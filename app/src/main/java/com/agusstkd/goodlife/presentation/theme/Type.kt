@@ -1,4 +1,4 @@
-package com.agusstkd.goodlife.ui.theme
+package com.agusstkd.goodlife.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

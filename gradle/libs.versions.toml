@@ -23,6 +23,12 @@ ksp = "2.1.0-1.0.29"
 # Retrofit
 retrofit = "3.0.0"
 
+# Koin - Dependency Injection
+koin = "4.0.0"
+
+# Coroutines
+coroutines = "1.9.0"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -57,6 +63,13 @@ kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializat
 # Retrofit
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-adapter = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "retrofit" }
+
+# Koin - Dependency Injection
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
+
+# Coroutines
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -89,4 +89,11 @@ dependencies {
     // Retrofit
     implementation(libs.retrofit)
     implementation(libs.retrofit.adapter)
+
+    // Koin - Dependency Injection
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
+
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.android)
 }

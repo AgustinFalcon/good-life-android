@@ -1,6 +1,5 @@
-package com.agusstkd.goodlife.ui.theme
+package com.agusstkd.goodlife.presentation.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
