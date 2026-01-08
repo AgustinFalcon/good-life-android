@@ -7,7 +7,45 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
-## [0.1.0] - 2025-01-07
+## [0.2.0] - 2026-01-08
+
+### Added
+
+#### Theme System
+- **Font.kt**: Familias de fuentes personalizadas
+  - `UbuntuFontFamily`: Light, Regular, Medium, Bold (para títulos)
+  - `InterFontFamily`: Light, Regular, Medium, SemiBold, Bold (para body text)
+
+- **res/font/**: 9 archivos de fuentes TTF
+  - Ubuntu: `ubuntu_light`, `ubuntu_regular`, `ubuntu_medium`, `ubuntu_bold`
+  - Inter: `inter_light`, `inter_regular`, `inter_medium`, `inter_semibold`, `inter_bold`
+
+- **Color.kt**: Paleta de colores completa
+  - Colores primarios: `DarkGreen`, `LightGreen`, `GreenSelected`, `EmeraldGreen`
+  - Gradientes de fondo: `DegradeBackground1-5`
+  - Colores semánticos: `SuccessGreen`, `ErrorRed`, `WarningOrange`, `InfoBlue`
+  - Colores de UI: texto, superficies, bordes, botones
+  - Colores para modo oscuro
+  - Brushes reutilizables: `ButtonEnabledGradientBrush`, `InputBorderNormalGradientBrush`, etc.
+  - Listas de colores para estados: `ButtonColorsEnabled`, `InputBorderColorsNormal`, etc.
+
+- **Type.kt**: Sistema tipográfico Material 3 completo
+  - Display, Headline, Title con Ubuntu
+  - Body, Label con Inter
+  - Estilos personalizados: `AppTitleStyle`, `PlaceholderStyle`, `ButtonTextStyle`, `LinkTextStyle`
+
+- **Theme.kt**: Temas claro y oscuro
+  - `GoodLifeTheme()`: Composable principal
+  - `LightColorScheme` y `DarkColorScheme` completos
+  - Configuración automática de status bar
+  - `ExtendedColors` para colores adicionales
+
+### Changed
+- Deshabilitado Dynamic Color para mantener identidad de marca
+
+---
+
+## [0.1.0] - 2026-01-07
 
 ### Added
 
@@ -94,4 +132,3 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 - `refactor:` Refactorización de código
 - `test:` Agregar o modificar tests
 - `chore:` Tareas de mantenimiento
-
