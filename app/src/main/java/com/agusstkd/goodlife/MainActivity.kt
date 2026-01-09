@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
-import com.agusstkd.goodlife.presentation.navigation.host.SmartNavHost
+import com.agusstkd.goodlife.presentation.navigation.host.GoodLifeNavHost
 import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
 import com.agusstkd.goodlife.presentation.navigation.route.addAppGraph
 import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
             GoodLifeTheme {
                 val navController = rememberNavController()
 
-                SmartNavHost(
+                GoodLifeNavHost(
                     navController = navController,
                     navigationController = navigationController,
                     startDestination = AppRoute.Splash,

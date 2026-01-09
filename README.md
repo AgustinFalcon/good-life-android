@@ -112,4 +112,3 @@ Seguimos [Conventional Commits](https://www.conventionalcommits.org/):
 ## 📜 Licencia
 
 Proyecto privado - Todos los derechos reservados.
-

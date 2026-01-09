@@ -84,4 +84,3 @@ sealed interface TabGraphRoute {
     @Serializable
     data object SettingsGraph : TabGraphRoute
 }
-

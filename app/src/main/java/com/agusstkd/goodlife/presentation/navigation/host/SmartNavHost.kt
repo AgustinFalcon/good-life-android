@@ -32,7 +32,7 @@ private const val ANIMATION_DURATION = 300
  * @param graphBuilder Constructor del grafo de navegación.
  */
 @Composable
-fun SmartNavHost(
+fun GoodLifeNavHost(
     navController: NavHostController,
     navigationController: ComposeNavigationController,
     startDestination: Any,

@@ -41,4 +41,3 @@ sealed class NavigationAction {
         val inclusive: Boolean = false
     ) : NavigationAction()
 }
-

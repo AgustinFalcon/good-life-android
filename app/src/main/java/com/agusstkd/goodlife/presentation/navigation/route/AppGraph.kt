@@ -41,4 +41,3 @@ fun NavGraphBuilder.addAppGraph() {
 private fun PlaceholderScreen(name: String) {
     Text(text = "Pantalla: $name")
 }
-

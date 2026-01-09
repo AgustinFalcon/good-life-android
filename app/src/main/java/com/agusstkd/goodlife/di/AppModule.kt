@@ -40,4 +40,3 @@ val appModule = module {
     // viewModelOf(::SplashViewModel)
     // viewModelOf(::LoginViewModel)
 }
-

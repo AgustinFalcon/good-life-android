@@ -93,4 +93,3 @@ fun ComposeNavigationController.navigateToMealDetail(mealId: Long) {
 fun ComposeNavigationController.navigateToProfile() {
     navigateTo(TabRoute.Profile)
 }
-

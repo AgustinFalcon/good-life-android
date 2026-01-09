@@ -296,4 +296,3 @@ Previene que se procesen eventos de navegación cuando la Activity está en `STO
 ### ¿Puedo navegar desde fuera de un ViewModel?
 
 Sí, cualquier clase que tenga inyectado `ComposeNavigationController` puede navegar. Pero es recomendable centralizar la lógica de navegación en ViewModels.
-

@@ -229,4 +229,3 @@ El código está diseñado para migrar a Kotlin Multiplatform:
 | Domain layer | ✅ | Sin dependencias Android |
 | Navigation | ⚠️ | Requiere expect/actual |
 | Room/Retrofit | ❌ | Reemplazar con SQLDelight/Ktor |
-

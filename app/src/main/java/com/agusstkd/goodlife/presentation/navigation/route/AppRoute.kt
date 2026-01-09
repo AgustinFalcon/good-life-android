@@ -29,4 +29,3 @@ sealed interface AppRoute {
     @Serializable
     data object Main : AppRoute
 }
-
