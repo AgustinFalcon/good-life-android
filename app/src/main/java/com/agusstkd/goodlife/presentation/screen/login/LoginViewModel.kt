@@ -2,6 +2,8 @@ package com.agusstkd.goodlife.presentation.screen.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.agusstkd.goodlife.domain.usecase.LoginResult
+import com.agusstkd.goodlife.domain.usecase.LoginUseCase
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
 import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
 import com.agusstkd.goodlife.presentation.navigation.route.navigateToMain
@@ -19,12 +21,23 @@ import kotlinx.coroutines.launch
  * ## Responsabilidades:
  * - Mantener el estado de UI (LoginUiState)
  * - Procesar las acciones del usuario (LoginUiAction)
- * - Validar credenciales
+ * - Delegar validaciones y login al LoginUseCase
  * - Navegar a otras pantallas via ComposeNavigationController
  *
+ * ## Arquitectura Clean:
+ * ```
+ * LoginViewModel
+ *     └── LoginUseCase
+ *             ├── ValidateEmailUseCase
+ *             ├── ValidatePasswordUseCase
+ *             └── AuthRepository
+ * ```
+ *
+ * @property loginUseCase Caso de uso que encapsula la lógica de login
  * @property navigationController Controlador de navegación reactivo
  */
 class LoginViewModel(
+    private val loginUseCase: LoginUseCase,
     private val navigationController: ComposeNavigationController
 ) : ViewModel() {
 
@@ -32,9 +45,9 @@ class LoginViewModel(
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
     init {
-        // Simular carga inicial
+        // Simular carga inicial (verificar sesión existente, etc.)
         viewModelScope.launch {
-            delay(1000)
+            delay(800)
             _uiState.value = LoginUiState.Content()
         }
     }
@@ -91,50 +104,53 @@ class LoginViewModel(
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════════════
-    // ACTIONS
+    // LOGIN ACTION - Usa LoginUseCase
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
     private fun performLogin() {
         val currentState = _uiState.value
         if (currentState !is LoginUiState.Content) return
 
-        val email = currentState.email
-        val password = currentState.password
-
-        // Validar campos vacíos
-        val isEmailEmpty = email.isBlank()
-        val isPasswordEmpty = password.isBlank()
-
-        if (isEmailEmpty || isPasswordEmpty) {
-            _uiState.value = currentState.copy(
-                isEmailError = isEmailEmpty,
-                isPasswordError = isPasswordEmpty
-            )
-            return
-        }
-
-        // TODO: Implementar autenticación real con el backend
-        // Por ahora, simular login con credenciales hardcodeadas
         viewModelScope.launch {
+            // Mostrar loading
             _uiState.value = LoginUiState.Loading
 
-            delay(1500) // Simular llamada al servidor
+            // Ejecutar login via UseCase
+            val result = loginUseCase(
+                email = currentState.email,
+                password = currentState.password
+            )
 
-            val validEmail = "agustin"
-            val validPassword = "1234"
+            // Procesar resultado
+            when (result) {
+                is LoginResult.Success -> {
+                    _uiState.value = LoginUiState.Success
+                    delay(300) // Pequeño delay para mostrar éxito
+                    navigationController.navigateToMain()
+                }
 
-            if (email == validEmail && password == validPassword) {
-                _uiState.value = LoginUiState.Success
-                delay(500)
-                navigationController.navigateToMain()
-            } else {
-                _uiState.value = currentState.copy(
-                    isEmailError = true,
-                    isPasswordError = true
-                )
+                is LoginResult.ValidationError -> {
+                    _uiState.value = currentState.copy(
+                        isEmailError = result.emailError != null,
+                        isPasswordError = result.passwordError != null
+                    )
+                    // TODO: Mostrar mensaje de error específico
+                }
+
+                is LoginResult.Error -> {
+                    _uiState.value = currentState.copy(
+                        isEmailError = true,
+                        isPasswordError = true
+                    )
+                    // TODO: Mostrar mensaje de error general
+                }
             }
         }
     }
+
+    // ═══════════════════════════════════════════════════════════════════════════════════════════
+    // NAVIGATION
+    // ═══════════════════════════════════════════════════════════════════════════════════════════
 
     private fun navigateToRegister() {
         navigationController.navigateTo(AppRoute.Register)
