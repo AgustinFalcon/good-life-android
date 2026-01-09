@@ -192,7 +192,7 @@ val GoodLifeTypography = Typography(
 val AppTitleStyle = TextStyle(
     fontFamily = UbuntuFontFamily,
     fontWeight = FontWeight.Bold,
-    fontSize = 40.sp,
+    fontSize = 60.sp,
     lineHeight = 48.sp,
     letterSpacing = (-0.5).sp
 )

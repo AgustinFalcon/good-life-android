@@ -4,6 +4,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.agusstkd.goodlife.presentation.screen.login.LoginScreenOwner
+import com.agusstkd.goodlife.presentation.screen.splash.SplashScreenOwner
 
 /**
  * Define el grafo de navegación a nivel de aplicación.
@@ -14,13 +16,11 @@ import androidx.navigation.compose.composable
 fun NavGraphBuilder.addAppGraph() {
 
     composable<AppRoute.Splash> {
-        // TODO: Reemplazar con SplashScreenOwner()
-        PlaceholderScreen("Splash")
+        SplashScreenOwner()
     }
 
     composable<AppRoute.Login> {
-        // TODO: Reemplazar con LoginScreenOwner()
-        PlaceholderScreen("Login")
+        LoginScreenOwner()
     }
 
     composable<AppRoute.Register> {

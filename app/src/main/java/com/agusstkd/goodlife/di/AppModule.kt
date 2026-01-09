@@ -4,6 +4,9 @@ import com.agusstkd.goodlife.core.dispatcher.AndroidDispatcherProvider
 import com.agusstkd.goodlife.core.dispatcher.DispatcherProvider
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationControllerImpl
+import com.agusstkd.goodlife.presentation.screen.login.LoginViewModel
+import com.agusstkd.goodlife.presentation.screen.splash.SplashViewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 /**
@@ -35,8 +38,14 @@ val appModule = module {
     }
 
     // ===== VIEWMODELS =====
-    // Se agregarán conforme se creen las pantallas
-    // Ejemplo:
-    // viewModelOf(::SplashViewModel)
-    // viewModelOf(::LoginViewModel)
+
+    /**
+     * SplashViewModel - Pantalla de carga inicial.
+     */
+    viewModel { SplashViewModel(navigationController = get()) }
+
+    /**
+     * LoginViewModel - Pantalla de login.
+     */
+    viewModel { LoginViewModel(navigationController = get()) }
 }

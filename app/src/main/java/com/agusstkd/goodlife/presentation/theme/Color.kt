@@ -134,13 +134,23 @@ val TitleGradientBrush = Brush.horizontalGradient(
  * Degradado vertical para fondos de pantallas de autenticación.
  * Efecto: Verde menta → Aqua → Celeste (de arriba hacia abajo)
  */
-val BackgroundGradientBrush = Brush.verticalGradient(
+val BackgroundGradientBrushVertical = Brush.verticalGradient(
     colors = listOf(
         DegradeBackground1,
         DegradeBackground2,
         DegradeBackground3,
         DegradeBackground4,
         DegradeBackground5
+    )
+)
+
+val BackgroundGradientBrushHorizontal = Brush.verticalGradient(
+    colors = listOf(
+        DegradeBackground5,
+        DegradeBackground4,
+        DegradeBackground3,
+        DegradeBackground2,
+        DegradeBackground1,
     )
 )
 
@@ -236,3 +246,42 @@ val ButtonColorsEnabled = listOf(DarkGreen, LightGreen, DegradeBackground5)
  * Uso: Brush.horizontalGradient(colors = ButtonColorsDisabled)
  */
 val ButtonColorsDisabled = listOf(ButtonDisabledBg, Color(0xFF9E9E9E))
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+// 8. COLORES Y BRUSHES PARA LOGIN/REGISTER (Diseño limpio)
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Verde menta muy claro para fondos de pantallas de autenticación.
+ * Más suave y limpio que el gradiente del Splash.
+ */
+val BackgroundMint = Color(0xFFE8FFF8)
+
+/**
+ * Gradiente de fondo para Login/Register.
+ * Efecto: Verde menta suave arriba → Blanco abajo
+ * Diseño minimalista y profesional.
+ */
+val AuthBackgroundGradientBrush = Brush.verticalGradient(
+    colors = listOf(
+        BackgroundMint,      // #E8FFF8 - Verde menta arriba
+        Color.White          // #FFFFFF - Blanco abajo
+    )
+)
+
+/**
+ * Gradiente para botón primario de Login/Register.
+ * Efecto: Verde esmeralda → Verde brillante
+ * Solo 2 colores para un look más limpio.
+ */
+val AuthButtonGradientBrush = Brush.horizontalGradient(
+    colors = listOf(
+        LightGreen,          // #1EC691
+        GreenSelected        // #00D26B
+    )
+)
+
+/**
+ * Lista de colores para botón de Auth (Login/Register).
+ */
+val AuthButtonColors = listOf(LightGreen, GreenSelected)
