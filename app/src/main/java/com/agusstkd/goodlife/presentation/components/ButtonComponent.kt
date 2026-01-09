@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -132,12 +133,14 @@ data class ButtonVisualState(
  *
  * @property text Texto del botón
  * @property enabled Estado del botón (true = enabled, false = disabled)
+ * @property isLoading Mostrar spinner de carga (deshabilita el botón)
  * @property variant Variante visual (PRIMARY/OUTLINE)
  * @property showTrailingIcon Mostrar icono de flecha al final
  */
 data class ButtonParams(
     val text: String,
     val enabled: Boolean = true,
+    val isLoading: Boolean = false,
     val variant: ButtonVariant = ButtonVariant.PRIMARY,
     val showTrailingIcon: Boolean = false,
     val trailingIcon: ImageVector = Icons.AutoMirrored.Filled.ArrowForward
@@ -170,7 +173,11 @@ fun ButtonComponent(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // El botón está efectivamente deshabilitado si está loading o disabled
+    val isEffectivelyEnabled = params.enabled && !params.isLoading
+
     // Seleccionar el estado visual según variant y enabled
+    // Nota: Mantenemos los colores enabled durante loading para mejor UX
     val visualState = when {
         !params.enabled -> ButtonVisualState.Disabled
         params.variant == ButtonVariant.PRIMARY -> ButtonVisualState.EnabledPrimary
@@ -180,15 +187,16 @@ fun ButtonComponent(
     when (params.variant) {
         ButtonVariant.PRIMARY -> {
             PrimaryButton(
-                params = params,
+                params = params.copy(enabled = isEffectivelyEnabled),
                 visualState = visualState,
+                isLoading = params.isLoading,
                 onClick = onClick,
                 modifier = modifier
             )
         }
         ButtonVariant.OUTLINE -> {
             OutlineButton(
-                params = params,
+                params = params.copy(enabled = isEffectivelyEnabled),
                 visualState = visualState,
                 onClick = onClick,
                 modifier = modifier
@@ -204,6 +212,7 @@ fun ButtonComponent(
 private fun PrimaryButton(
     params: ButtonParams,
     visualState: ButtonVisualState,
+    isLoading: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -230,23 +239,33 @@ private fun PrimaryButton(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = params.text,
+            if (isLoading) {
+                // Mostrar spinner cuando está cargando
+                CircularProgressIndicator(
                     color = visualState.textColor,
-                    style = ButtonTextStyle
+                    modifier = Modifier.size(24.dp),
+                    strokeWidth = 2.dp
                 )
-                if (params.showTrailingIcon) {
-                    Spacer(Modifier.width(8.dp))
-                    Icon(
-                        imageVector = params.trailingIcon,
-                        contentDescription = null,
-                        tint = visualState.textColor,
-                        modifier = Modifier.size(20.dp)
+            } else {
+                // Contenido normal del botón
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = params.text,
+                        color = visualState.textColor,
+                        style = ButtonTextStyle
                     )
+                    if (params.showTrailingIcon) {
+                        Spacer(Modifier.width(8.dp))
+                        Icon(
+                            imageVector = params.trailingIcon,
+                            contentDescription = null,
+                            tint = visualState.textColor,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                 }
             }
         }

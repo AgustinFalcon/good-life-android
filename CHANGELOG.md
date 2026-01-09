@@ -7,6 +7,101 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-01-09
+
+### Added
+
+#### 🔐 Authentication System
+- **Login completo** con backend real
+  - Conexión a `https://devtukychloe.ddns.net/api/v1/token`
+  - Form-urlencoded authentication
+  - Manejo de tokens JWT (access + refresh)
+  - Almacenamiento seguro con SharedPreferences
+
+- **LoginUseCase**: Orquesta validación y autenticación
+- **ValidateEmailUseCase**: Validación de email
+- **ValidatePasswordUseCase**: Validación de contraseña
+- **GetCurrentUserUseCase**: Obtiene usuario logueado
+- **LogoutUseCase**: Cierre de sesión
+
+#### 🌐 Network Layer (Retrofit + OkHttp)
+- **GoodLifeApiService**: Interface Retrofit con endpoints
+  - `POST /api/v1/token` - Login
+  - `POST /api/v1/register` - Registro
+  
+- **GoodLifeInterceptor**: Interceptor personalizado
+  - Agrega `Authorization: Bearer` automáticamente
+  - Logging detallado de URL, request y response
+  - Emojis para fácil identificación en Logcat
+  - Skip de endpoints públicos
+
+- **NetworkConstants**: URL base y endpoints públicos
+- **HttpCode**: Enum con códigos HTTP del backend
+- **ApiException**: Excepción personalizada para errores de API
+
+- **DTOs**:
+  - `BaseResponse<T>`: Wrapper genérico del backend
+  - `AuthResponse`: Respuesta de login (accessToken, refreshToken)
+  - `RegisterRequest/Response`: Registro de usuario
+
+#### 💾 Database Layer (Room)
+- **GoodLifeDatabase**: Base de datos con patrón Singleton thread-safe
+  - `@Volatile` + `synchronized` para thread safety
+  - `getInstance(context)` para acceso global
+  - `fallbackToDestructiveMigration()` para desarrollo
+
+- **UserEntity**: Entidad para almacenar usuario logueado
+- **UserDao**: Operaciones CRUD de usuario
+  - `insertUser()`, `getUser()`, `deleteUser()`
+
+- **Mappers como extension functions**:
+  - `UserEntity.toDomain()` → `User`
+  - `User.fromDomain()` → `UserEntity`
+  - `AuthResponse.toAuthToken()` → `AuthToken`
+  - `RegisterResponse.toUser()` → `User`
+
+#### 🏠 Home Screen
+- **HomeViewModel**: Carga usuario y maneja logout
+- **HomeScreen**: Pantalla de bienvenida
+  - Mensaje "¡Bienvenido, [nombre]!"
+  - Botón de cerrar sesión
+  - Estados: Loading, Content, Error
+
+- **HomeUiState** / **HomeUiAction**: Extraídos a archivos separados
+
+#### 📦 Dependency Injection
+- **NetworkModule**: OkHttpClient, Retrofit, ApiService, Json
+- **DatabaseModule**: GoodLifeDatabase, UserDao
+- **AppModule actualizado**: UseCases, DataSources, Repository
+
+#### 🎨 Compose Optimizations
+- **@Stable** en todos los UI States y Actions
+  - `LoginUiState`, `LoginUiAction`
+  - `HomeUiState`, `HomeUiAction`
+  - `SplashUiState`, `SplashUiAction`
+  
+- Previene recomposiciones innecesarias
+
+#### 🔧 Infrastructure
+- **TokenManager**: Almacena tokens en SharedPreferences
+- **AuthRemoteDataSource**: Ejecuta llamadas API y mapea responses
+- **AuthRepositoryImpl**: Implementación completa del repositorio
+  - Login → API → Save tokens → Save user to Room
+  - Logout → Clear tokens → Delete user from Room
+
+### Changed
+- **AndroidManifest.xml**: Agregados permisos INTERNET y ACCESS_NETWORK_STATE
+- **build.gradle.kts**: Agregadas dependencias Room, OkHttp, KSP
+- **libs.versions.toml**: Versiones de Room 2.7.0-alpha03, OkHttp 4.12.0
+
+### Technical Decisions
+- **Singleton en GoodLifeDatabase**: Thread-safe con double-checked locking
+- **Extension functions para mappers**: Más idiomático en Kotlin
+- **@Stable annotations**: Optimización de recomposición en Compose
+- **Mensajes de error del backend**: No hardcodeados, vienen del BaseResponse
+
+---
+
 ## [0.2.0] - 2026-01-08
 
 ### Added

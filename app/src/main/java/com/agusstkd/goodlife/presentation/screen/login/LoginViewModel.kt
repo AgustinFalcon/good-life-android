@@ -2,8 +2,8 @@ package com.agusstkd.goodlife.presentation.screen.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.agusstkd.goodlife.domain.usecase.LoginResult
-import com.agusstkd.goodlife.domain.usecase.LoginUseCase
+import com.agusstkd.goodlife.domain.usecase.login.LoginResult
+import com.agusstkd.goodlife.domain.usecase.login.LoginUseCase
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
 import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
 import com.agusstkd.goodlife.presentation.navigation.route.navigateToMain
@@ -111,9 +111,12 @@ class LoginViewModel(
         val currentState = _uiState.value
         if (currentState !is LoginUiState.Content) return
 
+        // Evitar múltiples clicks
+        if (currentState.isLoading) return
+
         viewModelScope.launch {
-            // Mostrar loading
-            _uiState.value = LoginUiState.Loading
+            // Mostrar loading en el botón (no cambiar toda la pantalla)
+            _uiState.value = currentState.copy(isLoading = true)
 
             // Ejecutar login via UseCase
             val result = loginUseCase(
@@ -131,6 +134,7 @@ class LoginViewModel(
 
                 is LoginResult.ValidationError -> {
                     _uiState.value = currentState.copy(
+                        isLoading = false,
                         isEmailError = result.emailError != null,
                         isPasswordError = result.passwordError != null
                     )
@@ -139,6 +143,7 @@ class LoginViewModel(
 
                 is LoginResult.Error -> {
                     _uiState.value = currentState.copy(
+                        isLoading = false,
                         isEmailError = true,
                         isPasswordError = true
                     )

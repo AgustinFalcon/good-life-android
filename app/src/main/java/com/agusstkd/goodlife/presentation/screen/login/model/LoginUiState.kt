@@ -28,13 +28,15 @@ sealed interface LoginUiState {
      * @property rememberUser Si el usuario quiere ser recordado
      * @property isEmailError Si el campo de email tiene error de validación
      * @property isPasswordError Si el campo de contraseña tiene error de validación
+     * @property isLoading Si se está procesando el login (muestra spinner en botón)
      */
     data class Content(
         val email: String = "",
         val password: String = "",
         val rememberUser: Boolean = false,
         val isEmailError: Boolean = false,
-        val isPasswordError: Boolean = false
+        val isPasswordError: Boolean = false,
+        val isLoading: Boolean = false
     ) : LoginUiState
 
     /**

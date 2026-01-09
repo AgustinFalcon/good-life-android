@@ -4,6 +4,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.agusstkd.goodlife.presentation.screen.home.HomeScreenOwner
 import com.agusstkd.goodlife.presentation.screen.login.LoginScreenOwner
 import com.agusstkd.goodlife.presentation.screen.splash.SplashScreenOwner
 
@@ -29,8 +30,9 @@ fun NavGraphBuilder.addAppGraph() {
     }
 
     composable<AppRoute.Main> {
-        // TODO: Reemplazar con MainScaffoldScreen()
-        PlaceholderScreen("Main (con tabs)")
+        // Pantalla Home con mensaje de bienvenida
+        // TODO: Eventualmente reemplazar con MainScaffold con tabs
+        HomeScreenOwner()
     }
 }
 

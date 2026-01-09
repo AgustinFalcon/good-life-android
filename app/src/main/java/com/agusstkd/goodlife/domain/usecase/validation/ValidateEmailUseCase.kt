@@ -1,4 +1,4 @@
-package com.agusstkd.goodlife.domain.usecase
+package com.agusstkd.goodlife.domain.usecase.validation
 
 import com.agusstkd.goodlife.domain.model.ValidationResult
 

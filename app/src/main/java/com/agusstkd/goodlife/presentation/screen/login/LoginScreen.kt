@@ -95,6 +95,7 @@ fun LoginScreen(
                     rememberUser = uiState.rememberUser,
                     isEmailError = uiState.isEmailError,
                     isPasswordError = uiState.isPasswordError,
+                    isLoading = uiState.isLoading,
                     onAction = onAction
                 )
             }
@@ -105,6 +106,7 @@ fun LoginScreen(
                     rememberUser = false,
                     isEmailError = true,
                     isPasswordError = true,
+                    isLoading = false,
                     onAction = onAction
                 )
             }
@@ -143,6 +145,7 @@ private fun LoginContent(
     rememberUser: Boolean,
     isEmailError: Boolean,
     isPasswordError: Boolean,
+    isLoading: Boolean,
     onAction: (LoginUiAction) -> Unit
 ) {
     val isFormValid = email.isNotBlank() && password.isNotBlank()
@@ -193,6 +196,7 @@ private fun LoginContent(
         // ═══════════════════════════════════════════════════════════════════════════════
         LoginButtons(
             isFormValid = isFormValid,
+            isLoading = isLoading,
             onAction = onAction
         )
 
@@ -354,19 +358,21 @@ private fun RememberAndForgotRow(
 @Composable
 private fun LoginButtons(
     isFormValid: Boolean,
+    isLoading: Boolean,
     onAction: (LoginUiAction) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Botón Login
+        // Botón Login con loading
         ButtonComponent(
             params = ButtonParams(
                 text = "Iniciar Sesión",
                 enabled = isFormValid,
+                isLoading = isLoading,
                 variant = ButtonVariant.PRIMARY,
-                showTrailingIcon = true
+                showTrailingIcon = !isLoading // Ocultar flecha cuando está loading
             ),
             onClick = { onAction(LoginUiAction.OnLoginClick) }
         )
@@ -374,11 +380,11 @@ private fun LoginButtons(
         // Separador con círculo
         SeparatorWithCircle()
 
-        // Botón Register
+        // Botón Register (deshabilitado durante loading)
         ButtonComponent(
             params = ButtonParams(
                 text = "Crear Cuenta",
-                enabled = true,
+                enabled = !isLoading,
                 variant = ButtonVariant.OUTLINE
             ),
             onClick = { onAction(LoginUiAction.OnRegisterClick) }

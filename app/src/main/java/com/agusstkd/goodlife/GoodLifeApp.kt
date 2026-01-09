@@ -2,6 +2,8 @@ package com.agusstkd.goodlife
 
 import android.app.Application
 import com.agusstkd.goodlife.di.appModule
+import com.agusstkd.goodlife.di.databaseModule
+import com.agusstkd.goodlife.di.networkModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -22,12 +24,21 @@ class GoodLifeApp : Application() {
 
     /**
      * Inicializa el contenedor de dependencias Koin.
+     *
+     * Módulos:
+     * - [networkModule]: Retrofit, OkHttp, ApiService, TokenManager
+     * - [databaseModule]: Room Database, DAOs
+     * - [appModule]: Repositories, UseCases, ViewModels
      */
     private fun initKoin() {
         startKoin {
             androidLogger(Level.DEBUG)
             androidContext(this@GoodLifeApp)
-            modules(appModule)
+            modules(
+                networkModule,
+                databaseModule,
+                appModule
+            )
         }
     }
 }
