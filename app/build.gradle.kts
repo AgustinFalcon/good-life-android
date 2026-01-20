@@ -104,4 +104,10 @@ dependencies {
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
+
+    // Biometric Authentication
+    implementation(libs.androidx.biometric)
+
+// Encrypted SharedPreferences (para guardar credenciales seguras)
+    implementation(libs.androidx.security.crypto)
 }

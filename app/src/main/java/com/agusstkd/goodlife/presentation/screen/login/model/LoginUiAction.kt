@@ -1,6 +1,7 @@
 package com.agusstkd.goodlife.presentation.screen.login.model
 
 import androidx.compose.runtime.Stable
+import com.agusstkd.goodlife.core.biometric.BiometricResult
 
 /**
  * Acciones de UI para la pantalla de Login.
@@ -66,4 +67,17 @@ sealed interface LoginUiAction {
      * Usuario tocó el link de "Privacidad".
      */
     data object OnPrivacyClick : LoginUiAction
+
+    // ═══════ BIOMETRÍA ═══════
+    /** Toggle del checkbox de activar biometría */
+    data object OnBiometricToggle : LoginUiAction
+
+    /** Click en el ícono de huella (abre prompt) */
+    data object OnBiometricIconClick : LoginUiAction
+
+    /** Resultado de la autenticación biométrica */
+    data class OnBiometricResult(val result: BiometricResult) : LoginUiAction
+
+    /** Resetear flag de mostrar prompt */
+    data object OnBiometricPromptShown : LoginUiAction
 }

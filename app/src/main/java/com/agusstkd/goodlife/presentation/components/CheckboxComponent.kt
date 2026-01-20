@@ -37,30 +37,6 @@ import com.agusstkd.goodlife.presentation.theme.DarkGreen
 import com.agusstkd.goodlife.presentation.theme.DegradeBackground5
 import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
 import com.agusstkd.goodlife.presentation.theme.LightGreen
-import com.agusstkd.goodlife.presentation.theme.TextSecondary
-
-/**
- * ═══════════════════════════════════════════════════════════════════════════════════════════
- * CHECKBOX COMPONENT - Checkbox con texto y opción de icono
- * ═══════════════════════════════════════════════════════════════════════════════════════════
- *
- * Componente reutilizable para checkboxes con:
- * - Fondo con degradado cuando está activo
- * - Icono opcional al final (ej: huella digital)
- * - Soporte para link clickeable
- *
- * ## Ejemplo de uso:
- * ```kotlin
- * CheckboxComponent(
- *     params = CheckboxParams(
- *         text = "Activar login con huella",
- *         checked = fingerPrint,
- *         endIcon = Icons.Default.Fingerprint
- *     ),
- *     onClick = { onAction(LoginUiAction.OnCheckFingerPrint) }
- * )
- * ```
- */
 
 // ═══════════════════════════════════════════════════════════════════════════════════════════
 // 1. VISUAL STATE - Estado visual del checkbox
@@ -68,6 +44,9 @@ import com.agusstkd.goodlife.presentation.theme.TextSecondary
 
 /**
  * Estado visual del checkbox.
+ *
+ * @property backgroundColors Colores del degradado de fondo
+ * @property textColor Color del texto
  */
 data class CheckboxVisualState(
     val backgroundColors: List<Color>,
@@ -75,65 +54,102 @@ data class CheckboxVisualState(
 ) {
     companion object {
         /**
-         * Estado CHECKED (activo).
+         * Estado ENABLED (checkbox activo/checked).
          * Degradado verde vibrante.
          */
-        val Checked = CheckboxVisualState(
+        val Enabled = CheckboxVisualState(
             backgroundColors = listOf(DarkGreen, LightGreen, DegradeBackground5),
             textColor = DarkGreen
         )
 
         /**
-         * Estado UNCHECKED (inactivo).
-         * Sin fondo, borde gris.
+         * Estado DISABLED (checkbox inactivo/unchecked).
+         * Degradado gris.
          */
-        val Unchecked = CheckboxVisualState(
+        val Disabled = CheckboxVisualState(
             backgroundColors = listOf(Color(0xFFBDBDBD), Color(0xFF9E9E9E)),
-            textColor = TextSecondary
+            textColor = Color.Gray
         )
     }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════════════════
-// 2. PARAMS - Parámetros del checkbox
+// 2. PARAMS ID - Identificador del checkbox
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Identificadores para diferentes tipos de checkbox.
+ * Útil para identificar qué checkbox se clickeó en callbacks.
+ */
+enum class CheckboxParamsId {
+    ENABLE_FINGER_PRINT,
+    ACCEPT_TERMS_AND_CONDITIONS,
+    REMEMBER_USER,
+    OTHER
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+// 3. PARAMS - Parámetros del checkbox
 // ═══════════════════════════════════════════════════════════════════════════════════════════
 
 /**
  * Parámetros de configuración del checkbox.
  *
  * @property text Texto principal
- * @property checked Estado del checkbox
+ * @property checked Estado del checkbox (true = checked)
+ * @property id Identificador del checkbox (opcional, para callbacks)
  * @property linkText Texto opcional para link clickeable
  * @property endIcon Icono opcional al final (ej: huella digital)
+ * @property enabledState Estado visual cuando está checked
+ * @property disabledState Estado visual cuando NO está checked
  */
 data class CheckboxParams(
     val text: String,
     val checked: Boolean,
+    val id: CheckboxParamsId = CheckboxParamsId.OTHER,
     val linkText: String? = null,
-    val endIcon: ImageVector? = null
+    val endIcon: ImageVector? = null,
+    val enabledState: CheckboxVisualState = CheckboxVisualState.Enabled,
+    val disabledState: CheckboxVisualState = CheckboxVisualState.Disabled
 )
 
 // ═══════════════════════════════════════════════════════════════════════════════════════════
-// 3. COMPONENTE - El Checkbox
+// 4. COMPONENTE - El Checkbox
 // ═══════════════════════════════════════════════════════════════════════════════════════════
 
 /**
  * Componente Checkbox con gradiente y texto.
  *
+ * ## Ejemplo de uso:
+ * ```kotlin
+ * CheckboxComponent(
+ *     params = CheckboxParams(
+ *         text = "Activar login con huella",
+ *         checked = isBiometricEnabled,
+ *         id = CheckboxParamsId.ENABLE_FINGER_PRINT,
+ *         endIcon = Icons.Default.Fingerprint
+ *     ),
+ *     onClick = { onAction(LoginUiAction.OnBiometricToggle) },
+ *     onEndIconClick = { onAction(LoginUiAction.OnBiometricIconClick) }
+ * )
+ * ```
+ *
  * @param params Configuración del checkbox
  * @param onClick Callback cuando se hace click en el checkbox
- * @param onLinkClick Callback opcional para click en el link
  * @param modifier Modificador de Compose
+ * @param onLinkClick Callback opcional para click en el link
+ * @param onEndIconClick Callback opcional para click en el ícono final
  */
 @Composable
 fun CheckboxComponent(
     params: CheckboxParams,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onLinkClick: (() -> Unit)? = null
+    onLinkClick: (() -> Unit)? = null,
+    onEndIconClick: (() -> Unit)? = null
 ) {
     val isChecked = params.checked
-    val visualState = if (isChecked) CheckboxVisualState.Checked else CheckboxVisualState.Unchecked
+    val colors = if (isChecked) params.enabledState else params.disabledState
     val rowSize = 22.dp
 
     Row(
@@ -156,7 +172,7 @@ fun CheckboxComponent(
                 .clip(RoundedCornerShape(4.dp))
                 .then(
                     if (isChecked) {
-                        Modifier.background(Brush.linearGradient(visualState.backgroundColors))
+                        Modifier.background(Brush.linearGradient(colors.backgroundColors))
                     } else {
                         Modifier
                             .background(Color.Transparent)
@@ -181,11 +197,14 @@ fun CheckboxComponent(
         // Si hay linkText, mostrar texto principal + link clickeable
         if (params.linkText != null) {
             Row(verticalAlignment = Alignment.CenterVertically) {
+                // Texto principal
                 Text(
                     text = params.text,
-                    color = if (isChecked) DarkGreen else TextSecondary,
+                    color = if (isChecked) DarkGreen else Color.Gray,
                     fontSize = 14.sp
                 )
+
+                // Texto del link clickeable
                 Text(
                     text = params.linkText,
                     color = DarkGreen,
@@ -200,26 +219,46 @@ fun CheckboxComponent(
             // Texto simple sin link
             Text(
                 text = params.text,
-                color = visualState.textColor,
+                color = colors.textColor,
                 fontSize = 14.sp
             )
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Icono opcional al final
-        params.endIcon?.let {
+        // Icono opcional al final (clickeable si hay callback y está checked)
+        params.endIcon?.let { icon ->
+            val iconModifier = Modifier
+                .size(rowSize + 4.dp)
+                .then(
+                    if (onEndIconClick != null && isChecked) {
+                        Modifier.clickable { onEndIconClick() }
+                    } else {
+                        Modifier
+                    }
+                )
+
             GradientIcon(
-                imageVector = it,
-                colors = visualState.backgroundColors,
-                modifier = Modifier.size(rowSize + 4.dp)
+                imageVector = icon,
+                colors = colors.backgroundColors,
+                modifier = iconModifier,
+                contentDescription = "Activar con huella"
             )
         }
     }
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+// 5. GRADIENT ICON - Icono con degradado
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+
 /**
- * Icono con degradado.
+ * Icono con degradado aplicado.
+ *
+ * @param imageVector Icono a mostrar
+ * @param colors Colores del degradado
+ * @param modifier Modificador de Compose
+ * @param contentDescription Descripción para accesibilidad
  */
 @Composable
 fun GradientIcon(
@@ -261,43 +300,71 @@ fun CheckboxComponentPreview() {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Checkbox unchecked
+            // Checkbox unchecked - Recordar usuario
             CheckboxComponent(
                 params = CheckboxParams(
                     text = "Recordar usuario",
-                    checked = false
+                    checked = false,
+                    id = CheckboxParamsId.REMEMBER_USER
                 ),
                 onClick = {}
             )
 
-            // Checkbox checked
+            // Checkbox checked - Recordar usuario
             CheckboxComponent(
                 params = CheckboxParams(
                     text = "Recordar usuario",
-                    checked = true
+                    checked = true,
+                    id = CheckboxParamsId.REMEMBER_USER
                 ),
                 onClick = {}
             )
 
-            // Checkbox con icono de huella
+            // Checkbox con icono de huella (checked - ícono clickeable)
             CheckboxComponent(
                 params = CheckboxParams(
                     text = "Activar login con huella",
                     checked = true,
+                    id = CheckboxParamsId.ENABLE_FINGER_PRINT,
+                    endIcon = Icons.Default.Fingerprint
+                ),
+                onClick = {},
+                onEndIconClick = { /* Abre BiometricPrompt */ }
+            )
+
+            // Checkbox con icono de huella (unchecked - ícono gris)
+            CheckboxComponent(
+                params = CheckboxParams(
+                    text = "Activar login con huella",
+                    checked = false,
+                    id = CheckboxParamsId.ENABLE_FINGER_PRINT,
                     endIcon = Icons.Default.Fingerprint
                 ),
                 onClick = {}
             )
 
-            // Checkbox con link
+            // Checkbox con link (términos y condiciones)
             CheckboxComponent(
                 params = CheckboxParams(
                     text = "Acepto los ",
                     checked = false,
+                    id = CheckboxParamsId.ACCEPT_TERMS_AND_CONDITIONS,
                     linkText = "términos y condiciones"
                 ),
                 onClick = {},
-                onLinkClick = {}
+                onLinkClick = { /* Navega a términos */ }
+            )
+
+            // Checkbox con link checked
+            CheckboxComponent(
+                params = CheckboxParams(
+                    text = "Acepto los ",
+                    checked = true,
+                    id = CheckboxParamsId.ACCEPT_TERMS_AND_CONDITIONS,
+                    linkText = "términos y condiciones"
+                ),
+                onClick = {},
+                onLinkClick = { /* Navega a términos */ }
             )
         }
     }

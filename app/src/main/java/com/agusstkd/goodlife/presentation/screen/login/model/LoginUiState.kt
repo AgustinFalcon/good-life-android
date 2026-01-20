@@ -29,6 +29,9 @@ sealed interface LoginUiState {
      * @property isEmailError Si el campo de email tiene error de validación
      * @property isPasswordError Si el campo de contraseña tiene error de validación
      * @property isLoading Si se está procesando el login (muestra spinner en botón)
+     * @property isBiometricAvailable Si el dispositivo tiene hardware biométrico disponible
+     * @property isBiometricEnabled Si el usuario activó login con biometría
+     * @property shouldShowBiometricPrompt Flag para triggear el BiometricPrompt desde el Owner
      */
     data class Content(
         val email: String = "",
@@ -36,7 +39,10 @@ sealed interface LoginUiState {
         val rememberUser: Boolean = false,
         val isEmailError: Boolean = false,
         val isPasswordError: Boolean = false,
-        val isLoading: Boolean = false
+        val isLoading: Boolean = false,
+        val isBiometricAvailable: Boolean = false,
+        val isBiometricEnabled: Boolean = false,
+        val shouldShowBiometricPrompt: Boolean = false
     ) : LoginUiState
 
     /**

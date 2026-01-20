@@ -1,9 +1,9 @@
 package com.agusstkd.goodlife
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.compose.rememberNavController
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
 import com.agusstkd.goodlife.presentation.navigation.host.GoodLifeNavHost
@@ -17,8 +17,10 @@ import org.koin.android.ext.android.inject
  *
  * Implementa Single Activity Architecture.
  * Toda la navegación se maneja con Compose Navigation.
+ * 
+ * NOTA: Usa FragmentActivity (no ComponentActivity) para soportar BiometricPrompt.
  */
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
 
     private val navigationController: ComposeNavigationController by inject()
 

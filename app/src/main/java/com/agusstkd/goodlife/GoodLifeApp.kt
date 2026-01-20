@@ -2,6 +2,7 @@ package com.agusstkd.goodlife
 
 import android.app.Application
 import com.agusstkd.goodlife.di.appModule
+import com.agusstkd.goodlife.di.biometricModule
 import com.agusstkd.goodlife.di.databaseModule
 import com.agusstkd.goodlife.di.networkModule
 import org.koin.android.ext.koin.androidContext
@@ -28,6 +29,7 @@ class GoodLifeApp : Application() {
      * Módulos:
      * - [networkModule]: Retrofit, OkHttp, ApiService, TokenManager
      * - [databaseModule]: Room Database, DAOs
+     * - [biometricModule]: BiometricAuthenticator, SecureCredentialsStorage
      * - [appModule]: Repositories, UseCases, ViewModels
      */
     private fun initKoin() {
@@ -37,6 +39,7 @@ class GoodLifeApp : Application() {
             modules(
                 networkModule,
                 databaseModule,
+                biometricModule,
                 appModule
             )
         }

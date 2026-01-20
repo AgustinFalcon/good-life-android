@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -39,7 +38,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.agusstkd.goodlife.R
 import com.agusstkd.goodlife.presentation.components.BackgroundGradientComponent
 import com.agusstkd.goodlife.presentation.components.ButtonComponent
@@ -58,6 +56,11 @@ import com.agusstkd.goodlife.presentation.theme.GoodLifeTypography
 import com.agusstkd.goodlife.presentation.theme.LightGreen
 import com.agusstkd.goodlife.presentation.theme.TextLink
 import com.agusstkd.goodlife.presentation.theme.TextSecondary
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Fingerprint
+import com.agusstkd.goodlife.presentation.components.CheckboxComponent
+import com.agusstkd.goodlife.presentation.components.CheckboxParams
+import com.agusstkd.goodlife.presentation.components.CheckboxParamsId
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════════════════════
@@ -96,6 +99,8 @@ fun LoginScreen(
                     isEmailError = uiState.isEmailError,
                     isPasswordError = uiState.isPasswordError,
                     isLoading = uiState.isLoading,
+                    isBiometricAvailable = uiState.isBiometricAvailable,
+                    isBiometricEnabled = uiState.isBiometricEnabled,
                     onAction = onAction
                 )
             }
@@ -107,6 +112,8 @@ fun LoginScreen(
                     isEmailError = true,
                     isPasswordError = true,
                     isLoading = false,
+                    isBiometricAvailable = false,
+                    isBiometricEnabled = false,
                     onAction = onAction
                 )
             }
@@ -146,6 +153,8 @@ private fun LoginContent(
     isEmailError: Boolean,
     isPasswordError: Boolean,
     isLoading: Boolean,
+    isBiometricAvailable: Boolean,
+    isBiometricEnabled: Boolean,
     onAction: (LoginUiAction) -> Unit
 ) {
     val isFormValid = email.isNotBlank() && password.isNotBlank()
@@ -182,12 +191,23 @@ private fun LoginContent(
         Spacer(modifier = Modifier.height(12.dp))
 
         // ═══════════════════════════════════════════════════════════════════════════════
-        // REMEMBER + FORGOT PASSWORD
+        // BIOMETRÍA (solo mostrar si está disponible)
         // ═══════════════════════════════════════════════════════════════════════════════
-        RememberAndForgotRow(
-            rememberUser = rememberUser,
-            onAction = onAction
-        )
+        if (isBiometricAvailable) {
+            CheckboxComponent(
+                params = CheckboxParams(
+                    text = "Activar login con huella",
+                    checked = isBiometricEnabled,
+                    id = CheckboxParamsId.ENABLE_FINGER_PRINT,
+                    endIcon = Icons.Default.Fingerprint
+                ),
+                onClick = { onAction(LoginUiAction.OnBiometricToggle) },
+                onEndIconClick = { onAction(LoginUiAction.OnBiometricIconClick) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 4.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -294,6 +314,7 @@ private fun LoginForm(
         )
     }
 }
+
 
 // ═══════════════════════════════════════════════════════════════════════════════════════════
 // REMEMBER + FORGOT PASSWORD

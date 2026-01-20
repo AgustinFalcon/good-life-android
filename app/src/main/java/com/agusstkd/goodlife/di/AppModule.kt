@@ -6,8 +6,8 @@ import com.agusstkd.goodlife.data.remote.datasource.AuthRemoteDataSource
 import com.agusstkd.goodlife.data.repository.AuthRepositoryImpl
 import com.agusstkd.goodlife.domain.repository.AuthRepository
 import com.agusstkd.goodlife.domain.usecase.home.GetCurrentUserUseCase
-import com.agusstkd.goodlife.domain.usecase.login.LoginUseCase
 import com.agusstkd.goodlife.domain.usecase.home.LogoutUseCase
+import com.agusstkd.goodlife.domain.usecase.login.LoginUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidateEmailUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidatePasswordUseCase
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
@@ -148,7 +148,9 @@ val appModule = module {
     viewModel {
         LoginViewModel(
             loginUseCase = get(),
-            navigationController = get()
+            navigationController = get(),
+            biometricAuthenticator = get(),
+            credentialsStorage = get()
         )
     }
 

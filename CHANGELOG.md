@@ -7,6 +7,105 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-01-20
+
+### Added
+
+#### 🔐 Autenticación Biométrica (KMP-Ready)
+
+- **Login con huella digital**: Autenticación biométrica completa
+  - Huella digital (Fingerprint)
+  - Face ID (en dispositivos compatibles)
+  - Métodos alternativos: PIN, patrón, contraseña del dispositivo
+  - Prompt automático al abrir la app si está activado
+  - Prompt manual al tocar el ícono de huella
+
+- **Auto-completar email**: El campo de email se autocompleta automáticamente cuando la biometría está activada, ahorrando tiempo al usuario
+
+- **Arquitectura KMP-Ready**:
+  - Interfaces en capa `domain` (Kotlin puro, sin Android)
+  - Implementaciones en capa `platform` (Android específico)
+  - Inversión de dependencias con Koin
+
+#### 📁 Nuevos Archivos (Domain Layer - Kotlin Puro)
+
+- `domain/biometric/BiometricAuthenticator.kt` - Interface para autenticación
+- `domain/biometric/BiometricPromptConfig.kt` - Configuración del prompt
+- `domain/biometric/BiometricAvailability.kt` - Estados de disponibilidad
+- `domain/biometric/BiometricResult.kt` - Resultados de autenticación
+- `domain/storage/SecureCredentialsStorage.kt` - Interface para credenciales
+
+#### 📁 Nuevos Archivos (Platform Layer - Android)
+
+- `platform/biometric/AndroidBiometricAuthenticator.kt` - Impl. de BiometricAuthenticator
+- `platform/storage/AndroidSecureCredentialsStorage.kt` - Impl. de SecureCredentialsStorage
+
+#### 📁 Nuevos Archivos (DI)
+
+- `di/BiometricModule.kt` - Módulo Koin para biometría
+
+#### 📱 Cambios en UI
+
+- **LoginScreen**: 
+  - Nuevo `CheckboxComponent` para activar login con huella
+  - Ícono de huella digital clickeable para activar prompt manual
+  - Email pre-rellenado cuando biometría está activada
+
+- **LoginUiState.Content**:
+  - `isBiometricAvailable: Boolean` - Hardware soporta biometría
+  - `isBiometricEnabled: Boolean` - Usuario activó biometría
+  - `shouldShowBiometricPrompt: Boolean` - Mostrar prompt biométrico
+
+- **LoginUiAction**:
+  - `OnBiometricToggle` - Toggle del checkbox
+  - `OnBiometricIconClick` - Click en ícono de huella
+  - `OnBiometricResult(result)` - Resultado del prompt
+
+#### 🔧 Cambios Técnicos
+
+- **MainActivity**: Cambió de `ComponentActivity` a `FragmentActivity` (requerido por BiometricPrompt)
+- **LoginScreenOwner**: 
+  - Maneja el ciclo de vida del BiometricPrompt
+  - Usa `findActivity()` extension para obtener FragmentActivity desde Compose
+  - Pasa Activity al `AndroidBiometricAuthenticator` vía `setActivity()`
+
+- **LoginViewModel**:
+  - `checkBiometricStatus()` - Verifica disponibilidad y estado
+  - `handleBiometricToggle()` - Maneja toggle de checkbox
+  - `handleBiometricIconClick()` - Activa prompt manual
+  - `handleBiometricResult()` - Procesa resultado del prompt
+  - `performLoginWithCredentials()` - Login con credenciales guardadas
+
+### Changed
+
+- **GoodLifeApp.kt**: Incluye `biometricModule` en la inicialización de Koin
+- **strings.xml**: Nuevos strings para prompt biométrico
+  - `biometric_prompt_title`
+  - `biometric_prompt_subtitle`
+  - `biometric_checkbox_label`
+
+### Dependencies
+
+```kotlin
+// build.gradle.kts (app)
+implementation("androidx.biometric:biometric:1.2.0-alpha05")
+implementation("androidx.security:security-crypto:1.1.0-alpha06")
+```
+
+### Security
+
+- **EncryptedSharedPreferences**: Credenciales almacenadas con AES256_GCM
+- **MasterKey**: AES256_GCM para encriptación de claves
+- **BiometricPrompt**: Usa `BIOMETRIC_STRONG | DEVICE_CREDENTIAL`
+
+### Documentation
+
+- **SPEC-002-biometric-login.md**: Actualizado a estado ✅ COMPLETADO
+- **SPEC-001-register-screen.md**: Actualizado con componentes reutilizables
+- **SPEC-003-plan-implementation-register.md**: Nuevo plan de implementación paso a paso
+
+---
+
 ## [0.3.0] - 2026-01-09
 
 ### Added
