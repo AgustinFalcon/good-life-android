@@ -130,7 +130,9 @@ private fun RegisterContent(
             state.email.isNotBlank() &&
             state.password.isNotBlank() &&
             state.confirmPassword.isNotBlank() &&
-            state.acceptedTerms
+            state.password == state.confirmPassword &&  // Contraseñas deben coincidir
+            state.acceptedTerms &&
+            !state.isConfirmPasswordError  // Sin errores de validación
 
     val scrollState = rememberScrollState()
 
@@ -257,14 +259,13 @@ private fun RegisterForm(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Nombre Completo
+        // Nombre Completo (se guarda localmente, se enviará al backend cuando lo soporte)
         TextFieldComponent(
             params = TextFieldParams(
                 value = state.fullName,
                 placeholder = "Nombre completo",
                 type = TextFieldType.USER,
-                isError = state.isFullNameError,
-                errorMessage = state.fullNameErrorMessage
+                isError = state.isFullNameError
             ),
             onValueChange = { onAction(RegisterUiAction.OnFullNameChange(it)) }
         )
@@ -275,8 +276,7 @@ private fun RegisterForm(
                 value = state.userName,
                 placeholder = "Nombre de usuario",
                 type = TextFieldType.USER,
-                isError = state.isUserNameError,
-                errorMessage = state.userNameErrorMessage
+                isError = state.isUserNameError
             ),
             onValueChange = { onAction(RegisterUiAction.OnUserNameChange(it)) }
         )
@@ -287,8 +287,7 @@ private fun RegisterForm(
                 value = state.email,
                 placeholder = "Correo electrónico",
                 type = TextFieldType.EMAIL,
-                isError = state.isEmailError,
-                errorMessage = state.emailErrorMessage
+                isError = state.isEmailError
             ),
             onValueChange = { onAction(RegisterUiAction.OnEmailChange(it)) }
         )
@@ -299,12 +298,9 @@ private fun RegisterForm(
                 value = state.password,
                 placeholder = "Contraseña",
                 type = TextFieldType.PASSWORD,
-                isError = state.isPasswordError,
-                errorMessage = state.passwordErrorMessage,
-                isPasswordVisible = state.isPasswordVisible
+                isError = state.isPasswordError
             ),
-            onValueChange = { onAction(RegisterUiAction.OnPasswordChange(it)) },
-            onPasswordVisibilityToggle = { onAction(RegisterUiAction.OnPasswordVisibilityToggle) }
+            onValueChange = { onAction(RegisterUiAction.OnPasswordChange(it)) }
         )
 
         // Confirmar Contraseña
@@ -313,12 +309,9 @@ private fun RegisterForm(
                 value = state.confirmPassword,
                 placeholder = "Confirmar contraseña",
                 type = TextFieldType.PASSWORD,
-                isError = state.isConfirmPasswordError,
-                errorMessage = state.confirmPasswordErrorMessage,
-                isPasswordVisible = state.isConfirmPasswordVisible
+                isError = state.isConfirmPasswordError
             ),
-            onValueChange = { onAction(RegisterUiAction.OnConfirmPasswordChange(it)) },
-            onPasswordVisibilityToggle = { onAction(RegisterUiAction.OnConfirmPasswordVisibilityToggle) }
+            onValueChange = { onAction(RegisterUiAction.OnConfirmPasswordChange(it)) }
         )
     }
 }
@@ -334,10 +327,10 @@ private fun TermsCheckbox(
 ) {
     CheckboxComponent(
         params = CheckboxParams(
-            text = "Acepto los Términos y Condiciones",
-            linkText = "Política de Privacidad",
+            text = "Acepto los ",
+            linkText = "Términos y Condiciones",
             checked = isChecked,
-            id = CheckboxParamsId.TERMS
+            id = CheckboxParamsId.ACCEPT_TERMS_AND_CONDITIONS
         ),
         onClick = { onAction(RegisterUiAction.OnTermsToggle) },
         modifier = Modifier

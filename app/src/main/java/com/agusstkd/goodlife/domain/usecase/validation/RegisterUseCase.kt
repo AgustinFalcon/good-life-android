@@ -94,7 +94,7 @@ class RegisterUseCase(
         confirmPassword: String
     ): RegisterResult {
 
-        // 1. Validar nombre completo
+        // 1. Validar nombre completo (no se envía al backend aún, pero se valida)
         val fullNameResult = validateFullName(fullName)
         if (!fullNameResult.isValid) {
             return RegisterResult.ValidationError(

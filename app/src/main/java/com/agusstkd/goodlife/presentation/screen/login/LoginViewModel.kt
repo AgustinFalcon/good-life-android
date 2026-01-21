@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.agusstkd.goodlife.core.biometric.BiometricAvailability
 import com.agusstkd.goodlife.core.biometric.BiometricResult
+import com.agusstkd.goodlife.core.dispatcher.DispatcherProvider
 import com.agusstkd.goodlife.domain.biometric.BiometricAuthenticator
 import com.agusstkd.goodlife.domain.storage.SecureCredentialsStorage
 import com.agusstkd.goodlife.domain.usecase.login.LoginResult
@@ -43,7 +44,8 @@ class LoginViewModel(
     private val loginUseCase: LoginUseCase,
     private val navigationController: ComposeNavigationController,
     private val biometricAuthenticator: BiometricAuthenticator,
-    private val credentialsStorage: SecureCredentialsStorage
+    private val credentialsStorage: SecureCredentialsStorage,
+    private val dispatcherProvider: DispatcherProvider,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Loading)
@@ -140,7 +142,7 @@ class LoginViewModel(
         // Evitar múltiples clicks
         if (currentState.isLoading) return
 
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcherProvider.io) {
             // Mostrar loading en el botón (no cambiar toda la pantalla)
             _uiState.value = currentState.copy(isLoading = true)
 
@@ -245,7 +247,7 @@ class LoginViewModel(
     }
 
     private fun performLoginWithCredentials(email: String, password: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcherProvider.io) {
             val current = (_uiState.value as? LoginUiState.Content) ?: return@launch
             _uiState.value = current.copy(isLoading = true)
 

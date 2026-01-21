@@ -59,16 +59,6 @@ sealed interface RegisterUiAction {
      */
     data object OnTermsToggle : RegisterUiAction
 
-    /**
-     * Alternar visibilidad de la contraseña.
-     */
-    data object OnPasswordVisibilityToggle : RegisterUiAction
-
-    /**
-     * Alternar visibilidad de la confirmación de contraseña.
-     */
-    data object OnConfirmPasswordVisibilityToggle : RegisterUiAction
-
     // ═══════════════════════════════════════════════════════════════════════════════════════════
     // ACCIONES PRINCIPALES
     // ═══════════════════════════════════════════════════════════════════════════════════════════

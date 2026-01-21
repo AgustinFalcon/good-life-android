@@ -32,6 +32,20 @@ fun ComposeNavigationController.navigateToRegister() {
     navigateTo(AppRoute.Register)
 }
 
+
+/**
+ * Navega a Login desde Register.
+ */
+fun ComposeNavigationController.navigateToLoginFromRegister() {
+    navigateTo(
+        route = AppRoute.Login,
+        navOptions = navOptions {
+            popUpTo<AppRoute.Register> { inclusive = true }
+            launchSingleTop = true
+        }
+    )
+}
+
 /**
  * Navega a Main limpiando Login del stack.
  */

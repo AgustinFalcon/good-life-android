@@ -23,26 +23,23 @@ sealed interface RegisterUiState {
     /**
      * Estado principal con el formulario de registro.
      *
-     * @property fullName Nombre completo del usuario
+     * @property fullName Nombre completo del usuario (guardado localmente)
      * @property userName Nombre de usuario único
      * @property email Correo electrónico
      * @property password Contraseña
      * @property confirmPassword Confirmación de contraseña
      * @property acceptedTerms Si aceptó términos y condiciones
-     * @property isPasswordVisible Si la contraseña es visible
-     * @property isConfirmPasswordVisible Si la confirmación es visible
      * @property isFullNameError Si hay error en el nombre completo
      * @property isUserNameError Si hay error en el username
-     * @property fullNameErrorMessage Mensaje de error del nombre
-     * @property userNameErrorMessage Mensaje de error del username
      * @property isEmailError Si hay error en el email
-     * @property emailErrorMessage Mensaje de error del email
      * @property isPasswordError Si hay error en la contraseña
-     * @property passwordErrorMessage Mensaje de error de contraseña
      * @property isConfirmPasswordError Si hay error en la confirmación
-     * @property confirmPasswordErrorMessage Mensaje de error de confirmación
      * @property isLoading Si el botón está en estado loading
      * @property errorMessage Error general (ej: del servidor)
+     *
+     * Nota: Los mensajes de error individuales se guardan pero el componente
+     * TextFieldComponent solo muestra el borde rojo (no el mensaje).
+     * El errorMessage general se muestra en un Snackbar.
      */
     data class Content(
         val fullName: String = "",
@@ -51,11 +48,9 @@ sealed interface RegisterUiState {
         val password: String = "",
         val confirmPassword: String = "",
         val acceptedTerms: Boolean = false,
-        val isPasswordVisible: Boolean = false,
-        val isConfirmPasswordVisible: Boolean = false,
         val isFullNameError: Boolean = false,
-        val isUserNameError: Boolean = false,
         val fullNameErrorMessage: String? = null,
+        val isUserNameError: Boolean = false,
         val userNameErrorMessage: String? = null,
         val isEmailError: Boolean = false,
         val emailErrorMessage: String? = null,

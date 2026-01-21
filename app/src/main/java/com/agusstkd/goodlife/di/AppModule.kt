@@ -188,7 +188,8 @@ val appModule = module {
             loginUseCase = get(),
             navigationController = get(),
             biometricAuthenticator = get(),
-            credentialsStorage = get()
+            credentialsStorage = get(),
+            dispatcherProvider = get()
         )
     }
 

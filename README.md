@@ -6,10 +6,12 @@ Aplicación Android para gestión de bienestar personal: tareas diarias, hábito
 
 - ✅ **Autenticación completa** con backend real (JWT)
 - ✅ **Login/Logout** funcional
+- ✅ **Login Biométrico** (huella, Face ID, PIN, patrón)
+- ✅ **Registro de usuarios** con validación en tiempo real
 - ✅ **Persistencia local** con Room (usuario logueado)
 - ✅ **Navegación type-safe** con Compose Navigation
 - ✅ **UI optimizada** con `@Stable` states
-- 🚧 Registro (próximamente)
+- ✅ **Arquitectura KMP-Ready** (domain layer en Kotlin puro)
 - 🚧 Auto-login con token guardado
 
 ## 🚀 Quick Start
@@ -170,11 +172,14 @@ Seguimos [Conventional Commits](https://www.conventionalcommits.org/):
 
 ## 🗺️ Roadmap
 
-- [ ] Pantalla de Registro
+- [x] Pantalla de Registro ✅
+- [x] Login Biométrico ✅
 - [ ] Auto-login con token guardado
 - [ ] Refresh token automático
 - [ ] Modo offline con caché
 - [ ] Pantallas principales (Tasks, Habits, Workouts, Meals)
+- [ ] Sistema de gamificación (XP, niveles)
+- [ ] Notificaciones push
 
 ## 📜 Licencia
 

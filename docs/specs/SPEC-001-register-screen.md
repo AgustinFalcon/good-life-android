@@ -240,15 +240,16 @@ Content-Type: application/json
 }
 ```
 
-### Response (200)
+**Nota:** El campo `fullName` se guarda localmente pero NO se envía al backend (pendiente implementación en backend).
+
+### Response (201 Created)
 ```json
 {
-  "code": 200,
+  "code": 201,
   "data": {
-    "id": 1,
     "username": "agustin123",
     "email": "agustin@example.com",
-    "createdAt": "2026-01-09T10:00:00Z"
+    "message": "Usuario registrado exitosamente"
   }
 }
 ```
@@ -257,7 +258,14 @@ Content-Type: application/json
 ```json
 {
   "code": 400,
-  "message": "El email ya está registrado"
+  "message": "El username 'agustin123' ya está en uso"
+}
+```
+
+```json
+{
+  "code": 400,
+  "message": "El email 'agustin@example.com' ya está registrado"
 }
 ```
 
@@ -266,20 +274,41 @@ Content-Type: application/json
 ## 🧪 Validaciones
 
 ### En Tiempo Real (mientras escribe)
-| Campo | Validación | Mensaje de Error |
-|-------|------------|------------------|
-| Nombre | Mínimo 2 caracteres | "El nombre es muy corto" |
-| Email | Formato válido | "Ingresa un email válido" |
-| Contraseña | Mínimo 6 caracteres | "Mínimo 6 caracteres" |
-| Confirmar | Coincide con contraseña | "Las contraseñas no coinciden" |
+| Campo | Validación | Mensaje de Error | Implementado |
+|-------|------------|------------------|--------------|
+| Nombre completo | Mínimo 2 caracteres, solo letras | "El nombre es muy corto" | ✅ |
+| Username | Mínimo 2 caracteres | "El nombre de usuario es muy corto" | ✅ |
+| Email | Formato válido (regex) | "El email no es válido" | ✅ |
+| Contraseña | Mínimo 6 caracteres | "La contraseña debe tener al menos 6 caracteres" | ✅ |
+| Confirmar | Coincide con contraseña | "Las contraseñas no coinciden" | ✅ |
+
+### Validación de Contraseñas en Tiempo Real
+La validación de contraseñas se ejecuta **mientras el usuario escribe**:
+
+```kotlin
+// En RegisterViewModel.updateConfirmPassword()
+val passwordsMatch = value.isEmpty() || value == current.password
+
+_uiState.value = current.copy(
+    confirmPassword = value,
+    isConfirmPasswordError = !passwordsMatch,
+    confirmPasswordErrorMessage = if (!passwordsMatch) {
+        "Las contraseñas no coinciden"
+    } else null
+)
+```
+
+- ✅ Borde rojo inmediato si no coinciden
+- ✅ Botón deshabilitado si no coinciden
+- ✅ Re-valida si se modifica la contraseña original
 
 ### Al Presionar Registrar
-1. Validar todos los campos (UseCases)
-2. Verificar checkbox de términos marcado
-3. Mostrar loading en botón (`isLoading = true`)
-4. Llamar al backend via `RegisterUseCase`
-5. Si éxito → Navegar a Login
-6. Si error → Mostrar mensaje del backend
+1. Verificar checkbox de términos marcado
+2. Mostrar loading en botón (`isLoading = true`)
+3. Ejecutar `RegisterUseCase` que valida todos los campos
+4. Llamar a `authRepository.register(username, email, password)`
+5. Si éxito (201) → Navegar a Login
+6. Si error (400) → Mostrar mensaje del backend en Snackbar
 
 ---
 
@@ -670,31 +699,33 @@ viewModel { RegisterViewModel(get(), get()) }
 ## ✅ Checklist de Implementación
 
 ### Domain Layer
-- [ ] Crear `ValidateFullNameUseCase.kt`
-- [ ] Crear `ValidatePasswordMatchUseCase.kt`
-- [ ] Crear `RegisterUseCase.kt`
+- [x] Crear `ValidateFullNameUseCase.kt`
+- [x] Crear `ValidateUserNameUseCase.kt`
+- [x] Crear `ValidatePasswordMatchUseCase.kt`
+- [x] Crear `RegisterUseCase.kt`
 
 ### Presentation Layer
-- [ ] Crear `RegisterUiState.kt`
-- [ ] Crear `RegisterUiAction.kt`
-- [ ] Crear `RegisterViewModel.kt`
-- [ ] Crear `RegisterScreen.kt` (RegisterContent + Previews)
-- [ ] Crear `RegisterScreenOwner.kt`
+- [x] Crear `RegisterUiState.kt`
+- [x] Crear `RegisterUiAction.kt`
+- [x] Crear `RegisterViewModel.kt`
+- [x] Crear `RegisterScreen.kt` (RegisterContent + Previews)
+- [x] Crear `RegisterScreenOwner.kt`
 
 ### Navigation
-- [ ] Agregar ruta en `AppGraph.kt`
-- [ ] Agregar `navigateToLoginFromRegister()` en `NavigationExtensions.kt`
+- [x] Agregar ruta en `AppGraph.kt`
+- [x] Agregar `navigateToLoginFromRegister()` en `NavigationExtensions.kt`
 
 ### DI
-- [ ] Registrar UseCases en `AppModule`
-- [ ] Registrar `RegisterViewModel` en `AppModule`
+- [x] Registrar UseCases en `AppModule`
+- [x] Registrar `RegisterViewModel` en `AppModule`
 
 ### Testing
-- [ ] Preview de cada estado (Empty, Filled, Errors, Loading)
-- [ ] Navegación Login ↔ Register funciona
-- [ ] Registro con backend funciona
-- [ ] Validaciones en tiempo real funcionan
-- [ ] Loading en botón funciona
+- [x] Preview de cada estado (Empty, Filled, Errors, Loading)
+- [x] Navegación Login ↔ Register funciona
+- [x] Registro con backend funciona (HTTP 201)
+- [x] Validaciones en tiempo real funcionan
+- [x] Loading en botón funciona
+- [x] Error HTTP 400 muestra mensaje del backend
 
 ---
 

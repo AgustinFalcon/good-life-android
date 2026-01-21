@@ -7,6 +7,74 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-01-20
+
+### Added
+
+#### 📝 Módulo de Registro Completo
+
+- **Pantalla de Registro** con formulario completo
+  - Nombre completo (guardado localmente, pendiente backend)
+  - Nombre de usuario (username)
+  - Email
+  - Contraseña con toggle de visibilidad
+  - Confirmar contraseña con toggle
+  - Checkbox de términos y condiciones
+
+- **Validación en tiempo real**
+  - Las contraseñas se comparan mientras el usuario escribe
+  - Borde rojo inmediato si no coinciden
+  - Botón deshabilitado si las contraseñas no coinciden
+
+- **UseCases nuevos:**
+  - `ValidateFullNameUseCase` - Valida nombre completo (min 2 chars, solo letras)
+  - `ValidateUserNameUseCase` - Valida username (min 2 chars)
+  - `ValidatePasswordMatchUseCase` - Valida que las contraseñas coincidan
+  - `RegisterUseCase` - Orquesta el proceso de registro
+
+#### 📁 Nuevos Archivos
+
+**Domain Layer:**
+- `domain/usecase/validation/ValidateFullNameUseCase.kt`
+- `domain/usecase/validation/ValidateUserNameUseCase.kt`
+- `domain/usecase/validation/ValidatePasswordMatchUseCase.kt`
+- `domain/usecase/validation/RegisterUseCase.kt`
+
+**Presentation Layer:**
+- `presentation/screen/register/RegisterScreen.kt`
+- `presentation/screen/register/RegisterScreenOwner.kt`
+- `presentation/screen/register/RegisterViewModel.kt`
+- `presentation/screen/register/model/RegisterUiState.kt`
+- `presentation/screen/register/model/RegisterUiAction.kt`
+
+**Navigation:**
+- `navigateToLoginFromRegister()` en `NavigationExtensions.kt`
+
+### Changed
+
+- **RegisterResponse.kt**: Ajustado para coincidir con backend
+  - Solo `username`, `email`, `message` (sin `id` ni `createdAt`)
+  
+- **AppModule.kt**: Registrados todos los UseCases y `RegisterViewModel`
+
+- **AppGraph.kt**: `RegisterScreenOwner` reemplaza placeholder
+
+- **TextFieldComponent**: Maneja visibilidad de password internamente (simplificado)
+
+### Fixed
+
+- Validación de contraseñas ahora funciona en tiempo real
+- Botón "Registrarme" se deshabilita correctamente si contraseñas no coinciden
+- Parseo correcto de respuesta del backend sin campo `id`
+
+### Documentation
+
+- **SPEC-001-register-screen.md**: Marcado como ✅ Completado
+- **CHANGELOG.md**: Actualizado con v0.5.0
+- **README.md**: Features actualizadas
+
+---
+
 ## [0.4.0] - 2026-01-20
 
 ### Added

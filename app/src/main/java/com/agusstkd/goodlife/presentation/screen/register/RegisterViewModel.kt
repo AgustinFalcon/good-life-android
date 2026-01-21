@@ -57,8 +57,6 @@ class RegisterViewModel(
             is RegisterUiAction.OnPasswordChange -> updatePassword(action.value)
             is RegisterUiAction.OnConfirmPasswordChange -> updateConfirmPassword(action.value)
             is RegisterUiAction.OnTermsToggle -> toggleTerms()
-            is RegisterUiAction.OnPasswordVisibilityToggle -> togglePasswordVisibility()
-            is RegisterUiAction.OnConfirmPasswordVisibilityToggle -> toggleConfirmPasswordVisibility()
             is RegisterUiAction.OnRegisterClick -> performRegister()
             is RegisterUiAction.OnLoginClick -> navigateToLogin()
             is RegisterUiAction.OnDismissError -> dismissError()
@@ -107,25 +105,43 @@ class RegisterViewModel(
 
     /**
      * Actualiza la contraseña y limpia errores.
+     * También re-valida la confirmación si ya tiene valor.
      */
     private fun updatePassword(value: String) {
         val current = (_uiState.value as? RegisterUiState.Content) ?: return
+
+        // Si confirmPassword ya tiene valor, verificar si coinciden
+        val passwordsMatch = current.confirmPassword.isEmpty() ||
+                value == current.confirmPassword
+
         _uiState.value = current.copy(
             password = value,
             isPasswordError = false,
-            passwordErrorMessage = null
+            passwordErrorMessage = null,
+            // Actualizar error de confirmación si ya escribió algo
+            isConfirmPasswordError = !passwordsMatch && current.confirmPassword.isNotEmpty(),
+            confirmPasswordErrorMessage = if (!passwordsMatch && current.confirmPassword.isNotEmpty()) {
+                "Las contraseñas no coinciden"
+            } else null
         )
     }
 
     /**
-     * Actualiza la confirmación de contraseña y limpia errores.
+     * Actualiza la confirmación de contraseña.
+     * Valida en tiempo real si coincide con la contraseña.
      */
     private fun updateConfirmPassword(value: String) {
         val current = (_uiState.value as? RegisterUiState.Content) ?: return
+
+        // Validar si las contraseñas coinciden
+        val passwordsMatch = value.isEmpty() || value == current.password
+
         _uiState.value = current.copy(
             confirmPassword = value,
-            isConfirmPasswordError = false,
-            confirmPasswordErrorMessage = null
+            isConfirmPasswordError = !passwordsMatch,
+            confirmPasswordErrorMessage = if (!passwordsMatch) {
+                "Las contraseñas no coinciden"
+            } else null
         )
     }
 
@@ -139,22 +155,6 @@ class RegisterViewModel(
     private fun toggleTerms() {
         val current = (_uiState.value as? RegisterUiState.Content) ?: return
         _uiState.value = current.copy(acceptedTerms = !current.acceptedTerms)
-    }
-
-    /**
-     * Alterna la visibilidad de la contraseña.
-     */
-    private fun togglePasswordVisibility() {
-        val current = (_uiState.value as? RegisterUiState.Content) ?: return
-        _uiState.value = current.copy(isPasswordVisible = !current.isPasswordVisible)
-    }
-
-    /**
-     * Alterna la visibilidad de la confirmación de contraseña.
-     */
-    private fun toggleConfirmPasswordVisibility() {
-        val current = (_uiState.value as? RegisterUiState.Content) ?: return
-        _uiState.value = current.copy(isConfirmPasswordVisible = !current.isConfirmPasswordVisible)
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════════════

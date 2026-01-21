@@ -11,7 +11,7 @@ object NetworkConstants {
      * URL base del backend.
      * Desplegado en VM DEV con Nginx + SSL.
      */
-    const val BASE_URL = "https://devtukychloe.ddns.net/"
+    const val BASE_URL = "https://good-life.ddns.net/"
 
     /**
      * Timeouts de conexión (en segundos)
