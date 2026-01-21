@@ -8,12 +8,17 @@ import com.agusstkd.goodlife.domain.repository.AuthRepository
 import com.agusstkd.goodlife.domain.usecase.home.GetCurrentUserUseCase
 import com.agusstkd.goodlife.domain.usecase.home.LogoutUseCase
 import com.agusstkd.goodlife.domain.usecase.login.LoginUseCase
+import com.agusstkd.goodlife.domain.usecase.validation.RegisterUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidateEmailUseCase
+import com.agusstkd.goodlife.domain.usecase.validation.ValidateFullNameUseCase
+import com.agusstkd.goodlife.domain.usecase.validation.ValidatePasswordMatchUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidatePasswordUseCase
+import com.agusstkd.goodlife.domain.usecase.validation.ValidateUserNameUseCase
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationControllerImpl
 import com.agusstkd.goodlife.presentation.screen.home.HomeViewModel
 import com.agusstkd.goodlife.presentation.screen.login.LoginViewModel
+import com.agusstkd.goodlife.presentation.screen.register.RegisterViewModel
 import com.agusstkd.goodlife.presentation.screen.splash.SplashViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -104,6 +109,24 @@ val appModule = module {
     factory { ValidatePasswordUseCase() }
 
     /**
+     * ValidateFullNameUseCase - Validación de nombre completo.
+     * Factory porque no tiene estado interno.
+     */
+    factory { ValidateFullNameUseCase() }
+
+    /**
+     * ValidateUserNameUseCase - Validación de nombre de usuario.
+     * Factory porque no tiene estado interno.
+     */
+    factory { ValidateUserNameUseCase() }
+
+    /**
+     * ValidatePasswordMatchUseCase - Validación de coincidencia de contraseñas.
+     * Factory porque no tiene estado interno.
+     */
+    factory { ValidatePasswordMatchUseCase() }
+
+    /**
      * LoginUseCase - Ejecutar login con validaciones.
      * Factory porque no tiene estado interno.
      */
@@ -129,6 +152,21 @@ val appModule = module {
      */
     factory {
         LogoutUseCase(authRepository = get())
+    }
+
+    /**
+     * RegisterUseCase - Ejecutar registro con validaciones.
+     * Factory porque no tiene estado interno.
+     */
+    factory {
+        RegisterUseCase(
+            authRepository = get(),
+            validateUserName = get(),
+            validateFullName = get(),
+            validateEmail = get(),
+            validatePassword = get(),
+            validatePasswordMatch = get()
+        )
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════════════
@@ -162,6 +200,17 @@ val appModule = module {
             getCurrentUserUseCase = get(),
             logoutUseCase = get(),
             navigationController = get()
+        )
+    }
+
+    /**
+     * RegisterViewModel - Pantalla de registro.
+     */
+    viewModel {
+        RegisterViewModel(
+            registerUseCase = get(),
+            navigationController = get(),
+            dispatcherProvider = get()
         )
     }
 }

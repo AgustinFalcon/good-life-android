@@ -62,9 +62,9 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun register(email: String, password: String, name: String): Result<User> {
+    override suspend fun register(username: String, email: String, password: String): Result<User> {
         return when (val registerResult = remoteDataSource.register(
-            username = name,
+            username = username,
             email = email,
             password = password
         )) {

@@ -8,7 +8,7 @@ Este directorio contiene las especificaciones técnicas detalladas para las feat
 
 | ID | Feature | Prioridad | Estado |
 |----|---------|-----------|--------|
-| [SPEC-001](./SPEC-001-register-screen.md) | Pantalla de Registro | Alta | 🔜 Pendiente |
+| [SPEC-001](./SPEC-001-register-screen.md) | Pantalla de Registro | Alta | ✅ Completado |
 | [SPEC-002](./SPEC-002-biometric-login.md) | Login con Huella Digital | Media | ✅ Completado |
 
 ---
@@ -61,7 +61,7 @@ Cada especificación sigue esta estructura:
 |--------|--------|
 | Login | ✅ Completado |
 | Biometría | ✅ Completado |
-| Registro | 🔜 Próximo |
+| Registro | ✅ Completado |
 | Home | ✅ Básico |
 | Workouts | ⏸️ Pendiente |
 | Meals | ⏸️ Pendiente |

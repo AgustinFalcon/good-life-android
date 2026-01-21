@@ -7,8 +7,9 @@
 | **ID** | SPEC-001 |
 | **Tipo** | Feature |
 | **Prioridad** | Alta |
-| **Estado** | 🔜 Pendiente |
+| **Estado** | ✅ Completado |
 | **Fecha Creación** | 2026-01-09 |
+| **Fecha Completado** | 2026-01-20 |
 | **Dependencia** | Login completado ✅ |
 | **Tiempo Estimado** | 2-3 horas |
 

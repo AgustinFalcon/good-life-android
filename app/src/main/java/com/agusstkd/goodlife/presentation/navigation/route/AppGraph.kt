@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.agusstkd.goodlife.presentation.screen.home.HomeScreenOwner
 import com.agusstkd.goodlife.presentation.screen.login.LoginScreenOwner
+import com.agusstkd.goodlife.presentation.screen.register.RegisterScreenOwner
 import com.agusstkd.goodlife.presentation.screen.splash.SplashScreenOwner
 
 /**
@@ -25,8 +26,7 @@ fun NavGraphBuilder.addAppGraph() {
     }
 
     composable<AppRoute.Register> {
-        // TODO: Reemplazar con RegisterScreenOwner()
-        PlaceholderScreen("Register")
+        RegisterScreenOwner()
     }
 
     composable<AppRoute.Main> {

@@ -28,12 +28,12 @@ interface AuthRepository {
     /**
      * Registra un nuevo usuario.
      *
+     * @param username Nombre de usuario único
      * @param email Correo electrónico
      * @param password Contraseña
-     * @param name Nombre del usuario
      * @return Result<User> con el usuario registrado o error
      */
-    suspend fun register(email: String, password: String, name: String): Result<User>
+    suspend fun register(username: String, email: String, password: String): Result<User>
 
     /**
      * Cierra la sesión del usuario actual.
