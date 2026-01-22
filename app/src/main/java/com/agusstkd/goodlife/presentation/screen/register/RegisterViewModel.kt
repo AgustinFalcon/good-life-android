@@ -3,7 +3,7 @@ package com.agusstkd.goodlife.presentation.screen.register
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.agusstkd.goodlife.core.dispatcher.DispatcherProvider
-import com.agusstkd.goodlife.domain.usecase.validation.RegisterUseCase
+import com.agusstkd.goodlife.domain.usecase.register.RegisterUseCase
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
 import com.agusstkd.goodlife.presentation.navigation.route.navigateToLoginFromRegister
 import com.agusstkd.goodlife.presentation.screen.register.model.RegisterUiAction

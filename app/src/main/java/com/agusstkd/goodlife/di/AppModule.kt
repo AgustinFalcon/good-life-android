@@ -8,7 +8,7 @@ import com.agusstkd.goodlife.domain.repository.AuthRepository
 import com.agusstkd.goodlife.domain.usecase.home.GetCurrentUserUseCase
 import com.agusstkd.goodlife.domain.usecase.home.LogoutUseCase
 import com.agusstkd.goodlife.domain.usecase.login.LoginUseCase
-import com.agusstkd.goodlife.domain.usecase.validation.RegisterUseCase
+import com.agusstkd.goodlife.domain.usecase.register.RegisterUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidateEmailUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidateFullNameUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidatePasswordMatchUseCase
