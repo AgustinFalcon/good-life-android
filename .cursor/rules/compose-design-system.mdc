@@ -1,0 +1,74 @@
+---
+description: Reglas de Design System para Jetpack Compose - MaterialTheme obligatorio
+globs: "**/presentation/**/*.kt"
+alwaysApply: false
+---
+
+# Design System - Jetpack Compose
+
+Todo componente debe usar `MaterialTheme` para colores, tipografía y shapes. **Nunca valores "al aire"**.
+
+## Shapes
+
+```kotlin
+// ❌ MAL - Valores hardcodeados sin contexto
+shape = RoundedCornerShape(12.dp)
+shape = RoundedCornerShape(50.dp)
+
+// ✅ BIEN - Usa MaterialTheme.shapes
+shape = MaterialTheme.shapes.medium      // 12.dp - Cards, dialogs
+shape = MaterialTheme.shapes.extraLarge  // 50.dp - Botones pill
+shape = MaterialTheme.shapes.small       // 8.dp - Chips
+```
+
+## Colores
+
+```kotlin
+// ❌ MAL - Colores hardcodeados
+color = Color(0xFF1EC691)
+color = Color.White
+
+// ✅ BIEN - Usa MaterialTheme.colorScheme
+color = MaterialTheme.colorScheme.primary
+color = MaterialTheme.colorScheme.surface
+color = MaterialTheme.colorScheme.onSurface
+
+// ✅ ACEPTABLE - Colores custom del theme (Color.kt)
+color = LightGreen  // Definido en theme/Color.kt
+color = GreenSelected
+```
+
+## Tipografía
+
+```kotlin
+// ❌ MAL - Estilos inline
+fontSize = 16.sp
+fontWeight = FontWeight.Bold
+
+// ✅ BIEN - Usa MaterialTheme.typography
+style = MaterialTheme.typography.bodyLarge
+style = MaterialTheme.typography.titleMedium
+style = MaterialTheme.typography.labelMedium
+```
+
+## Dimensiones (Espaciado/Tamaños)
+
+```kotlin
+// ✅ ACEPTABLE - Valores directos .dp (no hay Dimens object)
+.padding(16.dp)
+.size(24.dp)
+.height(56.dp)
+
+// ⚠️ CONSISTENCIA - Usar múltiplos de 4dp
+4.dp, 8.dp, 12.dp, 16.dp, 24.dp, 32.dp, 48.dp, 56.dp
+```
+
+## Escala de Shapes (GoodLifeShapes)
+
+| Shape | Valor | Uso |
+|-------|-------|-----|
+| `extraSmall` | 4.dp | Badges, indicadores |
+| `small` | 8.dp | Chips, campos pequeños |
+| `medium` | 12.dp | Cards, dialogs |
+| `large` | 16.dp | Bottom sheets |
+| `extraLarge` | 50.dp | Botones pill, inputs |

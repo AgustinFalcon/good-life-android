@@ -1,16 +1,15 @@
 package com.agusstkd.goodlife.presentation.screen.splash
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,23 +21,15 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.agusstkd.goodlife.R
-import com.agusstkd.goodlife.presentation.components.BackgroundGradientComponent
+import com.agusstkd.goodlife.presentation.components.common.BackgroundGradientComponent
 import com.agusstkd.goodlife.presentation.screen.splash.model.SplashUiAction
 import com.agusstkd.goodlife.presentation.screen.splash.model.SplashUiState
 import com.agusstkd.goodlife.presentation.theme.AppTitleStyle
-import com.agusstkd.goodlife.presentation.theme.BackgroundGradientBrushVertical
 import com.agusstkd.goodlife.presentation.theme.DarkGreen
 import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
 import com.agusstkd.goodlife.presentation.theme.LightGreen
 import com.agusstkd.goodlife.presentation.theme.LinkTextStyle
 
-/**
- * SplashScreen - UI PURA
- *
- * Renderiza diferente contenido según el estado:
- * - Loading → Spinner
- * - Ready → Texto clickeable
- */
 @Composable
 fun SplashScreen(
     uiState: SplashUiState,
@@ -49,7 +40,7 @@ fun SplashScreen(
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center  // Para centrar verticalmente
+            verticalArrangement = Arrangement.Center
         ) {
             Image(
                 painter = painterResource(R.drawable.good_life_logo),
@@ -92,10 +83,6 @@ fun SplashScreen(
         }
     }
 }
-
-// ═══════════════════════════════════════════════════════════════════════
-// PREVIEWS
-// ═══════════════════════════════════════════════════════════════════════
 
 @Preview(showBackground = true, name = "Loading")
 @Composable

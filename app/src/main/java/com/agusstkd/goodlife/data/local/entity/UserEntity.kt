@@ -2,7 +2,7 @@ package com.agusstkd.goodlife.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.agusstkd.goodlife.domain.model.User
+import com.agusstkd.goodlife.domain.model.auth.User
 
 /**
  * Entidad Room para el usuario.

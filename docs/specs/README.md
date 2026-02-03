@@ -10,6 +10,7 @@ Este directorio contiene las especificaciones técnicas detalladas para las feat
 |----|---------|-----------|--------|
 | [SPEC-001](./SPEC-001-register-screen.md) | Pantalla de Registro | Alta | ✅ Completado |
 | [SPEC-002](./SPEC-002-biometric-login.md) | Login con Huella Digital | Media | ✅ Completado |
+| [SPEC-003](./SPEC-003-main-scaffold.md) | Main Scaffold + Bottom Nav | Alta | 🚧 En Planificación |
 
 ---
 
@@ -43,8 +44,12 @@ Cada especificación sigue esta estructura:
 
 ## 🎯 Próximos Pasos
 
-1. **Implementar Registro**: Seguir [SPEC-001](./SPEC-001-register-screen.md) paso a paso
-2. **Endpoint /me**: Backend debe implementar para obtener datos completos del usuario
+1. **Main Scaffold**: Implementar [SPEC-003](./SPEC-003-main-scaffold.md)
+   - Bottom Navigation con 4 tabs + FAB central
+   - Header con navegación de fechas
+   - Sistema de navegación anidada por tabs
+2. **Tab Screens**: Crear pantallas placeholder para cada tab
+3. **Endpoint /me**: Backend debe implementar para obtener datos completos del usuario
 
 ---
 
@@ -52,6 +57,7 @@ Cada especificación sigue esta estructura:
 
 - **CHANGELOG**: Ver `/CHANGELOG.md` para historial de versiones
 - **ARCHITECTURE**: Ver `/docs/ARCHITECTURE.md` para arquitectura general
+- **ARCHITECTURE_GUIDE**: Ver `/docs/ARCHITECTURE_GUIDE.md` para la guía completa de principios, patrones y reglas
 
 ---
 
@@ -62,11 +68,12 @@ Cada especificación sigue esta estructura:
 | Login | ✅ Completado |
 | Biometría | ✅ Completado |
 | Registro | ✅ Completado |
-| Home | ✅ Básico |
-| Workouts | ⏸️ Pendiente |
-| Meals | ⏸️ Pendiente |
-| Settings | ⏸️ Pendiente |
+| **Main Scaffold** | 🚧 En Planificación |
+| Home Tab | ⏸️ Pendiente |
+| Workouts Tab | ⏸️ Pendiente |
+| Meals Tab | ⏸️ Pendiente |
+| Settings Tab | ⏸️ Pendiente |
 
 ---
 
-**Última actualización:** 2026-01-20
+**Última actualización:** 2026-01-22

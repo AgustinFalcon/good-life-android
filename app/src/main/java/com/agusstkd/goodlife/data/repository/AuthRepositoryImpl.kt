@@ -9,7 +9,7 @@ import com.agusstkd.goodlife.data.local.entity.toEntity
 import com.agusstkd.goodlife.data.remote.datasource.AuthRemoteDataSource
 import com.agusstkd.goodlife.data.remote.dto.response.toDomain
 import com.agusstkd.goodlife.domain.exception.NoSessionException
-import com.agusstkd.goodlife.domain.model.User
+import com.agusstkd.goodlife.domain.model.auth.User
 import com.agusstkd.goodlife.domain.repository.AuthRepository
 
 /**

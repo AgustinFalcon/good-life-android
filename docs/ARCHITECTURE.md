@@ -1,5 +1,7 @@
 # Arquitectura GoodLife Android
 
+> **📚 Documento completo:** Para la guía exhaustiva de arquitectura con todos los principios, patrones y reglas, ver **[ARCHITECTURE_GUIDE.md](./ARCHITECTURE_GUIDE.md)**
+
 ## Visión General
 
 GoodLife utiliza **Clean Architecture** con **MVVM** y está diseñada para ser **KMP-ready** (Kotlin Multiplatform).
@@ -36,6 +38,14 @@ GoodLife utiliza **Clean Architecture** con **MVVM** y está diseñada para ser 
 ```
 com.agusstkd.goodlife/
 ├── core/                          # Utilidades compartidas (KMP-ready)
+│   ├── biometric/                 # Biometría
+│   │   ├── BiometricResult.kt
+│   │   └── BiometricAvailability.kt
+│   ├── datetime/                  # Manejo de fechas (KMP-ready)
+│   │   ├── LocalDateExtensions.kt # isToday, isYesterday, toFriendlyString
+│   │   └── language/
+│   │       ├── AppLanguage.kt     # Spanish, English, Portuguese
+│   │       └── DateFormats.kt     # DateFormats + RelativeDateTexts
 │   ├── dispatcher/                # Abstracción de Dispatchers
 │   │   └── DispatcherProvider.kt
 │   ├── network/                   # Configuración de red
@@ -80,9 +90,16 @@ com.agusstkd.goodlife/
 │
 ├── domain/                        # Lógica de negocio (Kotlin puro)
 │   ├── model/                     # Modelos de dominio
-│   │   ├── User.kt
-│   │   ├── AuthToken.kt
-│   │   └── ValidationResult.kt
+│   │   ├── auth/
+│   │   │   ├── User.kt
+│   │   │   └── AuthToken.kt
+│   │   ├── daily/
+│   │   │   ├── DailyItemType.kt   # TASK, HABIT, WORKOUT, MEAL
+│   │   │   └── ItemStatus.kt      # PENDING, IN_PROGRESS, COMPLETED, SKIPPED
+│   │   ├── nutrition/
+│   │   │   └── MealType.kt        # BREAKFAST, LUNCH, DINNER, etc.
+│   │   └── validation/
+│   │       └── ValidationResult.kt
 │   ├── repository/                # Interfaces de repositorio
 │   │   └── AuthRepository.kt
 │   └── usecase/                   # Casos de uso
@@ -97,8 +114,28 @@ com.agusstkd.goodlife/
 │
 ├── presentation/                  # UI y ViewModels
 │   ├── components/                # Componentes reutilizables
-│   │   ├── ButtonComponent.kt
-│   │   └── InputComponent.kt
+│   │   ├── common/
+│   │   │   ├── ButtonComponent.kt
+│   │   │   ├── TextFieldComponent.kt
+│   │   │   ├── CheckboxComponent.kt
+│   │   │   ├── TitleComponent.kt
+│   │   │   └── BackgroundGradientComponent.kt
+│   │   ├── bottom/                # Bottom Navigation
+│   │   │   ├── BottomNavigationComponent.kt
+│   │   │   └── model/
+│   │   │       ├── BottomMenuOption.kt
+│   │   │       └── BottomNavItemModel.kt
+│   │   ├── header/                # Headers dinámicos por tab
+│   │   │   ├── DateHeaderComponent.kt      # Para Diary/Meals
+│   │   │   ├── TabRowHeaderComponent.kt    # Para Workouts
+│   │   │   └── CalendarDayIcon.kt          # Icono personalizado
+│   │   ├── modal/                 # Modal de acciones
+│   │   │   ├── AddActionModalComponent.kt
+│   │   │   └── model/
+│   │   │       ├── QuickActionType.kt
+│   │   │       ├── QuickActionItem.kt
+│   │   │       └── MealOptionItem.kt
+│   │   └── GradientIcon.kt
 │   │
 │   ├── navigation/                # Sistema de navegación
 │   │   ├── core/
@@ -138,10 +175,11 @@ com.agusstkd.goodlife/
 │   │           └── HomeUiAction.kt     # @Stable
 │   │
 │   └── theme/                     # Material Theme
-│       ├── Color.kt
-│       ├── Font.kt
-│       ├── Theme.kt
-│       └── Type.kt
+│       ├── Color.kt               # Paleta completa light/dark + brushes
+│       ├── Font.kt                # FontFamily (Ubuntu)
+│       ├── Shape.kt               # GoodLifeShapes (MaterialTheme.shapes)
+│       ├── Theme.kt               # GoodLifeTheme (integra todo)
+│       └── Type.kt                # GoodLifeTypography + estilos custom
 │
 ├── GoodLifeApp.kt                 # Application class (Koin init)
 └── MainActivity.kt                # Single Activity
@@ -361,6 +399,7 @@ sealed interface LoginUiState {
 | Koin | 4.0.0 | Inyección de dependencias |
 | Navigation Compose | 2.8.5 | Navegación |
 | Kotlinx Serialization | 1.7.3 | Type-safe routes + JSON |
+| Kotlinx DateTime | 0.7.1 | Fechas KMP-ready |
 | Lifecycle Runtime | 2.8.7 | repeatOnLifecycle |
 | Material 3 | (BOM) | UI Components |
 | Retrofit | 2.11.0 | HTTP Client |
@@ -375,6 +414,7 @@ El código está diseñado para migrar a Kotlin Multiplatform:
 |------------|-----------|-------|
 | `Result.kt` | ✅ | Kotlin puro |
 | `DispatcherProvider` | ✅ | Interface abstracta |
+| `core/datetime/*` | ✅ | kotlinx-datetime (KMP nativo) |
 | `domain/model/*` | ✅ | Sin dependencias Android |
 | `domain/repository/*` | ✅ | Interfaces puras |
 | `domain/usecase/*` | ✅ | Kotlin puro |
@@ -396,4 +436,110 @@ shared/
 │
 └── iosMain/
     └── data/        # SQLDelight + Ktor
+```
+
+## 🎨 Design System
+
+### Patrón Simple (MaterialTheme)
+
+Todo sale de `MaterialTheme`:
+
+```kotlin
+// Shapes
+shape = MaterialTheme.shapes.extraLarge  // Botones pill
+shape = MaterialTheme.shapes.medium      // Cards
+shape = MaterialTheme.shapes.small       // Chips
+
+// Colors
+color = MaterialTheme.colorScheme.primary
+color = MaterialTheme.colorScheme.onSurface
+color = MaterialTheme.colorScheme.surface
+
+// Typography
+style = MaterialTheme.typography.bodyLarge
+style = MaterialTheme.typography.titleMedium
+style = MaterialTheme.typography.labelMedium
+
+// Dimensiones: valores directos
+.padding(16.dp)
+.size(24.dp)
+.height(56.dp)
+```
+
+### Escala de Shapes
+
+```kotlin
+val GoodLifeShapes = Shapes(
+    extraSmall = RoundedCornerShape(4.dp),   // Badges
+    small = RoundedCornerShape(8.dp),        // Chips
+    medium = RoundedCornerShape(12.dp),      // Cards
+    large = RoundedCornerShape(16.dp),       // Bottom sheets
+    extraLarge = RoundedCornerShape(50.dp)   // Botones pill
+)
+```
+
+### Colores Custom (fuera de ColorScheme)
+
+```kotlin
+// Gradientes para botones
+val AuthButtonColors = listOf(LightGreen, GreenSelected)
+val ButtonColorsDisabled = listOf(ButtonDisabledBg, Color(0xFF9E9E9E))
+
+// Colores específicos
+val GreenSelected = Color(0xFF00D26B)  // Items seleccionados
+val DividerColor = Color(0xFFE0E0E0)   // Divisores
+```
+
+## 📅 Date Handling (KMP-Ready)
+
+### Librería: kotlinx-datetime
+
+```kotlin
+// Dependencia
+implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
+```
+
+### Clock Inyectado (Testabilidad)
+
+```kotlin
+// Producción
+single<Clock> { Clock.System }
+
+// Tests
+val fakeClock = object : Clock {
+    override fun now() = Instant.parse("2026-01-29T12:00:00Z")
+}
+
+// Uso en componentes
+@Composable
+fun DateHeader(
+    date: LocalDate,
+    clock: Clock,  // Inyectado
+    language: AppLanguage
+)
+```
+
+### Multi-Idioma
+
+```kotlin
+sealed interface AppLanguage {
+    val monthNames: MonthNames
+    val dayNamesShort: DayOfWeekNames
+    val formats: DateFormats
+    val relativeTexts: RelativeDateTexts
+    
+    data object Spanish : AppLanguage { /* ... */ }
+    data object English : AppLanguage { /* ... */ }
+    data object Portuguese : AppLanguage { /* ... */ }
+}
+```
+
+### Extension Functions
+
+```kotlin
+fun LocalDate.isToday(clock: Clock): Boolean
+fun LocalDate.isYesterday(clock: Clock): Boolean
+fun LocalDate.isTomorrow(clock: Clock): Boolean
+fun LocalDate.toFriendlyString(clock: Clock, language: AppLanguage): String
+fun LocalDate.toModalHeaderString(clock: Clock, language: AppLanguage): String
 ```

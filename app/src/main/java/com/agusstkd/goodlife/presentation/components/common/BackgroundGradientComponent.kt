@@ -1,4 +1,4 @@
-package com.agusstkd.goodlife.presentation.components
+package com.agusstkd.goodlife.presentation.components.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

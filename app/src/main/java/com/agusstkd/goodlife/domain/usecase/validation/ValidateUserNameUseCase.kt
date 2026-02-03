@@ -1,6 +1,6 @@
 package com.agusstkd.goodlife.domain.usecase.validation
 
-import com.agusstkd.goodlife.domain.model.ValidationResult
+import com.agusstkd.goodlife.domain.model.validation.ValidationResult
 
 /**
  * Valida el nombre de usuario.

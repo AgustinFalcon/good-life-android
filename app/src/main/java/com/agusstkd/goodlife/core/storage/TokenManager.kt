@@ -3,7 +3,7 @@ package com.agusstkd.goodlife.core.storage
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.agusstkd.goodlife.domain.model.AuthToken
+import com.agusstkd.goodlife.domain.model.auth.AuthToken
 
 /**
  * Gestor de tokens JWT usando SharedPreferences.

@@ -1,4 +1,4 @@
-package com.agusstkd.goodlife.domain.model
+package com.agusstkd.goodlife.domain.model.validation
 
 /**
  * Resultado de una validación.

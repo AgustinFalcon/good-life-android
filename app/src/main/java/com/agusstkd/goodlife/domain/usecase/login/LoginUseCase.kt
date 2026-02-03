@@ -1,7 +1,7 @@
 package com.agusstkd.goodlife.domain.usecase.login
 
 import com.agusstkd.goodlife.core.result.Result
-import com.agusstkd.goodlife.domain.model.User
+import com.agusstkd.goodlife.domain.model.auth.User
 import com.agusstkd.goodlife.domain.repository.AuthRepository
 import com.agusstkd.goodlife.domain.usecase.validation.ValidateEmailUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidatePasswordUseCase

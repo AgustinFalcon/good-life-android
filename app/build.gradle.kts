@@ -105,6 +105,9 @@ dependencies {
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
+    // DateTime (KMP-ready)
+    implementation(libs.kotlinx.datetime)
+
     // Biometric Authentication
     implementation(libs.androidx.biometric)
 
