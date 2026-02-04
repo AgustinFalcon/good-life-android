@@ -5,7 +5,97 @@ Todos los cambios notables de este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
-## [Unreleased]
+---
+
+## [Unreleased] - 2026-02-04
+
+### Added
+
+#### 📅 DateProvider Pattern (SPEC-004)
+
+- **DateProvider interface** - Abstracción para manejo de fechas (KMP-ready)
+  - `today()`: Fecha actual en timezone local
+  - `yesterday()`, `tomorrow()`: Métodos de conveniencia
+  - `now()`: Timestamp UTC actual
+
+- **RealDateProvider** - Implementación para producción
+  - Usa `Clock.System` + `TimeZone.currentSystemDefault()`
+  - Cachea TimeZone para optimizar performance
+  - Encapsula `@OptIn(ExperimentalTime)` en un solo lugar
+
+- **FakeDateProvider** - Implementación para tests
+  - Fecha fija inyectada en constructor
+  - Habilita tests deterministas sin depender del reloj del sistema
+
+#### 📁 Nuevos Archivos
+
+**Core Layer:**
+- `core/datetime/DateProvider.kt` - Interface
+- `core/datetime/RealDateProvider.kt` - Implementación Android
+- `core/datetime/FakeDateProvider.kt` - Implementación para tests
+
+**Documentación:**
+- `docs/specs/SPEC-004-date-provider.md` - Especificación completa (1000+ líneas)
+- `docs/archive/` - Documentación de proceso preservada
+- `docs/README.md` - Índice actualizado
+
+### Changed
+
+- **DailyTabViewModel**: Ahora usa `DateProvider` en lugar de `Clock` directamente
+  - Formatea fechas en el ViewModel (no en UI)
+  - Compara fechas con `dateProvider.today()`, `yesterday()`, `tomorrow()`
+
+- **MainScaffoldViewModel**: Integrado con DateProvider
+  - Formateo de modal header usa DateProvider
+
+- **AppModule.kt**: Registrado `DateProvider` como singleton en Koin
+  - `single<DateProvider> { RealDateProvider() }`
+
+- **LocalDateExtensions.kt**: Migradas funciones a ViewModels
+  - `todayHere()`, `isToday()`, etc. ahora son responsabilidad del ViewModel
+  - Documentado el cambio en KDoc
+
+### Fixed
+
+#### 🐛 Bug de Timezone Resuelto
+- **Problema**: App mostraba fecha +1 día en emuladores
+  - `TimeZone.currentSystemDefault()` devolvía UTC en lugar de timezone local
+  - Emuladores con hora 23:00 mostraban el día siguiente
+
+- **Solución**: DateProvider encapsula correctamente Clock + TimeZone
+  - Cachea `TimeZone.currentSystemDefault()` al inicializar
+  - Usa `clock.now().toLocalDateTime(timeZone).date` para fecha local correcta
+  - ✅ Validado: Si son las 23:00 del 3 de febrero → muestra "3" (no "4")
+
+#### 🏗️ Mejoras Arquitectónicas
+- **Antes**: ViewModels exponían `Clock` y `AppLanguage` a la UI
+- **Ahora**: UI 100% pura, sin conocimiento de Clock ni Language
+- **Antes**: Formateo de fechas en Composables (DateHeaderComponent)
+- **Ahora**: Formateo en ViewModels, UI solo renderiza strings
+
+#### ✅ Beneficios
+- ✅ Timezone local correcto (usa `TimeZone.currentSystemDefault()` correctamente)
+- ✅ UI 100% pura (sin lógica de fechas)
+- ✅ Testeable con `FakeDateProvider(LocalDate(2025, 12, 25))`
+- ✅ KMP-compatible (solo `kotlinx.datetime`, no `java.time`)
+- ✅ Encapsula `@OptIn(ExperimentalTime)` en `RealDateProvider.kt`
+- ✅ Performance optimizada (cachea TimeZone)
+
+### Documentation
+
+- **SPEC-004**: Especificación completa con:
+  - Problema resuelto (bug de timezone + arquitectura)
+  - Solución implementada (DateProvider pattern)
+  - Código completo de Domain, Data, Tests
+  - Before/After comparisons
+  - Lecciones aprendidas
+
+- **archive/**: Documentación de proceso preservada
+  - `ANALISIS-CLOCK-Y-MEJORAS.md` - Análisis del problema
+  - `DATEPROVIDER-IMPLEMENTACION-COMPLETA.md` - Tracking de implementación
+  - `INSTRUCCIONES-VALIDACION.md` - Checklist de validación
+
+---
 
 ## [0.5.0] - 2026-01-20
 

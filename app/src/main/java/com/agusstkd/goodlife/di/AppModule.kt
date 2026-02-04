@@ -1,5 +1,7 @@
 package com.agusstkd.goodlife.di
 
+import com.agusstkd.goodlife.core.datetime.DateProvider
+import com.agusstkd.goodlife.core.datetime.RealDateProvider
 import com.agusstkd.goodlife.core.dispatcher.AndroidDispatcherProvider
 import com.agusstkd.goodlife.core.dispatcher.DispatcherProvider
 import com.agusstkd.goodlife.data.remote.datasource.AuthRemoteDataSource
@@ -14,12 +16,15 @@ import com.agusstkd.goodlife.domain.usecase.validation.ValidateFullNameUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidatePasswordMatchUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidatePasswordUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidateUserNameUseCase
+import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationControllerImpl
 import com.agusstkd.goodlife.presentation.screen.home.HomeViewModel
 import com.agusstkd.goodlife.presentation.screen.login.LoginViewModel
+import com.agusstkd.goodlife.presentation.screen.main.MainScaffoldViewModel
 import com.agusstkd.goodlife.presentation.screen.register.RegisterViewModel
 import com.agusstkd.goodlife.presentation.screen.splash.SplashViewModel
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.DailyTabViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -63,6 +68,45 @@ val appModule = module {
     single<ComposeNavigationController> {
         ComposeNavigationControllerImpl()
     }
+
+    /**
+     * DateProvider como singleton.
+     *
+     * Provee fecha/hora con timezone local correcto del dispositivo.
+     * Resuelve bug de fechas UTC en emuladores Android.
+     *
+     * ## Producción:
+     * Usa [RealDateProvider] que cachea TimeZone.currentSystemDefault()
+     * y calcula fecha local con clock.now().toLocalDateTime(timeZone).date
+     *
+     * ## Testing:
+     * Inyectar [FakeDateProvider] con fecha fija para tests deterministas.
+     *
+     * ## Uso en ViewModels:
+     * ```kotlin
+     * class DailyTabViewModel(
+     *     private val dateProvider: DateProvider,
+     *     private val language: AppLanguage
+     * ) : ViewModel() {
+     *     val today = dateProvider.today()
+     * }
+     * ```
+     *
+     * @see DateProvider Interface abstraída
+     * @see RealDateProvider Implementación real
+     * @see FakeDateProvider Implementación fake para tests
+     */
+    single<DateProvider> { RealDateProvider() }
+
+    /**
+     * AppLanguage como singleton.
+     *
+     * Define el idioma de la aplicación para formateo de fechas y textos.
+     * Actualmente fijo en Spanish, futuro: desde SharedPreferences.
+     *
+     * @see AppLanguage Sealed interface con Spanish, English, Portuguese
+     */
+    single<AppLanguage> { AppLanguage.Spanish }
 
     // ═══════════════════════════════════════════════════════════════════════════════════════════
     // DATA SOURCES
@@ -212,6 +256,26 @@ val appModule = module {
             registerUseCase = get(),
             navigationController = get(),
             dispatcherProvider = get()
+        )
+    }
+
+    /**
+     * MainScaffoldViewModel - Scaffold principal con tabs.
+     */
+    viewModel {
+        MainScaffoldViewModel(
+            dateProvider = get(),
+            language = get()
+        )
+    }
+
+    /**
+     * DailyTabViewModel - Tab de tareas diarias.
+     */
+    viewModel {
+        DailyTabViewModel(
+            dateProvider = get(),
+            language = get()
         )
     }
 }
