@@ -2,7 +2,6 @@ package com.agusstkd.goodlife.core.datetime.language
 
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format.DateTimeFormat
-import java.time.LocalDate
 
 /**
  * Contenedor de formatos de fecha para un idioma específico.

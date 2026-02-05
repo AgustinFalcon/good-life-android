@@ -11,6 +11,8 @@ import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
 import com.agusstkd.goodlife.presentation.navigation.route.addAppGraph
 import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
 import org.koin.android.ext.android.inject
+import org.koin.androidx.compose.KoinAndroidContext
+import org.koin.core.annotation.KoinExperimentalAPI
 
 /**
  * Activity principal de la aplicación.
@@ -24,20 +26,23 @@ class MainActivity : FragmentActivity() {
 
     private val navigationController: ComposeNavigationController by inject()
 
+    @OptIn(KoinExperimentalAPI::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         setContent {
-            GoodLifeTheme {
-                val navController = rememberNavController()
+            KoinAndroidContext {
+                GoodLifeTheme {
+                    val navController = rememberNavController()
 
-                GoodLifeNavHost(
-                    navController = navController,
-                    navigationController = navigationController,
-                    startDestination = AppRoute.Splash,
-                    graphBuilder = { addAppGraph() }
-                )
+                    GoodLifeNavHost(
+                        navController = navController,
+                        navigationController = navigationController,
+                        startDestination = AppRoute.Splash,
+                        graphBuilder = { addAppGraph() }
+                    )
+                }
             }
         }
     }

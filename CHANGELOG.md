@@ -7,9 +7,32 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
-## [Unreleased] - 2026-02-04
+## [Unreleased] - 2026-02-05
 
 ### Added
+
+#### 🌐 Offline-First Architecture + SWR (SPEC-006)
+
+- **Stale-While-Revalidate Pattern** - Patrón profesional para cache + sincronización
+  - Cache-first: UI renderiza en 0ms
+  - Background revalidation: Backend siempre consulta
+  - Fallback offline: App funciona sin internet
+  - Optimistic UI: Updates instantáneos
+
+- **Documentación completa**:
+  - `docs/specs/SPEC-006-offline-first-swr.md` - Especificación completa (800+ líneas)
+  - Comparación TTL vs SWR
+  - Implementación de Repository con SWR
+  - Optimistic UI en ViewModels
+  - Flujos de usuario (online/offline)
+  - Optimizaciones avanzadas
+  - Aplicación en todos los módulos (Daily, Tasks, Habits, Workouts, Meals)
+
+- **Plan actualizado**:
+  - `docs/plans/DAILY-IMPLEMENTATION-PLAN.md` - Actualizado con SWR
+  - Eliminado `cachedAt` y `isFresh()` de entities
+  - Repository con `fetchDailyLogWithSWR()`
+  - Optimistic UI en `DailyTabViewModel`
 
 #### 📅 DateProvider Pattern (SPEC-004)
 

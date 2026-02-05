@@ -62,6 +62,14 @@ import kotlin.time.ExperimentalTime
  * viewModel { DailyTabViewModel(dateProvider = get(), language = get()) }
  * ```
  *
+ * ## Serialización para API:
+ * ```kotlin
+ * val date: LocalDate = dateProvider.today()  // LocalDate(2026, 2, 3)
+ * val dateString = date.toString()            // "2026-02-03" (ISO-8601)
+ * ```
+ * **Importante:** `kotlinx.datetime.LocalDate.toString()` devuelve formato ISO-8601
+ * (`YYYY-MM-DD`), compatible directamente con el backend sin conversión adicional.
+ *
  * @see RealDateProvider Implementación real para producción
  * @see FakeDateProvider Implementación fake para testing
  */

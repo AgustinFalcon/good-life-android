@@ -126,7 +126,7 @@ com.agusstkd.goodlife/
 │   │   │       ├── BottomMenuOption.kt
 │   │   │       └── BottomNavItemModel.kt
 │   │   ├── header/                # Headers dinámicos por tab
-│   │   │   ├── DateHeaderComponent.kt      # Para Diary/Meals
+│   │   │   ├── DateHeaderComponent.kt      # Para Daily/Meals
 │   │   │   ├── TabRowHeaderComponent.kt    # Para Workouts
 │   │   │   └── CalendarDayIcon.kt          # Icono personalizado
 │   │   ├── modal/                 # Modal de acciones

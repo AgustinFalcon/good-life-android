@@ -103,10 +103,10 @@ Crear el scaffold principal de la aplicación con:
 ### Fase 8: Tab Screens ❌ PENDIENTE
 ```
 📁 presentation/screen/tabs/
-├── diary/
-│   ├── DiaryTabScreen.kt        ❌ TODO (con DateHeaderComponent)
-│   ├── DiaryTabViewModel.kt     ❌ TODO (maneja fecha)
-│   └── model/DiaryUiState.kt    ❌ TODO
+├── daily/
+│   ├── DailyTabScreen.kt        ❌ TODO (con DateHeaderComponent)
+│   ├── DailyTabViewModel.kt     ❌ TODO (maneja fecha)
+│   └── model/DailyUiState.kt    ❌ TODO
 │
 ├── workouts/
 │   ├── WorkoutsTabScreen.kt     ❌ TODO (con TabRowHeaderComponent)
@@ -137,7 +137,7 @@ Crear el scaffold principal de la aplicación con:
 📁 di/
 └── AppModule.kt                 ⚠️ ACTUALIZAR
     - viewModel { MainScaffoldViewModel(...) }
-    - viewModel { DiaryTabViewModel(...) }
+    - viewModel { DailyTabViewModel(...) }
     - viewModel { WorkoutsTabViewModel(...) }
     - viewModel { MealsTabViewModel(...) }
     - viewModel { MoreTabViewModel(...) }
@@ -186,7 +186,7 @@ Crear el scaffold principal de la aplicación con:
 │  │                    TabNavHost (contenido)                       │ │
 │  │                                                                 │ │
 │  │   ┌──────────────────────────────────────────────────────────┐ │ │
-│  │   │  TAB DIARIO (DiaryTabScreen)                             │ │ │
+│  │   │  TAB DIARIO (DailyTabScreen)                             │ │ │
 │  │   │  ┌────────────────────────────────────────────────────┐  │ │ │
 │  │   │  │ [📅] [<] 🗓️ Jueves 23 Oct [>] [🔔]  ← DateHeader  │  │ │ │
 │  │   │  ├────────────────────────────────────────────────────┤  │ │ │

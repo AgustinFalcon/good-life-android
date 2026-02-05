@@ -12,8 +12,20 @@ Documentación oficial de features core implementadas.
 |------|---------|--------|-------------|
 | [SPEC-001](specs/SPEC-001-register-screen.md) | Register Screen | ✅ Completado | Pantalla de registro |
 | [SPEC-002](specs/SPEC-002-biometric-login.md) | Biometric Login | ✅ Completado | Autenticación biométrica |
-| [SPEC-003](specs/SPEC-003-main-scaffold.md) | Main Scaffold | 🚧 En Progreso | Bottom Navigation + Tabs |
+| [SPEC-003](specs/SPEC-003-main-scaffold.md) | Main Scaffold | ✅ Completado | Bottom Navigation + Tabs |
 | [SPEC-004](specs/SPEC-004-date-provider.md) | DateProvider | ✅ Completado | Core de fechas (KMP-ready) |
+| [SPEC-005](specs/SPEC-005-network-service.md) | Network Service | 📝 En Desarrollo | BaseResponse, HttpCode, Cache |
+| [SPEC-006](specs/SPEC-006-offline-first-swr.md) | Offline-First + SWR | 📝 En Desarrollo | Stale-While-Revalidate |
+
+---
+
+## 📋 Planes de Implementación
+
+Guías paso a paso para implementar features complejas.
+
+| Plan | Feature | Estado | Descripción |
+|------|---------|--------|-------------|
+| [DAILY-IMPLEMENTATION-PLAN](plans/DAILY-IMPLEMENTATION-PLAN.md) | Daily Screen | 🟡 Listo para implementar | LazyColumn con items + cache Room |
 
 ---
 
@@ -29,6 +41,55 @@ Documentación de proceso preservada como referencia histórica.
 ---
 
 ## 🚀 Guías Rápidas
+
+### Serialización de Fechas para API
+
+```kotlin
+// ✅ CORRECTO: LocalDate.toString() devuelve ISO-8601
+val date: LocalDate = dateProvider.today()  // LocalDate(2026, 2, 3)
+val dateString = date.toString()            // "2026-02-03" ✅
+
+// Request al backend
+apiService.getDailyLog(dateString)  // GET /daily-logs/2026-02-03
+
+// Parse de response
+val responseDate = LocalDate.parse("2026-02-03")  // ✅ Parse directo
+```
+
+**Importante:** NO se necesita formateo adicional. `kotlinx.datetime.LocalDate.toString()` ya devuelve formato ISO-8601 (`YYYY-MM-DD`), compatible con el backend.
+
+**Ver más:** [SPEC-004 § 16. Serialización](specs/SPEC-004-date-provider.md#16-serialización-para-api) y [SPEC-005 § 6. Formato de Fechas](specs/SPEC-005-network-service.md#6-formato-de-fechas-iso-8601)
+
+### Stale-While-Revalidate (SWR)
+
+```kotlin
+// ✅ PATRÓN SWR: Cache first + Background revalidation (SPEC-006)
+override suspend fun getDailyLog(date: LocalDate): Result<DailyLog> {
+    val cached = getCachedDailyLog(date)  // 1. Cache PRIMERO (0ms)
+    
+    try {
+        val response = apiService.getDailyLog(date)  // 2. Backend SIEMPRE
+        
+        if (HttpCode.isSuccess(response.code)) {
+            val fresh = response.data.toDomain()
+            saveDailyLogToCache(fresh)  // 3. Actualizar cache
+            return Result.success(fresh)
+        }
+    } catch (e: IOException) {
+        // Sin internet: cache es suficiente ✅
+    }
+    
+    return cached ?: throw NoDataAvailableException()
+}
+```
+
+**Beneficios:**
+- UI instantánea (0ms)
+- Backend como fuente de verdad
+- Funciona offline
+- Data siempre actualizada
+
+**Ver más:** [SPEC-006: Offline-First + SWR](specs/SPEC-006-offline-first-swr.md)
 
 ### Uso de DateProvider
 

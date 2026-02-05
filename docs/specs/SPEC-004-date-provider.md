@@ -951,6 +951,92 @@ App muestra: "Hoy - 3" ✅ CORRECTO
 
 ---
 
+## 16. Serialización para API
+
+### 16.1 Formato ISO-8601
+
+`kotlinx.datetime.LocalDate.toString()` devuelve automáticamente formato **ISO-8601**:
+
+```kotlin
+val date = LocalDate(2026, 2, 3)
+val dateString = date.toString()  // "2026-02-03" ✅ ISO-8601
+```
+
+### 16.2 Compatible con Backend
+
+El backend espera fechas en formato `YYYY-MM-DD` (ISO-8601):
+
+```kotlin
+// ✅ Conversión directa (sin formateo adicional)
+val date: LocalDate = dateProvider.today()
+val dateString = date.toString()  // "2026-02-03"
+
+// Request al backend
+apiService.getDailyLog(dateString)
+```
+
+### 16.3 Endpoints del Backend
+
+| Endpoint | Ejemplo |
+|----------|---------|
+| `GET /api/v1/daily-logs/{date}` | `/daily-logs/2026-02-03` |
+| `GET /api/v1/tasks/date/{date}` | `/tasks/date/2026-02-03` |
+| `GET /api/v1/habits/date/{date}` | `/habits/date/2026-02-03` |
+
+### 16.4 Parsing de Response
+
+El backend devuelve fechas en formato ISO-8601:
+
+```kotlin
+@Serializable
+data class DailyLogDto(
+    val id: Long,
+    val date: String,  // "2026-02-03"
+    val completionRate: Double
+)
+
+fun DailyLogDto.toDomain(): DailyLog {
+    return DailyLog(
+        id = id,
+        date = LocalDate.parse(date),  // ✅ Parse directo de ISO-8601
+        completionRate = completionRate
+    )
+}
+```
+
+### 16.5 Ventajas
+
+- ✅ **Sin conversión adicional**: `LocalDate.toString()` = ISO-8601
+- ✅ **Sin dependencias**: No se necesitan librerías de formateo
+- ✅ **Type-safe**: `LocalDate` hasta la capa de Repository
+- ✅ **Estándar internacional**: ISO-8601 es el estándar web
+
+### 16.6 Flujo Completo
+
+```kotlin
+// 1. ViewModel mantiene LocalDate
+val currentDate: LocalDate = dateProvider.today()  // LocalDate(2026, 2, 3)
+
+// 2. UseCase recibe LocalDate
+getDailyItemsUseCase(date = currentDate)
+
+// 3. Repository convierte a String
+val dateString = date.toString()  // "2026-02-03"
+apiService.getDailyLog(dateString)
+
+// 4. Backend recibe: GET /api/v1/daily-logs/2026-02-03
+
+// 5. Response vuelve con: { "date": "2026-02-03", ... }
+
+// 6. DTO parsea: LocalDate.parse("2026-02-03")
+
+// 7. Domain Model tiene LocalDate
+```
+
+**Ver más detalles en:** `SPEC-005-network-service.md`
+
+---
+
 **FIN DE SPEC-004**
 
 ---

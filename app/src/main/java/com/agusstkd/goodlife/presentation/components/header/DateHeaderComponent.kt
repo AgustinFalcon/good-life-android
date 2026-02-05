@@ -30,28 +30,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.agusstkd.goodlife.core.datetime.isToday
-import com.agusstkd.goodlife.core.datetime.isYesterday
-import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.presentation.components.GradientIcon
 import com.agusstkd.goodlife.presentation.theme.DarkGreen
 import com.agusstkd.goodlife.presentation.theme.DegradeBackground5
 import com.agusstkd.goodlife.presentation.theme.LightGreen
-import kotlin.time.Clock
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
 
 /**
- * Header con navegación de fechas para tabs como Diary y Meals.
+ * Header con navegación de fechas para tabs como Daily y Meals.
  *
- * Muestra la fecha actual con navegación día anterior/siguiente,
- * icono de calendario y notificaciones. Soporta textos relativos
- * ("Hoy", "Ayer") según el idioma.
+ * ## Filosofía:
+ * Componente **100% puro**: solo renderiza strings ya formateados.
+ * No conoce Clock, Language, ni lógica de fechas.
  *
- * @param date Fecha a mostrar
- * @param clock Clock inyectado para testabilidad
- * @param language Idioma para textos y formato
+ * ## Uso:
+ * ```kotlin
+ * DateHeaderComponent(
+ *     dayNumber = 15,
+ *     headerText = "Hoy",           // o "Lun, 15 feb"
+ *     monthYear = null,              // o "Febrero 2026"
+ *     onPreviousDay = {},
+ *     onNextDay = {}
+ * )
+ * ```
+ *
+ * @param dayNumber Número del día (1-31) para el icono de calendario
+ * @param headerText Texto principal: "Hoy" | "Ayer" | "Mañana" | "Lun, 08 feb"
+ * @param monthYear Mes y año completos (ej: "Febrero 2026"), null para fechas relativas
  * @param canNavigatePrevious Si permite navegar al día anterior
  * @param onCalendarClick Callback al abrir calendario
  * @param onPreviousDay Callback al ir al día anterior
@@ -61,9 +65,9 @@ import kotlinx.datetime.todayIn
  */
 @Composable
 fun DateHeaderComponent(
-    date: LocalDate,
-    clock: Clock,
-    language: AppLanguage,
+    dayNumber: Int,
+    headerText: String,
+    monthYear: String?,
     canNavigatePrevious: Boolean = true,
     onCalendarClick: () -> Unit = {},
     onPreviousDay: () -> Unit,
@@ -101,9 +105,9 @@ fun DateHeaderComponent(
         )
 
         DateHeaderWithIcon(
-            date = date,
-            clock = clock,
-            language = language,
+            dayNumber = dayNumber,
+            headerText = headerText,
+            monthYear = monthYear,
             modifier = Modifier.weight(1f)
         )
 
@@ -157,20 +161,17 @@ private fun IconButtonWithBorder(
 
 @Composable
 private fun DateHeaderWithIcon(
-    date: LocalDate,
-    clock: Clock,
-    language: AppLanguage,
+    dayNumber: Int,
+    headerText: String,
+    monthYear: String?,
     modifier: Modifier = Modifier
 ) {
-    val isToday = date.isToday(clock)
-    val isYesterday = date.isYesterday(clock)
-
     Row(
         modifier = modifier.fillMaxHeight(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        CalendarDayIcon(day = date.dayOfMonth, modifier = Modifier.size(42.dp))
+        CalendarDayIcon(day = dayNumber, modifier = Modifier.size(42.dp))
 
         Spacer(modifier = Modifier.width(8.dp))
 
@@ -178,22 +179,23 @@ private fun DateHeaderWithIcon(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Center
         ) {
-            if (isToday || isYesterday) {
+            Text(
+                text = headerText,
+                style = if (monthYear == null) {
+                    // Fecha relativa (Hoy, Ayer, Mañana) → texto grande
+                    MaterialTheme.typography.titleLarge
+                } else {
+                    // Fecha absoluta (Lun, 08 feb) → texto mediano
+                    MaterialTheme.typography.titleMedium
+                },
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+            // Mostrar mes/año solo si NO es fecha relativa
+            if (monthYear != null) {
                 Text(
-                    text = if (isToday) language.relativeTexts.today else language.relativeTexts.yesterday,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            } else {
-                Text(
-                    text = getDayOfWeekName(date, language),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    text = getMonthYearText(date, language),
+                    text = monthYear,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -202,23 +204,25 @@ private fun DateHeaderWithIcon(
     }
 }
 
-private fun getDayOfWeekName(date: LocalDate, language: AppLanguage): String {
-    val dayIndex = date.dayOfWeek.ordinal
-    return language.dayNamesShort.names[dayIndex].replaceFirstChar { it.uppercase() }
-}
-
-private fun getMonthYearText(date: LocalDate, language: AppLanguage): String {
-    val monthName = language.monthNames.names[date.monthNumber - 1].replaceFirstChar { it.uppercase() }
-    return "$monthName ${date.year}"
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun DateHeaderTodayPreview() {
     DateHeaderComponent(
-        date = Clock.System.todayIn(TimeZone.currentSystemDefault()),
-        clock = Clock.System,
-        language = AppLanguage.Spanish,
+        dayNumber = 3,
+        headerText = "Hoy",
+        monthYear = null,  // No mostrar mes/año para fechas relativas
+        onPreviousDay = {},
+        onNextDay = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DateHeaderYesterdayPreview() {
+    DateHeaderComponent(
+        dayNumber = 2,
+        headerText = "Ayer",
+        monthYear = null,
         onPreviousDay = {},
         onNextDay = {}
     )
@@ -228,9 +232,9 @@ private fun DateHeaderTodayPreview() {
 @Composable
 private fun DateHeaderOtherDayPreview() {
     DateHeaderComponent(
-        date = LocalDate(2025, 10, 23),
-        clock = Clock.System,
-        language = AppLanguage.Spanish,
+        dayNumber = 23,
+        headerText = "Lun, 23 oct",
+        monthYear = "Octubre 2025",
         onPreviousDay = {},
         onNextDay = {}
     )

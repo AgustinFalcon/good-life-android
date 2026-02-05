@@ -65,7 +65,6 @@ fun LoginScreenOwner(
         (biometricAuthenticator as? AndroidBiometricAuthenticator)?.setActivity(activity)
     }
 
-    // Strings para i18n (obtenidos de strings.xml)
     val biometricTitle = stringResource(R.string.biometric_prompt_title)
     val biometricSubtitle = stringResource(R.string.biometric_prompt_subtitle)
     val biometricNegativeButton = stringResource(R.string.biometric_prompt_negative_button)

@@ -17,9 +17,7 @@ import kotlinx.datetime.format.char
  * 2. Definir monthNames, dayNamesShort, formats y relativeTexts
  * 3. El compilador marcará error en todos los `when` incompletos
  */
-sealed interface AppLanguage {
-
-    val monthNames: MonthNames
+sealed interface AppLanguage {    val monthNames: MonthNames
     val dayNamesShort: DayOfWeekNames
     val formats: DateFormats
     val relativeTexts: RelativeDateTexts
@@ -77,7 +75,8 @@ sealed interface AppLanguage {
         override val monthNames = MonthNames(
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"
-        )        override val dayNamesShort = DayOfWeekNames(
+        )
+        override val dayNamesShort = DayOfWeekNames(
             "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
         )
 
@@ -112,11 +111,7 @@ sealed interface AppLanguage {
 
     // ═══════════════════════════════════════════════════════════════════
     // PORTUGUÊS
-    // ═══════════════════════════════════════════════════════════════════
-
-    data object Portuguese : AppLanguage {
-
-        override val monthNames = MonthNames(
+    // ═══════════════════════════════════════════════════════════════════    data object Portuguese : AppLanguage {        override val monthNames = MonthNames(
             "janeiro", "fevereiro", "março", "abril", "maio", "junho",
             "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
         )

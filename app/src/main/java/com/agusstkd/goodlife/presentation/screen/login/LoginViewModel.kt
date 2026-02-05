@@ -189,7 +189,7 @@ class LoginViewModel(
 
 
     // ═══════════════════════════════════════════════════════════════════════════════════════════
-    // BIOMETRIC
+    // BIOMETRIC - NO DEBERIA ESTAR EN UNA CLASE QUE HANDLEE BIOMETRIC?
     // ═══════════════════════════════════════════════════════════════════════════════════════════
     private fun handleBiometricToggle() {
         val current = (_uiState.value as? LoginUiState.Content) ?: return

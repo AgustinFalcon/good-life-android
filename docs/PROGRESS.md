@@ -158,11 +158,11 @@ fun MainScaffoldScreen(
 #### Fase 8: Tab Screens
 
 ```kotlin
-// 📁 presentation/screen/tabs/diary/DiaryTabScreen.kt
+// 📁 presentation/screen/tabs/daily/DailyTabScreen.kt
 @Composable
-fun DiaryTabScreen(
+fun DailyTabScreen(
     paddingValues: PaddingValues,
-    viewModel: DiaryTabViewModel = koinViewModel()
+    viewModel: DailyTabViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     
@@ -171,8 +171,8 @@ fun DiaryTabScreen(
             date = uiState.currentDate,
             clock = viewModel.clock,
             language = uiState.language,
-            onPreviousDay = { viewModel.onAction(DiaryAction.OnPreviousDay) },
-            onNextDay = { viewModel.onAction(DiaryAction.OnNextDay) },
+            onPreviousDay = { viewModel.onAction(DailyAction.OnPreviousDay) },
+            onNextDay = { viewModel.onAction(DailyAction.OnNextDay) },
             // ...
         )
         
@@ -198,7 +198,7 @@ fun TabNavGraph(
         startDestination = TabGraphRoute.HomeGraph
     ) {
         navigation<TabGraphRoute.HomeGraph>(startDestination = TabRoute.Home) {
-            composable<TabRoute.Home> { DiaryTabScreen(paddingValues) }
+            composable<TabRoute.Home> { DailyTabScreen(paddingValues) }
         }
         
         navigation<TabGraphRoute.WorkoutsGraph>(startDestination = TabRoute.Workouts) {
@@ -222,7 +222,7 @@ fun TabNavGraph(
 // 📁 di/AppModule.kt
 // Agregar:
 viewModel { MainScaffoldViewModel(get(), get()) }
-viewModel { DiaryTabViewModel(get()) }
+viewModel { DailyTabViewModel(get()) }
 viewModel { WorkoutsTabViewModel() }
 viewModel { MealsTabViewModel(get()) }
 viewModel { MoreTabViewModel() }
@@ -261,11 +261,11 @@ single<Clock> { Clock.System }
 
 ### Después de MainScaffold - Fase 8: Tab Screens
 
-5. **DiaryTabScreen**
-   - [ ] DiaryUiState.kt
-   - [ ] DiaryUiAction.kt
-   - [ ] DiaryTabViewModel.kt (maneja fecha)
-   - [ ] DiaryTabScreen.kt (con DateHeaderComponent)
+5. **DailyTabScreen**
+   - [ ] DailyUiState.kt
+   - [ ] DailyUiAction.kt
+   - [ ] DailyTabViewModel.kt (maneja fecha)
+   - [ ] DailyTabScreen.kt (con DateHeaderComponent)
 
 6. **WorkoutsTabScreen**
    - [ ] WorkoutsUiState.kt
