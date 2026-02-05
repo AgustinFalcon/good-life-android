@@ -1,62 +1,86 @@
 # 📋 Plan de Implementación: Daily Screen
 
-**Fecha:** 2026-02-04  
-**Responsable:** Usuario (con guía del asistente)  
-**Estimación:** 3-5 sesiones de trabajo
+**Fecha:** 2026-02-05  
+**Responsable:** Usuario  
+**Enfoque:** Paso a paso → FASE 1 (API REST) → FASE 2 (Room/Cache)
 
 ---
 
 ## 🎯 Objetivo
 
-Implementar la pantalla **Daily** que muestra:
-- **Tareas** programadas para el día
+Implementar la pantalla **Daily** que muestra todas las actividades del día:
+- **Tareas** programadas
 - **Hábitos** con progreso
 - **Entrenamientos** de la rutina activa
 - **Comidas** planificadas
 
-Con soporte para:
-- ✅ Navegación entre días (← ayer | hoy | mañana →)
-- ✅ Cache local con Room (offline-first)
-- ✅ Actualización de status (PENDING → COMPLETED/SKIPPED)
-- ✅ Pull-to-refresh
+---
+
+## 📐 Enfoque: 2 Fases
+
+| Fase | Objetivo | Duración | Cuándo |
+|------|----------|----------|--------|
+| **FASE 1** | API REST pura (con internet) | 2-3 horas | **AHORA** |
+| **FASE 2** | Room/Cache (modo offline) | 2-3 horas | **FUTURO** |
 
 ---
 
-## 📐 Arquitectura
+# 🚀 FASE 1: API REST PURA (AHORA)
+
+## Arquitectura
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│                   PRESENTATION LAYER                     │
-│                                                          │
-│  DailyScreen (UI pura)                                   │
-│       ↓ onAction                                         │
-│  DailyTabViewModel                                       │
-│       • currentDate: LocalDate                           │
-│       • loadItems(date)                                  │
-│       • updateItemStatus(itemId, status)                 │
-└──────────────────────────────────────────────────────────┘
-                         ↓ UseCase
-┌──────────────────────────────────────────────────────────┐
-│                     DOMAIN LAYER                         │
-│                                                          │
-│  GetDailyItemsUseCase(date: LocalDate)                   │
-│  UpdateItemStatusUseCase(itemId, status)                 │
-└──────────────────────────────────────────────────────────┘
-                         ↓ Repository
-┌──────────────────────────────────────────────────────────┐
-│                      DATA LAYER                          │
-│                                                          │
-│  DailyRepositoryImpl                                     │
-│       ├── Remote (ApiService)                            │
-│       │   └── GET /api/v1/daily-logs/{date}             │
-│       └── Local (RoomDao)                                │
-│           └── daily_logs + daily_log_items              │
-└──────────────────────────────────────────────────────────┘
+DailyScreen → DailyTabViewModel → GetDailyItemsUseCase → DailyRepository → ApiService → Backend
+                                                                                            ↓
+                                                                                      (Fuente de verdad 100%)
 ```
+
+**Sin:** Room, cache, offline
 
 ---
 
-## 📦 Módulos a Crear
+## ✅ Checklist de FASE 1
+
+### Paso 1: Domain Layer (30 min)
+- [ ] Crear `domain/model/daily/DailyLog.kt`
+- [ ] Crear `domain/model/daily/DailyItem.kt`
+- [ ] Crear `domain/model/daily/DailyItemType.kt`
+- [ ] Crear `domain/model/daily/ItemStatus.kt`
+- [ ] Crear `domain/repository/DailyRepository.kt`
+- [ ] Crear `domain/usecase/daily/GetDailyItemsUseCase.kt`
+- [ ] Crear `domain/usecase/daily/UpdateItemStatusUseCase.kt`
+
+### Paso 2: Data Layer - DTOs (30 min)
+- [ ] Crear `data/remote/dto/response/DailyLogDto.kt`
+- [ ] Crear `data/remote/dto/response/DailyLogItemDto.kt`
+- [ ] Crear `data/remote/dto/response/TaskSummaryDto.kt`
+- [ ] Crear `data/remote/dto/response/HabitLogSummaryDto.kt`
+- [ ] Crear `data/remote/mapper/DailyLogMapper.kt`
+- [ ] Agregar endpoints en `GoodLifeApiService.kt`
+
+### Paso 3: Repository (20 min)
+- [ ] Crear `data/repository/DailyRepositoryImpl.kt` (sin Room)
+
+### Paso 4: Presentation (30 min)
+- [ ] Actualizar `DailyUiState.kt` (Success/Error/Loading)
+- [ ] Actualizar `DailyUiAction.kt`
+- [ ] Actualizar `DailyTabViewModel.kt`
+- [ ] Actualizar `DailyScreen.kt` con LazyColumn
+- [ ] Crear `DailyItemCard.kt`
+
+### Paso 5: DI (15 min)
+- [ ] Crear `di/DailyModule.kt`
+- [ ] Registrar en `GoodLifeApp.kt`
+
+### Paso 6: Testing (15 min)
+- [ ] Probar con internet
+- [ ] Verificar carga de datos
+- [ ] Verificar navegación entre días
+- [ ] Verificar actualización de status
+
+---
+
+## 📦 Código FASE 1
 
 ### 1️⃣ Domain Layer
 
@@ -64,6 +88,13 @@ Con soporte para:
 
 ```kotlin
 // domain/model/daily/DailyLog.kt
+package com.agusstkd.goodlife.domain.model.daily
+
+import kotlinx.datetime.LocalDate
+
+/**
+ * Daily log unificado con todas las actividades del día.
+ */
 data class DailyLog(
     val id: Long,
     val userId: Long,
@@ -71,8 +102,17 @@ data class DailyLog(
     val completionRate: Double,
     val items: List<DailyItem>
 )
+```
 
+```kotlin
 // domain/model/daily/DailyItem.kt
+package com.agusstkd.goodlife.domain.model.daily
+
+import kotlinx.datetime.LocalTime
+
+/**
+ * Item individual en el daily log.
+ */
 data class DailyItem(
     val id: Long,
     val type: DailyItemType,
@@ -82,15 +122,28 @@ data class DailyItem(
     val title: String,
     val description: String?
 )
+```
 
+```kotlin
 // domain/model/daily/DailyItemType.kt
-enum class DailyItemType {
-    TASK, HABIT, WORKOUT, MEAL
-}
+package com.agusstkd.goodlife.domain.model.daily
 
+enum class DailyItemType {
+    TASK,
+    HABIT,
+    WORKOUT,
+    MEAL
+}
+```
+
+```kotlin
 // domain/model/daily/ItemStatus.kt
+package com.agusstkd.goodlife.domain.model.daily
+
 enum class ItemStatus {
-    PENDING, COMPLETED, SKIPPED
+    PENDING,
+    COMPLETED,
+    SKIPPED
 }
 ```
 
@@ -98,6 +151,18 @@ enum class ItemStatus {
 
 ```kotlin
 // domain/repository/DailyRepository.kt
+package com.agusstkd.goodlife.domain.repository
+
+import com.agusstkd.goodlife.core.result.Result
+import com.agusstkd.goodlife.domain.model.daily.DailyLog
+import com.agusstkd.goodlife.domain.model.daily.ItemStatus
+import kotlinx.datetime.LocalDate
+
+/**
+ * Repositorio para acceso a daily logs.
+ * 
+ * FASE 1: Solo backend (fuente de verdad 100%).
+ */
 interface DailyRepository {
     suspend fun getDailyLog(date: LocalDate): Result<DailyLog>
     suspend fun updateItemStatus(itemId: Long, status: ItemStatus): Result<DailyLog>
@@ -108,6 +173,18 @@ interface DailyRepository {
 
 ```kotlin
 // domain/usecase/daily/GetDailyItemsUseCase.kt
+package com.agusstkd.goodlife.domain.usecase.daily
+
+import com.agusstkd.goodlife.core.dispatcher.DispatcherProvider
+import com.agusstkd.goodlife.core.result.Result
+import com.agusstkd.goodlife.domain.model.daily.DailyLog
+import com.agusstkd.goodlife.domain.repository.DailyRepository
+import kotlinx.coroutines.withContext
+import kotlinx.datetime.LocalDate
+
+/**
+ * Obtiene los items del daily log para una fecha.
+ */
 class GetDailyItemsUseCase(
     private val repository: DailyRepository,
     private val dispatcher: DispatcherProvider
@@ -118,8 +195,22 @@ class GetDailyItemsUseCase(
         }
     }
 }
+```
 
+```kotlin
 // domain/usecase/daily/UpdateItemStatusUseCase.kt
+package com.agusstkd.goodlife.domain.usecase.daily
+
+import com.agusstkd.goodlife.core.dispatcher.DispatcherProvider
+import com.agusstkd.goodlife.core.result.Result
+import com.agusstkd.goodlife.domain.model.daily.DailyLog
+import com.agusstkd.goodlife.domain.model.daily.ItemStatus
+import com.agusstkd.goodlife.domain.repository.DailyRepository
+import kotlinx.coroutines.withContext
+
+/**
+ * Actualiza el status de un item del daily log.
+ */
 class UpdateItemStatusUseCase(
     private val repository: DailyRepository,
     private val dispatcher: DispatcherProvider
@@ -134,22 +225,32 @@ class UpdateItemStatusUseCase(
 
 ---
 
-### 2️⃣ Data Layer
+### 2️⃣ Data Layer - Remote
 
-#### 2.1 DTOs (Remote)
+#### 2.1 DTOs
 
 ```kotlin
 // data/remote/dto/response/DailyLogDto.kt
+package com.agusstkd.goodlife.data.remote.dto.response
+
+import kotlinx.serialization.Serializable
+
 @Serializable
 data class DailyLogDto(
     val id: Long,
     val userId: Long,
-    val date: String,  // "2026-02-03"
+    val date: String,  // "2026-02-05" (ISO-8601)
     val completionRate: Double,
     val items: List<DailyLogItemDto>
 )
+```
 
+```kotlin
 // data/remote/dto/response/DailyLogItemDto.kt
+package com.agusstkd.goodlife.data.remote.dto.response
+
+import kotlinx.serialization.Serializable
+
 @Serializable
 data class DailyLogItemDto(
     val id: Long,
@@ -162,128 +263,60 @@ data class DailyLogItemDto(
     val workout: WorkoutSummaryDto? = null,
     val meal: MealSummaryDto? = null
 )
+```
 
+```kotlin
 // data/remote/dto/response/TaskSummaryDto.kt
+package com.agusstkd.goodlife.data.remote.dto.response
+
+import kotlinx.serialization.Serializable
+
 @Serializable
 data class TaskSummaryDto(
     val id: Long,
     val title: String,
     val description: String?
 )
-
-// Similar para HabitLogSummaryDto, WorkoutSummaryDto, MealSummaryDto
 ```
 
-#### 2.2 Entities (Local - Room)
-
 ```kotlin
-// data/local/entity/DailyLogEntity.kt
-@Entity(tableName = "daily_logs")
-data class DailyLogEntity(
-    @PrimaryKey val date: String,  // "2026-02-03"
+// data/remote/dto/response/HabitLogSummaryDto.kt
+package com.agusstkd.goodlife.data.remote.dto.response
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class HabitLogSummaryDto(
     val id: Long,
-    val userId: Long,
-    val completionRate: Double
-    // ✅ SIN cachedAt: Usamos Stale-While-Revalidate (SPEC-006)
-    // El backend es siempre la fuente de verdad
-)
-
-// data/local/entity/DailyLogItemEntity.kt
-@Entity(
-    tableName = "daily_log_items",
-    foreignKeys = [
-        ForeignKey(
-            entity = DailyLogEntity::class,
-            parentColumns = ["date"],
-            childColumns = ["dailyLogDate"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
-)
-data class DailyLogItemEntity(
-    @PrimaryKey val id: Long,
-    val dailyLogDate: String,  // FK
-    val itemType: String,
-    val referenceId: Long,
-    val scheduledTime: String?,
-    val status: String,
-    val title: String,
-    val description: String?
+    val habitId: Long,
+    val habitName: String,
+    val currentValue: Int,
+    val targetValue: Int,
+    val progress: Double,
+    val unit: String
 )
 ```
 
-#### 2.3 DAO
-
-```kotlin
-// data/local/dao/DailyDao.kt
-@Dao
-interface DailyDao {
-    
-    @Query("SELECT * FROM daily_logs WHERE date = :date")
-    suspend fun getDailyLog(date: String): DailyLogEntity?
-    
-    @Query("SELECT * FROM daily_log_items WHERE dailyLogDate = :date ORDER BY scheduledTime ASC")
-    suspend fun getDailyLogItems(date: String): List<DailyLogItemEntity>
-    
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertDailyLog(dailyLog: DailyLogEntity)
-    
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertDailyLogItems(items: List<DailyLogItemEntity>)
-    
-    @Transaction
-    suspend fun insertDailyLogWithItems(
-        dailyLog: DailyLogEntity,
-        items: List<DailyLogItemEntity>
-    ) {
-        // Room ejecuta en transacción automáticamente
-        insertDailyLog(dailyLog)
-        insertDailyLogItems(items)
-    }
-    
-    @Query("UPDATE daily_log_items SET status = :status WHERE id = :itemId")
-    suspend fun updateItemStatus(itemId: Long, status: String)
-    
-    @Query("SELECT * FROM daily_log_items WHERE id = :itemId")
-    suspend fun getDailyLogItemById(itemId: Long): DailyLogItemEntity
-    
-    @Query("DELETE FROM daily_logs WHERE date < :oldestDate")
-    suspend fun deleteOldLogs(oldestDate: String)
-}
-```
-
-#### 2.4 ApiService
-
-```kotlin
-// data/remote/api/GoodLifeApiService.kt
-interface GoodLifeApiService {
-    
-    @GET("api/v1/daily-logs/today")
-    suspend fun getTodayDailyLog(): BaseResponse<DailyLogDto>
-    
-    @GET("api/v1/daily-logs/{date}")
-    suspend fun getDailyLog(
-        @Path("date") date: String  // "2026-02-03"
-    ): BaseResponse<DailyLogDto>
-    
-    @PATCH("api/v1/daily-logs/items/{itemId}/status")
-    suspend fun updateItemStatus(
-        @Path("itemId") itemId: Long,
-        @Query("status") status: String  // "COMPLETED", "SKIPPED", "PENDING"
-    ): BaseResponse<DailyLogDto>
-}
-```
-
-#### 2.5 Mappers
+#### 2.2 Mappers
 
 ```kotlin
 // data/remote/mapper/DailyLogMapper.kt
+package com.agusstkd.goodlife.data.remote.mapper
+
+import com.agusstkd.goodlife.data.remote.dto.response.DailyLogDto
+import com.agusstkd.goodlife.data.remote.dto.response.DailyLogItemDto
+import com.agusstkd.goodlife.domain.model.daily.DailyItem
+import com.agusstkd.goodlife.domain.model.daily.DailyItemType
+import com.agusstkd.goodlife.domain.model.daily.DailyLog
+import com.agusstkd.goodlife.domain.model.daily.ItemStatus
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 
 fun DailyLogDto.toDomain(): DailyLog {
     return DailyLog(
         id = id,
         userId = userId,
-        date = LocalDate.parse(date),  // "2026-02-03" → LocalDate
+        date = LocalDate.parse(date),  // "2026-02-05" → LocalDate
         completionRate = completionRate,
         items = items.map { it.toDomain() }
     )
@@ -314,203 +347,104 @@ private fun DailyLogItemDto.extractTitle(): String {
 private fun DailyLogItemDto.extractDescription(): String? {
     return when (itemType) {
         "TASK" -> task?.description
-        "HABIT" -> "${habitLog?.currentValue ?: 0} / ${habitLog?.targetValue ?: 0} ${habitLog?.unit ?: ""}"
+        "HABIT" -> {
+            val log = habitLog ?: return null
+            "${log.currentValue} / ${log.targetValue} ${log.unit}"
+        }
         else -> null
     }
 }
-
-// data/local/mapper/DailyLogEntityMapper.kt
-
-fun DailyLogEntity.toDomain(items: List<DailyLogItemEntity>): DailyLog {
-    return DailyLog(
-        id = id,
-        userId = userId,
-        date = LocalDate.parse(date),
-        completionRate = completionRate,
-        items = items.map { it.toDomain() }
-    )
-}
-
-fun DailyLogItemEntity.toDomain(): DailyItem {
-    return DailyItem(
-        id = id,
-        type = DailyItemType.valueOf(itemType),
-        referenceId = referenceId,
-        scheduledTime = scheduledTime?.let { LocalTime.parse(it) },
-        status = ItemStatus.valueOf(status),
-        title = title,
-        description = description
-    )
-}
-
-fun DailyLog.toEntity(): DailyLogEntity {
-    return DailyLogEntity(
-        date = date.toString(),  // LocalDate → "2026-02-03"
-        id = id,
-        userId = userId,
-        completionRate = completionRate
-    )
-}
-
-fun DailyItem.toEntity(dailyLogDate: String): DailyLogItemEntity {
-    return DailyLogItemEntity(
-        id = id,
-        dailyLogDate = dailyLogDate,
-        itemType = type.name,
-        referenceId = referenceId,
-        scheduledTime = scheduledTime?.toString(),
-        status = status.name,
-        title = title,
-        description = description
-    )
-}
 ```
 
-#### 2.6 Repository Implementation (Stale-While-Revalidate)
+#### 2.3 ApiService
+
+```kotlin
+// Agregar a: data/remote/api/GoodLifeApiService.kt
+
+@GET("api/v1/daily-logs/{date}")
+suspend fun getDailyLog(
+    @Path("date") date: String  // "2026-02-05"
+): BaseResponse<DailyLogDto>
+
+@PATCH("api/v1/daily-logs/items/{itemId}/status")
+suspend fun updateItemStatus(
+    @Path("itemId") itemId: Long,
+    @Query("status") status: String  // "COMPLETED", "SKIPPED", "PENDING"
+): BaseResponse<DailyLogDto>
+```
+
+#### 2.4 Repository SIMPLE (sin Room)
 
 ```kotlin
 // data/repository/DailyRepositoryImpl.kt
+package com.agusstkd.goodlife.data.repository
+
+import com.agusstkd.goodlife.core.dispatcher.DispatcherProvider
+import com.agusstkd.goodlife.core.network.ApiException
+import com.agusstkd.goodlife.core.network.HttpCode
+import com.agusstkd.goodlife.core.result.Result
+import com.agusstkd.goodlife.core.result.suspendResultOf
+import com.agusstkd.goodlife.data.remote.api.GoodLifeApiService
+import com.agusstkd.goodlife.data.remote.mapper.toDomain
+import com.agusstkd.goodlife.domain.model.daily.DailyLog
+import com.agusstkd.goodlife.domain.model.daily.ItemStatus
+import com.agusstkd.goodlife.domain.repository.DailyRepository
+import kotlinx.coroutines.withContext
+import kotlinx.datetime.LocalDate
+
+/**
+ * Implementación de [DailyRepository].
+ * 
+ * FASE 1: Solo consulta backend (fuente de verdad 100%).
+ * Backend maneja toda la lógica de generación y cálculo de daily logs.
+ */
 class DailyRepositoryImpl(
     private val apiService: GoodLifeApiService,
-    private val dailyDao: DailyDao,
-    private val dateProvider: DateProvider,
     private val dispatcher: DispatcherProvider
 ) : DailyRepository {
 
     override suspend fun getDailyLog(date: LocalDate): Result<DailyLog> {
         return withContext(dispatcher.io) {
             suspendResultOf {
+                // LocalDate.toString() devuelve ISO-8601 ("2026-02-05")
                 val dateString = date.toString()
-                val today = dateProvider.today()
-
-                // 🎯 OPTIMIZACIÓN: Días muy viejos (> 14 días) → cache only
-                if (date < today.minus(14, DateTimeUnit.DAY)) {
-                    val cached = getCachedDailyLog(dateString)
-                    if (cached != null) {
-                        return@suspendResultOf cached
+                
+                val response = apiService.getDailyLog(dateString)
+                
+                when {
+                    HttpCode.isSuccess(response.code) -> {
+                        response.data?.toDomain()
+                            ?: throw ApiException.NotFoundException("Daily log no encontrado")
                     }
-                }
-
-                // 🔥 ESTRATEGIA PRINCIPAL: Stale-While-Revalidate (SPEC-006)
-                fetchDailyLogWithSWR(dateString)
-            }
-        }
-    }
-
-    /**
-     * Stale-While-Revalidate Pattern (SPEC-006).
-     * 
-     * 1. Devuelve cache si existe (instantáneo)
-     * 2. Consulta backend SIEMPRE (si hay internet)
-     * 3. Actualiza cache con response fresca
-     * 
-     * Beneficios:
-     * - UI instantánea (0ms)
-     * - Backend como source of truth
-     * - Funciona offline
-     */
-    private suspend fun fetchDailyLogWithSWR(dateString: String): DailyLog {
-        // PASO 1: Obtener cache (si existe)
-        val cached = getCachedDailyLog(dateString)
-
-        // PASO 2: Intentar backend SIEMPRE (si hay internet)
-        try {
-            val response = apiService.getDailyLog(dateString)
-
-            when {
-                HttpCode.isSuccess(response.code) -> {
-                    val fresh = response.data?.toDomain()
-                        ?: throw ApiException.NotFoundException("Daily log no encontrado")
-
-                    // ✅ Guardar en cache (revalidation)
-                    saveDailyLogToCache(fresh)
-
-                    // ✅ Devolver data fresca
-                    return fresh
-                }
-                else -> {
-                    // Backend error → usar cache si existe
-                    if (cached != null) {
-                        return cached
-                    } else {
+                    else -> {
                         throw ApiException.fromCode(response.code, response.message)
                     }
                 }
             }
-        } catch (e: IOException) {
-            // 🔴 SIN INTERNET → Modo offline
-            if (cached != null) {
-                return cached
-            } else {
-                throw NoDataAvailableException("Sin internet y sin cache", e)
-            }
-        } catch (e: Exception) {
-            // Otro error → Fallback a cache
-            if (cached != null) {
-                return cached
-            } else {
-                throw e
-            }
         }
     }
 
-    private suspend fun getCachedDailyLog(dateString: String): DailyLog? {
-        val logEntity = dailyDao.getDailyLog(dateString) ?: return null
-        val itemEntities = dailyDao.getDailyLogItems(dateString)
-        return logEntity.toDomain(itemEntities)
-    }
-
-    override suspend fun updateItemStatus(itemId: Long, status: ItemStatus): Result<DailyLog> {
+    override suspend fun updateItemStatus(
+        itemId: Long,
+        status: ItemStatus
+    ): Result<DailyLog> {
         return withContext(dispatcher.io) {
             suspendResultOf {
-                val statusString = status.name
-
-                try {
-                    // PASO 1: Intentar backend primero
-                    val response = apiService.updateItemStatus(itemId, statusString)
-
-                    when {
-                        HttpCode.isSuccess(response.code) -> {
-                            val dailyLog = response.data?.toDomain()
-                                ?: throw ApiException.NotFoundException()
-
-                            // PASO 2: Actualizar cache con respuesta
-                            saveDailyLogToCache(dailyLog)
-
-                            dailyLog
-                        }
-                        else -> {
-                            throw ApiException.fromCode(response.code, response.message)
-                        }
+                val statusString = status.name  // ItemStatus.COMPLETED → "COMPLETED"
+                
+                val response = apiService.updateItemStatus(itemId, statusString)
+                
+                when {
+                    HttpCode.isSuccess(response.code) -> {
+                        response.data?.toDomain()
+                            ?: throw ApiException.NotFoundException("Daily log no encontrado")
                     }
-                } catch (e: IOException) {
-                    // 🔴 OFFLINE: Actualizar solo cache (optimistic)
-                    dailyDao.updateItemStatus(itemId, statusString)
-
-                    // TODO FASE 2: Marcar como pendiente de sincronización
-                    // syncQueueDao.enqueue(PendingSync(itemId, status))
-
-                    // Devolver cache actualizado
-                    val date = getDateForItem(itemId)
-                    getCachedDailyLog(date.toString())
-                        ?: throw NoDataAvailableException("No se pudo actualizar offline")
+                    else -> {
+                        throw ApiException.fromCode(response.code, response.message)
+                    }
                 }
             }
         }
-    }
-
-    private suspend fun getDateForItem(itemId: Long): LocalDate {
-        val item = dailyDao.getDailyLogItemById(itemId)
-        return LocalDate.parse(item.dailyLogDate)
-    }
-    
-    private suspend fun saveDailyLogToCache(dailyLog: DailyLog) {
-        val dateString = dailyLog.date.toString()
-        val logEntity = dailyLog.toEntity()
-        val itemEntities = dailyLog.items.map { it.toEntity(dateString) }
-        
-        // Room es rápido (~7ms para 10 items), no bloquea
-        dailyDao.insertDailyLogWithItems(logEntity, itemEntities)
     }
 }
 ```
@@ -519,47 +453,73 @@ class DailyRepositoryImpl(
 
 ### 3️⃣ Presentation Layer
 
-#### 3.1 UiState
+#### 3.1 UiState (actualizado)
 
 ```kotlin
 // presentation/screen/tabs/daily/model/DailyUiState.kt
+package com.agusstkd.goodlife.presentation.screen.tabs.daily.model
+
+import androidx.compose.runtime.Stable
+import kotlinx.datetime.LocalDate
+
+/**
+ * Estados de la pantalla Daily.
+ */
+@Stable
 sealed interface DailyUiState {
     
+    /**
+     * Cargando datos del backend.
+     */
     data object Loading : DailyUiState
     
+    /**
+     * Datos cargados exitosamente.
+     */
     data class Success(
         val date: LocalDate,
         val dayNumber: Int,
-        val headerText: String,
-        val monthYear: String,
+        val headerText: String,  // "Hoy", "Ayer", "Lun, 05 feb"
+        val monthYear: String,   // "Febrero 2026"
         val showFullDate: Boolean,
         val completionRate: Double,
         val items: List<DailyItemUiModel>,
         val isRefreshing: Boolean = false
     ) : DailyUiState
     
+    /**
+     * Error al cargar datos.
+     */
     data class Error(
         val message: String
     ) : DailyUiState
 }
 
-// presentation/screen/tabs/daily/model/DailyItemUiModel.kt
+/**
+ * Modelo UI de un item del daily log.
+ */
+@Stable
 data class DailyItemUiModel(
     val id: Long,
     val type: DailyItemType,
     val title: String,
     val description: String?,
-    val scheduledTime: String?,  // "08:00" (formateado)
-    val status: ItemStatus,
-    val iconRes: Int,  // R.drawable.ic_task
-    val colorRes: Int  // R.color.task_color
+    val scheduledTime: String?,  // "08:00"
+    val status: ItemStatus
 )
 ```
 
-#### 3.2 UiAction
+#### 3.2 UiAction (actualizado)
 
 ```kotlin
 // presentation/screen/tabs/daily/model/DailyUiAction.kt
+package com.agusstkd.goodlife.presentation.screen.tabs.daily.model
+
+import com.agusstkd.goodlife.domain.model.daily.ItemStatus
+
+/**
+ * Acciones de usuario en Daily screen.
+ */
 sealed interface DailyUiAction {
     data object OnPreviousDay : DailyUiAction
     data object OnNextDay : DailyUiAction
@@ -569,12 +529,45 @@ sealed interface DailyUiAction {
 }
 ```
 
-#### 3.3 ViewModel (actualizado con API)
+#### 3.3 ViewModel (actualizado)
 
 ```kotlin
 // presentation/screen/tabs/daily/DailyTabViewModel.kt
-import java.io.IOException
+package com.agusstkd.goodlife.presentation.screen.tabs.daily
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.agusstkd.goodlife.core.datetime.DateProvider
+import com.agusstkd.goodlife.core.datetime.language.AppLanguage
+import com.agusstkd.goodlife.core.network.ApiException
+import com.agusstkd.goodlife.core.result.onError
+import com.agusstkd.goodlife.core.result.onSuccess
+import com.agusstkd.goodlife.domain.model.daily.DailyItem
+import com.agusstkd.goodlife.domain.model.daily.DailyItemType
+import com.agusstkd.goodlife.domain.model.daily.ItemStatus
+import com.agusstkd.goodlife.domain.usecase.daily.GetDailyItemsUseCase
+import com.agusstkd.goodlife.domain.usecase.daily.UpdateItemStatusUseCase
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyItemUiModel
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiAction
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
+
+/**
+ * ViewModel para Daily tab.
+ * 
+ * Responsabilidades:
+ * - Mantener fecha navegada ([currentDate])
+ * - Cargar items del backend
+ * - Actualizar status de items
+ * - Formatear fechas para UI
+ */
 class DailyTabViewModel(
     private val dateProvider: DateProvider,
     private val language: AppLanguage,
@@ -595,7 +588,7 @@ class DailyTabViewModel(
         when (action) {
             DailyUiAction.OnPreviousDay -> navigateToPreviousDay()
             DailyUiAction.OnNextDay -> navigateToNextDay()
-            DailyUiAction.OnRefresh -> refreshItems()
+            DailyUiAction.OnRefresh -> loadItems()
             is DailyUiAction.OnItemClick -> navigateToDetail(action.itemId)
             is DailyUiAction.OnItemStatusChange -> updateItemStatus(action.itemId, action.newStatus)
         }
@@ -607,15 +600,7 @@ class DailyTabViewModel(
             
             getDailyItemsUseCase(currentDate)
                 .onSuccess { dailyLog ->
-                    _uiState.value = DailyUiState.Success(
-                        date = dailyLog.date,
-                        dayNumber = dailyLog.date.dayOfMonth,
-                        headerText = formatDateHeader(dailyLog.date),
-                        monthYear = formatMonthYear(dailyLog.date),
-                        showFullDate = !isRelativeDate(dailyLog.date),
-                        completionRate = dailyLog.completionRate,
-                        items = dailyLog.items.map { it.toUiModel() }
-                    )
+                    _uiState.value = buildSuccessState(dailyLog)
                 }
                 .onError { error ->
                     _uiState.value = DailyUiState.Error(
@@ -623,93 +608,25 @@ class DailyTabViewModel(
                             is ApiException.UnauthorizedException -> "Sesión expirada"
                             is ApiException.NotFoundException -> "No hay datos para esta fecha"
                             is ApiException.ServerException -> "Error del servidor. Intenta más tarde"
-                            else -> error.message ?: "Error desconocido"
+                            else -> error.message ?: "Error al cargar datos"
                         }
                     )
-                }
-        }
-    }
-
-    private fun refreshItems() {
-        val currentState = _uiState.value
-        if (currentState is DailyUiState.Success) {
-            _uiState.value = currentState.copy(isRefreshing = true)
-        }
-        
-        viewModelScope.launch {
-            getDailyItemsUseCase(currentDate)
-                .onSuccess { dailyLog ->
-                    _uiState.value = DailyUiState.Success(
-                        date = dailyLog.date,
-                        dayNumber = dailyLog.date.dayOfMonth,
-                        headerText = formatDateHeader(dailyLog.date),
-                        monthYear = formatMonthYear(dailyLog.date),
-                        showFullDate = !isRelativeDate(dailyLog.date),
-                        completionRate = dailyLog.completionRate,
-                        items = dailyLog.items.map { it.toUiModel() },
-                        isRefreshing = false
-                    )
-                }
-                .onError { error ->
-                    _uiState.value = DailyUiState.Error(error.message ?: "Error al refrescar")
                 }
         }
     }
 
     private fun updateItemStatus(itemId: Long, newStatus: ItemStatus) {
-        val currentState = _uiState.value as? DailyUiState.Success ?: return
-
-        // 🔥 OPTIMISTIC UI (SPEC-006): Actualizar UI ANTES del request
-        val updatedItems = currentState.items.map { item ->
-            if (item.id == itemId) {
-                item.copy(status = newStatus)
-            } else {
-                item
-            }
-        }
-
-        _uiState.value = currentState.copy(
-            items = updatedItems,
-            completionRate = calculateCompletionRate(updatedItems)
-        )
-
-        // Hacer request al backend
         viewModelScope.launch {
             updateItemStatusUseCase(itemId, newStatus)
                 .onSuccess { dailyLog ->
-                    // Backend confirmó → actualizar con data real
-                    _uiState.value = DailyUiState.Success(
-                        date = dailyLog.date,
-                        dayNumber = dailyLog.date.dayOfMonth,
-                        headerText = formatDateHeader(dailyLog.date),
-                        monthYear = formatMonthYear(dailyLog.date),
-                        showFullDate = !isRelativeDate(dailyLog.date),
-                        completionRate = dailyLog.completionRate,
-                        items = dailyLog.items.map { it.toUiModel() }
-                    )
+                    _uiState.value = buildSuccessState(dailyLog)
                 }
                 .onError { error ->
-                    when (error) {
-                        is IOException -> {
-                            // Offline: mantener cambio optimista
-                            // El Repository ya actualizó cache local
-                        }
-                        else -> {
-                            // Error real: revertir cambio optimista
-                            _uiState.value = currentState
-                            showError(error.message ?: "Error al actualizar")
-                        }
-                    }
+                    _uiState.value = DailyUiState.Error(
+                        message = error.message ?: "Error al actualizar"
+                    )
                 }
         }
-    }
-
-    private fun calculateCompletionRate(items: List<DailyItemUiModel>): Double {
-        if (items.isEmpty()) return 0.0
-        val completed = items.count { 
-            it.status == ItemStatus.COMPLETED || it.status == ItemStatus.SKIPPED 
-        }
-        return completed.toDouble() / items.size
     }
 
     private fun navigateToPreviousDay() {
@@ -723,44 +640,85 @@ class DailyTabViewModel(
     }
 
     private fun navigateToDetail(itemId: Long) {
-        // TODO: navegar a pantalla de detalle
+        // TODO: Implementar navegación a detalle
     }
 
-    // Funciones de formateo (igual que antes)
-    private fun formatDateHeader(date: LocalDate): String { /* ... */ }
-    private fun formatMonthYear(date: LocalDate): String { /* ... */ }
-    private fun isRelativeDate(date: LocalDate): Boolean { /* ... */ }
-}
+    private fun buildSuccessState(dailyLog: DailyLog): DailyUiState.Success {
+        return DailyUiState.Success(
+            date = dailyLog.date,
+            dayNumber = dailyLog.date.dayOfMonth,
+            headerText = formatDateHeader(dailyLog.date),
+            monthYear = formatMonthYear(dailyLog.date),
+            showFullDate = !isRelativeDate(dailyLog.date),
+            completionRate = dailyLog.completionRate,
+            items = dailyLog.items.map { it.toUiModel() },
+            isRefreshing = false
+        )
+    }
 
-// Extension para mapear DailyItem → DailyItemUiModel
-private fun DailyItem.toUiModel(): DailyItemUiModel {
-    return DailyItemUiModel(
-        id = id,
-        type = type,
-        title = title,
-        description = description,
-        scheduledTime = scheduledTime?.let { "${it.hour}:${it.minute.toString().padStart(2, '0')}" },
-        status = status,
-        iconRes = when (type) {
-            DailyItemType.TASK -> R.drawable.ic_task
-            DailyItemType.HABIT -> R.drawable.ic_habit
-            DailyItemType.WORKOUT -> R.drawable.ic_workout
-            DailyItemType.MEAL -> R.drawable.ic_meal
-        },
-        colorRes = when (type) {
-            DailyItemType.TASK -> R.color.task_color
-            DailyItemType.HABIT -> R.color.habit_color
-            DailyItemType.WORKOUT -> R.color.workout_color
-            DailyItemType.MEAL -> R.color.meal_color
+    private fun formatDateHeader(date: LocalDate): String {
+        val today = dateProvider.today()
+        val yesterday = dateProvider.yesterday()
+        val tomorrow = dateProvider.tomorrow()
+
+        return when (date) {
+            today -> language.relativeTexts.today
+            yesterday -> language.relativeTexts.yesterday
+            tomorrow -> language.relativeTexts.tomorrow
+            else -> {
+                // Formato: "Lun, 05 feb"
+                val dayOfWeek = language.daysOfWeek.short[date.dayOfWeek.ordinal]
+                val monthName = language.monthNames.short[date.monthNumber - 1]
+                "$dayOfWeek, ${date.dayOfMonth} $monthName"
+            }
         }
-    )
+    }
+
+    private fun formatMonthYear(date: LocalDate): String {
+        val monthName = language.monthNames.names[date.monthNumber - 1]
+        return "$monthName ${date.year}"
+    }
+
+    private fun isRelativeDate(date: LocalDate): Boolean {
+        val today = dateProvider.today()
+        return date == today || date == dateProvider.yesterday() || date == dateProvider.tomorrow()
+    }
+
+    private fun DailyItem.toUiModel(): DailyItemUiModel {
+        return DailyItemUiModel(
+            id = id,
+            type = type,
+            title = title,
+            description = description,
+            scheduledTime = scheduledTime?.let { 
+                "${it.hour}:${it.minute.toString().padStart(2, '0')}" 
+            },
+            status = status
+        )
+    }
 }
 ```
 
-#### 3.4 Screen (actualizado con items)
+#### 3.4 Screen (actualizado)
 
 ```kotlin
 // presentation/screen/tabs/daily/DailyScreen.kt
+package com.agusstkd.goodlife.presentation.screen.tabs.daily
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.agusstkd.goodlife.presentation.components.header.DateHeaderComponent
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiAction
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+
 @Composable
 fun DailyScreen(
     uiState: DailyUiState,
@@ -769,12 +727,7 @@ fun DailyScreen(
 ) {
     when (uiState) {
         is DailyUiState.Loading -> {
-            Box(
-                modifier = modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            DailyLoadingContent(modifier = modifier)
         }
         
         is DailyUiState.Success -> {
@@ -796,15 +749,22 @@ fun DailyScreen(
 }
 
 @Composable
+private fun DailyLoadingContent(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
 private fun DailySuccessContent(
     uiState: DailyUiState.Success,
     onAction: (DailyUiAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = uiState.isRefreshing,
-        onRefresh = { onAction(DailyUiAction.OnRefresh) }
-    )
+    val swipeRefreshState = rememberSwipeRefreshState(uiState.isRefreshing)
     
     Column(modifier = modifier.fillMaxSize()) {
         // Header con navegación de fecha
@@ -827,14 +787,14 @@ private fun DailySuccessContent(
         Text(
             text = "${(uiState.completionRate * 100).toInt()}% completado",
             style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, bottom = 8.dp)
         )
         
-        // Lista de items
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .pullRefresh(pullRefreshState)
+        // Lista de items con pull-to-refresh
+        SwipeRefresh(
+            state = swipeRefreshState,
+            onRefresh = { onAction(DailyUiAction.OnRefresh) },
+            modifier = Modifier.fillMaxSize()
         ) {
             if (uiState.items.isEmpty()) {
                 EmptyDailyContent(modifier = Modifier.fillMaxSize())
@@ -858,18 +818,75 @@ private fun DailySuccessContent(
                     }
                 }
             }
-            
-            PullRefreshIndicator(
-                refreshing = uiState.isRefreshing,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
         }
     }
 }
 
 @Composable
-private fun DailyItemCard(
+private fun EmptyDailyContent(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "No hay actividades para este día",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+@Composable
+private fun DailyErrorContent(
+    message: String,
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.error
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        Button(onClick = onRetry) {
+            Text("Reintentar")
+        }
+    }
+}
+```
+
+#### 3.5 DailyItemCard (nuevo)
+
+```kotlin
+// presentation/components/daily/DailyItemCard.kt
+package com.agusstkd.goodlife.presentation.components.daily
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
+import com.agusstkd.goodlife.domain.model.daily.DailyItemType
+import com.agusstkd.goodlife.domain.model.daily.ItemStatus
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyItemUiModel
+
+/**
+ * Card para mostrar un item del daily log.
+ */
+@Composable
+fun DailyItemCard(
     item: DailyItemUiModel,
     onClick: () -> Unit,
     onStatusChange: (ItemStatus) -> Unit,
@@ -885,11 +902,11 @@ private fun DailyItemCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Icono del tipo de item
+            // Icono según tipo
             Icon(
-                painter = painterResource(item.iconRes),
+                imageVector = getIconForType(item.type),
                 contentDescription = null,
-                tint = colorResource(item.colorRes),
+                tint = getColorForType(item.type),
                 modifier = Modifier.size(32.dp)
             )
             
@@ -948,51 +965,22 @@ private fun StatusCheckbox(
     )
 }
 
-@Composable
-private fun EmptyDailyContent(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_calendar_empty),
-            contentDescription = null,
-            modifier = Modifier.size(64.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        Text(
-            text = "No hay actividades para este día",
-            style = MaterialTheme.typography.bodyLarge
-        )
+private fun getIconForType(type: DailyItemType): ImageVector {
+    return when (type) {
+        DailyItemType.TASK -> Icons.Default.Check
+        DailyItemType.HABIT -> Icons.Default.FavoriteBorder
+        DailyItemType.WORKOUT -> Icons.Default.FitnessCenter
+        DailyItemType.MEAL -> Icons.Default.Restaurant
     }
 }
 
 @Composable
-private fun DailyErrorContent(
-    message: String,
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.error
-        )
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        Button(onClick = onRetry) {
-            Text("Reintentar")
-        }
+private fun getColorForType(type: DailyItemType): androidx.compose.ui.graphics.Color {
+    return when (type) {
+        DailyItemType.TASK -> MaterialTheme.colorScheme.primary
+        DailyItemType.HABIT -> MaterialTheme.colorScheme.secondary
+        DailyItemType.WORKOUT -> MaterialTheme.colorScheme.tertiary
+        DailyItemType.MEAL -> MaterialTheme.colorScheme.error
     }
 }
 ```
@@ -1003,20 +991,40 @@ private fun DailyErrorContent(
 
 ```kotlin
 // di/DailyModule.kt
+package com.agusstkd.goodlife.di
+
+import com.agusstkd.goodlife.data.repository.DailyRepositoryImpl
+import com.agusstkd.goodlife.domain.repository.DailyRepository
+import com.agusstkd.goodlife.domain.usecase.daily.GetDailyItemsUseCase
+import com.agusstkd.goodlife.domain.usecase.daily.UpdateItemStatusUseCase
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.DailyTabViewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.dsl.module
+
 val dailyModule = module {
     
-    // Repository
+    // Repository (FASE 1: sin Room)
     single<DailyRepository> {
         DailyRepositoryImpl(
             apiService = get(),
-            dailyDao = get(),
             dispatcher = get()
         )
     }
     
     // Use Cases
-    factory { GetDailyItemsUseCase(repository = get(), dispatcher = get()) }
-    factory { UpdateItemStatusUseCase(repository = get(), dispatcher = get()) }
+    factory { 
+        GetDailyItemsUseCase(
+            repository = get(),
+            dispatcher = get()
+        )
+    }
+    
+    factory { 
+        UpdateItemStatusUseCase(
+            repository = get(),
+            dispatcher = get()
+        )
+    }
     
     // ViewModel
     viewModel {
@@ -1028,117 +1036,348 @@ val dailyModule = module {
         )
     }
 }
+```
 
-// di/DatabaseModule.kt
-val databaseModule = module {
-    
-    single {
-        Room.databaseBuilder(
-            androidContext(),
-            GoodLifeDatabase::class.java,
-            "goodlife_database"
-        )
-            .fallbackToDestructiveMigration()
-            .build()
-    }
-    
-    single { get<GoodLifeDatabase>().dailyDao() }
-}
-
-// GoodLifeApp.kt
-class GoodLifeApp : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        
-        startKoin {
-            androidContext(this@GoodLifeApp)
-            modules(
-                coreModule,
-                networkModule,
-                databaseModule,
-                dailyModule,  // ← Nuevo
-                // ... otros módulos
-            )
-        }
-    }
+```kotlin
+// Agregar en: GoodLifeApp.kt
+startKoin {
+    androidContext(this@GoodLifeApp)
+    modules(
+        coreModule,
+        networkModule,
+        databaseModule,
+        biometricModule,
+        dailyModule,  // ← AGREGAR
+        // ... otros módulos
+    )
 }
 ```
 
 ---
 
-## 📝 Checklist de Implementación
+## ✅ FASE 1 Completada
 
-### Fase 1: Domain Layer ✅
-- [ ] Crear `DailyLog.kt`, `DailyItem.kt`, `DailyItemType.kt`, `ItemStatus.kt`
-- [ ] Crear `DailyRepository.kt` (interface)
-- [ ] Crear `GetDailyItemsUseCase.kt`
-- [ ] Crear `UpdateItemStatusUseCase.kt`
+Cuando termines la FASE 1, tu app:
+- ✅ Carga datos del backend
+- ✅ Muestra daily log del día actual
+- ✅ Navega entre días (← ayer | hoy | mañana →)
+- ✅ Actualiza status de items
+- ✅ Muestra porcentaje de completitud
+- ✅ Pull-to-refresh funciona
 
-### Fase 2: Data Layer - Remote ✅
-- [ ] Crear DTOs: `DailyLogDto.kt`, `DailyLogItemDto.kt`, `TaskSummaryDto.kt`, etc.
-- [ ] Agregar endpoints a `GoodLifeApiService.kt`
-- [ ] Crear mappers: `DailyLogMapper.kt` (DTO → Domain)
+**Limitaciones esperadas:**
+- ❌ No funciona sin internet (requiere conexión)
+- ❌ Cada navegación hace request (puede ser lento)
 
-### Fase 3: Data Layer - Local ✅
-- [ ] Crear entities: `DailyLogEntity.kt`, `DailyLogItemEntity.kt`
-- [ ] Crear `DailyDao.kt`
-- [ ] Agregar tablas a `GoodLifeDatabase.kt`
-- [ ] Crear mappers: `DailyLogEntityMapper.kt` (Entity ↔ Domain)
-
-### Fase 4: Data Layer - Repository ✅
-- [ ] Implementar `DailyRepositoryImpl.kt` con lógica de cache
-- [ ] Testear manejo de cache (fresco, viejo, offline)
-
-### Fase 5: Presentation Layer ✅
-- [ ] Actualizar `DailyUiState.kt` con Success/Error/Loading
-- [ ] Actualizar `DailyUiAction.kt` con acciones de items
-- [ ] Actualizar `DailyTabViewModel.kt` con UseCase integration
-- [ ] Actualizar `DailyScreen.kt` con LazyColumn de items
-- [ ] Crear `DailyItemCard.kt` composable
-
-### Fase 6: Dependency Injection ✅
-- [ ] Crear `DailyModule.kt`
-- [ ] Registrar Repository, UseCases, ViewModel
-- [ ] Agregar `databaseModule` si no existe
-- [ ] Actualizar `GoodLifeApp.kt` con módulos
-
-### Fase 7: Testing 🧪
-- [ ] Test de Repository (cache, network, offline)
-- [ ] Test de UseCases
-- [ ] Test de ViewModel
-- [ ] Test de Mappers
-
-### Fase 8: Documentación 📚
-- [ ] Actualizar `SPEC-005-network-service.md` con endpoints de Daily
-- [ ] Documentar DTOs y flows en KDoc
-- [ ] Actualizar `CHANGELOG.md`
+**¿Cuándo pasar a FASE 2?**
+- Cuando necesites entrenar sin internet
+- Cuando quieras mejor performance (UI instantánea)
+- Cuando marques hábitos y se corte conexión
 
 ---
 
-## 🎯 Próximos Pasos (después de Daily)
+---
 
-1. **Tasks CRUD**: Crear, editar, eliminar tareas (con SWR)
-2. **Habits CRUD**: Crear, editar hábitos con progreso (con SWR)
-3. **Workouts**: Ejecutar entrenamientos de la rutina activa (con SWR)
-4. **Meals**: Planificar comidas del día (con SWR)
-5. **Pending Sync** (FUTURO): Sincronizar cambios offline cuando vuelva internet
+# 🔮 FASE 2: ROOM + CACHE (FUTURO)
 
-**Importante:** Todos los módulos usarán **Stale-While-Revalidate** (SPEC-006).
+## Objetivo
+
+Agregar soporte offline con **Stale-While-Revalidate** (SPEC-006):
+- ✅ UI instantánea (cache first)
+- ✅ Backend como fuente de verdad (revalidation)
+- ✅ Funciona sin internet (gym, entrenamientos)
+- ✅ No pierde progreso si se corta conexión
+
+---
+
+## Qué Agregar en FASE 2
+
+### 1️⃣ Room Entities
+
+```kotlin
+// data/local/entity/DailyLogEntity.kt
+@Entity(tableName = "daily_logs")
+data class DailyLogEntity(
+    @PrimaryKey val date: String,  // "2026-02-05"
+    val id: Long,
+    val userId: Long,
+    val completionRate: Double
+)
+
+// data/local/entity/DailyLogItemEntity.kt
+@Entity(
+    tableName = "daily_log_items",
+    foreignKeys = [
+        ForeignKey(
+            entity = DailyLogEntity::class,
+            parentColumns = ["date"],
+            childColumns = ["dailyLogDate"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
+data class DailyLogItemEntity(
+    @PrimaryKey val id: Long,
+    val dailyLogDate: String,  // FK
+    val itemType: String,
+    val referenceId: Long,
+    val scheduledTime: String?,
+    val status: String,
+    val title: String,
+    val description: String?
+)
+```
+
+### 2️⃣ DAO
+
+```kotlin
+// data/local/dao/DailyDao.kt
+@Dao
+interface DailyDao {
+    
+    @Query("SELECT * FROM daily_logs WHERE date = :date")
+    suspend fun getDailyLog(date: String): DailyLogEntity?
+    
+    @Query("SELECT * FROM daily_log_items WHERE dailyLogDate = :date ORDER BY scheduledTime ASC")
+    suspend fun getDailyLogItems(date: String): List<DailyLogItemEntity>
+    
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertDailyLog(dailyLog: DailyLogEntity)
+    
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertDailyLogItems(items: List<DailyLogItemEntity>)
+    
+    @Transaction
+    suspend fun insertDailyLogWithItems(
+        dailyLog: DailyLogEntity,
+        items: List<DailyLogItemEntity>
+    ) {
+        insertDailyLog(dailyLog)
+        insertDailyLogItems(items)
+    }
+    
+    @Query("UPDATE daily_log_items SET status = :status WHERE id = :itemId")
+    suspend fun updateItemStatus(itemId: Long, status: String)
+    
+    @Query("SELECT * FROM daily_log_items WHERE id = :itemId")
+    suspend fun getDailyLogItemById(itemId: Long): DailyLogItemEntity
+    
+    @Query("DELETE FROM daily_logs WHERE date < :oldestDate")
+    suspend fun deleteOldLogs(oldestDate: String)
+}
+```
+
+### 3️⃣ Mappers Entity ↔ Domain
+
+```kotlin
+// data/local/mapper/DailyLogEntityMapper.kt
+fun DailyLogEntity.toDomain(items: List<DailyLogItemEntity>): DailyLog {
+    return DailyLog(
+        id = id,
+        userId = userId,
+        date = LocalDate.parse(date),
+        completionRate = completionRate,
+        items = items.map { it.toDomain() }
+    )
+}
+
+fun DailyLogItemEntity.toDomain(): DailyItem {
+    return DailyItem(
+        id = id,
+        type = DailyItemType.valueOf(itemType),
+        referenceId = referenceId,
+        scheduledTime = scheduledTime?.let { LocalTime.parse(it) },
+        status = ItemStatus.valueOf(status),
+        title = title,
+        description = description
+    )
+}
+
+fun DailyLog.toEntity(): DailyLogEntity {
+    return DailyLogEntity(
+        date = date.toString(),
+        id = id,
+        userId = userId,
+        completionRate = completionRate
+    )
+}
+
+fun DailyItem.toEntity(dailyLogDate: String): DailyLogItemEntity {
+    return DailyLogItemEntity(
+        id = id,
+        dailyLogDate = dailyLogDate,
+        itemType = type.name,
+        referenceId = referenceId,
+        scheduledTime = scheduledTime?.toString(),
+        status = status.name,
+        title = title,
+        description = description
+    )
+}
+```
+
+### 4️⃣ Repository con SWR
+
+```kotlin
+// data/repository/DailyRepositoryImpl.kt (actualizado)
+class DailyRepositoryImpl(
+    private val apiService: GoodLifeApiService,
+    private val dailyDao: DailyDao,  // ← AGREGAR
+    private val dateProvider: DateProvider,  // ← AGREGAR
+    private val dispatcher: DispatcherProvider
+) : DailyRepository {
+
+    override suspend fun getDailyLog(date: LocalDate): Result<DailyLog> {
+        return withContext(dispatcher.io) {
+            suspendResultOf {
+                val dateString = date.toString()
+                val today = dateProvider.today()
+
+                // Optimización: Días muy viejos → cache only
+                if (date < today.minus(14, DateTimeUnit.DAY)) {
+                    val cached = getCachedDailyLog(dateString)
+                    if (cached != null) {
+                        return@suspendResultOf cached
+                    }
+                }
+
+                // SWR: Cache first + backend revalidation
+                fetchDailyLogWithSWR(dateString)
+            }
+        }
+    }
+
+    private suspend fun fetchDailyLogWithSWR(dateString: String): DailyLog {
+        val cached = getCachedDailyLog(dateString)
+
+        try {
+            val response = apiService.getDailyLog(dateString)
+
+            when {
+                HttpCode.isSuccess(response.code) -> {
+                    val fresh = response.data?.toDomain()
+                        ?: throw ApiException.NotFoundException()
+
+                    saveDailyLogToCache(fresh)
+                    return fresh
+                }
+                else -> {
+                    return cached ?: throw ApiException.fromCode(response.code)
+                }
+            }
+        } catch (e: IOException) {
+            return cached ?: throw NoDataAvailableException("Sin internet y sin cache", e)
+        }
+    }
+
+    override suspend fun updateItemStatus(
+        itemId: Long,
+        status: ItemStatus
+    ): Result<DailyLog> {
+        return withContext(dispatcher.io) {
+            suspendResultOf {
+                try {
+                    val response = apiService.updateItemStatus(itemId, status.name)
+
+                    when {
+                        HttpCode.isSuccess(response.code) -> {
+                            val dailyLog = response.data?.toDomain()
+                                ?: throw ApiException.NotFoundException()
+
+                            saveDailyLogToCache(dailyLog)
+                            dailyLog
+                        }
+                        else -> {
+                            throw ApiException.fromCode(response.code)
+                        }
+                    }
+                } catch (e: IOException) {
+                    // OFFLINE: Actualizar cache local
+                    dailyDao.updateItemStatus(itemId, status.name)
+                    
+                    val date = getDateForItem(itemId)
+                    getCachedDailyLog(date.toString())
+                        ?: throw NoDataAvailableException("No se pudo actualizar offline")
+                }
+            }
+        }
+    }
+
+    private suspend fun getCachedDailyLog(dateString: String): DailyLog? {
+        val logEntity = dailyDao.getDailyLog(dateString) ?: return null
+        val itemEntities = dailyDao.getDailyLogItems(dateString)
+        return logEntity.toDomain(itemEntities)
+    }
+
+    private suspend fun saveDailyLogToCache(dailyLog: DailyLog) {
+        val dateString = dailyLog.date.toString()
+        val logEntity = dailyLog.toEntity()
+        val itemEntities = dailyLog.items.map { it.toEntity(dateString) }
+        dailyDao.insertDailyLogWithItems(logEntity, itemEntities)
+    }
+
+    private suspend fun getDateForItem(itemId: Long): LocalDate {
+        val item = dailyDao.getDailyLogItemById(itemId)
+        return LocalDate.parse(item.dailyLogDate)
+    }
+}
+```
+
+### 5️⃣ Actualizar DI
+
+```kotlin
+// di/DailyModule.kt (actualizado)
+val dailyModule = module {
+    
+    // Repository (FASE 2: con Room)
+    single<DailyRepository> {
+        DailyRepositoryImpl(
+            apiService = get(),
+            dailyDao = get(),  // ← AGREGAR
+            dateProvider = get(),  // ← AGREGAR
+            dispatcher = get()
+        )
+    }
+    
+    // ... resto igual
+}
+```
+
+---
+
+## 📊 Comparación FASE 1 vs FASE 2
+
+| Aspecto | FASE 1 (API only) | FASE 2 (Room/Cache) |
+|---------|-------------------|---------------------|
+| **Funciona con internet** | ✅ Sí | ✅ Sí |
+| **Funciona SIN internet** | ❌ No | ✅ Sí |
+| **UI instantánea** | ❌ No (espera red) | ✅ Sí (0ms) |
+| **Backend = verdad** | ✅ Sí | ✅ Sí |
+| **Complejidad** | 🟢 Simple | 🟡 Media |
+| **Archivos adicionales** | 0 | +6 (entities, DAO, mappers) |
+
+---
+
+## 🎯 Cuándo Hacer FASE 2
+
+Implementa FASE 2 cuando:
+- ✅ Necesites entrenar sin internet (gym)
+- ✅ Marques hábitos y se corte conexión
+- ✅ Completes workout sin red
+- ✅ Quieras UI más rápida (0ms)
+
+**No antes.** Primero hacé que funcione con backend (FASE 1).
 
 ---
 
 ## 📚 Referencias
 
-- [SPEC-004: DateProvider Pattern](../specs/SPEC-004-date-provider.md)
-- [SPEC-005: Network Service](../specs/SPEC-005-network-service.md)
-- **[SPEC-006: Offline-First + SWR](../specs/SPEC-006-offline-first-swr.md)** ← Arquitectura base
-
----
-
-**FIN DEL PLAN**
+- [SPEC-004: DateProvider Pattern](../specs/SPEC-004-date-provider.md) - Formato ISO-8601
+- [SPEC-005: Network Service](../specs/SPEC-005-network-service.md) - BaseResponse, HttpCode
+- [SPEC-006: Offline-First + SWR](../specs/SPEC-006-offline-first-swr.md) - Arquitectura FASE 2
 
 ---
 
 **Autor:** GoodLife Development Team  
-**Fecha:** 2026-02-05 (actualizado con SWR)  
-**Estado:** 📋 Listo para implementar
+**Fecha:** 2026-02-05  
+**Estado:** 📋 FASE 1 lista para implementar
