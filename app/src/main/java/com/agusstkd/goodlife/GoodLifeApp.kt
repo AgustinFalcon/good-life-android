@@ -3,6 +3,7 @@ package com.agusstkd.goodlife
 import android.app.Application
 import com.agusstkd.goodlife.di.appModule
 import com.agusstkd.goodlife.di.biometricModule
+import com.agusstkd.goodlife.di.dailyModule
 import com.agusstkd.goodlife.di.databaseModule
 import com.agusstkd.goodlife.di.networkModule
 import org.koin.android.ext.koin.androidContext
@@ -40,7 +41,8 @@ class GoodLifeApp : Application() {
                 networkModule,
                 databaseModule,
                 biometricModule,
-                appModule
+                appModule,
+                dailyModule
             )
         }
     }

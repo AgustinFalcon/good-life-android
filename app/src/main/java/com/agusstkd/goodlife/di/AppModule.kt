@@ -268,14 +268,4 @@ val appModule = module {
             language = get()
         )
     }
-
-    /**
-     * DailyTabViewModel - Tab de tareas diarias.
-     */
-    viewModel {
-        DailyTabViewModel(
-            dateProvider = get(),
-            language = get()
-        )
-    }
 }

@@ -114,9 +114,7 @@ sealed interface AppLanguage {    val monthNames: MonthNames
     // ═══════════════════════════════════════════════════════════════════    data object Portuguese : AppLanguage {        override val monthNames = MonthNames(
             "janeiro", "fevereiro", "março", "abril", "maio", "junho",
             "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
-        )
-
-        override val dayNamesShort = DayOfWeekNames(
+        )        override val dayNamesShort = DayOfWeekNames(
             "seg", "ter", "qua", "qui", "sex", "sáb", "dom"
         )
 

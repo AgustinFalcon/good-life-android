@@ -37,7 +37,7 @@ sealed class Result<out T> {
     data object Loading : Result<Nothing>()
 
     /** Indica si el resultado es exitoso. */
-    val isSuccess: Boolean get() = this is Success
+    public val isSuccess: Boolean get() = this is Success
 
     /** Indica si el resultado es un error. */
     val isError: Boolean get() = this is Error

@@ -4,10 +4,17 @@ import com.agusstkd.goodlife.data.remote.dto.request.RegisterRequest
 import com.agusstkd.goodlife.data.remote.dto.response.AuthResponse
 import com.agusstkd.goodlife.data.remote.dto.response.BaseResponse
 import com.agusstkd.goodlife.data.remote.dto.response.RegisterResponse
+import com.agusstkd.goodlife.data.remote.dto.response.daily.DailyLogDto
+import com.agusstkd.goodlife.data.remote.dto.response.daily.DailyLogResponse
+import com.agusstkd.goodlife.domain.model.daily.ItemStatus
 import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 /**
  * API Service principal de GoodLife.
@@ -80,6 +87,48 @@ interface GoodLifeApiService {
         @Body request: RegisterRequest
     ): BaseResponse<RegisterResponse>
 
+
+
+    // ═══════════════════════════════════════════════════════════════════════════════════════════
+    // DAILY ENDPOINTS
+    // ═══════════════════════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Obtiene el daily log de una fecha específica.
+     *
+     * Endpoint: GET /api/v1/daily-logs/{date}
+     * Formato de fecha: ISO-8601 (YYYY-MM-DD), ej: "2026-02-05"
+     *
+     * El backend genera automáticamente el daily log si no existe,
+     * incluyendo todos los items (tasks, habits, workouts, meals) programados para ese día.
+     *
+     * @param date Fecha en formato ISO-8601 ("2026-02-05")
+     * @return BaseResponse con DailyLogResponse (log + items)
+     */
+    @GET("api/v1/daily-logs/{date}")
+    suspend fun getDailyLogByDate(
+        @Path("date") date: String
+    ): BaseResponse<DailyLogResponse>
+
+    /**
+     * Actualiza el status de un item del daily log.
+     *
+     * Endpoint: PATCH /api/v1/daily-logs/items/{itemId}/status
+     * Query param: status (COMPLETED, SKIPPED, PENDING)
+     *
+     * El backend recalcula automáticamente el completionRate del daily log.
+     *
+     * @param itemId ID del item a actualizar
+     * @param status Nuevo status del item
+     * @return BaseResponse con DailyLogResponse actualizado (incluye nuevo completionRate)
+     */
+    @PATCH("api/v1/daily-logs/items/{itemId}/status")
+    suspend fun updateItemStatus(
+        @Path("itemId") itemId: Long,
+        @Query("status") status: String
+    ): BaseResponse<DailyLogResponse>
+
+
     // ═══════════════════════════════════════════════════════════════════════════════════════════
     // TODO: TASKS ENDPOINTS
     // ═══════════════════════════════════════════════════════════════════════════════════════════
@@ -96,7 +145,5 @@ interface GoodLifeApiService {
     // TODO: MEALS ENDPOINTS
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
-    // ═══════════════════════════════════════════════════════════════════════════════════════════
-    // TODO: DAILY LOG ENDPOINTS
-    // ═══════════════════════════════════════════════════════════════════════════════════════════
+
 }

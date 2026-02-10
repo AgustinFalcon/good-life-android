@@ -28,9 +28,7 @@ fun DailyScreen(
             monthYear = if (uiState.showFullDate) uiState.monthYear else null,
             onPreviousDay = { onAction(DailyUiAction.OnPreviousDay) },
             onNextDay = { onAction(DailyUiAction.OnNextDay) }
-        )
-
-        Text(
+        )        Text(
             text = "Daily: ${uiState.headerText}",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface,

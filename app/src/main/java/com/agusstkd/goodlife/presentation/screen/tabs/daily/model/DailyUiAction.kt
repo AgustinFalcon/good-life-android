@@ -2,6 +2,8 @@ package com.agusstkd.goodlife.presentation.screen.tabs.daily.model
 
 import androidx.compose.runtime.Stable
 
+import com.agusstkd.goodlife.domain.model.daily.ItemStatus
+
 /**
  * Acciones del usuario en la pantalla Daily.
  *
@@ -39,4 +41,27 @@ sealed interface DailyUiAction {
      * Ejemplo: De "Hoy" (4 de febrero) → "Mañana" (5 de febrero)
      */
     data object OnNextDay : DailyUiAction
+
+    /**
+     * Usuario pull-to-refresh para recargar datos.
+     */
+    data object OnRefresh : DailyUiAction
+
+    /**
+     * Usuario hace click en un item del daily log.
+     *
+     * @property itemId ID del item clickeado
+     */
+    data class OnItemClick(val itemId: Long) : DailyUiAction
+
+    /**
+     * Usuario cambia el status de un item (checkmark, skip, etc).
+     *
+     * @property itemId ID del item
+     * @property newStatus Nuevo status (COMPLETED, SKIPPED, PENDING)
+     */
+    data class OnItemStatusChange(
+        val itemId: Long,
+        val newStatus: ItemStatus
+    ) : DailyUiAction
 }
