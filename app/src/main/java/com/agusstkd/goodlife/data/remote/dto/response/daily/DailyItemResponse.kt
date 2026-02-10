@@ -1,13 +1,13 @@
 package com.agusstkd.goodlife.data.remote.dto.response.daily
 
-import com.agusstkd.goodlife.domain.model.daily.DailyItemType
-import com.agusstkd.goodlife.domain.model.daily.ItemStatus
-import kotlinx.datetime.LocalTime
-
 import com.agusstkd.goodlife.data.remote.dto.response.habit.HabitLogSummaryDto
 import com.agusstkd.goodlife.data.remote.dto.response.meal.MealSummaryDto
 import com.agusstkd.goodlife.data.remote.dto.response.task.TaskSummaryDto
 import com.agusstkd.goodlife.data.remote.dto.response.workout.WorkoutSummaryDto
+import com.agusstkd.goodlife.domain.model.daily.DailyItem
+import com.agusstkd.goodlife.domain.model.daily.DailyItemType
+import com.agusstkd.goodlife.domain.model.daily.ItemStatus
+import kotlinx.datetime.LocalTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -30,6 +30,7 @@ import kotlinx.serialization.Serializable
  * @see HabitLogSummaryDto
  * @see WorkoutSummaryDto
  * @see MealSummaryDto
+ * @see DailyItem Domain model equivalente
  */
 @Serializable
 data class DailyItemResponse(
@@ -48,3 +49,60 @@ data class DailyItemResponse(
     val workout: WorkoutSummaryDto? = null,
     val mealPlan: MealSummaryDto? = null
 )
+
+/**
+ * Convierte DailyItemResponse a modelo de dominio DailyItem.
+ *
+ * Extrae el título y descripción del campo correcto según el tipo:
+ * - TASK → task.title, task.description
+ * - HABIT → habitLog.habitName, progreso formateado
+ * - WORKOUT → workout.name, rutina formateada
+ * - MEAL → mealPlan.mealName, calorías formateadas
+ *
+ * @return DailyItem listo para usar en ViewModel/UseCases
+ */
+fun DailyItemResponse.toDomain(): DailyItem {
+    val (title, description) = extractTitleAndDescription()
+
+    return DailyItem(
+        id = id,
+        type = type,
+        referenceId = referenceId,
+        scheduledTime = scheduledTime,
+        status = status,
+        title = title,
+        description = description
+    )
+}
+
+/**
+ * Extrae título y descripción según el tipo de item.
+ */
+private fun DailyItemResponse.extractTitleAndDescription(): Pair<String, String?> {
+    return when (type) {
+        DailyItemType.TASK -> {
+            task?.title ?: "Tarea sin título" to task?.description
+        }
+        DailyItemType.HABIT -> {
+            val habitName = habitLog?.habitName ?: "Hábito sin nombre"
+            val description = habitLog?.let {
+                "${it.currentValue} / ${it.targetValue} ${it.unit}"
+            }
+            habitName to description
+        }
+        DailyItemType.WORKOUT -> {
+            val name = workout?.name ?: "Entrenamiento"
+            val description = workout?.let {
+                "Rutina: ${it.routineName} • ${it.exerciseCount} ejercicios"
+            }
+            name to description
+        }
+        DailyItemType.MEAL -> {
+            val name = mealPlan?.mealName ?: "Comida"
+            val description = mealPlan?.let {
+                "${it.calories} kcal • ${it.protein}g proteína"
+            }
+            name to description
+        }
+    }
+}

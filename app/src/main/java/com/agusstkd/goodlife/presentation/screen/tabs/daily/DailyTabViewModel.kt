@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.agusstkd.goodlife.core.datetime.DateProvider
 import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.core.network.ApiException
-import com.agusstkd.goodlife.data.remote.dto.response.daily.DailyItemResponse
-import com.agusstkd.goodlife.data.remote.dto.response.daily.DailyLogResponse
+import com.agusstkd.goodlife.domain.model.daily.DailyItem
+import com.agusstkd.goodlife.domain.model.daily.DailyLog
 import com.agusstkd.goodlife.domain.model.daily.ItemStatus
 import com.agusstkd.goodlife.domain.usecase.daily.GetDailyItemsUseCase
 import com.agusstkd.goodlife.domain.usecase.daily.UpdateItemStatusUseCase
@@ -57,8 +57,12 @@ import com.agusstkd.goodlife.core.result.Result
  * ```
  *
  * ## Filosofía:
- * TODO el formateo de fechas y mapeo Response→UiModel se hace aquí.
+ * TODO el formateo de fechas y mapeo Domain→UiModel se hace aquí.
  * La UI recibe strings y UI models listos para renderizar.
+ *
+ * ## Nota sobre mapeo:
+ * El mapeo Response→Domain (DailyLogResponse→DailyLog) se hace en el Repository.
+ * Este ViewModel solo mapea Domain→UiModel (DailyItem→DailyItemUiModel).
  */
 class DailyTabViewModel(
     private val dateProvider: DateProvider,
@@ -163,12 +167,12 @@ class DailyTabViewModel(
     /**
      * Construye el UiState.Success con todos los campos formateados.
      *
-     * Mapea DailyLogResponse → DailyUiState.Success
+     * Mapea DailyLog (Domain Model) → DailyUiState.Success (UI Model)
      *
-     * @param dailyLog Response del backend
+     * @param dailyLog Domain Model del daily log
      * @return UiState.Success con datos listos para renderizar
      */
-    private fun buildSuccessState(dailyLog: DailyLogResponse): DailyUiState.Success {
+    private fun buildSuccessState(dailyLog: DailyLog): DailyUiState.Success {
         val today = dateProvider.today()
         val yesterday = dateProvider.yesterday()
         val tomorrow = dateProvider.tomorrow()
@@ -202,34 +206,18 @@ class DailyTabViewModel(
     }
 
     /**
-     * Mapea DailyItemResponse → DailyItemUiModel.
+     * Mapea DailyItem (Domain Model) → DailyItemUiModel (UI Model).
      *
-     * Extrae el título del campo correcto según el tipo:
-     * - TASK → task.title
-     * - HABIT → habitLog.habitName
-     * - WORKOUT → workout.name
-     * - MEAL → mealPlan.mealName
+     * El título y descripción ya vienen extraídos en el Domain Model
+     * (el mapeo Response→Domain se hizo en el Repository).
+     *
+     * Este método solo formatea la hora para la UI.
      */
-    private fun DailyItemResponse.toUiModel(): DailyItemUiModel {
-        val (title, description) = when (type) {
-            com.agusstkd.goodlife.domain.model.daily.DailyItemType.TASK -> {
-                task?.title to task?.description
-            }
-            com.agusstkd.goodlife.domain.model.daily.DailyItemType.HABIT -> {
-                habitLog?.habitName to null
-            }
-            com.agusstkd.goodlife.domain.model.daily.DailyItemType.WORKOUT -> {
-                workout?.name to "Rutina: ${workout?.routineName}"
-            }
-            com.agusstkd.goodlife.domain.model.daily.DailyItemType.MEAL -> {
-                mealPlan?.mealName to "${mealPlan?.calories} kcal"
-            }
-        }
-
+    private fun DailyItem.toUiModel(): DailyItemUiModel {
         return DailyItemUiModel(
             id = id,
             type = type,
-            title = title ?: "Sin título",
+            title = title,
             description = description,
             scheduledTime = scheduledTime?.let {
                 "${it.hour}:${it.minute.toString().padStart(2, '0')}"

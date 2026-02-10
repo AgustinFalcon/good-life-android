@@ -346,32 +346,56 @@ data class DailyItemResponse(
 
 ## 📐 Arquitectura REAL (corregida)
 
-### Flujo de datos:
+### Flujo de datos completo:
 
 ```
 UI (DailyScreen)
     ↓
 ViewModel (DailyTabViewModel)
+    - Usa DailyLog (Domain Model)
+    - Mapea DailyItem → DailyItemUiModel
     ↓
 UseCase (GetDailyItemsUseCase / UpdateItemStatusUseCase)
+    - Devuelve Result<DailyLog>
     ↓
 Repository (DailyRepositoryImpl)
+    - Llama DataSource
+    - Mapea Response → Domain: .map { it.toDomain() }
+    - Devuelve Result<DailyLog>
     ↓
 DataSource (DailyRemoteDataSource)
+    - Llama ApiService
+    - Usa executeApiCall()
+    - Devuelve Result<DailyLogResponse>
     ↓
 ApiService (GoodLifeApiService)
+    - Retrofit parsea JSON → DailyLogResponse
     ↓
 Backend → BaseResponse<DailyLogResponse>
     ↓
 executeApiCall() → Result<DailyLogResponse>
     ↓
-Repository devuelve Result
+Repository .map { it.toDomain() } → Result<DailyLog>
     ↓
-UseCase devuelve Result
+UseCase devuelve Result<DailyLog>
     ↓
-ViewModel mapea Result → UiState
+ViewModel mapea Result<DailyLog> → UiState
     ↓
 UI renderiza UiState
+```
+
+### Capas de mapeo:
+
+```
+Backend JSON
+    ↓ (Retrofit + @Serializable)
+DailyLogResponse (Data Layer)
+    ↓ (.toDomain() en Repository)
+DailyLog (Domain Layer)
+    ↓ (.toUiModel() en ViewModel)
+DailyItemUiModel (Presentation Layer)
+    ↓
+UI renderiza
 ```
 
 ### Capas:
@@ -429,15 +453,33 @@ UI renderiza UiState
 
 ### 1. ¿Response o Dto o Domain?
 
-**Respuesta:** En este proyecto, para Daily:
+**Respuesta CORREGIDA:** El proyecto SIEMPRE mapea Response → Domain:
+
+**Patrón correcto (igual para Auth y Daily):**
 - **Response** = Lo que viene del backend (DailyLogResponse, DailyItemResponse)
+  - Tiene `@Serializable` para Retrofit
+  - Vive en `data/remote/dto/response`
+  - Tiene función `fun toDomain(): DomainModel`
 - **Dto** = Sub-objetos dentro de Response (TaskSummaryDto, HabitLogSummaryDto)
-- **Domain** = NO EXISTE para Daily (se usa Response directamente)
+- **Domain** = Modelo de negocio (DailyLog, DailyItem)
+  - Libre de detalles de serialización
+  - Vive en `domain/model`
+  - Es lo que usan ViewModels y UseCases
 
-Para Auth sí hay mapeo:
-- Response (AuthResponse) → Domain (User)
+**Flujo completo:**
+```
+Backend → BaseResponse<DailyLogResponse>
+    ↓
+DailyLogResponse.toDomain() → DailyLog
+    ↓
+Repository devuelve Result<DailyLog>
+    ↓
+UseCase devuelve Result<DailyLog>
+    ↓
+ViewModel usa DailyLog
+```
 
-Ambos patrones son válidos. El usuario eligió usar Response directamente para Daily.
+**Dónde se hace el mapeo:** En el Repository, usando `Result.map { it.toDomain() }`
 
 ### 2. ¿UseCase debe manejar errores?
 
