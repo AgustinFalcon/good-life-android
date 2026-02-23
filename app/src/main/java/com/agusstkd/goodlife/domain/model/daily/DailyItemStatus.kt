@@ -9,7 +9,7 @@ package com.agusstkd.goodlife.domain.model.daily
  * SKIPPED cuenta como procesado para el cálculo de completion rate,
  * permitiendo que decisiones conscientes no penalicen al usuario.
  */
-enum class ItemStatus {
+enum class DailyItemStatus {
     PENDING,
     IN_PROGRESS,
     COMPLETED,

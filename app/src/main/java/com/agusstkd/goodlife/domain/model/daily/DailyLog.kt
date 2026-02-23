@@ -13,7 +13,6 @@ import kotlinx.datetime.LocalDate
  * El ViewModel y UseCases usan este modelo, NO el Response del backend.
  *
  * @property id ID del daily log
- * @property userId ID del usuario propietario
  * @property date Fecha del daily log
  * @property completionRate Porcentaje de items completados (0.0 - 1.0)
  * @property items Lista de items del día (tasks, habits, workouts, meals)
@@ -23,7 +22,6 @@ import kotlinx.datetime.LocalDate
  */
 data class DailyLog(
     val id: Long,
-    val userId: Long,
     val date: LocalDate,
     val completionRate: Double,
     val items: List<DailyItem>

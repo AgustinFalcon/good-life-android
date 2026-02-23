@@ -29,6 +29,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.agusstkd.goodlife.core.datetime.language.AppLanguage
+import com.agusstkd.goodlife.core.datetime.language.HomeTexts
 import com.agusstkd.goodlife.presentation.screen.home.model.HomeUiAction
 import com.agusstkd.goodlife.presentation.screen.home.model.HomeUiState
 import com.agusstkd.goodlife.presentation.theme.DarkGreen
@@ -49,7 +51,8 @@ fun HomeScreenOwner(
 
     HomeScreen(
         uiState = uiState,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
+        homeTexts = viewModel.homeTexts
     )
 }
 
@@ -63,7 +66,8 @@ fun HomeScreenOwner(
 @Composable
 private fun HomeScreen(
     uiState: HomeUiState,
-    onAction: (HomeUiAction) -> Unit
+    onAction: (HomeUiAction) -> Unit,
+    homeTexts: HomeTexts
 ) {
     Scaffold { paddingValues ->
         Box(
@@ -85,11 +89,13 @@ private fun HomeScreen(
                 is HomeUiState.Content -> ContentView(
                     userName = uiState.userName,
                     userEmail = uiState.userEmail,
-                    onLogoutClick = { onAction(HomeUiAction.OnLogoutClick) }
+                    onLogoutClick = { onAction(HomeUiAction.OnLogoutClick) },
+                    homeTexts = homeTexts
                 )
                 is HomeUiState.Error -> ErrorView(
                     message = uiState.message,
-                    onRetryClick = { onAction(HomeUiAction.OnRetryClick) }
+                    onRetryClick = { onAction(HomeUiAction.OnRetryClick) },
+                    homeTexts = homeTexts
                 )
             }
         }
@@ -107,7 +113,8 @@ private fun LoadingView() {
 private fun ContentView(
     userName: String,
     userEmail: String,
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
+    homeTexts: HomeTexts
 ) {
     Column(
         modifier = Modifier
@@ -116,7 +123,6 @@ private fun ContentView(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Icono de éxito
         Icon(
             imageVector = Icons.Default.CheckCircle,
             contentDescription = null,
@@ -126,9 +132,8 @@ private fun ContentView(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Título de bienvenida
         Text(
-            text = "¡Bienvenido!",
+            text = homeTexts.welcome,
             style = MaterialTheme.typography.headlineLarge.copy(
                 fontWeight = FontWeight.Bold,
                 brush = Brush.horizontalGradient(
@@ -139,7 +144,6 @@ private fun ContentView(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Nombre del usuario
         Text(
             text = userName,
             style = MaterialTheme.typography.headlineMedium.copy(
@@ -150,7 +154,6 @@ private fun ContentView(
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        // Email del usuario
         Text(
             text = userEmail,
             style = MaterialTheme.typography.bodyLarge,
@@ -159,9 +162,8 @@ private fun ContentView(
 
         Spacer(modifier = Modifier.height(48.dp))
 
-        // Mensaje de login exitoso
         Text(
-            text = "Has iniciado sesión correctamente.\nTu sesión está activa.",
+            text = homeTexts.sessionActive,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
@@ -169,7 +171,6 @@ private fun ContentView(
 
         Spacer(modifier = Modifier.height(48.dp))
 
-        // Botón de logout
         TextButton(
             onClick = onLogoutClick
         ) {
@@ -180,7 +181,7 @@ private fun ContentView(
             )
             Spacer(modifier = Modifier.size(8.dp))
             Text(
-                text = "Cerrar sesión",
+                text = homeTexts.logout,
                 color = MaterialTheme.colorScheme.error,
                 fontSize = 16.sp
             )
@@ -191,7 +192,8 @@ private fun ContentView(
 @Composable
 private fun ErrorView(
     message: String,
-    onRetryClick: () -> Unit
+    onRetryClick: () -> Unit,
+    homeTexts: HomeTexts
 ) {
     Column(
         modifier = Modifier.padding(32.dp),
@@ -199,7 +201,7 @@ private fun ErrorView(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Error",
+            text = homeTexts.error,
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.error
         )
@@ -216,7 +218,7 @@ private fun ErrorView(
         Spacer(modifier = Modifier.height(24.dp))
 
         TextButton(onClick = onRetryClick) {
-            Text("Reintentar")
+            Text(homeTexts.retry)
         }
     }
 }
@@ -231,7 +233,8 @@ private fun HomeScreenLoadingPreview() {
     GoodLifeTheme {
         HomeScreen(
             uiState = HomeUiState.Loading,
-            onAction = {}
+            onAction = {},
+            homeTexts = AppLanguage.Spanish.homeTexts
         )
     }
 }
@@ -245,7 +248,8 @@ private fun HomeScreenContentPreview() {
                 userName = "Agustín",
                 userEmail = "agustin@gmail.com"
             ),
-            onAction = {}
+            onAction = {},
+            homeTexts = AppLanguage.Spanish.homeTexts
         )
     }
 }
@@ -256,7 +260,8 @@ private fun HomeScreenErrorPreview() {
     GoodLifeTheme {
         HomeScreen(
             uiState = HomeUiState.Error("No hay sesión activa"),
-            onAction = {}
+            onAction = {},
+            homeTexts = AppLanguage.Spanish.homeTexts
         )
     }
 }

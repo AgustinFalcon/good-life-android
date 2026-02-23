@@ -2,12 +2,12 @@
 
 package com.agusstkd.goodlife.core.datetime
 
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 /**
  * Implementación real de [DateProvider] para producción en Android.
@@ -66,7 +66,7 @@ import kotlin.time.ExperimentalTime
 class RealDateProvider : DateProvider {
 
     /**
-     * TimeZone local del dispositivo.
+     * TimeZone local reportado por el sistema operativo.
      *
      * ## Caching:
      * Cacheado al instanciar la clase porque:
@@ -74,11 +74,9 @@ class RealDateProvider : DateProvider {
      * - El timezone no cambia durante la ejecución de la app
      * - Se llama múltiples veces en ViewModels y formateos
      *
-     * ## Valores típicos:
-     * - Android Argentina: "America/Argentina/Buenos_Aires" (GMT-3)
-     * - Android España: "Europe/Madrid" (GMT+1)
-     * - Android USA: "America/New_York" (GMT-5)
-     * - Emulador sin config: "UTC" (por eso fallaba antes)
+     * ## Nota:
+     * No se aplica ningún fallback geográfico hardcodeado.
+     * En emulador, si el timezone está mal (ej: UTC), debe corregirse desde ajustes del dispositivo.
      */
     private val timeZone: TimeZone = TimeZone.currentSystemDefault()
 

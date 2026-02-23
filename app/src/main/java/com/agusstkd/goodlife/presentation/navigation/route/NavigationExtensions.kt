@@ -47,6 +47,33 @@ fun ComposeNavigationController.navigateToLoginFromRegister() {
 }
 
 /**
+ * Navega a Login desde Main (logout), limpiando todo el stack.
+ */
+fun ComposeNavigationController.navigateToLoginFromMain() {
+    navigateTo(
+        route = AppRoute.Login,
+        navOptions = navOptions {
+            popUpTo<AppRoute.Main> { inclusive = true }
+            launchSingleTop = true
+        }
+    )
+}
+
+/**
+ * Navega a Login cuando la sesion expira (refresh token invalido).
+ * Limpia todo el back stack independientemente de donde este el usuario.
+ */
+fun ComposeNavigationController.navigateToLoginSessionExpired() {
+    navigateTo(
+        route = AppRoute.Login,
+        navOptions = navOptions {
+            popUpTo(0) { inclusive = true }
+            launchSingleTop = true
+        }
+    )
+}
+
+/**
  * Navega a Main limpiando Login del stack.
  */
 fun ComposeNavigationController.navigateToMain() {
@@ -60,13 +87,14 @@ fun ComposeNavigationController.navigateToMain() {
 }
 
 /**
- * Navega a Login desde Main (logout), limpiando todo el stack.
+ * Navega a Main desde Splash (auto-login con sesión válida).
+ * Limpia Splash del stack para que el usuario no pueda volver atrás.
  */
-fun ComposeNavigationController.navigateToLoginFromMain() {
+fun ComposeNavigationController.navigateToMainFromSplash() {
     navigateTo(
-        route = AppRoute.Login,
+        route = AppRoute.Main,
         navOptions = navOptions {
-            popUpTo<AppRoute.Main> { inclusive = true }
+            popUpTo<AppRoute.Splash> { inclusive = true }
             launchSingleTop = true
         }
     )

@@ -44,6 +44,24 @@ val GreenSelected = Color(0xFF00D26B)
  */
 val EmeraldGreen = Color(0xFF50C878)
 
+
+/**
+ * Colores que representan a cada TAREA en el daily item.
+ */
+val HabitBackground = Color(0xFFE8F5E9)
+val HabitAccent = Color(0xFF4CAF50)
+
+val WorkoutBackground = Color(0xFFFFEBEE)
+val WorkoutAccent = Color(0xFFFF5252)
+
+val MealBackground = Color(0xFFFFF8E1)
+val MealAccent = Color(0xFFFFB300)
+
+val TaskBackground = Color(0xFFE3F2FD)
+val TaskAccent = Color(0xFF2196F3)
+
+val CompletionGreen = Color(0xFF2ECC71)
+
 // ═══════════════════════════════════════════════════════════════════════════════════════════════
 // 2. COLORES DE FONDO (DEGRADADO PRINCIPAL)
 // ═══════════════════════════════════════════════════════════════════════════════════════════════
@@ -256,30 +274,6 @@ val ButtonColorsDisabled = listOf(ButtonDisabledBg, Color(0xFF9E9E9E))
  * Más suave y limpio que el gradiente del Splash.
  */
 val BackgroundMint = Color(0xFFE8FFF8)
-
-/**
- * Gradiente de fondo para Login/Register.
- * Efecto: Verde menta suave arriba → Blanco abajo
- * Diseño minimalista y profesional.
- */
-val AuthBackgroundGradientBrush = Brush.verticalGradient(
-    colors = listOf(
-        BackgroundMint,      // #E8FFF8 - Verde menta arriba
-        Color.White          // #FFFFFF - Blanco abajo
-    )
-)
-
-/**
- * Gradiente para botón primario de Login/Register.
- * Efecto: Verde esmeralda → Verde brillante
- * Solo 2 colores para un look más limpio.
- */
-val AuthButtonGradientBrush = Brush.horizontalGradient(
-    colors = listOf(
-        LightGreen,          // #1EC691
-        GreenSelected        // #00D26B
-    )
-)
 
 /**
  * Lista de colores para botón de Auth (Login/Register).

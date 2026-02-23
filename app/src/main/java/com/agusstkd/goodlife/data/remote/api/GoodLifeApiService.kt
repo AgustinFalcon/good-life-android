@@ -4,9 +4,7 @@ import com.agusstkd.goodlife.data.remote.dto.request.RegisterRequest
 import com.agusstkd.goodlife.data.remote.dto.response.AuthResponse
 import com.agusstkd.goodlife.data.remote.dto.response.BaseResponse
 import com.agusstkd.goodlife.data.remote.dto.response.RegisterResponse
-import com.agusstkd.goodlife.data.remote.dto.response.daily.DailyLogDto
 import com.agusstkd.goodlife.data.remote.dto.response.daily.DailyLogResponse
-import com.agusstkd.goodlife.domain.model.daily.ItemStatus
 import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded

@@ -2,6 +2,8 @@ package com.agusstkd.goodlife.presentation.screen.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.agusstkd.goodlife.core.datetime.language.AppLanguage
+import com.agusstkd.goodlife.core.datetime.language.HomeTexts
 import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.domain.usecase.home.GetCurrentUserUseCase
 import com.agusstkd.goodlife.domain.usecase.home.LogoutUseCase
@@ -26,8 +28,11 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val logoutUseCase: LogoutUseCase,
-    private val navigationController: ComposeNavigationController
+    private val navigationController: ComposeNavigationController,
+    private val language: AppLanguage
 ) : ViewModel() {
+
+    val homeTexts: HomeTexts get() = language.homeTexts
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
@@ -51,7 +56,7 @@ class HomeViewModel(
                     )
                 }
                 is Result.Error -> {
-                    HomeUiState.Error(result.message ?: "Error al cargar usuario")
+                    HomeUiState.Error(result.message ?: language.errorTexts.userLoadError)
                 }
                 is Result.Loading -> HomeUiState.Loading
             }

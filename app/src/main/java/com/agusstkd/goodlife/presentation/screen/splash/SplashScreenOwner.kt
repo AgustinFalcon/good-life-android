@@ -3,9 +3,7 @@ package com.agusstkd.goodlife.presentation.screen.splash
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
 
 
 

@@ -24,12 +24,17 @@ sealed class Result<out T> {
      * Representa una operación fallida.
      *
      * @param exception La excepción que causó el error.
-     * @param message Mensaje opcional para mostrar al usuario.
      */
     data class Error(
-        val exception: Throwable,
-        val message: String? = null
-    ) : Result<Nothing>()
+        val exception: Throwable
+    ) : Result<Nothing>() {
+        /**
+         * Mensaje de error único expuesto a presentation.
+         *
+         * Fuente de verdad: [exception.message].
+         */
+        val message: String? get() = exception.message
+    }
 
     /**
      * Representa una operación en progreso.
@@ -108,7 +113,7 @@ inline fun <T, R> Result<T>.map(transform: (T) -> R): Result<R> = when (this) {
 inline fun <T> resultOf(block: () -> T): Result<T> = try {
     Result.Success(block())
 } catch (e: Exception) {
-    Result.Error(e, e.message)
+    Result.Error(e)
 }
 
 /**
@@ -120,5 +125,5 @@ inline fun <T> resultOf(block: () -> T): Result<T> = try {
 suspend inline fun <T> suspendResultOf(crossinline block: suspend () -> T): Result<T> = try {
     Result.Success(block())
 } catch (e: Exception) {
-    Result.Error(e, e.message)
+    Result.Error(e)
 }

@@ -30,45 +30,44 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.presentation.components.GradientIcon
 import com.agusstkd.goodlife.presentation.theme.DarkGreen
 import com.agusstkd.goodlife.presentation.theme.DegradeBackground5
 import com.agusstkd.goodlife.presentation.theme.LightGreen
 
 /**
+ * Parámetros del componente DateHeader.
+ *
+ * @property dayNumber Número del día (1-31) para el icono de calendario
+ * @property headerText Texto principal: "Hoy" | "Ayer" | "Mañana" | "Lun, 08 feb"
+ * @property monthYear Mes y año completos (ej: "Febrero 2026"), null para fechas relativas
+ * @property canNavigatePrevious Si permite navegar al día anterior
+ * @property openCalendarLabel Descripción accesibilidad del botón calendario
+ * @property previousDayLabel Descripción accesibilidad del botón día anterior
+ * @property nextDayLabel Descripción accesibilidad del botón día siguiente
+ * @property notificationsLabel Descripción accesibilidad del botón notificaciones
+ */
+data class DateHeaderParams(
+    val dayNumber: Int,
+    val headerText: String,
+    val monthYear: String?,
+    val canNavigatePrevious: Boolean = true,
+    val openCalendarLabel: String = "",
+    val previousDayLabel: String = "",
+    val nextDayLabel: String = "",
+    val notificationsLabel: String = ""
+)
+
+/**
  * Header con navegación de fechas para tabs como Daily y Meals.
  *
- * ## Filosofía:
  * Componente **100% puro**: solo renderiza strings ya formateados.
  * No conoce Clock, Language, ni lógica de fechas.
- *
- * ## Uso:
- * ```kotlin
- * DateHeaderComponent(
- *     dayNumber = 15,
- *     headerText = "Hoy",           // o "Lun, 15 feb"
- *     monthYear = null,              // o "Febrero 2026"
- *     onPreviousDay = {},
- *     onNextDay = {}
- * )
- * ```
- *
- * @param dayNumber Número del día (1-31) para el icono de calendario
- * @param headerText Texto principal: "Hoy" | "Ayer" | "Mañana" | "Lun, 08 feb"
- * @param monthYear Mes y año completos (ej: "Febrero 2026"), null para fechas relativas
- * @param canNavigatePrevious Si permite navegar al día anterior
- * @param onCalendarClick Callback al abrir calendario
- * @param onPreviousDay Callback al ir al día anterior
- * @param onNextDay Callback al ir al día siguiente
- * @param onNotificationsClick Callback al abrir notificaciones
- * @param modifier Modificador de Compose
  */
 @Composable
 fun DateHeaderComponent(
-    dayNumber: Int,
-    headerText: String,
-    monthYear: String?,
-    canNavigatePrevious: Boolean = true,
+    params: DateHeaderParams,
     onCalendarClick: () -> Unit = {},
     onPreviousDay: () -> Unit,
     onNextDay: () -> Unit,
@@ -77,7 +76,7 @@ fun DateHeaderComponent(
 ) {
     val enabledColors = listOf(DarkGreen, LightGreen, DegradeBackground5)
     val disabledColors = listOf(Color(0xFFBDBDBD), Color(0xFF9E9E9E))
-    val previousArrowColors = if (canNavigatePrevious) enabledColors else disabledColors
+    val previousArrowColors = if (params.canNavigatePrevious) enabledColors else disabledColors
 
     Row(
         modifier = modifier
@@ -89,7 +88,7 @@ fun DateHeaderComponent(
         IconButtonWithBorder(
             icon = Icons.Default.CalendarMonth,
             colors = enabledColors,
-            contentDescription = "Abrir calendario",
+            contentDescription = params.openCalendarLabel,
             onClick = onCalendarClick,
             iconSize = 22.dp
         )
@@ -99,22 +98,22 @@ fun DateHeaderComponent(
         IconButtonWithBorder(
             icon = Icons.Default.ArrowBackIosNew,
             colors = previousArrowColors,
-            contentDescription = "Día anterior",
-            onClick = { if (canNavigatePrevious) onPreviousDay() },
+            contentDescription = params.previousDayLabel,
+            onClick = { if (params.canNavigatePrevious) onPreviousDay() },
             iconSize = 18.dp
         )
 
         DateHeaderWithIcon(
-            dayNumber = dayNumber,
-            headerText = headerText,
-            monthYear = monthYear,
+            dayNumber = params.dayNumber,
+            headerText = params.headerText,
+            monthYear = params.monthYear,
             modifier = Modifier.weight(1f)
         )
 
         IconButtonWithBorder(
             icon = Icons.Default.ArrowForwardIos,
             colors = enabledColors,
-            contentDescription = "Día siguiente",
+            contentDescription = params.nextDayLabel,
             onClick = onNextDay,
             iconSize = 18.dp
         )
@@ -124,7 +123,7 @@ fun DateHeaderComponent(
         IconButtonWithBorder(
             icon = Icons.Default.Notifications,
             colors = enabledColors,
-            contentDescription = "Notificaciones",
+            contentDescription = params.notificationsLabel,
             onClick = onNotificationsClick,
             iconSize = 18.dp
         )
@@ -207,10 +206,13 @@ private fun DateHeaderWithIcon(
 @Preview(showBackground = true)
 @Composable
 private fun DateHeaderTodayPreview() {
+    val a = AppLanguage.Spanish.accessibilityTexts
     DateHeaderComponent(
-        dayNumber = 3,
-        headerText = "Hoy",
-        monthYear = null,  // No mostrar mes/año para fechas relativas
+        params = DateHeaderParams(
+            dayNumber = 3, headerText = "Hoy", monthYear = null,
+            openCalendarLabel = a.openCalendar, previousDayLabel = a.previousDay,
+            nextDayLabel = a.nextDay, notificationsLabel = a.notifications
+        ),
         onPreviousDay = {},
         onNextDay = {}
     )
@@ -219,10 +221,13 @@ private fun DateHeaderTodayPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun DateHeaderYesterdayPreview() {
+    val a = AppLanguage.Spanish.accessibilityTexts
     DateHeaderComponent(
-        dayNumber = 2,
-        headerText = "Ayer",
-        monthYear = null,
+        params = DateHeaderParams(
+            dayNumber = 2, headerText = "Ayer", monthYear = null,
+            openCalendarLabel = a.openCalendar, previousDayLabel = a.previousDay,
+            nextDayLabel = a.nextDay, notificationsLabel = a.notifications
+        ),
         onPreviousDay = {},
         onNextDay = {}
     )
@@ -231,10 +236,13 @@ private fun DateHeaderYesterdayPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun DateHeaderOtherDayPreview() {
+    val a = AppLanguage.Spanish.accessibilityTexts
     DateHeaderComponent(
-        dayNumber = 23,
-        headerText = "Lun, 23 oct",
-        monthYear = "Octubre 2025",
+        params = DateHeaderParams(
+            dayNumber = 23, headerText = "Lun, 23 oct", monthYear = "Octubre 2025",
+            openCalendarLabel = a.openCalendar, previousDayLabel = a.previousDay,
+            nextDayLabel = a.nextDay, notificationsLabel = a.notifications
+        ),
         onPreviousDay = {},
         onNextDay = {}
     )

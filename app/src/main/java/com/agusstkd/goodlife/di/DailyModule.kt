@@ -5,7 +5,7 @@ import com.agusstkd.goodlife.domain.repository.DailyRepository
 import com.agusstkd.goodlife.domain.usecase.daily.GetDailyItemsUseCase
 import com.agusstkd.goodlife.domain.usecase.daily.UpdateItemStatusUseCase
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.DailyTabViewModel
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 import com.agusstkd.goodlife.data.remote.datasource.DailyRemoteDataSource
@@ -82,6 +82,7 @@ val dailyModule = module {
         DailyTabViewModel(
             dateProvider = get(),
             language = get(),
+            dispatcher = get(),
             getDailyItemsUseCase = get(),
             updateItemStatusUseCase = get()
         )

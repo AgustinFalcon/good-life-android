@@ -6,11 +6,15 @@ Este directorio contiene las especificaciones técnicas detalladas para las feat
 
 ## 📑 Índice de Specs
 
-| ID | Feature | Prioridad | Estado |
-|----|---------|-----------|--------|
-| [SPEC-001](./SPEC-001-register-screen.md) | Pantalla de Registro | Alta | ✅ Completado |
-| [SPEC-002](./SPEC-002-biometric-login.md) | Login con Huella Digital | Media | ✅ Completado |
-| [SPEC-003](./SPEC-003-main-scaffold.md) | Main Scaffold + Bottom Nav | Alta | 🚧 En Planificación |
+| ID | Feature | Tipo | Estado |
+|----|---------|------|--------|
+| [SPEC-001](./SPEC-001-register-screen.md) | Pantalla de Registro | Feature | ✅ Completado |
+| [SPEC-002](./SPEC-002-biometric-login.md) | Login con Huella Digital | Feature | ✅ Completado |
+| [SPEC-003](./SPEC-003-main-scaffold.md) | Main Scaffold + Bottom Nav | Feature | 🚧 En Progreso (85%) |
+| [SPEC-004](./SPEC-004-date-provider.md) | DateProvider Pattern (Core de Fechas) | Core Architecture | ✅ Completado |
+| [SPEC-005](./SPEC-005-network-service.md) | Network Service | Core Architecture | 🚧 En Desarrollo (Auth 401 pendiente) |
+| [SPEC-006](./SPEC-006-offline-first-swr.md) | Offline-First SWR | Architecture Pattern | 📝 Planificado |
+| [SPEC-007](./SPEC-007-app-language.md) | Sistema de Localización KMP-Ready (AppLanguage) | Core Architecture | ✅ Completado |
 
 ---
 
@@ -20,13 +24,12 @@ Cada especificación sigue esta estructura:
 
 1. **Información General**: ID, tipo, prioridad, estado, tiempo estimado
 2. **Objetivo**: Qué problema resuelve
-3. **Diseño Visual**: Mockups ASCII y estructura
-4. **Modelos de Datos**: States, Actions, DTOs
-5. **Arquitectura**: Archivos a crear/modificar
-6. **Flujos**: Diagramas de flujo de usuario
-7. **Integración**: Endpoints, dependencias
-8. **Plan de Implementación**: Código paso a paso
-9. **Checklist**: Tareas específicas para implementar
+3. **Problemas que resolvió**: Antes/después con ejemplos de código
+4. **Solución Implementada**: Arquitectura, flujo de datos
+5. **Archivos del Sistema**: Tablas de archivos creados/modificados
+6. **Reglas Arquitectónicas**: Prohibiciones y patrones obligatorios
+7. **Cómo extender**: Paso a paso para agregar funcionalidad nueva
+8. **Checklist de Validación**: Verificación post-implementación
 
 ---
 
@@ -34,30 +37,35 @@ Cada especificación sigue esta estructura:
 
 | Estado | Descripción |
 |--------|-------------|
-| 📝 Pendiente | Aún no iniciado |
-| 🔜 Pendiente | Próximo a implementar |
+| 📝 Planificado | Diseño documentado, pendiente de implementar |
 | 🚧 En Progreso | Implementación activa |
-| ✅ Completado | Feature implementada y testeada |
+| ✅ Completado | Feature implementada y validada |
 | ⏸️ Pausado | Postergado temporalmente |
 
 ---
 
-## 🎯 Próximos Pasos
+## 🔗 Relaciones entre SPECs
 
-1. **Main Scaffold**: Implementar [SPEC-003](./SPEC-003-main-scaffold.md)
-   - Bottom Navigation con 4 tabs + FAB central
-   - Header con navegación de fechas
-   - Sistema de navegación anidada por tabs
-2. **Tab Screens**: Crear pantallas placeholder para cada tab
-3. **Endpoint /me**: Backend debe implementar para obtener datos completos del usuario
+```
+SPEC-001 (Register)
+    └── usa → SPEC-007 (AppLanguage: AuthTexts, ValidationTexts)
 
----
+SPEC-002 (Biometric Login)
+    └── usa → SPEC-007 (AppLanguage: AuthTexts.biometricPrompt*)
 
-## 🔗 Documentación Relacionada
+SPEC-003 (Main Scaffold)
+    ├── usa → SPEC-004 (DateProvider para formateo de fechas)
+    └── usa → SPEC-007 (AppLanguage: MainScaffoldTexts, AccessibilityTexts)
 
-- **CHANGELOG**: Ver `/CHANGELOG.md` para historial de versiones
-- **ARCHITECTURE**: Ver `/docs/ARCHITECTURE.md` para arquitectura general
-- **ARCHITECTURE_GUIDE**: Ver `/docs/ARCHITECTURE_GUIDE.md` para la guía completa de principios, patrones y reglas
+SPEC-004 (DateProvider)
+    └── usa → SPEC-007 (AppLanguage: formats, relativeTexts)
+
+SPEC-005 (Network)
+    └── usa → SPEC-007 (AppLanguage: ErrorTexts)
+
+SPEC-007 (AppLanguage) ← Core para toda la app
+    └── alimenta → todos los demás SPECs
+```
 
 ---
 
@@ -68,12 +76,24 @@ Cada especificación sigue esta estructura:
 | Login | ✅ Completado |
 | Biometría | ✅ Completado |
 | Registro | ✅ Completado |
-| **Main Scaffold** | 🚧 En Planificación |
-| Home Tab | ⏸️ Pendiente |
+| DateProvider | ✅ Completado |
+| Network Service | ✅ Completado |
+| **Localización (AppLanguage)** | ✅ Completado |
+| **Main Scaffold** | 🚧 En Progreso (85%) |
+| Daily Tab | ✅ Completado |
 | Workouts Tab | ⏸️ Pendiente |
 | Meals Tab | ⏸️ Pendiente |
-| Settings Tab | ⏸️ Pendiente |
+| Settings/More Tab | ⏸️ Pendiente |
+| Offline-First SWR | 📝 Planificado |
 
 ---
 
-**Última actualización:** 2026-01-22
+## 🔗 Documentación Relacionada
+
+- **ARCHITECTURE**: Ver `/docs/ARCHITECTURE.md` para arquitectura general
+- **ARCHITECTURE_GUIDE**: Ver `/docs/ARCHITECTURE_GUIDE.md` para la guía completa de principios, patrones y reglas
+- **PROGRESS**: Ver `/docs/PROGRESS.md` para el estado detallado de implementación
+
+---
+
+**Última actualización:** 2026-02-03

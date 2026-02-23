@@ -3,7 +3,7 @@ package com.agusstkd.goodlife.domain.usecase.daily
 import com.agusstkd.goodlife.core.dispatcher.DispatcherProvider
 import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.domain.model.daily.DailyLog
-import com.agusstkd.goodlife.domain.model.daily.ItemStatus
+import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 import com.agusstkd.goodlife.domain.repository.DailyRepository
 import kotlinx.coroutines.withContext
 
@@ -33,7 +33,7 @@ class UpdateItemStatusUseCase(
      * @param status Nuevo status (COMPLETED, SKIPPED, PENDING)
      * @return Result con DailyLog (Domain Model) actualizado
      */
-    suspend operator fun invoke(itemId: Long, status: ItemStatus): Result<DailyLog> {
+    suspend operator fun invoke(itemId: Long, status: DailyItemStatus): Result<DailyLog> {
         return withContext(dispatcher.io) {
             repository.updateItemStatus(itemId, status)
         }

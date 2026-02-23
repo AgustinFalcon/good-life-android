@@ -21,7 +21,7 @@ import kotlinx.datetime.LocalTime
  * @property description Descripción opcional (extraída según tipo)
  *
  * @see DailyItemType
- * @see ItemStatus
+ * @see DailyItemStatus
  * @see com.agusstkd.goodlife.data.remote.dto.response.daily.DailyItemResponse
  */
 data class DailyItem(
@@ -29,7 +29,7 @@ data class DailyItem(
     val type: DailyItemType,
     val referenceId: Long,
     val scheduledTime: LocalTime?,
-    val status: ItemStatus,
+    val status: DailyItemStatus,
     val title: String,
     val description: String?
 )

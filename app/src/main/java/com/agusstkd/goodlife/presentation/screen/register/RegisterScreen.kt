@@ -33,6 +33,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.agusstkd.goodlife.R
+import com.agusstkd.goodlife.core.datetime.language.AccessibilityTexts
 import com.agusstkd.goodlife.presentation.components.common.BackgroundGradientComponent
 import com.agusstkd.goodlife.presentation.components.common.ButtonComponent
 import com.agusstkd.goodlife.presentation.components.common.ButtonParams
@@ -44,6 +45,9 @@ import com.agusstkd.goodlife.presentation.components.common.TextFieldComponent
 import com.agusstkd.goodlife.presentation.components.common.TextFieldParams
 import com.agusstkd.goodlife.presentation.components.common.TextFieldType
 import com.agusstkd.goodlife.presentation.components.common.TitleComponent
+import com.agusstkd.goodlife.core.datetime.language.AppLanguage
+import com.agusstkd.goodlife.core.datetime.language.AuthScreenTexts
+import com.agusstkd.goodlife.core.datetime.language.AuthTexts
 import com.agusstkd.goodlife.presentation.screen.register.model.RegisterUiAction
 import com.agusstkd.goodlife.presentation.screen.register.model.RegisterUiState
 import com.agusstkd.goodlife.presentation.theme.DarkGreen
@@ -55,12 +59,21 @@ import com.agusstkd.goodlife.presentation.theme.TextSecondary
 fun RegisterScreen(
     uiState: RegisterUiState,
     onAction: (RegisterUiAction) -> Unit,
+    texts: AuthScreenTexts,
     modifier: Modifier = Modifier
 ) {
+    val auth = texts.auth
+    val accessibility = texts.accessibility
+
     BackgroundGradientComponent(modifier = modifier) {
         when (uiState) {
             is RegisterUiState.Loading -> LoadingView()
-            is RegisterUiState.Content -> RegisterContent(state = uiState, onAction = onAction)
+            is RegisterUiState.Content -> RegisterContent(
+                state = uiState,
+                onAction = onAction,
+                auth = auth,
+                accessibility = accessibility
+            )
             is RegisterUiState.Success -> { }
         }
     }
@@ -82,7 +95,9 @@ private fun LoadingView() {
 @Composable
 private fun RegisterContent(
     state: RegisterUiState.Content,
-    onAction: (RegisterUiAction) -> Unit
+    onAction: (RegisterUiAction) -> Unit,
+    auth: AuthTexts,
+    accessibility: AccessibilityTexts
 ) {
     val isFormValid = state.fullName.isNotBlank() &&
             state.userName.isNotBlank() &&
@@ -105,21 +120,21 @@ private fun RegisterContent(
     ) {
         Spacer(modifier = Modifier.height(32.dp))
 
-        RegisterHeader()
+        RegisterHeader(auth = auth)
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        RegisterForm(state = state, onAction = onAction)
+        RegisterForm(state = state, onAction = onAction, auth = auth, accessibility = accessibility)
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TermsCheckbox(isChecked = state.acceptedTerms, onAction = onAction)
+        TermsCheckbox(isChecked = state.acceptedTerms, onAction = onAction, auth = auth)
 
         Spacer(modifier = Modifier.height(24.dp))
 
         ButtonComponent(
             params = ButtonParams(
-                text = "Registrarme",
+                text = auth.register,
                 enabled = isFormValid,
                 isLoading = state.isLoading,
                 variant = ButtonVariant.PRIMARY,
@@ -130,13 +145,14 @@ private fun RegisterContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        AlreadyHaveAccountLink(onAction = onAction)
+        AlreadyHaveAccountLink(onAction = onAction, auth = auth)
 
         state.errorMessage?.let { error ->
             Spacer(modifier = Modifier.height(16.dp))
             ErrorSnackbar(
                 message = error,
-                onDismiss = { onAction(RegisterUiAction.OnDismissError) }
+                onDismiss = { onAction(RegisterUiAction.OnDismissError) },
+                auth = auth
             )
         }
 
@@ -145,7 +161,7 @@ private fun RegisterContent(
 }
 
 @Composable
-private fun RegisterHeader() {
+private fun RegisterHeader(auth: AuthTexts) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
@@ -161,12 +177,12 @@ private fun RegisterHeader() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TitleComponent(text = "Crear Cuenta")
+        TitleComponent(text = auth.createAccount)
 
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = "Crea tu cuenta para empezar tu vida saludable",
+            text = auth.registerSubtitle,
             style = MaterialTheme.typography.bodyMedium,
             color = TextSecondary,
             textAlign = TextAlign.Center
@@ -177,7 +193,9 @@ private fun RegisterHeader() {
 @Composable
 private fun RegisterForm(
     state: RegisterUiState.Content,
-    onAction: (RegisterUiAction) -> Unit
+    onAction: (RegisterUiAction) -> Unit,
+    auth: AuthTexts,
+    accessibility: AccessibilityTexts
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -186,7 +204,7 @@ private fun RegisterForm(
         TextFieldComponent(
             params = TextFieldParams(
                 value = state.fullName,
-                placeholder = "Nombre completo",
+                placeholder = auth.fullName,
                 type = TextFieldType.USER,
                 isError = state.isFullNameError
             ),
@@ -196,7 +214,7 @@ private fun RegisterForm(
         TextFieldComponent(
             params = TextFieldParams(
                 value = state.userName,
-                placeholder = "Nombre de usuario",
+                placeholder = auth.username,
                 type = TextFieldType.USER,
                 isError = state.isUserNameError
             ),
@@ -206,7 +224,7 @@ private fun RegisterForm(
         TextFieldComponent(
             params = TextFieldParams(
                 value = state.email,
-                placeholder = "Correo electrónico",
+                placeholder = auth.email,
                 type = TextFieldType.EMAIL,
                 isError = state.isEmailError
             ),
@@ -216,9 +234,11 @@ private fun RegisterForm(
         TextFieldComponent(
             params = TextFieldParams(
                 value = state.password,
-                placeholder = "Contraseña",
+                placeholder = auth.password,
                 type = TextFieldType.PASSWORD,
-                isError = state.isPasswordError
+                isError = state.isPasswordError,
+                passwordToggleHide = accessibility.hide,
+                passwordToggleShow = accessibility.show
             ),
             onValueChange = { onAction(RegisterUiAction.OnPasswordChange(it)) }
         )
@@ -226,9 +246,11 @@ private fun RegisterForm(
         TextFieldComponent(
             params = TextFieldParams(
                 value = state.confirmPassword,
-                placeholder = "Confirmar contraseña",
+                placeholder = auth.confirmPassword,
                 type = TextFieldType.PASSWORD,
-                isError = state.isConfirmPasswordError
+                isError = state.isConfirmPasswordError,
+                passwordToggleHide = accessibility.hide,
+                passwordToggleShow = accessibility.show
             ),
             onValueChange = { onAction(RegisterUiAction.OnConfirmPasswordChange(it)) }
         )
@@ -238,12 +260,13 @@ private fun RegisterForm(
 @Composable
 private fun TermsCheckbox(
     isChecked: Boolean,
-    onAction: (RegisterUiAction) -> Unit
+    onAction: (RegisterUiAction) -> Unit,
+    auth: AuthTexts
 ) {
     CheckboxComponent(
         params = CheckboxParams(
-            text = "Acepto los ",
-            linkText = "Términos y Condiciones",
+            text = auth.termsPrefix,
+            linkText = auth.termsAndConditions,
             checked = isChecked,
             id = CheckboxParamsId.ACCEPT_TERMS_AND_CONDITIONS
         ),
@@ -255,13 +278,13 @@ private fun TermsCheckbox(
 }
 
 @Composable
-private fun AlreadyHaveAccountLink(onAction: (RegisterUiAction) -> Unit) {
+private fun AlreadyHaveAccountLink(onAction: (RegisterUiAction) -> Unit, auth: AuthTexts) {
     val annotatedString = buildAnnotatedString {
         withStyle(SpanStyle(color = TextSecondary)) {
-            append("¿Ya tienes cuenta? ")
+            append(auth.alreadyHaveAccount)
         }
         withStyle(SpanStyle(color = TextLink, textDecoration = TextDecoration.Underline)) {
-            append("Iniciar Sesión")
+            append(auth.login)
         }
     }
 
@@ -278,12 +301,13 @@ private fun AlreadyHaveAccountLink(onAction: (RegisterUiAction) -> Unit) {
 @Composable
 private fun ErrorSnackbar(
     message: String,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    auth: AuthTexts
 ) {
     Snackbar(
         action = {
             TextButton(onClick = onDismiss) {
-                Text("OK")
+                Text(auth.ok)
             }
         }
     ) {
@@ -299,7 +323,11 @@ private fun ErrorSnackbar(
 @Composable
 private fun RegisterScreenLoadingPreview() {
     GoodLifeTheme {
-        RegisterScreen(uiState = RegisterUiState.Loading, onAction = {})
+        RegisterScreen(
+            uiState = RegisterUiState.Loading,
+            onAction = {},
+            texts = AuthScreenTexts(AppLanguage.Spanish.authTexts, AppLanguage.Spanish.accessibilityTexts)
+        )
     }
 }
 
@@ -307,7 +335,11 @@ private fun RegisterScreenLoadingPreview() {
 @Composable
 private fun RegisterScreenEmptyPreview() {
     GoodLifeTheme {
-        RegisterScreen(uiState = RegisterUiState.Content(), onAction = {})
+        RegisterScreen(
+            uiState = RegisterUiState.Content(),
+            onAction = {},
+            texts = AuthScreenTexts(AppLanguage.Spanish.authTexts, AppLanguage.Spanish.accessibilityTexts)
+        )
     }
 }
 
@@ -324,7 +356,8 @@ private fun RegisterScreenFilledPreview() {
                 confirmPassword = "123456",
                 acceptedTerms = true
             ),
-            onAction = {}
+            onAction = {},
+            texts = AuthScreenTexts(AppLanguage.Spanish.authTexts, AppLanguage.Spanish.accessibilityTexts)
         )
     }
 }

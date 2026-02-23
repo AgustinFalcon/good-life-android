@@ -24,7 +24,8 @@ class GoodLifeInterceptor(
         val requestPath = originalRequest.url.encodedPath
         val requestUrl = originalRequest.url.toString()
         val requestMethod = originalRequest.method
-        
+        val publicEndpoint = isPublicEndpoint(requestPath)
+
         // ═══════════════════════════════════════════════════════════════════
         // LOG REQUEST
         // ═══════════════════════════════════════════════════════════════════
@@ -34,10 +35,10 @@ class GoodLifeInterceptor(
         Log.d(TAG, "🔗 URL: $requestUrl")
         Log.d(TAG, "📋 Method: $requestMethod")
         Log.d(TAG, "📂 Path: $requestPath")
-        Log.d(TAG, "🔐 Is Public: ${isPublicEndpoint(requestPath)}")
+        Log.d(TAG, "🔐 Is Public: $publicEndpoint")
 
         // Si es un endpoint público, no añadir token
-        val requestToSend = if (isPublicEndpoint(requestPath)) {
+        val requestToSend = if (publicEndpoint) {
             Log.d(TAG, "⚪ No auth required (public endpoint)")
             originalRequest
         } else {
@@ -51,7 +52,8 @@ class GoodLifeInterceptor(
                 Log.d(TAG, "🟢 Token attached (${accessToken.take(20)}...)")
                 // Añadir el header de autorización
                 originalRequest.newBuilder()
-                    .addHeader(HEADER_AUTHORIZATION, "$BEARER_PREFIX$accessToken")
+                    // usando .header y no addHeader. evitás duplicar Authorization cuando haya retry con token renovado.
+                    .header(HEADER_AUTHORIZATION, "$BEARER_PREFIX$accessToken")
                     .build()
             }
         }

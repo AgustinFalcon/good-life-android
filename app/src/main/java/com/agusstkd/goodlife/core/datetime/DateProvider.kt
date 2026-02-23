@@ -1,11 +1,11 @@
 package com.agusstkd.goodlife.core.datetime
 
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 /**
  * Proveedor de fecha/hora abstraído para testing determinista.

@@ -748,12 +748,63 @@ class DailyRepositoryTest {
 
 | Fase | Feature | Estado |
 |------|---------|--------|
-| 1 | Authentication (login, register, refresh) | ✅ Completado |
+| 1 | Authentication (login, register, refresh) | 🚧 En Desarrollo |
+| 1.1 | Session Renewal automático por `401` | 🟡 Pendiente |
 | 2 | Daily Logs (today, by date, update status) | 🟡 En Desarrollo |
 | 3 | Tasks (CRUD, by date) | 🔴 Pendiente |
 | 4 | Habits (CRUD, by date, update progress) | 🔴 Pendiente |
 | 5 | Workouts (routines, logs, finish) | 🔴 Pendiente |
 | 6 | Meals (catalog, plans) | 🔴 Pendiente |
+
+---
+
+## 12.1 Pendiente de Auth: Refresh Token Automático en `401`
+
+### Objetivo
+
+Implementar renovación automática de sesión para que la app:
+- reintente requests fallidos por `401` usando refresh token
+- evite logout inmediato cuando solo expiró access token
+- mantenga UX fluida y robusta
+
+### Estado
+
+🟡 **Pendiente** (documentado para implementación posterior)
+
+### Diseño propuesto (alto nivel)
+
+1. Interceptar respuestas `401` en capa de network.
+2. Excluir endpoints de auth (`/token`, `/register`, `/token/refresh`) para evitar loops.
+3. Leer refresh token desde `TokenManager`.
+4. Si refresh token válido:
+   - llamar endpoint de refresh
+   - persistir nuevo access token (`TokenManager.updateAccessToken(...)`)
+   - reintentar request original una sola vez.
+5. Si falla refresh:
+   - limpiar sesión local
+   - notificar `Unauthorized` para navegar a login.
+
+### Checklist técnico (pendiente)
+
+- [ ] Definir estrategia: `Authenticator` de OkHttp vs manejo manual en `Interceptor`
+- [ ] Implementar guard anti-loop (máximo 1 retry por request)
+- [ ] Implementar exclusión de endpoints auth
+- [ ] Integrar llamada a `refreshToken(...)`
+- [ ] Persistir nuevo access token y expiración
+- [ ] Reintentar request original con token renovado
+- [ ] Manejar fallback logout cuando refresh falle
+- [ ] Agregar tests:
+  - [ ] `401` + refresh OK => retry exitoso
+  - [ ] `401` + refresh FAIL => sesión inválida
+  - [ ] endpoint auth no dispara refresh
+  - [ ] no hay loop de reintentos
+
+### Riesgos a cubrir
+
+- Condiciones de carrera (múltiples requests 401 simultáneos)
+- Loop infinito de refresh
+- Retry sobre requests no idempotentes
+- Inconsistencias de token en memoria vs SharedPreferences
 
 ---
 

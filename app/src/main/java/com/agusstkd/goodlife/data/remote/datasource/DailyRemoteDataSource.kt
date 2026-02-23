@@ -4,7 +4,7 @@ import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.data.remote.api.GoodLifeApiService
 import com.agusstkd.goodlife.data.remote.api.executeApiCall
 import com.agusstkd.goodlife.data.remote.dto.response.daily.DailyLogResponse
-import com.agusstkd.goodlife.domain.model.daily.ItemStatus
+import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 
 /**
  * DataSource remoto para operaciones de daily logs.
@@ -37,11 +37,11 @@ class DailyRemoteDataSource(
      * @param status Nuevo status del item
      * @return Result con DailyLogResponse actualizado
      */
-    suspend fun updateItemStatus(itemId: Long, status: ItemStatus): Result<DailyLogResponse> {
+    suspend fun updateItemStatus(itemId: Long, status: DailyItemStatus): Result<DailyLogResponse> {
         return executeApiCall {
             apiService.updateItemStatus(
                 itemId = itemId,
-                status = status.name  // ItemStatus.COMPLETED → "COMPLETED"
+                status = status.name  // DailyItemStatus.COMPLETED → "COMPLETED"
             )
         }
     }

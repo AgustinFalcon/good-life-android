@@ -32,6 +32,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.agusstkd.goodlife.core.datetime.language.AppLanguage
+import com.agusstkd.goodlife.core.datetime.language.MainScaffoldTexts
 import com.agusstkd.goodlife.presentation.theme.GreenSelected
 
 /**
@@ -60,26 +62,31 @@ data class TabItemModel(
 )
 
 /**
+ * Parámetros del componente WorkoutTabHeader.
+ *
+ * @property tabs Lista de tabs a mostrar
+ * @property selectedTab Tab actualmente seleccionado
+ * @property filterContentDescription Descripción accesibilidad del botón filtro
+ */
+data class WorkoutTabHeaderParams(
+    val tabs: List<TabItemModel>,
+    val selectedTab: WorkoutTabOption,
+    val filterContentDescription: String = ""
+)
+
+/**
  * Header con tabs personalizados para la sección de Workouts.
  *
  * Incluye un botón de filtro y tabs con iconos e indicador de selección.
- *
- * @param tabs Lista de tabs a mostrar
- * @param selectedTab Tab actualmente seleccionado
- * @param onTabSelected Callback cuando se selecciona un tab
- * @param onFilterClick Callback al tocar el filtro
- * @param modifier Modificador de Compose
  */
 @Composable
 fun WorkoutTabHeaderComponent(
-    tabs: List<TabItemModel>,
-    selectedTab: WorkoutTabOption,
+    params: WorkoutTabHeaderParams,
     onTabSelected: (WorkoutTabOption) -> Unit,
     onFilterClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.background(MaterialTheme.colorScheme.surface)) {
-        // Fila del filtro
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -90,7 +97,7 @@ fun WorkoutTabHeaderComponent(
         ) {
             Icon(
                 imageVector = Icons.Default.FilterList,
-                contentDescription = "Filtrar",
+                contentDescription = params.filterContentDescription,
                 modifier = Modifier
                     .clickable(onClick = onFilterClick)
                     .padding(4.dp)
@@ -106,15 +113,15 @@ fun WorkoutTabHeaderComponent(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            tabs.forEachIndexed { index, tab ->
+            params.tabs.forEachIndexed { index, tab ->
                 WorkoutTabItem(
                     item = tab,
-                    isSelected = tab.option == selectedTab,
+                    isSelected = tab.option == params.selectedTab,
                     onClick = { onTabSelected(tab.option) },
                     modifier = Modifier.weight(1f)
                 )
 
-                if (index < tabs.lastIndex) {
+                if (index < params.tabs.lastIndex) {
                     VerticalDivider(
                         modifier = Modifier
                             .width(1.dp)
@@ -180,19 +187,19 @@ private fun WorkoutTabItem(
 /**
  * Retorna los tabs por defecto para la sección de Workouts.
  */
-fun getDefaultWorkoutTabs(): List<TabItemModel> = listOf(
+fun getDefaultWorkoutTabs(scaffoldTexts: MainScaffoldTexts): List<TabItemModel> = listOf(
     TabItemModel(
-        label = "Ejercicios",
+        label = scaffoldTexts.tabExercises,
         icon = Icons.Default.Person,
         option = WorkoutTabOption.ALL_EXERCISES
     ),
     TabItemModel(
-        label = "Mis ejercicios",
+        label = scaffoldTexts.tabMyExercises,
         icon = Icons.Default.HowToReg,
         option = WorkoutTabOption.MY_EXERCISES
     ),
     TabItemModel(
-        label = "Estadísticas",
+        label = scaffoldTexts.tabStatistics,
         icon = Icons.Default.QueryStats,
         option = WorkoutTabOption.STATISTICS
     )
@@ -201,9 +208,13 @@ fun getDefaultWorkoutTabs(): List<TabItemModel> = listOf(
 @Preview(showBackground = true)
 @Composable
 private fun WorkoutTabHeaderPreview() {
+    val lang = AppLanguage.Spanish
     WorkoutTabHeaderComponent(
-        tabs = getDefaultWorkoutTabs(),
-        selectedTab = WorkoutTabOption.ALL_EXERCISES,
+        params = WorkoutTabHeaderParams(
+            tabs = getDefaultWorkoutTabs(lang.mainScaffoldTexts),
+            selectedTab = WorkoutTabOption.ALL_EXERCISES,
+            filterContentDescription = lang.accessibilityTexts.filter
+        ),
         onTabSelected = {}
     )
 }
@@ -211,9 +222,13 @@ private fun WorkoutTabHeaderPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun WorkoutTabHeaderMyExercisesPreview() {
+    val lang = AppLanguage.Spanish
     WorkoutTabHeaderComponent(
-        tabs = getDefaultWorkoutTabs(),
-        selectedTab = WorkoutTabOption.MY_EXERCISES,
+        params = WorkoutTabHeaderParams(
+            tabs = getDefaultWorkoutTabs(lang.mainScaffoldTexts),
+            selectedTab = WorkoutTabOption.MY_EXERCISES,
+            filterContentDescription = lang.accessibilityTexts.filter
+        ),
         onTabSelected = {}
     )
 }

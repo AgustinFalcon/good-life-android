@@ -1,7 +1,7 @@
 # Guía de Arquitectura - GoodLife Android
 
 > **Documento de referencia obligatorio** para todo desarrollo en el proyecto.
-> Última actualización: 2026-01-26
+> Última actualización: 2026-02-03
 
 ---
 
@@ -15,7 +15,8 @@
 6. [Convenciones de Código](#6-convenciones-de-código)
 7. [Reglas KMP-Ready](#7-reglas-kmp-ready)
 8. [Inyección de Dependencias](#8-inyección-de-dependencias)
-9. [Checklist de Implementación](#9-checklist-de-implementación)
+9. [Sistema de Localización (AppLanguage)](#9-sistema-de-localización-applanguage)
+10. [Checklist de Implementación](#10-checklist-de-implementación)
 
 ---
 
@@ -293,61 +294,89 @@ Platform contiene implementaciones que usan APIs específicas de Android que NO 
 
 ## 4. Patrones de Diseño
 
-### 4.1 Patrón Owner (Screen Composition)
+### 4.1 Patrón Owner (Screen Composition) — Actualizado SPEC-007
 
 ```kotlin
 // ═══════════════════════════════════════════════════════════════════
 // PATRÓN: Owner separa inyección de UI pura
+// REGLA: Owner es el ÚNICO lugar con koinViewModel()
+// REGLA: Textos localizados fluyen del ViewModel via parámetro
 // ═══════════════════════════════════════════════════════════════════
 
 /**
- * OWNER: Maneja inyección y side-effects platform-specific
+ * OWNER: Maneja inyección, textos y side-effects platform-specific
  */
 @Composable
 fun LoginScreenOwner(
-    viewModel: LoginViewModel = koinViewModel()  // Inyección
+    viewModel: LoginViewModel = koinViewModel()  // único koinViewModel
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val texts = viewModel.screenTexts  // AuthScreenTexts del ViewModel
     
-    // Side effects que requieren Context/Activity
-    val context = LocalContext.current
-    LaunchedEffect(uiState) {
-        // Mostrar BiometricPrompt, toasts, etc.
-    }
+    // Side effects que requieren Context/Activity (biometría, etc.)
     
-    // Delegar a Content puro
-    LoginContent(
+    // Delegar a Screen puro con textos como parámetro
+    LoginScreen(
         uiState = uiState,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
+        texts = texts                   // ← textos como parámetro
     )
 }
 
 /**
- * CONTENT: UI pura, sin dependencias externas
- * - Recibe estado inmutable
+ * SCREEN: UI pura, sin dependencias externas
+ * - Recibe estado inmutable + textos localizados
  * - Emite acciones via callbacks
- * - Fácil de previsualizar y testear
+ * - NUNCA usa koinInject(), stringResource(), R.string
  */
 @Composable
-private fun LoginContent(
+fun LoginScreen(
     uiState: LoginUiState,
-    onAction: (LoginUiAction) -> Unit
+    onAction: (LoginUiAction) -> Unit,
+    texts: AuthScreenTexts              // ← wrapper de textos
 ) {
-    // Composables puros
+    val auth = texts.auth
+    val accessibility = texts.accessibility
+    
+    // Pasa textos a Components dentro de sus Params
+    TextFieldComponent(
+        params = TextFieldParams(
+            value = uiState.password,
+            placeholder = auth.password,
+            passwordToggleHide = accessibility.hide,
+            passwordToggleShow = accessibility.show
+        ),
+        onValueChange = { onAction(LoginUiAction.OnPasswordChange(it)) }
+    )
 }
 
 /**
- * PREVIEW: Usa Content con datos mock
+ * PREVIEW: Usa Screen con datos mock + textos reales
  */
 @Preview
 @Composable
 private fun LoginScreenPreview() {
-    LoginContent(
+    LoginScreen(
         uiState = LoginUiState.Content(email = "test@test.com"),
-        onAction = {}
+        onAction = {},
+        texts = AuthScreenTexts(
+            auth = AppLanguage.Spanish.authTexts,
+            accessibility = AppLanguage.Spanish.accessibilityTexts
+        )
     )
 }
 ```
+
+#### Reglas estrictas del patrón Owner
+
+| # | Regla | Razón |
+|---|-------|-------|
+| 1 | **`koinViewModel()` solo en Owner** | Screens y Components son renderers puros |
+| 2 | **`koinInject()` PROHIBIDO en Screens/Components** | Acopla UI al contenedor DI |
+| 3 | **Textos del ViewModel, no de Koin** | `viewModel.screenTexts`, no `koinInject<AppLanguage>()` |
+| 4 | **Textos como parámetro al Screen** | Screen recibe wrapper `AuthScreenTexts`, `HomeTexts`, etc. |
+| 5 | **Textos dentro de Params para Components** | `TextFieldParams(passwordToggleHide = ...)` |
+| 6 | **Único `koinInject` aceptable en Owner** | `BiometricAuthenticator` (requiere Activity) |
 
 ### 4.2 Patrón Component (UI Reusable)
 
@@ -816,7 +845,85 @@ viewModel { LoginViewModel(get(), get(), get(), get(), get()) }
 
 ---
 
-## 9. Checklist de Implementación
+## 9. Sistema de Localización (AppLanguage)
+
+> Referencia completa: **[SPEC-007-app-language.md](./specs/SPEC-007-app-language.md)**
+
+### 9.1 Principios
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│  REGLA DE ORO: Todo texto visible al usuario viene de          │
+│  AppLanguage, NUNCA de stringResource(), R.string, ni hardcode │
+└────────────────────────────────────────────────────────────────┘
+```
+
+### 9.2 Flujo de textos
+
+```
+AppLanguage (singleton Koin, detecta locale automáticamente)
+    ↓ constructor injection
+ViewModel (private val language: AppLanguage)
+    ↓ expone propiedad
+    val screenTexts: XxxScreenTexts
+        get() = XxxScreenTexts(language.xxxTexts, language.accessibilityTexts)
+    ↓ Owner lee
+Owner (viewModel.screenTexts)
+    ↓ pasa como parámetro
+Screen (texts: XxxScreenTexts)
+    ↓ extrae y pasa dentro de Params
+Component (params: XxxParams con textos dentro)
+```
+
+### 9.3 Prohibiciones
+
+```kotlin
+// ❌ PROHIBIDO — koinInject en Screen
+@Composable
+fun LoginScreen(language: AppLanguage = koinInject()) { }
+
+// ❌ PROHIBIDO — stringResource/R.string en cualquier lugar
+Text(text = stringResource(R.string.login))
+
+// ❌ PROHIBIDO — textos hardcodeados
+Text(text = "Iniciar Sesión")
+
+// ❌ PROHIBIDO — textos fuera de Params en Components
+fun TextFieldComponent(params: TextFieldParams, hideLabel: String = "")
+
+// ✅ CORRECTO — textos dentro de Params
+fun TextFieldComponent(params: TextFieldParams(passwordToggleHide = "..."))
+```
+
+### 9.4 Agregar textos para una nueva vista
+
+```
+1. UiTexts.kt        → data class NuevoTexts(title: String, ...)
+2. AppLanguage.kt     → val nuevoTexts: NuevoTexts
+                        + implementar en Spanish, English, Portuguese
+3. UiTexts.kt         → data class NuevoScreenTexts(nuevo: NuevoTexts, accessibility: AccessibilityTexts)
+                        (solo si el Screen necesita >1 grupo)
+4. NuevoViewModel.kt  → val screenTexts: NuevoScreenTexts
+5. NuevoScreenOwner   → pasa viewModel.screenTexts al Screen
+6. NuevoScreen        → recibe texts: NuevoScreenTexts como parámetro
+```
+
+### 9.5 Agregar un nuevo idioma
+
+```kotlin
+// 1. Nuevo data object en AppLanguage.kt
+data object Italian : AppLanguage {
+    override val authTexts = AuthTexts(login = "Accedi", ...)
+    // el compilador marca error en CADA propiedad faltante
+}
+
+// 2. Nuevo case en AppModule.kt
+"it" -> AppLanguage.Italian
+```
+
+---
+
+## 10. Checklist de Implementación
 
 ### Al crear una nueva pantalla:
 
@@ -825,26 +932,34 @@ viewModel { LoginViewModel(get(), get(), get(), get(), get()) }
     □ [Feature]UiState.kt (@Stable sealed interface)
     □ [Feature]UiAction.kt (@Stable sealed interface)
 
-□ 2. Crear [Feature]ViewModel.kt
-    □ Inyectar dependencias via constructor
+□ 2. Definir textos localizados
+    □ data class [Feature]Texts(...) en UiTexts.kt
+    □ Implementar en AppLanguage: Spanish, English, Portuguese
+    □ (Opcional) data class [Feature]ScreenTexts wrapper si necesita >1 grupo
+
+□ 3. Crear [Feature]ViewModel.kt
+    □ Inyectar language: AppLanguage via constructor
+    □ Exponer val screenTexts: [Feature]ScreenTexts (o textos directos)
     □ Exponer StateFlow<UiState>
     □ Implementar fun onAction(action: UiAction)
     □ Usar dispatcherProvider.io para operaciones async
 
-□ 3. Crear [Feature]Screen.kt
-    □ [Feature]Content: UI pura con uiState + onAction
-    □ Previews para cada estado
+□ 4. Crear [Feature]Screen.kt
+    □ Recibe texts como parámetro (NUNCA koinInject)
+    □ Pasa textos a Components dentro de sus Params
+    □ Previews para cada estado con textos mock
 
-□ 4. Crear [Feature]ScreenOwner.kt
+□ 5. Crear [Feature]ScreenOwner.kt
     □ Inyectar ViewModel con koinViewModel()
     □ collectAsStateWithLifecycle()
+    □ Pasar viewModel.screenTexts al Screen
     □ Manejar side effects platform-specific
 
-□ 5. Actualizar DI
-    □ Registrar ViewModel en AppModule
+□ 6. Actualizar DI
+    □ viewModel { [Feature]ViewModel(language = get(), ...) }
     □ Registrar UseCases nuevos si los hay
 
-□ 6. Actualizar Navegación
+□ 7. Actualizar Navegación
     □ Agregar ruta en AppRoute o TabRoute
     □ Agregar composable en AppGraph
     □ Agregar extension function si es navegación común
@@ -855,7 +970,7 @@ viewModel { LoginViewModel(get(), get(), get(), get(), get()) }
 ```
 □ 1. Crear en domain/usecase/[feature]/
 □ 2. Definir sealed interface Result si es complejo
-□ 3. Inyectar dependencias via constructor
+□ 3. Inyectar dependencias via constructor (incluyendo language si necesita textos)
 □ 4. Implementar operator fun invoke()
 □ 5. Registrar como factory en AppModule
 □ 6. Documentar responsabilidades y flujo
@@ -865,10 +980,11 @@ viewModel { LoginViewModel(get(), get(), get(), get(), get()) }
 
 ```
 □ 1. Crear en presentation/components/[categoria]/
-□ 2. Definir data class [Nombre]Params
+□ 2. Definir data class [Nombre]Params (incluir textos de accessibility aquí)
 □ 3. Crear @Composable [Nombre]Component(params, callbacks, modifier)
-□ 4. Agregar @Preview para cada variante
-□ 5. Documentar uso con ejemplo
+□ 4. NUNCA usar koinInject(), stringResource() o R.string
+□ 5. Agregar @Preview para cada variante
+□ 6. Documentar uso con ejemplo
 ```
 
 ---
@@ -885,9 +1001,15 @@ viewModel { LoginViewModel(get(), get(), get(), get(), get()) }
 | 6 | Owner separa inyección de UI pura | Testabilidad |
 | 7 | Mappers como extension functions junto al DTO/Entity | Cohesión |
 | 8 | Result<T> para operaciones que pueden fallar | Manejo uniforme de errores |
+| 9 | **`koinInject()` PROHIBIDO en Screens y Components** | KMP-ready + Composable puro (SPEC-007) |
+| 10 | **`stringResource()` y `R.string` PROHIBIDO en capa compartida** | KMP-ready (SPEC-007) |
+| 11 | **Textos localizados via AppLanguage → ViewModel → Screen** | Flujo unidireccional (SPEC-007) |
+| 12 | **Textos de accessibility dentro de Params** | Firmas limpias (SPEC-007) |
+| 13 | **DateProvider inyectado, NUNCA Clock.System directo** | Testing determinista (SPEC-004) |
+| 14 | **Formateo de fechas en ViewModel, NUNCA en UI** | UI pura (SPEC-004) |
 
 ---
 
 **Creado por:** Android Team  
-**Versión:** 1.0  
-**Última actualización:** 2026-01-26
+**Versión:** 2.0  
+**Última actualización:** 2026-02-03

@@ -12,10 +12,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.agusstkd.goodlife.R
 import com.agusstkd.goodlife.domain.biometric.BiometricAuthenticator
 import com.agusstkd.goodlife.domain.biometric.BiometricPromptConfig
 import com.agusstkd.goodlife.platform.biometric.AndroidBiometricAuthenticator
@@ -65,9 +63,10 @@ fun LoginScreenOwner(
         (biometricAuthenticator as? AndroidBiometricAuthenticator)?.setActivity(activity)
     }
 
-    val biometricTitle = stringResource(R.string.biometric_prompt_title)
-    val biometricSubtitle = stringResource(R.string.biometric_prompt_subtitle)
-    val biometricNegativeButton = stringResource(R.string.biometric_prompt_negative_button)
+    val texts = viewModel.screenTexts
+    val biometricTitle = texts.auth.biometricPromptTitle
+    val biometricSubtitle = texts.auth.biometricPromptSubtitle
+    val biometricNegativeButton = texts.auth.biometricPromptCancel
 
     // Mostrar BiometricPrompt cuando shouldShowBiometricPrompt es true
     LaunchedEffect(uiState) {
@@ -91,39 +90,35 @@ fun LoginScreenOwner(
     }
 
     when (uiState) {
-        // Estados de UI → Delegar a LoginScreen
         is LoginUiState.Loading,
         is LoginUiState.Content,
         is LoginUiState.Error -> {
             LoginScreen(
                 uiState = uiState,
                 onAction = viewModel::onAction,
+                texts = viewModel.screenTexts
             )
         }
 
-        // Estado de navegación → Mostrar éxito y navegar
         is LoginUiState.Success -> {
-            LoginSuccessScreen()
-            // La navegación se maneja en el ViewModel via ComposeNavigationController
+            LoginSuccessScreen(text = texts.auth.loginSuccess)
         }
     }
 }
 
-/**
- * Pantalla temporal de éxito.
- * Se muestra brevemente antes de navegar a Main.
- */
 @Composable
-private fun LoginSuccessScreen(modifier: Modifier = Modifier) {
+private fun LoginSuccessScreen(
+    text: String,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "✅ Login Exitoso!",
+            text = text,
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.primary
         )
-        // TODO: Agregar Lottie animation o AnimatedVisibility
     }
 }

@@ -92,14 +92,14 @@ data class TextFieldVisualState(
             cursorColor = DarkGreen
         )
         val Focused = TextFieldVisualState(
-            borderColors = listOf(LightGreen, LightGreen, LightGreen),
+            borderColors = listOf(LightGreen, LightGreen.copy(alpha = 0.9f), LightGreen.copy(alpha = 0.7f)),
             iconColor = LightGreen,
             textColor = Color.Black,
             placeholderColor = LightGreen.copy(alpha = 0.7f),
             cursorColor = LightGreen
         )
         val Error = TextFieldVisualState(
-            borderColors = listOf(ErrorRed, ErrorRed, ErrorRed),
+            borderColors = listOf(ErrorRed, ErrorRed.copy(alpha = 0.9f), ErrorRed.copy(alpha = 0.7f)),
             iconColor = ErrorRed,
             textColor = Color.Black,
             placeholderColor = ErrorRed.copy(alpha = 0.7f),
@@ -120,7 +120,9 @@ data class TextFieldParams(
     val value: String,
     val placeholder: String,
     val type: TextFieldType,
-    val isError: Boolean = false
+    val isError: Boolean = false,
+    val passwordToggleHide: String = "",
+    val passwordToggleShow: String = ""
 )
 
 /**
@@ -199,7 +201,7 @@ fun TextFieldComponent(
                     Spacer(Modifier.width(12.dp))
                     Icon(
                         imageVector = if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                        contentDescription = if (isPasswordVisible) "Ocultar" else "Mostrar",
+                        contentDescription = if (isPasswordVisible) params.passwordToggleHide else params.passwordToggleShow,
                         tint = visualState.iconColor,
                         modifier = Modifier.clickable { isPasswordVisible = !isPasswordVisible }
                     )

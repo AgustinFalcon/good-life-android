@@ -85,7 +85,7 @@ class AuthRepositoryImpl(
             userDao.deleteUser()
             Result.Success(Unit)
         } catch (e: Exception) {
-            Result.Error(e, "Error al cerrar sesión")
+            Result.Error(Exception("Error al cerrar sesión", e))
         }
     }
 
@@ -100,8 +100,7 @@ class AuthRepositoryImpl(
             Result.Success(userEntity.toDomain())
         } else {
             Result.Error(
-                exception = NoSessionException(),
-                message = "No hay usuario autenticado"
+                exception = NoSessionException("No hay usuario autenticado")
             )
         }
     }

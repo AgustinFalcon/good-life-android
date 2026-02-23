@@ -20,7 +20,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DailyLogResponse(
     val id: Long,
-    val userId: Long,
     val date: LocalDate,
     val completionRate: Double,
     val items: List<DailyItemResponse>
@@ -36,7 +35,6 @@ data class DailyLogResponse(
 fun DailyLogResponse.toDomain(): DailyLog {
     return DailyLog(
         id = id,
-        userId = userId,
         date = date,
         completionRate = completionRate,
         items = items.map { it.toDomain() }

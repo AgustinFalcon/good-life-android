@@ -1,6 +1,7 @@
 package com.agusstkd.goodlife.di
 
 import com.agusstkd.goodlife.core.network.ApiServiceFactory
+import com.agusstkd.goodlife.core.network.GoodLifeAuthenticator
 import com.agusstkd.goodlife.core.network.GoodLifeInterceptor
 import com.agusstkd.goodlife.core.network.JsonSerializerFactory
 import com.agusstkd.goodlife.core.network.OkHttpClientFactory
@@ -81,17 +82,33 @@ val networkModule = module {
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════════════
+    // AUTHENTICATOR (401 refresh)
+    // ═══════════════════════════════════════════════════════════════════════════════════════════
+
+    /**
+     * GoodLifeAuthenticator como singleton.
+     * Usa inject() (Lazy) para romper dependencia circular:
+     * OkHttpClient → Authenticator → ApiService → Retrofit → OkHttpClient
+     */
+    single<GoodLifeAuthenticator> {
+        GoodLifeAuthenticator(
+            tokenManager = get(),
+            apiService = inject()
+        )
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════════════════
     // OKHTTP CLIENT
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
     /**
-     * OkHttpClient configurado.
-     * Usa OkHttpClientFactory para la creación.
+     * OkHttpClient configurado con interceptors y authenticator.
      */
     single<OkHttpClient> {
         OkHttpClientFactory.create(
             authInterceptor = get(),
-            loggingInterceptor = get()
+            loggingInterceptor = get(),
+            authenticator = get()
         )
     }
 

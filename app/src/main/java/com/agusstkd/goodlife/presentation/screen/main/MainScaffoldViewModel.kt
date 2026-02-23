@@ -36,10 +36,11 @@ class MainScaffoldViewModel(
 
     private val _uiState = MutableStateFlow(
         MainScaffoldUiState(
-            bottomNavItems = getDefaultBottomNavItems(),
+            bottomNavItems = getDefaultBottomNavItems(language.mainScaffoldTexts, language.accessibilityTexts),
             currentDateFormatted = formatModalHeaderDate(),
             quickActions = buildQuickActions(),
-            mealOptions = buildMealOptions()
+            mealOptions = buildMealOptions(),
+            fabContentDescription = language.accessibilityTexts.add
         )
     )
     val uiState: StateFlow<MainScaffoldUiState> = _uiState.asStateFlow()
@@ -69,24 +70,30 @@ class MainScaffoldViewModel(
         }
     }
 
-    private fun buildQuickActions(): List<QuickActionItem> = listOf(
-        QuickActionItem(QuickActionType.ROUTINE, "Rutina", Icons.Default.FitnessCenter, SuccessGreen),
-        QuickActionItem(QuickActionType.NUTRITION, "Alimentación", Icons.Default.LocalDining, WarningOrange),
-        QuickActionItem(QuickActionType.WEIGHT, "Peso", Icons.Default.MonitorWeight, InfoBlue),
-        QuickActionItem(QuickActionType.SUPPLEMENTS, "Suplementos", Icons.Default.Medication, EmeraldGreen),
-        QuickActionItem(QuickActionType.ACTIVITY, "Actividad", Icons.Default.DirectionsRun, LightGreen),
-        QuickActionItem(QuickActionType.OTHER, "Otros", Icons.Default.MoreHoriz, WarningOrange)
-    )
+    private fun buildQuickActions(): List<QuickActionItem> {
+        val t = language.mainScaffoldTexts
+        return listOf(
+            QuickActionItem(QuickActionType.ROUTINE, t.routine, Icons.Default.FitnessCenter, SuccessGreen),
+            QuickActionItem(QuickActionType.NUTRITION, t.nutrition, Icons.Default.LocalDining, WarningOrange),
+            QuickActionItem(QuickActionType.WEIGHT, t.weight, Icons.Default.MonitorWeight, InfoBlue),
+            QuickActionItem(QuickActionType.SUPPLEMENTS, t.supplements, Icons.Default.Medication, EmeraldGreen),
+            QuickActionItem(QuickActionType.ACTIVITY, t.activity, Icons.Default.DirectionsRun, LightGreen),
+            QuickActionItem(QuickActionType.OTHER, t.others, Icons.Default.MoreHoriz, WarningOrange)
+        )
+    }
 
-    private fun buildMealOptions(): List<MealOptionItem> = listOf(
-        MealOptionItem(null, "Resumen diario", Icons.Default.WbSunny),
-        MealOptionItem(MealType.BREAKFAST, "Desayuno", Icons.Default.LocalDining),
-        MealOptionItem(MealType.LUNCH, "Almuerzo", Icons.Default.Dining),
-        MealOptionItem(MealType.DINNER, "Cena", Icons.Default.Dining),
-        MealOptionItem(MealType.SNACK, "Snack", Icons.Default.LocalDining),
-        MealOptionItem(MealType.PRE_WORKOUT, "Pre entreno", Icons.Default.FitnessCenter),
-        MealOptionItem(MealType.POST_WORKOUT, "Post entreno", Icons.Default.FitnessCenter)
-    )
+    private fun buildMealOptions(): List<MealOptionItem> {
+        val t = language.mainScaffoldTexts
+        return listOf(
+            MealOptionItem(null, t.dailySummary, Icons.Default.WbSunny),
+            MealOptionItem(MealType.BREAKFAST, t.breakfast, Icons.Default.LocalDining),
+            MealOptionItem(MealType.LUNCH, t.lunch, Icons.Default.Dining),
+            MealOptionItem(MealType.DINNER, t.dinner, Icons.Default.Dining),
+            MealOptionItem(MealType.SNACK, t.snack, Icons.Default.LocalDining),
+            MealOptionItem(MealType.PRE_WORKOUT, t.preWorkout, Icons.Default.FitnessCenter),
+            MealOptionItem(MealType.POST_WORKOUT, t.postWorkout, Icons.Default.FitnessCenter)
+        )
+    }
 
     /**
      * Formatea la fecha para el header del modal de acciones.

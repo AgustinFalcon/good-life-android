@@ -11,6 +11,7 @@ import com.agusstkd.goodlife.domain.usecase.home.GetCurrentUserUseCase
 import com.agusstkd.goodlife.domain.usecase.home.LogoutUseCase
 import com.agusstkd.goodlife.domain.usecase.login.LoginUseCase
 import com.agusstkd.goodlife.domain.usecase.register.RegisterUseCase
+import com.agusstkd.goodlife.domain.usecase.session.CheckSessionUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidateEmailUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidateFullNameUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidatePasswordMatchUseCase
@@ -101,12 +102,19 @@ val appModule = module {
     /**
      * AppLanguage como singleton.
      *
-     * Define el idioma de la aplicación para formateo de fechas y textos.
-     * Actualmente fijo en Spanish, futuro: desde SharedPreferences.
+     * Detecta el idioma del dispositivo y selecciona el AppLanguage correspondiente.
+     * Fallback a English si el idioma no está soportado.
      *
-     * @see AppLanguage Sealed interface con Spanish, English, Portuguese
+     * TODO: En el futuro, permitir override manual desde SharedPreferences/Settings.
      */
-    single<AppLanguage> { AppLanguage.Spanish }
+    single<AppLanguage> {
+        val locale = java.util.Locale.getDefault().language
+        when (locale) {
+            "es" -> AppLanguage.Spanish
+            "pt" -> AppLanguage.Portuguese
+            else -> AppLanguage.English
+        }
+    }
 
     // ═══════════════════════════════════════════════════════════════════════════════════════════
     // DATA SOURCES
@@ -144,64 +152,31 @@ val appModule = module {
      * ValidateEmailUseCase - Validación de email/usuario.
      * Factory porque no tiene estado interno.
      */
-    factory { ValidateEmailUseCase() }
+    factory { ValidateEmailUseCase(language = get()) }
 
-    /**
-     * ValidatePasswordUseCase - Validación de contraseña.
-     * Factory porque no tiene estado interno.
-     */
-    factory { ValidatePasswordUseCase() }
+    factory { ValidatePasswordUseCase(language = get()) }
 
-    /**
-     * ValidateFullNameUseCase - Validación de nombre completo.
-     * Factory porque no tiene estado interno.
-     */
-    factory { ValidateFullNameUseCase() }
+    factory { ValidateFullNameUseCase(language = get()) }
 
-    /**
-     * ValidateUserNameUseCase - Validación de nombre de usuario.
-     * Factory porque no tiene estado interno.
-     */
-    factory { ValidateUserNameUseCase() }
+    factory { ValidateUserNameUseCase(language = get()) }
 
-    /**
-     * ValidatePasswordMatchUseCase - Validación de coincidencia de contraseñas.
-     * Factory porque no tiene estado interno.
-     */
-    factory { ValidatePasswordMatchUseCase() }
+    factory { ValidatePasswordMatchUseCase(language = get()) }
 
-    /**
-     * LoginUseCase - Ejecutar login con validaciones.
-     * Factory porque no tiene estado interno.
-     */
     factory {
         LoginUseCase(
             validateEmail = get(),
             validatePassword = get(),
-            authRepository = get()
+            authRepository = get(),
+            language = get()
         )
     }
 
-    /**
-     * GetCurrentUserUseCase - Obtener usuario logueado.
-     * Factory porque no tiene estado interno.
-     */
-    factory {
-        GetCurrentUserUseCase(authRepository = get())
-    }
+    factory { CheckSessionUseCase(tokenManager = get()) }
 
-    /**
-     * LogoutUseCase - Cerrar sesión.
-     * Factory porque no tiene estado interno.
-     */
-    factory {
-        LogoutUseCase(authRepository = get())
-    }
+    factory { GetCurrentUserUseCase(authRepository = get()) }
 
-    /**
-     * RegisterUseCase - Ejecutar registro con validaciones.
-     * Factory porque no tiene estado interno.
-     */
+    factory { LogoutUseCase(authRepository = get()) }
+
     factory {
         RegisterUseCase(
             authRepository = get(),
@@ -209,7 +184,8 @@ val appModule = module {
             validateFullName = get(),
             validateEmail = get(),
             validatePassword = get(),
-            validatePasswordMatch = get()
+            validatePasswordMatch = get(),
+            language = get()
         )
     }
 
@@ -217,51 +193,42 @@ val appModule = module {
     // VIEWMODELS
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
-    /**
-     * SplashViewModel - Pantalla de carga inicial.
-     */
     viewModel {
-        SplashViewModel(navigationController = get())
+        SplashViewModel(
+            navigationController = get(),
+            checkSessionUseCase = get()
+        )
     }
 
-    /**
-     * LoginViewModel - Pantalla de login.
-     */
     viewModel {
         LoginViewModel(
             loginUseCase = get(),
             navigationController = get(),
             biometricAuthenticator = get(),
             credentialsStorage = get(),
-            dispatcherProvider = get()
+            dispatcherProvider = get(),
+            language = get()
         )
     }
 
-    /**
-     * HomeViewModel - Pantalla principal.
-     */
     viewModel {
         HomeViewModel(
             getCurrentUserUseCase = get(),
             logoutUseCase = get(),
-            navigationController = get()
+            navigationController = get(),
+            language = get()
         )
     }
 
-    /**
-     * RegisterViewModel - Pantalla de registro.
-     */
     viewModel {
         RegisterViewModel(
             registerUseCase = get(),
             navigationController = get(),
-            dispatcherProvider = get()
+            dispatcherProvider = get(),
+            language = get()
         )
     }
 
-    /**
-     * MainScaffoldViewModel - Scaffold principal con tabs.
-     */
     viewModel {
         MainScaffoldViewModel(
             dateProvider = get(),

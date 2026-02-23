@@ -33,7 +33,7 @@ GoodLife utiliza **Clean Architecture** con **MVVM** y está diseñada para ser 
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## Estructura de Paquetes (Actualizada)
+## Estructura de Paquetes (Actualizada 2026-02-03)
 
 ```
 com.agusstkd.goodlife/
@@ -42,10 +42,13 @@ com.agusstkd.goodlife/
 │   │   ├── BiometricResult.kt
 │   │   └── BiometricAvailability.kt
 │   ├── datetime/                  # Manejo de fechas (KMP-ready)
-│   │   ├── LocalDateExtensions.kt # isToday, isYesterday, toFriendlyString
+│   │   ├── DateProvider.kt        # Interface abstraída (SPEC-004)
+│   │   ├── RealDateProvider.kt    # Implementación Android (timezone-safe)
+│   │   ├── LocalDateExtensions.kt # (vaciado — formateo migrado a ViewModels)
 │   │   └── language/
-│   │       ├── AppLanguage.kt     # Spanish, English, Portuguese
-│   │       └── DateFormats.kt     # DateFormats + RelativeDateTexts
+│   │       ├── AppLanguage.kt     # Sealed interface: Spanish, English, Portuguese
+│   │       ├── UiTexts.kt         # AuthTexts, HomeTexts, DailyTexts, etc.
+│   │       └── DateFormats.kt     # DateFormats + RelativeDateTexts + DailyItemLabels
 │   ├── dispatcher/                # Abstracción de Dispatchers
 │   │   └── DispatcherProvider.kt
 │   ├── network/                   # Configuración de red
@@ -84,7 +87,7 @@ com.agusstkd.goodlife/
 │       └── AuthRepositoryImpl.kt
 │
 ├── di/                            # Inyección de dependencias
-│   ├── AppModule.kt               # Core, UseCases, ViewModels
+│   ├── AppModule.kt               # Core, UseCases, ViewModels, AppLanguage
 │   ├── NetworkModule.kt           # OkHttp, Retrofit, ApiService
 │   └── DatabaseModule.kt          # Room, DAOs
 │
@@ -110,26 +113,29 @@ com.agusstkd.goodlife/
 │       │   └── LoginUseCase.kt
 │       └── validation/
 │           ├── ValidateEmailUseCase.kt
-│           └── ValidatePasswordUseCase.kt
+│           ├── ValidatePasswordUseCase.kt
+│           ├── ValidateUserNameUseCase.kt
+│           ├── ValidateFullNameUseCase.kt
+│           └── ValidatePasswordMatchUseCase.kt
 │
 ├── presentation/                  # UI y ViewModels
-│   ├── components/                # Componentes reutilizables
+│   ├── components/                # Componentes reutilizables (todos con Params)
 │   │   ├── common/
-│   │   │   ├── ButtonComponent.kt
-│   │   │   ├── TextFieldComponent.kt
+│   │   │   ├── ButtonComponent.kt           # ButtonParams
+│   │   │   ├── TextFieldComponent.kt        # TextFieldParams (+ passwordToggle texts)
 │   │   │   ├── CheckboxComponent.kt
-│   │   │   ├── TitleComponent.kt
+│   │   │   ├── TitleComponent.kt            # text: String (no stringResource)
 │   │   │   └── BackgroundGradientComponent.kt
-│   │   ├── bottom/                # Bottom Navigation
-│   │   │   ├── BottomNavigationComponent.kt
+│   │   ├── bottom/                          # Bottom Navigation
+│   │   │   ├── BottomNavigationComponent.kt # BottomNavigationParams (+ fabContentDescription)
 │   │   │   └── model/
 │   │   │       ├── BottomMenuOption.kt
 │   │   │       └── BottomNavItemModel.kt
-│   │   ├── header/                # Headers dinámicos por tab
-│   │   │   ├── DateHeaderComponent.kt      # Para Daily/Meals
-│   │   │   ├── TabRowHeaderComponent.kt    # Para Workouts
-│   │   │   └── CalendarDayIcon.kt          # Icono personalizado
-│   │   ├── modal/                 # Modal de acciones
+│   │   ├── header/                          # Headers dinámicos por tab
+│   │   │   ├── DateHeaderComponent.kt       # DateHeaderParams (+ accessibility labels)
+│   │   │   ├── TabRowHeaderComponent.kt     # WorkoutTabHeaderParams (+ filterContentDescription)
+│   │   │   └── CalendarDayIcon.kt
+│   │   ├── modal/                           # Modal de acciones
 │   │   │   ├── AddActionModalComponent.kt
 │   │   │   └── model/
 │   │   │       ├── QuickActionType.kt
@@ -150,32 +156,58 @@ com.agusstkd.goodlife/
 │   │       ├── NavigationExtensions.kt
 │   │       └── AppGraph.kt
 │   │
-│   ├── screen/                    # Pantallas (MVVM)
+│   ├── screen/                    # Pantallas (Owner / Screen / ViewModel)
 │   │   ├── splash/
 │   │   │   ├── SplashScreen.kt
 │   │   │   ├── SplashScreenOwner.kt
 │   │   │   ├── SplashViewModel.kt
 │   │   │   └── model/
-│   │   │       ├── SplashUiState.kt    # @Stable
-│   │   │       └── SplashUiEvent.kt    # @Stable
+│   │   │       ├── SplashUiState.kt        # @Stable
+│   │   │       └── SplashUiEvent.kt        # @Stable
 │   │   │
 │   │   ├── login/
-│   │   │   ├── LoginScreen.kt
-│   │   │   ├── LoginScreenOwner.kt
-│   │   │   ├── LoginViewModel.kt
+│   │   │   ├── LoginScreen.kt              # texts: AuthScreenTexts
+│   │   │   ├── LoginScreenOwner.kt         # koinViewModel + biometric side effects
+│   │   │   ├── LoginViewModel.kt           # screenTexts: AuthScreenTexts
 │   │   │   └── model/
-│   │   │       ├── LoginUiState.kt     # @Stable
-│   │   │       └── LoginUiAction.kt    # @Stable
+│   │   │       ├── LoginUiState.kt         # @Stable
+│   │   │       └── LoginUiAction.kt        # @Stable
 │   │   │
-│   │   └── home/
-│   │       ├── HomeScreen.kt
-│   │       ├── HomeViewModel.kt        # (Owner integrado)
-│   │       └── model/
-│   │           ├── HomeUiState.kt      # @Stable
-│   │           └── HomeUiAction.kt     # @Stable
+│   │   ├── register/
+│   │   │   ├── RegisterScreen.kt           # texts: AuthScreenTexts
+│   │   │   ├── RegisterScreenOwner.kt
+│   │   │   ├── RegisterViewModel.kt        # screenTexts: AuthScreenTexts
+│   │   │   └── model/
+│   │   │       ├── RegisterUiState.kt      # @Stable
+│   │   │       └── RegisterUiAction.kt     # @Stable
+│   │   │
+│   │   ├── home/
+│   │   │   ├── HomeScreen.kt              # homeTexts: HomeTexts
+│   │   │   ├── HomeScreenOwner.kt
+│   │   │   ├── HomeViewModel.kt           # homeTexts: HomeTexts
+│   │   │   └── model/
+│   │   │       ├── HomeUiState.kt         # @Stable
+│   │   │       └── HomeUiAction.kt        # @Stable
+│   │   │
+│   │   ├── main/
+│   │   │   ├── MainScaffoldScreen.kt      # uiState contiene fabContentDescription
+│   │   │   ├── MainScaffoldScreenOwner.kt
+│   │   │   ├── MainScaffoldViewModel.kt   # fabContentDescription en UiState
+│   │   │   └── model/
+│   │   │       ├── MainScaffoldUiState.kt # @Stable + fabContentDescription: String
+│   │   │       └── MainScaffoldUiAction.kt
+│   │   │
+│   │   └── tabs/
+│   │       └── daily/
+│   │           ├── DailyScreen.kt          # dailyTexts + dateHeaderParams
+│   │           ├── DailyScreenOwner.kt     # construye DateHeaderParams
+│   │           ├── DailyTabViewModel.kt    # dailyTexts + accessibilityTexts
+│   │           └── model/
+│   │               ├── DailyUiState.kt     # @Stable + strings formateados
+│   │               └── DailyUiAction.kt
 │   │
 │   └── theme/                     # Material Theme
-│       ├── Color.kt               # Paleta completa light/dark + brushes
+│       ├── Color.kt               # Paleta completa light/dark + brushes + DailyItemStyle
 │       ├── Font.kt                # FontFamily (Ubuntu)
 │       ├── Shape.kt               # GoodLifeShapes (MaterialTheme.shapes)
 │       ├── Theme.kt               # GoodLifeTheme (integra todo)
@@ -245,43 +277,62 @@ class LoginViewModel(
 
 **Navegación = One-shot event** → SharedFlow evita re-navegación al rotar.
 
-## Patrón Owner
+## Patrón Owner (Actualizado — SPEC-007)
 
-Separa la inyección de dependencias de la UI pura para mejor testabilidad.
+Separa la inyección de dependencias de la UI pura. El Owner es el **único punto** donde se usa `koinViewModel()`. Los textos localizados fluyen del ViewModel al Screen como parámetro.
 
 ```kotlin
-// Owner: Maneja inyección y coordina
+// Owner: Maneja inyección, textos y side-effects platform-specific
 @Composable
 fun LoginScreenOwner(
-    viewModel: LoginViewModel = koinViewModel()
+    viewModel: LoginViewModel = koinViewModel()   // único koinViewModel
 ) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val texts = viewModel.screenTexts   // AuthScreenTexts (del ViewModel)
+
+    // Side effects platform-specific (biometría, etc.)
     
-    LoginScreenContent(
-        state = state,
-        onAction = viewModel::onAction
+    LoginScreen(
+        uiState = uiState,
+        onAction = viewModel::onAction,
+        texts = texts                    // textos como parámetro
     )
 }
 
-// Content: UI pura, sin dependencias externas
+// Screen: UI pura — NO inyecta nada, NO conoce Koin
 @Composable
-fun LoginScreenContent(
-    state: LoginUiState,
-    onAction: (LoginUiAction) -> Unit
+fun LoginScreen(
+    uiState: LoginUiState,
+    onAction: (LoginUiAction) -> Unit,
+    texts: AuthScreenTexts                // wrapper de textos
 ) {
-    // Composables puros
+    // Usa texts.auth.login, texts.accessibility.hide, etc.
 }
 
-// Preview: Usa Content con datos mock
+// Preview: Usa Screen con datos mock
 @Preview
 @Composable
 fun LoginScreenPreview() {
-    LoginScreenContent(
-        state = LoginUiState(email = "test@test.com"),
-        onAction = {}
+    LoginScreen(
+        uiState = LoginUiState.Content(email = "test@test.com"),
+        onAction = {},
+        texts = AuthScreenTexts(
+            auth = AppLanguage.Spanish.authTexts,
+            accessibility = AppLanguage.Spanish.accessibilityTexts
+        )
     )
 }
 ```
+
+### Reglas del Patrón Owner
+
+| Regla | Descripción |
+|-------|-------------|
+| `koinViewModel()` solo en Owner | Screens y Components NO inyectan nada |
+| Textos via ViewModel | `viewModel.screenTexts`, `viewModel.homeTexts`, etc. |
+| Textos como parámetro | El Screen recibe textos por parameter, NO por `koinInject()` |
+| Textos dentro de Params | Components reciben textos encapsulados en sus Params |
+| Platform side-effects en Owner | BiometricPrompt, Context, Activity — solo aquí |
 
 ## Result Wrapper
 
@@ -414,10 +465,14 @@ El código está diseñado para migrar a Kotlin Multiplatform:
 |------------|-----------|-------|
 | `Result.kt` | ✅ | Kotlin puro |
 | `DispatcherProvider` | ✅ | Interface abstracta |
+| `DateProvider` | ✅ | Interface + RealDateProvider (kotlinx-datetime) |
+| `AppLanguage` + `UiTexts` | ✅ | Pure Kotlin, sin Android Context |
 | `core/datetime/*` | ✅ | kotlinx-datetime (KMP nativo) |
 | `domain/model/*` | ✅ | Sin dependencias Android |
 | `domain/repository/*` | ✅ | Interfaces puras |
-| `domain/usecase/*` | ✅ | Kotlin puro |
+| `domain/usecase/*` | ✅ | Kotlin puro (usa ValidationTexts/ErrorTexts) |
+| ViewModels | ✅ | No usan Context, textos via AppLanguage |
+| Screens/Components | ✅ | Sin `stringResource()`, sin `koinInject()` |
 | Navigation | ⚠️ | Requiere expect/actual |
 | Room | ❌ | Reemplazar con SQLDelight |
 | Retrofit | ❌ | Reemplazar con Ktor |
@@ -490,56 +545,124 @@ val GreenSelected = Color(0xFF00D26B)  // Items seleccionados
 val DividerColor = Color(0xFFE0E0E0)   // Divisores
 ```
 
-## 📅 Date Handling (KMP-Ready)
+## 📅 Date Handling — DateProvider Pattern (SPEC-004)
 
 ### Librería: kotlinx-datetime
 
 ```kotlin
-// Dependencia
 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
 ```
 
-### Clock Inyectado (Testabilidad)
+### DateProvider (Abstracción KMP-ready)
 
 ```kotlin
-// Producción
-single<Clock> { Clock.System }
-
-// Tests
-val fakeClock = object : Clock {
-    override fun now() = Instant.parse("2026-01-29T12:00:00Z")
+// Interface (core/datetime/)
+interface DateProvider {
+    fun today(): LocalDate
+    fun now(): Instant
+    fun yesterday(): LocalDate = today().minus(1, DateTimeUnit.DAY)
+    fun tomorrow(): LocalDate = today().plus(1, DateTimeUnit.DAY)
 }
 
-// Uso en componentes
-@Composable
-fun DateHeader(
-    date: LocalDate,
-    clock: Clock,  // Inyectado
-    language: AppLanguage
+// Producción — timezone-safe
+single<DateProvider> { RealDateProvider() }
+
+// Tests — fecha fija, determinista
+val fakeProvider = FakeDateProvider(LocalDate(2025, 12, 25))
+```
+
+### Formateo en ViewModel (NO en UI)
+
+```kotlin
+// ViewModel formatea todo internamente
+class DailyTabViewModel(
+    private val dateProvider: DateProvider,
+    private val language: AppLanguage
+) {
+    private fun buildUiState(date: LocalDate): DailyUiState {
+        val headerText = when (date) {
+            dateProvider.today() -> language.relativeTexts.today
+            dateProvider.yesterday() -> language.relativeTexts.yesterday
+            else -> date.format(language.formats.dayNameAndDate)
+        }
+        return DailyUiState(dayNumber = date.dayOfMonth, headerText = headerText, ...)
+    }
+}
+
+// UI solo renderiza strings
+DateHeaderComponent(params = DateHeaderParams(dayNumber = 3, headerText = "Hoy", ...))
+```
+
+## 🌐 Localización — AppLanguage System (SPEC-007)
+
+### Arquitectura
+
+```
+UiTexts.kt → data classes de texto (AuthTexts, HomeTexts, DailyTexts, ...)
+    ↓
+AppLanguage.kt → sealed interface + 3 idiomas (Spanish, English, Portuguese)
+    ↓
+AppModule.kt → single<AppLanguage> { detecta locale automáticamente }
+    ↓
+ViewModel → constructor(language: AppLanguage) → expone screenTexts
+    ↓
+Owner → viewModel.screenTexts → pasa a Screen como parámetro
+    ↓
+Screen → textos via parameter, pasa a Components dentro de Params
+```
+
+### Grupos de textos
+
+| Grupo | Uso |
+|-------|-----|
+| `AuthTexts` | Login, Register, biometric prompt |
+| `HomeTexts` | Home screen |
+| `DailyTexts` | Daily tab (progreso, errores) |
+| `ValidationTexts` | UseCases de validación |
+| `ErrorTexts` | Mensajes de error genéricos |
+| `MainScaffoldTexts` | BottomNav, modal, tabs |
+| `AccessibilityTexts` | Content descriptions (hide/show, calendar, nav) |
+| `DailyItemLabels` | Etiquetas de tipo (Hábito, Tarea, ...) |
+
+### Screen Wrappers
+
+```kotlin
+// Agrupa textos de un Screen en un solo objeto
+data class AuthScreenTexts(
+    val auth: AuthTexts,
+    val accessibility: AccessibilityTexts
+)
+
+// ViewModel expone un solo accessor
+class LoginViewModel(private val language: AppLanguage) {
+    val screenTexts: AuthScreenTexts
+        get() = AuthScreenTexts(language.authTexts, language.accessibilityTexts)
+}
+```
+
+### Textos dentro de Params
+
+```kotlin
+// Textos de accessibility van DENTRO del Params del componente
+TextFieldComponent(
+    params = TextFieldParams(
+        value = password,
+        placeholder = auth.password,
+        passwordToggleHide = accessibility.hide,     // dentro de Params
+        passwordToggleShow = accessibility.show      // dentro de Params
+    )
 )
 ```
 
-### Multi-Idioma
+### Detección automática de locale
 
 ```kotlin
-sealed interface AppLanguage {
-    val monthNames: MonthNames
-    val dayNamesShort: DayOfWeekNames
-    val formats: DateFormats
-    val relativeTexts: RelativeDateTexts
-    
-    data object Spanish : AppLanguage { /* ... */ }
-    data object English : AppLanguage { /* ... */ }
-    data object Portuguese : AppLanguage { /* ... */ }
+// di/AppModule.kt
+single<AppLanguage> {
+    when (java.util.Locale.getDefault().language) {
+        "es" -> AppLanguage.Spanish
+        "pt" -> AppLanguage.Portuguese
+        else -> AppLanguage.English
+    }
 }
-```
-
-### Extension Functions
-
-```kotlin
-fun LocalDate.isToday(clock: Clock): Boolean
-fun LocalDate.isYesterday(clock: Clock): Boolean
-fun LocalDate.isTomorrow(clock: Clock): Boolean
-fun LocalDate.toFriendlyString(clock: Clock, language: AppLanguage): String
-fun LocalDate.toModalHeaderString(clock: Clock, language: AppLanguage): String
 ```

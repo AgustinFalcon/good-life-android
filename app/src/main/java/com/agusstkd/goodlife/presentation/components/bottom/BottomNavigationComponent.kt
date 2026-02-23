@@ -31,10 +31,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.presentation.components.bottom.model.BottomMenuOption
 import com.agusstkd.goodlife.presentation.components.bottom.model.BottomNavItemModel
 import com.agusstkd.goodlife.presentation.components.bottom.model.getDefaultBottomNavItems
@@ -51,7 +51,8 @@ import com.agusstkd.goodlife.presentation.theme.LightGreen
 data class BottomNavigationParams(
     val items: List<BottomNavItemModel>,
     val selectedTab: BottomMenuOption = BottomMenuOption.HOME,
-    val isFabRotated: Boolean = false
+    val isFabRotated: Boolean = false,
+    val fabContentDescription: String = ""
 )
 
 /**
@@ -148,7 +149,7 @@ fun BottomNavigationComponent(
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
-                contentDescription = "Agregar",
+                contentDescription = params.fabContentDescription,
                 modifier = Modifier
                     .size(fabSize * 0.5f)
                     .rotate(fabRotation)
@@ -192,7 +193,7 @@ private fun BottomNavigationItem(
         Spacer(Modifier.height(4.dp))
 
         Text(
-            text = stringResource(item.label),
+            text = item.label,
             color = tintColor,
             style = MaterialTheme.typography.labelMedium
         )
@@ -202,9 +203,10 @@ private fun BottomNavigationItem(
 @Preview(showBackground = true)
 @Composable
 private fun BottomNavigationPreview() {
+    val lang = AppLanguage.Spanish
     BottomNavigationComponent(
         params = BottomNavigationParams(
-            items = getDefaultBottomNavItems(),
+            items = getDefaultBottomNavItems(lang.mainScaffoldTexts, lang.accessibilityTexts),
             selectedTab = BottomMenuOption.HOME,
             isFabRotated = false
         ),
@@ -216,11 +218,13 @@ private fun BottomNavigationPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun BottomNavigationFabOpenPreview() {
+    val lang = AppLanguage.Spanish
     BottomNavigationComponent(
         params = BottomNavigationParams(
-            items = getDefaultBottomNavItems(),
+            items = getDefaultBottomNavItems(lang.mainScaffoldTexts, lang.accessibilityTexts),
             selectedTab = BottomMenuOption.EXERCISES,
-            isFabRotated = true
+            isFabRotated = true,
+            fabContentDescription = lang.accessibilityTexts.add
         ),
         onTabClick = { },
         onFabClick = { }

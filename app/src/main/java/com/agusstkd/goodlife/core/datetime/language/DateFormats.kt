@@ -31,3 +31,21 @@ data class RelativeDateTexts(
     val yesterday: String,
     val tomorrow: String
 )
+
+/**
+ * Labels localizados para tipos de item del Daily Log.
+ *
+ * Centraliza las etiquetas de UI para cada [DailyItemType].
+ * Pure Kotlin, KMP-ready: no depende de Context ni de Android resources.
+ *
+ * @property task Etiqueta para TASK
+ * @property habit Etiqueta para HABIT
+ * @property workout Etiqueta para WORKOUT
+ * @property meal Etiqueta para MEAL
+ */
+data class DailyItemLabels(
+    val task: String,
+    val habit: String,
+    val workout: String,
+    val meal: String
+)

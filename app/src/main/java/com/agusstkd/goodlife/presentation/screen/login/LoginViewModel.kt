@@ -2,6 +2,8 @@ package com.agusstkd.goodlife.presentation.screen.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.agusstkd.goodlife.core.datetime.language.AppLanguage
+import com.agusstkd.goodlife.core.datetime.language.AuthScreenTexts
 import com.agusstkd.goodlife.core.biometric.BiometricAvailability
 import com.agusstkd.goodlife.core.biometric.BiometricResult
 import com.agusstkd.goodlife.core.dispatcher.DispatcherProvider
@@ -46,7 +48,11 @@ class LoginViewModel(
     private val biometricAuthenticator: BiometricAuthenticator,
     private val credentialsStorage: SecureCredentialsStorage,
     private val dispatcherProvider: DispatcherProvider,
+    private val language: AppLanguage,
 ) : ViewModel() {
+
+    val screenTexts: AuthScreenTexts
+        get() = AuthScreenTexts(language.authTexts, language.accessibilityTexts)
 
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Loading)
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()

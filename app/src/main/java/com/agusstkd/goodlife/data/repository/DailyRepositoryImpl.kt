@@ -5,7 +5,7 @@ import com.agusstkd.goodlife.core.result.map
 import com.agusstkd.goodlife.data.remote.datasource.DailyRemoteDataSource
 import com.agusstkd.goodlife.data.remote.dto.response.daily.toDomain
 import com.agusstkd.goodlife.domain.model.daily.DailyLog
-import com.agusstkd.goodlife.domain.model.daily.ItemStatus
+import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 import com.agusstkd.goodlife.domain.repository.DailyRepository
 import kotlinx.datetime.LocalDate
 
@@ -53,7 +53,7 @@ class DailyRepositoryImpl(
      * @param status Nuevo status (COMPLETED, SKIPPED, PENDING)
      * @return Result con DailyLog actualizado
      */
-    override suspend fun updateItemStatus(itemId: Long, status: ItemStatus): Result<DailyLog> {
+    override suspend fun updateItemStatus(itemId: Long, status: DailyItemStatus): Result<DailyLog> {
         return remoteDataSource.updateItemStatus(itemId, status)
             .map { response -> response.toDomain() }
     }

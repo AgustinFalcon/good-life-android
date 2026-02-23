@@ -2,6 +2,8 @@ package com.agusstkd.goodlife.presentation.screen.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.agusstkd.goodlife.core.datetime.language.AppLanguage
+import com.agusstkd.goodlife.core.datetime.language.AuthScreenTexts
 import com.agusstkd.goodlife.core.dispatcher.DispatcherProvider
 import com.agusstkd.goodlife.domain.usecase.register.RegisterUseCase
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
@@ -35,7 +37,11 @@ class RegisterViewModel(
     private val registerUseCase: RegisterUseCase,
     private val navigationController: ComposeNavigationController,
     private val dispatcherProvider: DispatcherProvider,
+    private val language: AppLanguage
 ) : ViewModel() {
+
+    val screenTexts: AuthScreenTexts
+        get() = AuthScreenTexts(language.authTexts, language.accessibilityTexts)
 
     private val _uiState = MutableStateFlow<RegisterUiState>(RegisterUiState.Content())
     val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
@@ -121,7 +127,7 @@ class RegisterViewModel(
             // Actualizar error de confirmación si ya escribió algo
             isConfirmPasswordError = !passwordsMatch && current.confirmPassword.isNotEmpty(),
             confirmPasswordErrorMessage = if (!passwordsMatch && current.confirmPassword.isNotEmpty()) {
-                "Las contraseñas no coinciden"
+                language.validationTexts.passwordsDontMatch
             } else null
         )
     }
@@ -140,7 +146,7 @@ class RegisterViewModel(
             confirmPassword = value,
             isConfirmPasswordError = !passwordsMatch,
             confirmPasswordErrorMessage = if (!passwordsMatch) {
-                "Las contraseñas no coinciden"
+                language.validationTexts.passwordsDontMatch
             } else null
         )
     }
@@ -173,7 +179,7 @@ class RegisterViewModel(
         // Verificar términos aceptados
         if (!current.acceptedTerms) {
             _uiState.value = current.copy(
-                errorMessage = "Debes aceptar los términos y condiciones"
+                errorMessage = language.errorTexts.mustAcceptTerms
             )
             return
         }

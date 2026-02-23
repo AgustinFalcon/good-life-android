@@ -89,8 +89,7 @@ public suspend fun <T> executeApiCall(
     } catch (e: Exception) {
         // Error de red, timeout, etc.
         Result.Error(
-            exception = e,
-            message = e.message ?: "Error de conexión"
+            exception = Exception(e.message ?: "Error de conexión", e)
         )
     }
 }
@@ -116,17 +115,21 @@ public fun <T> processResponse(response: BaseResponse<T>): Result<T> {
         // Éxito: extraer data
         response.data?.let {
             Result.Success(it)
-        } ?: Result.Error(
-            exception = ApiException.fromCode(code, "Error"),
-            message = response.message ?: "Error del servidor (código: $code)"
-        )
+        } ?: run {
+            val errorMessage = response.message ?: "Error del servidor (código: $code)"
+            Result.Error(
+                exception = ApiException.fromCode(
+                    code = code,
+                    message = errorMessage
+                )
+            )
+        }
     } else {
         // Error: usar SIEMPRE el mensaje del backend
         // Solo usar fallback genérico si el backend no envió mensaje
         val errorMessage = response.message ?: "Error del servidor (código: $code)"
         Result.Error(
-            exception = ApiException.fromCode(code, errorMessage),
-            message = errorMessage
+            exception = ApiException.fromCode(code, errorMessage)
         )
     }
 }

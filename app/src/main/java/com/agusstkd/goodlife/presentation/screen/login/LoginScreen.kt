@@ -41,6 +41,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.agusstkd.goodlife.R
+import com.agusstkd.goodlife.core.datetime.language.AccessibilityTexts
 import com.agusstkd.goodlife.presentation.components.common.BackgroundGradientComponent
 import com.agusstkd.goodlife.presentation.components.common.ButtonComponent
 import com.agusstkd.goodlife.presentation.components.common.ButtonParams
@@ -52,6 +53,9 @@ import com.agusstkd.goodlife.presentation.components.common.TextFieldComponent
 import com.agusstkd.goodlife.presentation.components.common.TextFieldParams
 import com.agusstkd.goodlife.presentation.components.common.TextFieldType
 import com.agusstkd.goodlife.presentation.components.common.TitleComponent
+import com.agusstkd.goodlife.core.datetime.language.AppLanguage
+import com.agusstkd.goodlife.core.datetime.language.AuthScreenTexts
+import com.agusstkd.goodlife.core.datetime.language.AuthTexts
 import com.agusstkd.goodlife.presentation.screen.login.model.LoginUiAction
 import com.agusstkd.goodlife.presentation.screen.login.model.LoginUiState
 import com.agusstkd.goodlife.presentation.theme.DarkGreen
@@ -65,8 +69,12 @@ import com.agusstkd.goodlife.presentation.theme.TextSecondary
 fun LoginScreen(
     uiState: LoginUiState,
     onAction: (LoginUiAction) -> Unit,
+    texts: AuthScreenTexts,
     modifier: Modifier = Modifier
 ) {
+    val auth = texts.auth
+    val accessibility = texts.accessibility
+
     BackgroundGradientComponent(modifier = modifier) {
         when (uiState) {
             is LoginUiState.Loading -> LoadingView()
@@ -79,7 +87,9 @@ fun LoginScreen(
                 isLoading = uiState.isLoading,
                 isBiometricAvailable = uiState.isBiometricAvailable,
                 isBiometricEnabled = uiState.isBiometricEnabled,
-                onAction = onAction
+                onAction = onAction,
+                auth = auth,
+                accessibility = accessibility
             )
             is LoginUiState.Error -> LoginContent(
                 email = "",
@@ -90,7 +100,9 @@ fun LoginScreen(
                 isLoading = false,
                 isBiometricAvailable = false,
                 isBiometricEnabled = false,
-                onAction = onAction
+                onAction = onAction,
+                auth = auth,
+                accessibility = accessibility
             )
             is LoginUiState.Success -> { }
         }
@@ -120,7 +132,9 @@ private fun LoginContent(
     isLoading: Boolean,
     isBiometricAvailable: Boolean,
     isBiometricEnabled: Boolean,
-    onAction: (LoginUiAction) -> Unit
+    onAction: (LoginUiAction) -> Unit,
+    auth: AuthTexts,
+    accessibility: AccessibilityTexts
 ) {
     val isFormValid = email.isNotBlank() && password.isNotBlank()
     val scrollState = rememberScrollState()
@@ -135,7 +149,7 @@ private fun LoginContent(
     ) {
         Spacer(modifier = Modifier.height(48.dp))
 
-        LoginHeader()
+        LoginHeader(auth = auth)
 
         Spacer(modifier = Modifier.height(40.dp))
 
@@ -144,7 +158,9 @@ private fun LoginContent(
             password = password,
             isEmailError = isEmailError,
             isPasswordError = isPasswordError,
-            onAction = onAction
+            onAction = onAction,
+            auth = auth,
+            accessibility = accessibility
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -152,7 +168,7 @@ private fun LoginContent(
         if (isBiometricAvailable) {
             CheckboxComponent(
                 params = CheckboxParams(
-                    text = "Activar login con huella",
+                    text = auth.enableBiometricLogin,
                     checked = isBiometricEnabled,
                     id = CheckboxParamsId.ENABLE_FINGER_PRINT,
                     endIcon = Icons.Default.Fingerprint
@@ -170,23 +186,24 @@ private fun LoginContent(
         LoginButtons(
             isFormValid = isFormValid,
             isLoading = isLoading,
-            onAction = onAction
+            onAction = onAction,
+            auth = auth
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        SocialLoginSection(onAction = onAction)
+        SocialLoginSection(onAction = onAction, auth = auth)
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        LoginFooter(onAction = onAction)
+        LoginFooter(onAction = onAction, auth = auth)
 
         Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
 @Composable
-private fun LoginHeader() {
+private fun LoginHeader(auth: AuthTexts) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
@@ -207,7 +224,7 @@ private fun LoginHeader() {
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = "Tu bienestar, tu ritmo",
+            text = auth.loginSubtitle,
             style = MaterialTheme.typography.bodyMedium,
             color = TextSecondary,
             textAlign = TextAlign.Center
@@ -221,7 +238,9 @@ private fun LoginForm(
     password: String,
     isEmailError: Boolean,
     isPasswordError: Boolean,
-    onAction: (LoginUiAction) -> Unit
+    onAction: (LoginUiAction) -> Unit,
+    auth: AuthTexts,
+    accessibility: AccessibilityTexts
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -230,7 +249,7 @@ private fun LoginForm(
         TextFieldComponent(
             params = TextFieldParams(
                 value = email,
-                placeholder = "Correo electrónico o usuario",
+                placeholder = auth.emailOrUsername,
                 type = TextFieldType.USER,
                 isError = isEmailError
             ),
@@ -240,9 +259,11 @@ private fun LoginForm(
         TextFieldComponent(
             params = TextFieldParams(
                 value = password,
-                placeholder = "Contraseña",
+                placeholder = auth.password,
                 type = TextFieldType.PASSWORD,
-                isError = isPasswordError
+                isError = isPasswordError,
+                passwordToggleHide = accessibility.hide,
+                passwordToggleShow = accessibility.show
             ),
             onValueChange = { onAction(LoginUiAction.OnPasswordChange(it)) }
         )
@@ -253,7 +274,8 @@ private fun LoginForm(
 private fun LoginButtons(
     isFormValid: Boolean,
     isLoading: Boolean,
-    onAction: (LoginUiAction) -> Unit
+    onAction: (LoginUiAction) -> Unit,
+    auth: AuthTexts
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -261,7 +283,7 @@ private fun LoginButtons(
     ) {
         ButtonComponent(
             params = ButtonParams(
-                text = "Iniciar Sesión",
+                text = auth.login,
                 enabled = isFormValid,
                 isLoading = isLoading,
                 variant = ButtonVariant.PRIMARY,
@@ -270,11 +292,11 @@ private fun LoginButtons(
             onClick = { onAction(LoginUiAction.OnLoginClick) }
         )
 
-        SeparatorWithCircle()
+        SeparatorWithCircle(orText = auth.or)
 
         ButtonComponent(
             params = ButtonParams(
-                text = "Crear Cuenta",
+                text = auth.createAccount,
                 enabled = !isLoading,
                 variant = ButtonVariant.OUTLINE
             ),
@@ -284,7 +306,7 @@ private fun LoginButtons(
 }
 
 @Composable
-private fun SeparatorWithCircle() {
+private fun SeparatorWithCircle(orText: String) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -304,7 +326,7 @@ private fun SeparatorWithCircle() {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "o",
+                text = orText,
                 style = MaterialTheme.typography.bodySmall,
                 color = TextSecondary
             )
@@ -319,7 +341,7 @@ private fun SeparatorWithCircle() {
 }
 
 @Composable
-private fun SocialLoginSection(onAction: (LoginUiAction) -> Unit) {
+private fun SocialLoginSection(onAction: (LoginUiAction) -> Unit, auth: AuthTexts) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
@@ -327,7 +349,7 @@ private fun SocialLoginSection(onAction: (LoginUiAction) -> Unit) {
     ) {
         SocialButton(
             iconRes = R.drawable.good_life_logo,
-            contentDescription = "Login con Google",
+            contentDescription = auth.loginWithGoogle,
             onClick = { onAction(LoginUiAction.OnGoogleLoginClick) }
         )
 
@@ -335,7 +357,7 @@ private fun SocialLoginSection(onAction: (LoginUiAction) -> Unit) {
 
         SocialButton(
             iconRes = R.drawable.good_life_logo,
-            contentDescription = "Login con Apple",
+            contentDescription = auth.loginWithApple,
             onClick = { onAction(LoginUiAction.OnAppleLoginClick) }
         )
     }
@@ -365,22 +387,22 @@ private fun SocialButton(
 }
 
 @Composable
-private fun LoginFooter(onAction: (LoginUiAction) -> Unit) {
+private fun LoginFooter(onAction: (LoginUiAction) -> Unit, auth: AuthTexts) {
     val annotatedString = buildAnnotatedString {
         withStyle(SpanStyle(color = TextSecondary)) {
-            append("Al continuar, aceptas nuestros ")
+            append(auth.termsPrefix)
         }
         pushStringAnnotation(tag = "TERMS", annotation = "terms")
         withStyle(SpanStyle(color = TextLink, textDecoration = TextDecoration.Underline)) {
-            append("Términos")
+            append(auth.terms)
         }
         pop()
         withStyle(SpanStyle(color = TextSecondary)) {
-            append(" y ")
+            append(auth.and)
         }
         pushStringAnnotation(tag = "PRIVACY", annotation = "privacy")
         withStyle(SpanStyle(color = TextLink, textDecoration = TextDecoration.Underline)) {
-            append("Privacidad")
+            append(auth.privacy)
         }
         pop()
         withStyle(SpanStyle(color = TextSecondary)) {
@@ -406,7 +428,11 @@ private fun LoginFooter(onAction: (LoginUiAction) -> Unit) {
 @Composable
 fun LoginScreenLoadingPreview() {
     GoodLifeTheme {
-        LoginScreen(uiState = LoginUiState.Loading, onAction = {})
+        LoginScreen(
+            uiState = LoginUiState.Loading,
+            onAction = {},
+            texts = AuthScreenTexts(AppLanguage.Spanish.authTexts, AppLanguage.Spanish.accessibilityTexts)
+        )
     }
 }
 
@@ -414,7 +440,11 @@ fun LoginScreenLoadingPreview() {
 @Composable
 fun LoginScreenEmptyPreview() {
     GoodLifeTheme {
-        LoginScreen(uiState = LoginUiState.Content(), onAction = {})
+        LoginScreen(
+            uiState = LoginUiState.Content(),
+            onAction = {},
+            texts = AuthScreenTexts(AppLanguage.Spanish.authTexts, AppLanguage.Spanish.accessibilityTexts)
+        )
     }
 }
 
@@ -428,7 +458,8 @@ fun LoginScreenFilledPreview() {
                 password = "1234",
                 rememberUser = true
             ),
-            onAction = {}
+            onAction = {},
+            texts = AuthScreenTexts(AppLanguage.Spanish.authTexts, AppLanguage.Spanish.accessibilityTexts)
         )
     }
 }

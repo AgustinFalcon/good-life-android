@@ -6,7 +6,7 @@ import com.agusstkd.goodlife.data.remote.dto.response.task.TaskSummaryDto
 import com.agusstkd.goodlife.data.remote.dto.response.workout.WorkoutSummaryDto
 import com.agusstkd.goodlife.domain.model.daily.DailyItem
 import com.agusstkd.goodlife.domain.model.daily.DailyItemType
-import com.agusstkd.goodlife.domain.model.daily.ItemStatus
+import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 import kotlinx.datetime.LocalTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -41,7 +41,7 @@ data class DailyItemResponse(
 
     val referenceId: Long,
     val scheduledTime: LocalTime?,
-    val status: ItemStatus,
+    val status: DailyItemStatus,
 
     // Solo uno de estos será no-null según el tipo
     val task: TaskSummaryDto? = null,
@@ -81,7 +81,7 @@ fun DailyItemResponse.toDomain(): DailyItem {
 private fun DailyItemResponse.extractTitleAndDescription(): Pair<String, String?> {
     return when (type) {
         DailyItemType.TASK -> {
-            task?.title ?: "Tarea sin título" to task?.description
+            (task?.title ?: "Tarea sin título") to task?.description
         }
         DailyItemType.HABIT -> {
             val habitName = habitLog?.habitName ?: "Hábito sin nombre"

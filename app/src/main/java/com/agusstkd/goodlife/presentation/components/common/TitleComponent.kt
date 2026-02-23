@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -18,23 +17,21 @@ import com.agusstkd.goodlife.presentation.theme.TitleGradientBrush
 /**
  * Título con gradiente verde de la aplicación.
  *
+ * KMP-ready: recibe String directo, sin Android Context ni R.string.
+ *
  * @param modifier Modificador de Compose
- * @param textId ID del string resource (opcional)
- * @param text Texto directo (opcional, usado si textId es null)
+ * @param text Texto a mostrar
  * @param style Estilo del texto (default: AppTitleStyle)
  */
 @Composable
 fun TitleComponent(
     modifier: Modifier = Modifier,
-    textId: Int? = null,
-    text: String? = null,
+    text: String,
     style: TextStyle = AppTitleStyle
 ) {
-    val displayText = textId?.let { stringResource(it) } ?: text ?: ""
-
     Text(
         modifier = modifier,
-        text = displayText,
+        text = text,
         style = style.copy(brush = TitleGradientBrush)
     )
 }

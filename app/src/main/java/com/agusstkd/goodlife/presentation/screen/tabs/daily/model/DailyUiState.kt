@@ -1,9 +1,11 @@
 package com.agusstkd.goodlife.presentation.screen.tabs.daily.model
 
 import androidx.compose.runtime.Stable
+import com.agusstkd.goodlife.domain.model.daily.DailyItem
+import com.agusstkd.goodlife.domain.model.daily.DailyItemType
 import kotlinx.datetime.LocalDate
 
-import com.agusstkd.goodlife.domain.model.daily.ItemStatus
+import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 
 /**
  * Estado de UI para la pantalla Daily (tab de tareas diarias).
@@ -11,7 +13,7 @@ import com.agusstkd.goodlife.domain.model.daily.ItemStatus
  * Define los diferentes estados posibles:
  * - [Loading]: Cargando daily log del backend
  * - [Success]: Daily log cargado correctamente
- * - [Error]: Error al cargar datos
+ * - [Error]: Error al cargar/actualizar datos
  *
  * ## Responsabilidades:
  * - Contener fecha actual seleccionada y todos sus campos formateados
@@ -70,9 +72,11 @@ sealed interface DailyUiState {
      * Estado de error.
      * Se muestra cuando falla la carga del daily log.
      *
+     * @property code Código HTTP si el error vino del backend (400, 401, 403, 404, 500)
      * @property message Mensaje de error para mostrar al usuario
      */
     data class Error(
+        val code: Int?,
         val message: String
     ) : DailyUiState
 }
@@ -92,9 +96,32 @@ sealed interface DailyUiState {
  */
 data class DailyItemUiModel(
     val id: Long,
-    val type: com.agusstkd.goodlife.domain.model.daily.DailyItemType,
+    val type: DailyItemType,
+    val typeLabel: String,
     val title: String,
     val description: String?,
     val scheduledTime: String?,
-    val status: ItemStatus
+    val status: DailyItemStatus,
 )
+
+/**
+ * Mapea DailyItem (Domain Model) → DailyItemUiModel (UI Model).
+ *
+ * El título y descripción ya vienen extraídos en el Domain Model
+ * (el mapeo Response→Domain se hizo en el Repository).
+ *
+ * Este método solo formatea la hora para la UI.
+ */
+fun DailyItem.toUiModel(typeLabel: String): DailyItemUiModel {
+    return DailyItemUiModel(
+        id = id,
+        type = type,
+        title = title,
+        description = description,
+        scheduledTime = scheduledTime?.let {
+            "${it.hour}:${it.minute.toString().padStart(2, '0')}"
+        },
+        status = status,
+        typeLabel = typeLabel
+    )
+}

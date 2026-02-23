@@ -3,14 +3,14 @@ package com.agusstkd.goodlife.presentation.screen.tabs.daily
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.agusstkd.goodlife.core.datetime.DateProvider
+import com.agusstkd.goodlife.core.datetime.language.AccessibilityTexts
 import com.agusstkd.goodlife.core.datetime.language.AppLanguage
+import com.agusstkd.goodlife.core.dispatcher.DispatcherProvider
 import com.agusstkd.goodlife.core.network.ApiException
-import com.agusstkd.goodlife.domain.model.daily.DailyItem
 import com.agusstkd.goodlife.domain.model.daily.DailyLog
-import com.agusstkd.goodlife.domain.model.daily.ItemStatus
+import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 import com.agusstkd.goodlife.domain.usecase.daily.GetDailyItemsUseCase
 import com.agusstkd.goodlife.domain.usecase.daily.UpdateItemStatusUseCase
-import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyItemUiModel
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +23,8 @@ import kotlinx.datetime.format
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import com.agusstkd.goodlife.core.result.Result
+import com.agusstkd.goodlife.domain.model.daily.DailyItemType
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.toUiModel
 
 /**
  * ViewModel del tab Daily (tareas diarias).
@@ -32,7 +34,7 @@ import com.agusstkd.goodlife.core.result.Result
  * - Cargar items del backend usando [GetDailyItemsUseCase]
  * - Actualizar status de items usando [UpdateItemStatusUseCase]
  * - Formatear fechas para UI (headerText, monthYear)
- * - Mapear Response → UiModel
+ * - Mapear Domain → UiModel
  * - Interpretar errores del backend
  *
  * ## Flujo de datos:
@@ -51,7 +53,9 @@ import com.agusstkd.goodlife.core.result.Result
  *     ↓
  * executeApiCall() → Result<DailyLogResponse>
  *     ↓
- * ViewModel mapea Result
+ * Repository mapea Result<DailyLogResponse> → Result<DailyLog>
+ *     ↓
+ * ViewModel mapea Result<DailyLog>
  *     ↓
  * UiState.Success | UiState.Error
  * ```
@@ -67,11 +71,14 @@ import com.agusstkd.goodlife.core.result.Result
 class DailyTabViewModel(
     private val dateProvider: DateProvider,
     private val language: AppLanguage,
+    private val dispatcher: DispatcherProvider,
     private val getDailyItemsUseCase: GetDailyItemsUseCase,
     private val updateItemStatusUseCase: UpdateItemStatusUseCase
 ) : ViewModel() {
 
-    // Fecha actualmente navegada (puede ser hoy, ayer, mañana, etc.)
+    val dailyTexts get() = language.dailyTexts
+    val accessibilityTexts: AccessibilityTexts get() = language.accessibilityTexts
+
     private var currentDate: LocalDate = dateProvider.today()
 
     private val _uiState = MutableStateFlow<DailyUiState>(DailyUiState.Loading)
@@ -94,28 +101,19 @@ class DailyTabViewModel(
     /**
      * Carga los items del daily log del backend.
      *
-     * Flujo:
-     * 1. Muestra Loading
-     * 2. Llama al UseCase
-     * 3. Mapea Result.Success → buildSuccessState()
-     * 4. Mapea Result.Error → UiState.Error con mensaje de usuario
+     * Muestra Loading (skeleton) mientras se hace la request y,
+     * al responder, renderiza únicamente los datos nuevos del backend.
      */
     private fun loadItems() {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcher.main) {
             _uiState.value = DailyUiState.Loading
 
             when (val result = getDailyItemsUseCase(currentDate)) {
                 is Result.Success -> {
                     _uiState.value = buildSuccessState(result.data)
                 }
-                is Result.Error -> {
-                    _uiState.value = DailyUiState.Error(
-                        message = mapErrorToUserMessage(result.exception)
-                    )
-                }
-                is Result.Loading -> {
-                    // Ya está en Loading
-                }
+                is Result.Error -> handleError(result.exception)
+                is Result.Loading -> Unit
             }
         }
     }
@@ -128,24 +126,19 @@ class DailyTabViewModel(
      * @param itemId ID del item a actualizar
      * @param newStatus Nuevo status (COMPLETED, SKIPPED, PENDING)
      */
-    private fun updateItemStatus(itemId: Long, newStatus: ItemStatus) {
-        viewModelScope.launch {
+    private fun updateItemStatus(itemId: Long, newStatus: DailyItemStatus) {
+        viewModelScope.launch(dispatcher.main) {
+            val currentState = _uiState.value
+            if (currentState is DailyUiState.Success) {
+                _uiState.value = currentState.copy(isRefreshing = true)
+            }
+
             when (val result = updateItemStatusUseCase(itemId, newStatus)) {
                 is Result.Success -> {
                     _uiState.value = buildSuccessState(result.data)
                 }
-                is Result.Error -> {
-                    _uiState.value = DailyUiState.Error(
-                        message = mapErrorToUserMessage(result.exception)
-                    )
-                }
-                is Result.Loading -> {
-                    // Mantener estado actual con isRefreshing=true si es Success
-                    val currentState = _uiState.value
-                    if (currentState is DailyUiState.Success) {
-                        _uiState.value = currentState.copy(isRefreshing = true)
-                    }
-                }
+                is Result.Error -> handleError(result.exception)
+                is Result.Loading -> Unit
             }
         }
     }
@@ -173,71 +166,74 @@ class DailyTabViewModel(
      * @return UiState.Success con datos listos para renderizar
      */
     private fun buildSuccessState(dailyLog: DailyLog): DailyUiState.Success {
-        val today = dateProvider.today()
-        val yesterday = dateProvider.yesterday()
-        val tomorrow = dateProvider.tomorrow()
-
-        val isRelativeDate = currentDate == today || currentDate == yesterday || currentDate == tomorrow
-
-        val headerText = when (currentDate) {
-            today -> language.relativeTexts.today
-            yesterday -> language.relativeTexts.yesterday
-            tomorrow -> language.relativeTexts.tomorrow
-            else -> {
-                // Formato: "Lun, 05 feb"
-                val dayOfWeek = language.daysOfWeek.short[currentDate.dayOfWeek.ordinal]
-                val monthName = language.monthNames.short[currentDate.monthNumber - 1]
-                "$dayOfWeek, ${currentDate.dayOfMonth} $monthName"
-            }
-        }
-
-        val monthYear = "${language.monthNames.names[currentDate.monthNumber - 1]} ${currentDate.year}"
-
         return DailyUiState.Success(
             date = currentDate,
-            dayNumber = currentDate.dayOfMonth,
-            headerText = headerText,
-            monthYear = monthYear,
-            showFullDate = !isRelativeDate,
+            dayNumber = currentDate.day,
+            headerText = formatHeaderText(currentDate),
+            monthYear = formatMonthYear(currentDate),
+            showFullDate = !isRelativeDate(currentDate),
             completionRate = dailyLog.completionRate,
-            items = dailyLog.items.map { it.toUiModel() },
+            items = dailyLog.items.map { domainItem ->
+                domainItem.toUiModel(
+                    typeLabel = resolveTypeLabel(domainItem.type)
+                )
+            },
             isRefreshing = false
         )
     }
 
-    /**
-     * Mapea DailyItem (Domain Model) → DailyItemUiModel (UI Model).
-     *
-     * El título y descripción ya vienen extraídos en el Domain Model
-     * (el mapeo Response→Domain se hizo en el Repository).
-     *
-     * Este método solo formatea la hora para la UI.
-     */
-    private fun DailyItem.toUiModel(): DailyItemUiModel {
-        return DailyItemUiModel(
-            id = id,
-            type = type,
-            title = title,
-            description = description,
-            scheduledTime = scheduledTime?.let {
-                "${it.hour}:${it.minute.toString().padStart(2, '0')}"
-            },
-            status = status
-        )
+    private fun formatHeaderText(date: LocalDate): String {
+        val today = dateProvider.today()
+        val yesterday = dateProvider.yesterday()
+        val tomorrow = dateProvider.tomorrow()
+
+        return when (date) {
+            today -> language.relativeTexts.today
+            yesterday -> language.relativeTexts.yesterday
+            tomorrow -> language.relativeTexts.tomorrow
+            else -> {
+                date.format(language.formats.dayNameAndDate)
+                    .replaceFirstChar { it.uppercase() }
+            }
+        }
+    }
+
+    private fun resolveTypeLabel(type: DailyItemType): String {
+        val labels = language.dailyItemLabels
+        return when (type) {
+            DailyItemType.TASK -> labels.task
+            DailyItemType.HABIT -> labels.habit
+            DailyItemType.WORKOUT -> labels.workout
+            DailyItemType.MEAL -> labels.meal
+        }
+    }
+
+    private fun formatMonthYear(date: LocalDate): String {
+        return "${language.monthNames.names[date.month.ordinal]} ${date.year}"
+    }
+
+    private fun isRelativeDate(date: LocalDate): Boolean {
+        val today = dateProvider.today()
+        return date == today || date == dateProvider.yesterday() || date == dateProvider.tomorrow()
     }
 
     /**
-     * Mapea ApiException → Mensaje de usuario.
+     * Convierte un error técnico a UiState.Error genérico (code + message).
      *
-     * El backend envía el mensaje correcto en response.message,
-     * pero si llega una excepción de red o timeout, mapeamos acá.
+     * El Owner decide qué UI mostrar según code:
+     * - 500 -> escudo
+     * - 401 -> sesión expirada
+     * - 404 -> empty state
+     * - 403 -> sin permisos
+     * - 400 -> request inválido
      */
-    private fun mapErrorToUserMessage(throwable: Throwable): String {
-        return when (throwable) {
-            is ApiException.UnauthorizedException -> "Sesión expirada. Ingresá de nuevo"
-            is ApiException.NotFoundException -> "No hay datos para esta fecha"
-            is ApiException.ServerException -> "Error del servidor. Intentá más tarde"
-            else -> throwable.message ?: "Error al cargar datos"
-        }
+    private fun handleError(throwable: Throwable) {
+        val code = (throwable as? ApiException)?.code
+        val message = throwable.message ?: language.errorTexts.dataLoadError
+
+        _uiState.value = DailyUiState.Error(
+            code = code,
+            message = message
+        )
     }
 }

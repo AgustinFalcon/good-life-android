@@ -771,7 +771,7 @@ fun `muestra texto relativo cuando es ayer`() {
 ### Mediano plazo
 
 1. Refactorizar otros componentes de fecha (si existen)
-2. Crear `LanguageProvider` similar (si es necesario)
+2. ✅ ~~Crear `LanguageProvider` similar~~ → Implementado como **SPEC-007: AppLanguage System**
 3. Preparar para KMP con expect/actual
 
 ---
@@ -795,6 +795,7 @@ fun `muestra texto relativo cuando es ayer`() {
 - **SPEC-003:** Main Scaffold (donde se detectó el bug)
 - **SPEC-001:** Register Screen (ejemplo de arquitectura Clean)
 - **SPEC-002:** Biometric Login (ejemplo de dependency injection)
+- **SPEC-007:** AppLanguage System (localiza `relativeTexts`, `formats` usados por DateProvider)
 
 ---
 

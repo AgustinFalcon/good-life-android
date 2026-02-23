@@ -2,7 +2,7 @@ package com.agusstkd.goodlife.domain.repository
 
 import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.domain.model.daily.DailyLog
-import com.agusstkd.goodlife.domain.model.daily.ItemStatus
+import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 import kotlinx.datetime.LocalDate
 
 /**
@@ -28,5 +28,5 @@ interface DailyRepository {
      * @param status Nuevo status (COMPLETED, SKIPPED, PENDING)
      * @return Result con DailyLog actualizado
      */
-    suspend fun updateItemStatus(itemId: Long, status: ItemStatus): Result<DailyLog>
+    suspend fun updateItemStatus(itemId: Long, status: DailyItemStatus): Result<DailyLog>
 }

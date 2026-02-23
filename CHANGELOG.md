@@ -7,9 +7,46 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
-## [Unreleased] - 2026-02-05
+## [Unreleased] - 2026-02-03
 
 ### Added
+
+#### 🌐 Sistema de Localización KMP-Ready (SPEC-007)
+
+- **AppLanguage sealed interface** - Sistema completo de internacionalización
+  - 107+ strings organizados en 9 grupos de textos
+  - 3 idiomas: Español, English, Português
+  - Detección automática de locale del dispositivo
+  - 100% Kotlin puro — sin Android Context, sin `stringResource()`, sin `R.string`
+  - Exhaustividad garantizada por compilador (sealed interface)
+
+- **Grupos de textos (UiTexts.kt)**:
+  - `AuthTexts` (24 strings) — Login, Register, biometric prompt
+  - `ValidationTexts` (20 strings) — UseCases de validación
+  - `ErrorTexts` (12 strings) — Mensajes de error genéricos
+  - `DailyTexts` (11 strings) — Daily tab (progreso, errores)
+  - `MainScaffoldTexts` (16 strings) — BottomNav, modal, tabs
+  - `HomeTexts` (5 strings) — Home screen
+  - `AccessibilityTexts` (12 strings) — Content descriptions
+  - `DailyItemLabels` (4 strings) — Etiquetas de tipo de item
+  - `RelativeDateTexts` (3 strings) — Hoy/Ayer/Mañana
+
+- **Screen Wrappers**:
+  - `AuthScreenTexts` — Agrupa `AuthTexts` + `AccessibilityTexts` para Login/Register
+
+- **Params con textos integrados**:
+  - `TextFieldParams` — `passwordToggleHide`, `passwordToggleShow`
+  - `BottomNavigationParams` — `fabContentDescription`
+  - `DateHeaderParams` (nuevo) — `openCalendarLabel`, `previousDayLabel`, `nextDayLabel`, `notificationsLabel`
+  - `WorkoutTabHeaderParams` (nuevo) — `filterContentDescription`
+
+#### 📁 Nuevos Archivos
+
+**Core Layer:**
+- `core/datetime/language/UiTexts.kt` - Todos los data class de textos + screen wrappers
+
+**Documentación:**
+- `docs/specs/SPEC-007-app-language.md` - Especificación completa
 
 #### 🌐 Offline-First Architecture + SWR (SPEC-006)
 
@@ -64,23 +101,76 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Changed
 
+#### 🏗️ Refactoring de Localización (SPEC-007)
+
+- **LoginViewModel**: Recibe `language: AppLanguage` por constructor
+  - Expone `screenTexts: AuthScreenTexts`
+  - Biometric prompt texts desde `AuthTexts` (ya no desde `R.string`)
+
+- **RegisterViewModel**: Recibe `language: AppLanguage` por constructor
+  - Expone `screenTexts: AuthScreenTexts`
+
+- **HomeViewModel**: Recibe `language: AppLanguage` por constructor
+  - Expone `homeTexts: HomeTexts`
+
+- **DailyTabViewModel**: Expone `dailyTexts` y `accessibilityTexts`
+
+- **MainScaffoldViewModel**: `fabContentDescription` ahora es parte de `MainScaffoldUiState`
+  - Inicializado desde `language.accessibilityTexts.add`
+
+- **MainScaffoldUiState**: Agregado `fabContentDescription: String`
+
+- **LoginScreen / RegisterScreen**: Reciben `texts: AuthScreenTexts` como parámetro
+  - Eliminado `koinInject<AppLanguage>()`
+
+- **HomeScreen**: Recibe `homeTexts: HomeTexts` como parámetro
+
+- **DailyScreen**: Recibe `dateHeaderParams: DateHeaderParams` en lugar de `accessibilityTexts` directo
+
+- **LoginScreenOwner**: Usa `viewModel.screenTexts` para biometric prompt strings
+  - Eliminado `stringResource()` y `R.string` para biometric prompt
+
+- **DailyScreenOwner**: Construye `DateHeaderParams` desde `viewModel.accessibilityTexts`
+
+- **TextFieldComponent**: `passwordToggleHide/Show` movidos dentro de `TextFieldParams`
+
+- **BottomNavigationComponent**: `fabContentDescription` movido dentro de `BottomNavigationParams`
+
+- **DateHeaderComponent**: Refactorizado a recibir `DateHeaderParams`
+
+- **TabRowHeaderComponent**: Refactorizado a recibir `WorkoutTabHeaderParams`
+
+- **TitleComponent**: Ahora solo acepta `text: String` (eliminado `textId: Int?` y `stringResource`)
+
+- **SplashScreenOwner**: Eliminado import de `koinInject` no utilizado
+
+- **AppModule.kt**:
+  - `single<AppLanguage>` con detección automática de locale (`Locale.getDefault().language`)
+  - Todos los ViewModels reciben `language = get()`
+  - Registrado `DateProvider` como singleton
+
+#### 📅 DateProvider (SPEC-004)
+
 - **DailyTabViewModel**: Ahora usa `DateProvider` en lugar de `Clock` directamente
   - Formatea fechas en el ViewModel (no en UI)
   - Compara fechas con `dateProvider.today()`, `yesterday()`, `tomorrow()`
 
 - **MainScaffoldViewModel**: Integrado con DateProvider
-  - Formateo de modal header usa DateProvider
-
-- **AppModule.kt**: Registrado `DateProvider` como singleton en Koin
-  - `single<DateProvider> { RealDateProvider() }`
 
 - **LocalDateExtensions.kt**: Migradas funciones a ViewModels
-  - `todayHere()`, `isToday()`, etc. ahora son responsabilidad del ViewModel
-  - Documentado el cambio en KDoc
+
+### Removed
+
+- ❌ `stringResource()` de toda la capa de presentación compartida
+- ❌ `R.string` de toda la capa de presentación compartida
+- ❌ `koinInject()` de todos los Screens y Components
+- ❌ Textos hardcodeados de Screens y Components
+- ❌ Parámetros de texto sueltos fuera de Params en Components
+- ❌ `textId: Int?` en `TitleComponent` (ahora solo `text: String`)
 
 ### Fixed
 
-#### 🐛 Bug de Timezone Resuelto
+#### 🐛 Bug de Timezone Resuelto (SPEC-004)
 - **Problema**: App mostraba fecha +1 día en emuladores
   - `TimeZone.currentSystemDefault()` devolvía UTC en lugar de timezone local
   - Emuladores con hora 23:00 mostraban el día siguiente
@@ -90,28 +180,42 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
   - Usa `clock.now().toLocalDateTime(timeZone).date` para fecha local correcta
   - ✅ Validado: Si son las 23:00 del 3 de febrero → muestra "3" (no "4")
 
-#### 🏗️ Mejoras Arquitectónicas
-- **Antes**: ViewModels exponían `Clock` y `AppLanguage` a la UI
-- **Ahora**: UI 100% pura, sin conocimiento de Clock ni Language
-- **Antes**: Formateo de fechas en Composables (DateHeaderComponent)
-- **Ahora**: Formateo en ViewModels, UI solo renderiza strings
+#### 🏗️ Violaciones arquitectónicas corregidas (SPEC-007)
+- **Antes**: `koinInject<AppLanguage>()` en Screens y Components — violaba KMP-readiness
+- **Ahora**: Textos fluyen del ViewModel al Screen como parámetro, Components via Params
+- **Antes**: `stringResource(R.string.xxx)` en Components — bloqueaba KMP
+- **Ahora**: Todos los textos vienen de `AppLanguage` (pure Kotlin)
+- **Antes**: Textos de accessibility como parámetros sueltos
+- **Ahora**: Encapsulados dentro de Params (`DateHeaderParams`, `TextFieldParams`, etc.)
 
-#### ✅ Beneficios
-- ✅ Timezone local correcto (usa `TimeZone.currentSystemDefault()` correctamente)
-- ✅ UI 100% pura (sin lógica de fechas)
-- ✅ Testeable con `FakeDateProvider(LocalDate(2025, 12, 25))`
-- ✅ KMP-compatible (solo `kotlinx.datetime`, no `java.time`)
+#### ✅ Beneficios acumulados (SPEC-004 + SPEC-007)
+- ✅ Timezone local correcto
+- ✅ UI 100% pura (sin lógica de fechas, sin inyección directa, sin stringResource)
+- ✅ Testeable con FakeDateProvider y textos mock
+- ✅ KMP-compatible (solo `kotlinx.datetime`, textos en pure Kotlin)
 - ✅ Encapsula `@OptIn(ExperimentalTime)` en `RealDateProvider.kt`
 - ✅ Performance optimizada (cachea TimeZone)
+- ✅ 3 idiomas con ~321 traducciones (107 strings × 3)
+- ✅ Detección automática de locale
 
 ### Documentation
 
-- **SPEC-004**: Especificación completa con:
-  - Problema resuelto (bug de timezone + arquitectura)
-  - Solución implementada (DateProvider pattern)
-  - Código completo de Domain, Data, Tests
+- **SPEC-007**: Especificación completa del sistema de localización
+  - Problemas resueltos (koinInject, stringResource, textos sueltos)
+  - Arquitectura y flujo de datos
+  - Reglas estrictas con ejemplos
+  - Cómo agregar nueva vista / nuevo idioma
+
+- **SPEC-004**: Especificación completa del DateProvider pattern
+  - Bug de timezone + solución
   - Before/After comparisons
-  - Lecciones aprendidas
+  - Tests deterministas
+
+- **ARCHITECTURE.md**: Actualizado con localización, DateProvider, Params
+- **ARCHITECTURE_GUIDE.md**: v2.0 — sección 9 de localización, 6 reglas nuevas, checklist actualizado
+- **specs/README.md**: Índice completo SPEC-001 a SPEC-007, diagrama de relaciones
+- **PROGRESS.md**: Estado actualizado al 2026-02-03
+- **SPEC-003**: Actualizado a 85% — fases 7 y 8a completadas
 
 - **archive/**: Documentación de proceso preservada
   - `ANALISIS-CLOCK-Y-MEJORAS.md` - Análisis del problema

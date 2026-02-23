@@ -2,7 +2,7 @@ package com.agusstkd.goodlife.presentation.screen.tabs.daily.model
 
 import androidx.compose.runtime.Stable
 
-import com.agusstkd.goodlife.domain.model.daily.ItemStatus
+import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 
 /**
  * Acciones del usuario en la pantalla Daily.
@@ -62,6 +62,6 @@ sealed interface DailyUiAction {
      */
     data class OnItemStatusChange(
         val itemId: Long,
-        val newStatus: ItemStatus
+        val newStatus: DailyItemStatus
     ) : DailyUiAction
 }

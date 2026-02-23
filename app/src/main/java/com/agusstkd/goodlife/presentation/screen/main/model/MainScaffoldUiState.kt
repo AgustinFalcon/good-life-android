@@ -14,5 +14,6 @@ data class MainScaffoldUiState(
     val isModalOpen: Boolean = false,
     val currentDateFormatted: String = "",
     val quickActions: List<QuickActionItem> = emptyList(),
-    val mealOptions: List<MealOptionItem> = emptyList()
+    val mealOptions: List<MealOptionItem> = emptyList(),
+    val fabContentDescription: String = ""
 )

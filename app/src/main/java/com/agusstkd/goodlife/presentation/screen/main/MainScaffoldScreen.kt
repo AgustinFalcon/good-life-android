@@ -46,7 +46,8 @@ private fun MainScaffoldContent(
                     params = BottomNavigationParams(
                         items = uiState.bottomNavItems,
                         selectedTab = uiState.selectedTab,
-                        isFabRotated = uiState.isModalOpen
+                        isFabRotated = uiState.isModalOpen,
+                        fabContentDescription = uiState.fabContentDescription
                     ),
                     onTabClick = { selected ->
                         onAction(MainScaffoldUiAction.OnTabSelected(selected))

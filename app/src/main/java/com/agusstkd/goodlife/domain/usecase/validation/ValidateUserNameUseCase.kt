@@ -1,51 +1,41 @@
 package com.agusstkd.goodlife.domain.usecase.validation
 
+import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.domain.model.validation.ValidationResult
 
 /**
  * Valida el nombre de usuario.
  *
- * ## Reglas de validación:
+ * ## Reglas:
  * - No puede estar vacío
  * - Mínimo 3 caracteres
  * - Solo letras, números y guiones bajos
- * - Sin espacios
- *
- * @see ValidationResult
  */
-class ValidateUserNameUseCase {
+class ValidateUserNameUseCase(
+    private val language: AppLanguage
+) {
 
     companion object {
         private const val MIN_LENGTH = 3
         private val VALID_PATTERN = Regex("^[a-zA-Z0-9_]+$")
     }
 
-    /**
-     * Ejecuta la validación del nombre de usuario.
-     *
-     * @param username Nombre de usuario a validar
-     * @return [ValidationResult] con el resultado de la validación
-     */
     operator fun invoke(username: String): ValidationResult {
+        val texts = language.validationTexts
+
         if (username.isBlank()) {
-            return ValidationResult(
-                isValid = false,
-                errorMessage = "El nombre de usuario no puede estar vacío"
-            )
+            return ValidationResult(isValid = false, errorMessage = texts.usernameRequired)
         }
 
         if (username.length < MIN_LENGTH) {
             return ValidationResult(
                 isValid = false,
-                errorMessage = "El nombre de usuario debe tener al menos $MIN_LENGTH caracteres"
+                errorMessage = texts.usernameMinLengthFormat.replace("{0}", MIN_LENGTH.toString())
             )
         }
 
         if (!username.matches(VALID_PATTERN)) {
-            return ValidationResult(
-                isValid = false,
-                errorMessage = "Solo letras, números y guiones bajos"
-            )
+            return ValidationResult(isValid = false, errorMessage = texts.usernameInvalidChars)
         }
 
         return ValidationResult(isValid = true)

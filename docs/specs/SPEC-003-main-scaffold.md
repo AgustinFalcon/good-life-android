@@ -7,9 +7,9 @@
 | **ID** | SPEC-003 |
 | **Tipo** | Feature |
 | **Prioridad** | Alta |
-| **Estado** | 🚧 En Progreso (60% completado) |
+| **Estado** | 🚧 En Progreso (85% completado) |
 | **Fecha Creación** | 2026-01-22 |
-| **Actualizado** | 2026-01-29 |
+| **Actualizado** | 2026-02-03 |
 | **Dependencia** | Login/Register completados ✅ |
 
 ---
@@ -88,59 +88,80 @@ Crear el scaffold principal de la aplicación con:
 
 ---
 
-## ⏳ Pendiente de Implementación
+## ✅ Completado (post SPEC-004 + SPEC-007)
 
-### Fase 7: MainScaffold ❌ PENDIENTE
+### Fase 7: MainScaffold ✅ COMPLETADO
 ```
 📁 presentation/screen/main/
 ├── model/
-│   ├── MainScaffoldUiState.kt   ❌ TODO
-│   └── MainScaffoldUiAction.kt  ❌ TODO
-├── MainScaffoldViewModel.kt     ❌ TODO
-└── MainScaffoldScreen.kt        ❌ TODO (Owner + Content)
+│   ├── MainScaffoldUiState.kt   ✅ @Stable + fabContentDescription: String
+│   └── MainScaffoldUiAction.kt  ✅ @Stable sealed interface
+├── MainScaffoldViewModel.kt     ✅ Usa DateProvider + AppLanguage
+├── MainScaffoldScreen.kt        ✅ UI pura, textos via UiState/Params
+└── MainScaffoldScreenOwner.kt   ✅ Único koinViewModel()
 ```
 
-### Fase 8: Tab Screens ❌ PENDIENTE
+### Fase 8a: Daily Tab ✅ COMPLETADO
 ```
-📁 presentation/screen/tabs/
-├── daily/
-│   ├── DailyTabScreen.kt        ❌ TODO (con DateHeaderComponent)
-│   ├── DailyTabViewModel.kt     ❌ TODO (maneja fecha)
-│   └── model/DailyUiState.kt    ❌ TODO
-│
-├── workouts/
-│   ├── WorkoutsTabScreen.kt     ❌ TODO (con TabRowHeaderComponent)
-│   ├── WorkoutsTabViewModel.kt  ❌ TODO
-│   └── model/WorkoutsUiState.kt ❌ TODO
-│
-├── meals/
-│   ├── MealsTabScreen.kt        ❌ TODO (con DateHeaderComponent)
-│   ├── MealsTabViewModel.kt     ❌ TODO
-│   └── model/MealsUiState.kt    ❌ TODO
-│
-└── more/
-    ├── MoreTabScreen.kt         ❌ TODO
-    ├── MoreTabViewModel.kt      ❌ TODO
-    └── model/MoreUiState.kt     ❌ TODO
+📁 presentation/screen/tabs/daily/
+├── DailyScreen.kt               ✅ dailyTexts + dateHeaderParams (sin koinInject)
+├── DailyScreenOwner.kt          ✅ Construye DateHeaderParams desde ViewModel
+├── DailyTabViewModel.kt         ✅ DateProvider + AppLanguage + expone dailyTexts
+└── model/
+    ├── DailyUiState.kt          ✅ @Stable + strings formateados
+    └── DailyUiAction.kt         ✅ @Stable sealed interface
 ```
 
-### Fase 9: Navegación ❌ PENDIENTE
+### Localización ✅ COMPLETADO (SPEC-007)
 ```
-📁 presentation/navigation/route/
-├── TabNavGraph.kt               ❌ TODO
-├── TabRoute.kt                  ⚠️ ACTUALIZAR (agregar grafos)
-└── AppGraph.kt                  ⚠️ ACTUALIZAR (agregar MainScaffold)
+Todos los textos de BottomNav, Headers, Components, Screens y Modal
+localizados via AppLanguage → ViewModel → Owner → Screen → Params
 ```
 
-### Fase 10: DI ❌ PENDIENTE
+### Componentes actualizados ✅
 ```
-📁 di/
-└── AppModule.kt                 ⚠️ ACTUALIZAR
-    - viewModel { MainScaffoldViewModel(...) }
-    - viewModel { DailyTabViewModel(...) }
-    - viewModel { WorkoutsTabViewModel(...) }
-    - viewModel { MealsTabViewModel(...) }
-    - viewModel { MoreTabViewModel(...) }
+📁 presentation/components/
+├── header/
+│   ├── DateHeaderComponent.kt   ✅ DateHeaderParams (accessibility dentro)
+│   └── TabRowHeaderComponent.kt ✅ WorkoutTabHeaderParams (filter dentro)
+├── bottom/
+│   └── BottomNavigationComponent ✅ BottomNavigationParams (fabDesc dentro)
+├── common/
+│   ├── TextFieldComponent.kt    ✅ TextFieldParams (toggle texts dentro)
+│   └── TitleComponent.kt        ✅ text: String (sin stringResource)
+```
+
+---
+
+## ⏳ Pendiente de Implementación
+
+### Fase 8b: Workouts Tab ❌ PENDIENTE
+```
+📁 presentation/screen/tabs/workouts/
+├── WorkoutsTabScreen.kt         ❌ TODO (con WorkoutTabHeaderParams)
+├── WorkoutsTabViewModel.kt      ❌ TODO
+└── model/WorkoutsUiState.kt     ❌ TODO
+```
+
+### Fase 8c: Meals Tab ❌ PENDIENTE
+```
+📁 presentation/screen/tabs/meals/
+├── MealsTabScreen.kt            ❌ TODO (con DateHeaderParams)
+├── MealsTabViewModel.kt         ❌ TODO
+└── model/MealsUiState.kt        ❌ TODO
+```
+
+### Fase 8d: More Tab ❌ PENDIENTE
+```
+📁 presentation/screen/tabs/more/
+├── MoreTabScreen.kt             ❌ TODO
+├── MoreTabViewModel.kt          ❌ TODO
+└── model/MoreUiState.kt         ❌ TODO
+```
+
+### Fase 9: Backend Integration ❌ PENDIENTE
+```
+Endpoints reales para Daily Items, Habits, Workouts, Meals
 ```
 
 ---
@@ -209,9 +230,9 @@ Crear el scaffold principal de la aplicación con:
 
 ---
 
-## 🎬 Estados UI (Pendientes)
+## 🎬 Estados UI (Implementados)
 
-### MainScaffoldUiState
+### MainScaffoldUiState ✅
 ```kotlin
 @Stable
 data class MainScaffoldUiState(
@@ -220,11 +241,12 @@ data class MainScaffoldUiState(
     val isModalOpen: Boolean = false,
     val currentDateFormatted: String = "",
     val quickActions: List<QuickActionItem> = emptyList(),
-    val mealOptions: List<MealOptionItem> = emptyList()
+    val mealOptions: List<MealOptionItem> = emptyList(),
+    val fabContentDescription: String = ""  // ← SPEC-007: texto localizado
 )
 ```
 
-### MainScaffoldUiAction
+### MainScaffoldUiAction ✅
 ```kotlin
 @Stable
 sealed interface MainScaffoldUiAction {
@@ -253,12 +275,18 @@ sealed interface MainScaffoldUiAction {
    - Typography: `MaterialTheme.typography.bodyLarge`, `MaterialTheme.typography.titleMedium`
    - Dimensiones: valores directos `16.dp`, `24.dp`
 
-### Date Handling
+### Date Handling (SPEC-004)
 6. **KMP-Ready**: Usa `kotlinx-datetime` en lugar de `java.time`
-7. **Testable**: `Clock` inyectado, no `Clock.System` directo
-8. **Multi-idioma**: `AppLanguage` sealed interface con Spanish, English, Portuguese
+7. **Testable**: `DateProvider` inyectado, no `Clock.System` directo
+8. **Formateo en ViewModel**: UI recibe strings ya formateados
+
+### Localización (SPEC-007)
+9. **AppLanguage singleton**: Detecta locale automáticamente
+10. **Textos via ViewModel**: `koinInject()` prohibido en Screens/Components
+11. **Params encapsulan textos**: `DateHeaderParams`, `TextFieldParams`, etc.
+12. **3 idiomas**: Spanish, English, Portuguese (107+ strings cada uno)
 
 ---
 
 **Creado por:** Android Team  
-**Última actualización:** 2026-01-29
+**Última actualización:** 2026-02-03
