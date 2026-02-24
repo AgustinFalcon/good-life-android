@@ -21,7 +21,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.agusstkd.goodlife.core.datetime.language.DailyTexts
-import com.agusstkd.goodlife.core.network.HttpCode
 import com.agusstkd.goodlife.presentation.components.header.DateHeaderParams
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
@@ -33,7 +32,7 @@ import org.koin.androidx.compose.koinViewModel
  * Inyecta el ViewModel y conecta el estado con la UI pura.
  *
  * ## Filosofía Owner Pattern:
- * - Owner: Inyección de ViewModel + colectar estado
+ * - Owner: Inyección de ViewModel + colectar estado + routing de estados
  * - Screen: UI pura, solo recibe UiState y callbacks
  */
 @Composable
@@ -45,6 +44,13 @@ fun DailyScreenOwner(
     when (val state = uiState) {
         DailyUiState.Loading -> {
             DailyLoadingState()
+        }
+
+        DailyUiState.Empty -> {
+            DailyEmptyState(
+                dailyTexts = viewModel.dailyTexts,
+                onRetry = { viewModel.onAction(DailyUiAction.OnRefresh) }
+            )
         }
 
         is DailyUiState.Success -> {
@@ -67,7 +73,6 @@ fun DailyScreenOwner(
 
         is DailyUiState.Error -> {
             DailyErrorState(
-                code = state.code,
                 message = state.message,
                 dailyTexts = viewModel.dailyTexts,
                 onRetry = { viewModel.onAction(DailyUiAction.OnRefresh) }
@@ -92,6 +97,42 @@ private fun DailyLoadingState() {
 }
 
 @Composable
+private fun DailyEmptyState(
+    dailyTexts: DailyTexts,
+    onRetry: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "${dailyTexts.noData}\n${dailyTexts.tapToRetry}",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.clickable(onClick = onRetry)
+        )
+    }
+}
+
+@Composable
+private fun DailyErrorState(
+    message: String,
+    dailyTexts: DailyTexts,
+    onRetry: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "$message\n${dailyTexts.tapToRetry}",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.clickable(onClick = onRetry)
+        )
+    }
+}
+
+@Composable
 private fun SkeletonBlock(
     height: androidx.compose.ui.unit.Dp,
     alpha: Float
@@ -106,32 +147,4 @@ private fun SkeletonBlock(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
     ) {}
-}
-
-@Composable
-private fun DailyErrorState(
-    code: Int?,
-    message: String,
-    dailyTexts: DailyTexts,
-    onRetry: () -> Unit
-) {
-    val title = when (code?.let(HttpCode::fromCode)) {
-        HttpCode.INTERNAL_SERVER_ERROR -> dailyTexts.serverError
-        HttpCode.UNAUTHORIZED -> dailyTexts.sessionExpired
-        HttpCode.NOT_FOUND -> dailyTexts.noData
-        HttpCode.FORBIDDEN -> dailyTexts.noPermissions
-        HttpCode.BAD_REQUEST -> dailyTexts.invalidRequest
-        else -> dailyTexts.error
-    }
-
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "$title\n$message\n${dailyTexts.tapToRetry}",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.clickable(onClick = onRetry)
-        )
-    }
 }

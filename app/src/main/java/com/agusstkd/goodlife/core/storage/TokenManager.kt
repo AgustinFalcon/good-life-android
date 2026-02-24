@@ -3,21 +3,34 @@ package com.agusstkd.goodlife.core.storage
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import com.agusstkd.goodlife.domain.model.auth.AuthToken
 
 /**
- * Gestor de tokens JWT usando SharedPreferences.
+ * Gestor de tokens JWT con almacenamiento cifrado.
  *
- * Almacena de forma segura los tokens de autenticación.
- * En producción se podría migrar a EncryptedSharedPreferences.
+ * Usa [EncryptedSharedPreferences] con [MasterKey] respaldada por Android Keystore.
+ * - Claves cifradas con AES256-SIV (determinista, necesario para lookup por nombre).
+ * - Valores cifrados con AES256-GCM (nonce aleatorio por operación, seguridad semántica).
+ * - La MasterKey vive en el chip de seguridad del dispositivo y no puede extraerse.
  *
  * @param context Contexto de la aplicación
  */
 class TokenManager(context: Context) {
 
-    private val prefs: SharedPreferences = context.getSharedPreferences(
-        PREFS_NAME,
-        Context.MODE_PRIVATE
+    // `create()` está deprecado a favor de una API basada en Tink que requiere dependencias
+    // adicionales no incluidas en security-crypto:1.1.0-alpha06. Supprimimos el warning
+    // explícitamente — la seguridad (AES256-SIV + AES256-GCM + Android Keystore) es idéntica.
+    @Suppress("DEPRECATION")
+    private val prefs: SharedPreferences = EncryptedSharedPreferences.create(
+        context,
+        PREFS_ENCRYPTED_NAME,
+        MasterKey.Builder(context)
+            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            .build(),
+        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
     )
 
     /**
@@ -66,6 +79,7 @@ class TokenManager(context: Context) {
     /**
      * Verifica si hay un token válido guardado.
      *
+     *
      * @return true si existe un access token no expirado o un refresh token válido
      */
     fun hasValidToken(): Boolean {
@@ -103,7 +117,7 @@ class TokenManager(context: Context) {
     }
 
     companion object {
-        private const val PREFS_NAME = "goodlife_auth_prefs"
+        private const val PREFS_ENCRYPTED_NAME = "goodlife_auth_prefs_encrypted"
         private const val KEY_ACCESS_TOKEN = "access_token"
         private const val KEY_REFRESH_TOKEN = "refresh_token"
         private const val KEY_ACCESS_TOKEN_EXPIRES_AT = "access_token_expires_at"

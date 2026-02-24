@@ -20,10 +20,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.agusstkd.goodlife.core.datetime.language.DailyTexts
+import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 import com.agusstkd.goodlife.domain.model.daily.DailyItemType
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyItemUiModel
-import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
 import com.agusstkd.goodlife.presentation.theme.toDailyItemStyle
 
@@ -112,7 +112,7 @@ private fun DailyItemCardTaskPreview() {
                 scheduledTime = "08:30",
                 status = DailyItemStatus.PENDING
             ),
-            dailyTexts = AppLanguage.Spanish.dailyTexts,
+            dailyTexts = Spanish.dailyTexts,
             onClick = {},
             onStatusChange = { _, _ -> },
             modifier = Modifier.padding(12.dp)
@@ -134,7 +134,7 @@ private fun DailyItemCardWorkoutPreview() {
                 scheduledTime = "18:00",
                 status = DailyItemStatus.COMPLETED
             ),
-            dailyTexts = AppLanguage.Spanish.dailyTexts,
+            dailyTexts = Spanish.dailyTexts,
             onClick = {},
             onStatusChange = { _, _ -> },
             modifier = Modifier.padding(12.dp)

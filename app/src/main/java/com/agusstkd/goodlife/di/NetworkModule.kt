@@ -9,6 +9,7 @@ import com.agusstkd.goodlife.core.network.RetrofitFactory
 import com.agusstkd.goodlife.core.storage.TokenManager
 import com.agusstkd.goodlife.data.remote.api.GoodLifeApiService
 import kotlinx.serialization.json.Json
+import okhttp3.Authenticator
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -86,11 +87,11 @@ val networkModule = module {
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
     /**
-     * GoodLifeAuthenticator como singleton.
+     * Authenticator como singleton (registrado por interfaz para que Koin lo resuelva).
      * Usa inject() (Lazy) para romper dependencia circular:
      * OkHttpClient → Authenticator → ApiService → Retrofit → OkHttpClient
      */
-    single<GoodLifeAuthenticator> {
+    single<Authenticator> {
         GoodLifeAuthenticator(
             tokenManager = get(),
             apiService = inject()

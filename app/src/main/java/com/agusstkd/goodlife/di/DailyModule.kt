@@ -82,7 +82,6 @@ val dailyModule = module {
         DailyTabViewModel(
             dateProvider = get(),
             language = get(),
-            dispatcher = get(),
             getDailyItemsUseCase = get(),
             updateItemStatusUseCase = get()
         )

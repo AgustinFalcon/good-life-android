@@ -32,8 +32,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.core.datetime.language.MainScaffoldTexts
+import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.presentation.theme.GreenSelected
 
 /**
@@ -208,7 +208,7 @@ fun getDefaultWorkoutTabs(scaffoldTexts: MainScaffoldTexts): List<TabItemModel> 
 @Preview(showBackground = true)
 @Composable
 private fun WorkoutTabHeaderPreview() {
-    val lang = AppLanguage.Spanish
+    val lang = Spanish
     WorkoutTabHeaderComponent(
         params = WorkoutTabHeaderParams(
             tabs = getDefaultWorkoutTabs(lang.mainScaffoldTexts),
@@ -222,7 +222,7 @@ private fun WorkoutTabHeaderPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun WorkoutTabHeaderMyExercisesPreview() {
-    val lang = AppLanguage.Spanish
+    val lang = Spanish
     WorkoutTabHeaderComponent(
         params = WorkoutTabHeaderParams(
             tabs = getDefaultWorkoutTabs(lang.mainScaffoldTexts),

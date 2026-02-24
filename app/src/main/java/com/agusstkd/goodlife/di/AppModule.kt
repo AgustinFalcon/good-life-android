@@ -18,6 +18,9 @@ import com.agusstkd.goodlife.domain.usecase.validation.ValidatePasswordMatchUseC
 import com.agusstkd.goodlife.domain.usecase.validation.ValidatePasswordUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidateUserNameUseCase
 import com.agusstkd.goodlife.core.datetime.language.AppLanguage
+import com.agusstkd.goodlife.core.datetime.language.English
+import com.agusstkd.goodlife.core.datetime.language.Portuguese
+import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationControllerImpl
 import com.agusstkd.goodlife.presentation.screen.home.HomeViewModel
@@ -25,7 +28,7 @@ import com.agusstkd.goodlife.presentation.screen.login.LoginViewModel
 import com.agusstkd.goodlife.presentation.screen.main.MainScaffoldViewModel
 import com.agusstkd.goodlife.presentation.screen.register.RegisterViewModel
 import com.agusstkd.goodlife.presentation.screen.splash.SplashViewModel
-import com.agusstkd.goodlife.presentation.screen.tabs.daily.DailyTabViewModel
+import java.util.Locale
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -102,17 +105,32 @@ val appModule = module {
     /**
      * AppLanguage como singleton.
      *
-     * Detecta el idioma del dispositivo y selecciona el AppLanguage correspondiente.
-     * Fallback a English si el idioma no está soportado.
+     * Lee el idioma principal del dispositivo (`Locale.getDefault().language`) y
+     * retorna la implementación correspondiente de [AppLanguage].
+     * Si el idioma no está soportado, hace fallback a [English].
      *
-     * TODO: En el futuro, permitir override manual desde SharedPreferences/Settings.
+     * ## Idiomas soportados
+     * | Código BCP-47 | Implementación  |
+     * |---------------|-----------------|
+     * | `es`          | [Spanish]       |
+     * | `pt`          | [Portuguese]    |
+     * | cualquier otro| [English]       |
+     *
+     * ## Agregar un nuevo idioma
+     * 1. Crear `French.kt` con `data object French : AppLanguage { ... }`
+     * 2. Añadir `"fr" -> French` en el `when` de abajo.
+     * 3. No tocar los archivos de los otros idiomas.
+     *
+     * ## Override manual (pendiente)
+     * Leer el código de idioma desde `SharedPreferences` antes de hacer el fallback al
+     * locale del sistema — permitirá que el usuario seleccione el idioma desde Settings
+     * sin cambiar el idioma del dispositivo.
      */
     single<AppLanguage> {
-        val locale = java.util.Locale.getDefault().language
-        when (locale) {
-            "es" -> AppLanguage.Spanish
-            "pt" -> AppLanguage.Portuguese
-            else -> AppLanguage.English
+        when (Locale.getDefault().language) {
+            "es" -> Spanish
+            "pt" -> Portuguese
+            else -> English
         }
     }
 

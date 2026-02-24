@@ -7,9 +7,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -22,7 +19,18 @@ private const val ANIMATION_DURATION = 300
  * NavHost inteligente que observa eventos de navegación reactivos.
  *
  * Escucha el [ComposeNavigationController.navigationAction] SharedFlow
- * y ejecuta las navegaciones cuando la Activity está en estado STARTED.
+ * usando collect directo (sin repeatOnLifecycle) porque:
+ *
+ * 1. Los eventos de navegación son **one-shot**: no es estado que se puede perder.
+ *    Si la app va al fondo y llega un SessionExpired, queremos procesarlo.
+ * 2. El LaunchedEffect ya está atado al lifecycle de la composición:
+ *    se cancela si y solo si el NavHost sale del árbol de composición
+ *    (que en este caso es nunca, porque es el root).
+ * 3. Evita la race condition inicial con el Splash:
+ *    el collect empieza en el primer frame, sin esperar a STARTED.
+ *
+ * Nota: [repeatOnLifecycle(STARTED)] es correcto para **estado** (UiState).
+ * Para **eventos one-shot** de navegación, el collect directo es la práctica estándar.
  *
  * Incluye animaciones de transición preconfiguradas (slide + fade).
  *
@@ -38,14 +46,9 @@ fun GoodLifeNavHost(
     startDestination: Any,
     graphBuilder: NavGraphBuilder.() -> Unit
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    // Observa eventos de navegación solo cuando Activity está visible
-    LaunchedEffect(Unit) {
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            navigationController.navigationAction.collect { action ->
-                handleNavigationAction(navController, action)
-            }
+    LaunchedEffect(navigationController) {
+        navigationController.navigationAction.collect { action ->
+            handleNavigationAction(navController, action)
         }
     }
 

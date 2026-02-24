@@ -11,6 +11,25 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Added
 
+#### 🔒 Autenticación automática — Refresh de token con sincronización segura
+
+- **`GoodLifeAuthenticator`** — Implementación de `okhttp3.Authenticator` para renovar el
+  access token de forma transparente cuando cualquier endpoint responde `401 Unauthorized`:
+  - `Mutex` para serializar el refresh: solo una corrutina ejecuta el request de renovación;
+    las restantes esperan suspendidas y reutilizan el token ya obtenido sin volver a llamar al
+    backend.
+  - **Guard de recursión** en el endpoint de token (`/api/v1/token`): si el propio refresh
+    devuelve 401, se limpian los tokens y se emite `SessionEventBus.SessionExpired`
+    inmediatamente, evitando un bucle infinito.
+  - **Guard de reintento** (`X-Retry-After-Refresh`): si la solicitud ya fue reintentada con el
+    nuevo token y vuelve a fallar, fuerza logout sin otro ciclo.
+  - Re-uso del token ya renovado: si al adquirir el Mutex el token del request original ya
+    difiere del token actual, se construye la solicitud con el token nuevo sin hacer otra llamada
+    de refresh.
+  - `try/catch` global en el `runBlocking` para evitar crashes ante fallos de red o de parseo.
+  - Constantes para todos los literales (`TAG`, `HEADER_AUTH`, `BEARER_PREFIX`,
+    `HEADER_RETRY`, `GRANT_TYPE_REFRESH`, `ACCESS_TOKEN_DURATION_MS`, `TOKEN_ENDPOINT`).
+
 #### 🌐 Sistema de Localización KMP-Ready (SPEC-007)
 
 - **AppLanguage sealed interface** - Sistema completo de internacionalización
@@ -168,6 +187,21 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 - ❌ Parámetros de texto sueltos fuera de Params en Components
 - ❌ `textId: Int?` en `TitleComponent` (ahora solo `text: String`)
 
+### Refactored
+
+#### 🗂️ Split de `AppLanguage.kt` — Un archivo por idioma
+
+- `AppLanguage.kt` ahora solo contiene la `sealed interface`: contrato puro, sin implementaciones.
+- Cada idioma vive en su propio archivo en el mismo package
+  `core/datetime/language/`:
+  - `Spanish.kt` — `data object Spanish : AppLanguage`
+  - `English.kt` — `data object English : AppLanguage`
+  - `Portuguese.kt` — `data object Portuguese : AppLanguage`
+- **Motivación**: el archivo original tenía ~580 líneas; con el split cada archivo tiene ~150 líneas
+  y es responsable de un solo idioma → Single Responsibility, más fácil de revisar en PRs,
+  y más fácil de agregar un nuevo idioma sin tocar los existentes.
+- Sin cambios de comportamiento: mismos textos, misma lógica de detección de locale en `AppModule`.
+
 ### Fixed
 
 #### 🐛 Bug de Timezone Resuelto (SPEC-004)
@@ -188,6 +222,23 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 - **Antes**: Textos de accessibility como parámetros sueltos
 - **Ahora**: Encapsulados dentro de Params (`DateHeaderParams`, `TextFieldParams`, etc.)
 
+#### 🔄 Race condition en Splash — SharedFlow replay=1
+
+- **Problema**: después del auto-login, `SplashViewModel` emitía el evento de navegación antes de
+  que `GoodLifeNavHost` comenzara a colectar el `SharedFlow`, perdiendo el evento y dejando la
+  app en loop infinito sobre el Splash.
+- **Solución**: `ComposeNavigationControllerImpl` usa `MutableSharedFlow<NavigationAction>(replay = 1)`,
+  almacenando el último evento para entregarlo a suscriptores tardíos.
+- `GoodLifeNavHost` colecta directamente con `LaunchedEffect` (sin `repeatOnLifecycle`) para
+  garantizar que el collector esté activo desde la primera composición.
+
+#### 🔄 Flickering en `DateHeaderComponent` al cambiar de fecha
+
+- Las lambdas `onPreviousDay` / `onNextDay` se envuelven con `remember(onAction)` en `DailyScreen`
+  para garantizar referencias estables entre recomposiciones.
+- `enabledColors` y `disabledColors` fueron elevados a `private val` de nivel top del archivo,
+  evitando su recreación en cada recomposición.
+
 #### ✅ Beneficios acumulados (SPEC-004 + SPEC-007)
 - ✅ Timezone local correcto
 - ✅ UI 100% pura (sin lógica de fechas, sin inyección directa, sin stringResource)
@@ -197,6 +248,9 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 - ✅ Performance optimizada (cachea TimeZone)
 - ✅ 3 idiomas con ~321 traducciones (107 strings × 3)
 - ✅ Detección automática de locale
+- ✅ Token refresh concurrente serializado con `Mutex` (sin deadlocks, sin duplicados)
+- ✅ Auto-login sin race conditions en navegación
+- ✅ Codebase de localización split por responsabilidad (un archivo por idioma)
 
 ### Documentation
 

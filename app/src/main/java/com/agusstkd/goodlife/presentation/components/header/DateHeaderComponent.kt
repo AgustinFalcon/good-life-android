@@ -30,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.agusstkd.goodlife.core.datetime.language.AppLanguage
+import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.presentation.components.GradientIcon
 import com.agusstkd.goodlife.presentation.theme.DarkGreen
 import com.agusstkd.goodlife.presentation.theme.DegradeBackground5
@@ -65,6 +65,9 @@ data class DateHeaderParams(
  * Componente **100% puro**: solo renderiza strings ya formateados.
  * No conoce Clock, Language, ni lógica de fechas.
  */
+private val ENABLED_GRADIENT_COLORS = listOf(DarkGreen, LightGreen, DegradeBackground5)
+private val DISABLED_GRADIENT_COLORS = listOf(Color(0xFFBDBDBD), Color(0xFF9E9E9E))
+
 @Composable
 fun DateHeaderComponent(
     params: DateHeaderParams,
@@ -74,9 +77,7 @@ fun DateHeaderComponent(
     onNotificationsClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val enabledColors = listOf(DarkGreen, LightGreen, DegradeBackground5)
-    val disabledColors = listOf(Color(0xFFBDBDBD), Color(0xFF9E9E9E))
-    val previousArrowColors = if (params.canNavigatePrevious) enabledColors else disabledColors
+    val previousArrowColors = if (params.canNavigatePrevious) ENABLED_GRADIENT_COLORS else DISABLED_GRADIENT_COLORS
 
     Row(
         modifier = modifier
@@ -87,7 +88,7 @@ fun DateHeaderComponent(
     ) {
         IconButtonWithBorder(
             icon = Icons.Default.CalendarMonth,
-            colors = enabledColors,
+            colors = ENABLED_GRADIENT_COLORS,
             contentDescription = params.openCalendarLabel,
             onClick = onCalendarClick,
             iconSize = 22.dp
@@ -112,7 +113,7 @@ fun DateHeaderComponent(
 
         IconButtonWithBorder(
             icon = Icons.Default.ArrowForwardIos,
-            colors = enabledColors,
+            colors = ENABLED_GRADIENT_COLORS,
             contentDescription = params.nextDayLabel,
             onClick = onNextDay,
             iconSize = 18.dp
@@ -122,7 +123,7 @@ fun DateHeaderComponent(
 
         IconButtonWithBorder(
             icon = Icons.Default.Notifications,
-            colors = enabledColors,
+            colors = ENABLED_GRADIENT_COLORS,
             contentDescription = params.notificationsLabel,
             onClick = onNotificationsClick,
             iconSize = 18.dp
@@ -206,7 +207,7 @@ private fun DateHeaderWithIcon(
 @Preview(showBackground = true)
 @Composable
 private fun DateHeaderTodayPreview() {
-    val a = AppLanguage.Spanish.accessibilityTexts
+    val a = Spanish.accessibilityTexts
     DateHeaderComponent(
         params = DateHeaderParams(
             dayNumber = 3, headerText = "Hoy", monthYear = null,
@@ -221,7 +222,7 @@ private fun DateHeaderTodayPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun DateHeaderYesterdayPreview() {
-    val a = AppLanguage.Spanish.accessibilityTexts
+    val a = Spanish.accessibilityTexts
     DateHeaderComponent(
         params = DateHeaderParams(
             dayNumber = 2, headerText = "Ayer", monthYear = null,
@@ -236,7 +237,7 @@ private fun DateHeaderYesterdayPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun DateHeaderOtherDayPreview() {
-    val a = AppLanguage.Spanish.accessibilityTexts
+    val a = Spanish.accessibilityTexts
     DateHeaderComponent(
         params = DateHeaderParams(
             dayNumber = 23, headerText = "Lun, 23 oct", monthYear = "Octubre 2025",

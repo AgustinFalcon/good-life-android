@@ -29,8 +29,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.core.datetime.language.HomeTexts
+import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.presentation.screen.home.model.HomeUiAction
 import com.agusstkd.goodlife.presentation.screen.home.model.HomeUiState
 import com.agusstkd.goodlife.presentation.theme.DarkGreen
@@ -234,7 +234,7 @@ private fun HomeScreenLoadingPreview() {
         HomeScreen(
             uiState = HomeUiState.Loading,
             onAction = {},
-            homeTexts = AppLanguage.Spanish.homeTexts
+            homeTexts = Spanish.homeTexts
         )
     }
 }
@@ -249,7 +249,7 @@ private fun HomeScreenContentPreview() {
                 userEmail = "agustin@gmail.com"
             ),
             onAction = {},
-            homeTexts = AppLanguage.Spanish.homeTexts
+            homeTexts = Spanish.homeTexts
         )
     }
 }
@@ -261,7 +261,7 @@ private fun HomeScreenErrorPreview() {
         HomeScreen(
             uiState = HomeUiState.Error("No hay sesión activa"),
             onAction = {},
-            homeTexts = AppLanguage.Spanish.homeTexts
+            homeTexts = Spanish.homeTexts
         )
     }
 }

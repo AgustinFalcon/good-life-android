@@ -45,9 +45,9 @@ import com.agusstkd.goodlife.presentation.components.common.TextFieldComponent
 import com.agusstkd.goodlife.presentation.components.common.TextFieldParams
 import com.agusstkd.goodlife.presentation.components.common.TextFieldType
 import com.agusstkd.goodlife.presentation.components.common.TitleComponent
-import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.core.datetime.language.AuthScreenTexts
 import com.agusstkd.goodlife.core.datetime.language.AuthTexts
+import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.presentation.screen.register.model.RegisterUiAction
 import com.agusstkd.goodlife.presentation.screen.register.model.RegisterUiState
 import com.agusstkd.goodlife.presentation.theme.DarkGreen
@@ -326,7 +326,7 @@ private fun RegisterScreenLoadingPreview() {
         RegisterScreen(
             uiState = RegisterUiState.Loading,
             onAction = {},
-            texts = AuthScreenTexts(AppLanguage.Spanish.authTexts, AppLanguage.Spanish.accessibilityTexts)
+            texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)
         )
     }
 }
@@ -338,7 +338,7 @@ private fun RegisterScreenEmptyPreview() {
         RegisterScreen(
             uiState = RegisterUiState.Content(),
             onAction = {},
-            texts = AuthScreenTexts(AppLanguage.Spanish.authTexts, AppLanguage.Spanish.accessibilityTexts)
+            texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)
         )
     }
 }
@@ -357,7 +357,7 @@ private fun RegisterScreenFilledPreview() {
                 acceptedTerms = true
             ),
             onAction = {},
-            texts = AuthScreenTexts(AppLanguage.Spanish.authTexts, AppLanguage.Spanish.accessibilityTexts)
+            texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)
         )
     }
 }

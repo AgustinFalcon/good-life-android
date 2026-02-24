@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.agusstkd.goodlife.core.datetime.language.AppLanguage
+import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.presentation.components.bottom.model.BottomMenuOption
 import com.agusstkd.goodlife.presentation.components.bottom.model.BottomNavItemModel
 import com.agusstkd.goodlife.presentation.components.bottom.model.getDefaultBottomNavItems
@@ -203,7 +204,7 @@ private fun BottomNavigationItem(
 @Preview(showBackground = true)
 @Composable
 private fun BottomNavigationPreview() {
-    val lang = AppLanguage.Spanish
+    val lang = Spanish
     BottomNavigationComponent(
         params = BottomNavigationParams(
             items = getDefaultBottomNavItems(lang.mainScaffoldTexts, lang.accessibilityTexts),
@@ -218,7 +219,7 @@ private fun BottomNavigationPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun BottomNavigationFabOpenPreview() {
-    val lang = AppLanguage.Spanish
+    val lang = Spanish
     BottomNavigationComponent(
         params = BottomNavigationParams(
             items = getDefaultBottomNavItems(lang.mainScaffoldTexts, lang.accessibilityTexts),

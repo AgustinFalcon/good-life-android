@@ -1,0 +1,180 @@
+package com.agusstkd.goodlife.core.datetime.language
+
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format.DayOfWeekNames
+import kotlinx.datetime.format.MonthNames
+import kotlinx.datetime.format.char
+
+data object Portuguese : AppLanguage {
+
+    override val monthNames = MonthNames(
+        "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+        "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+    )
+
+    override val dayNamesShort = DayOfWeekNames(
+        "seg", "ter", "qua", "qui", "sex", "sáb", "dom"
+    )
+
+    override val relativeTexts = RelativeDateTexts(
+        today = "Hoje",
+        yesterday = "Ontem",
+        tomorrow = "Amanhã"
+    )
+
+    override val dailyItemLabels = DailyItemLabels(
+        task = "Tarefa",
+        habit = "Hábito",
+        workout = "Treino",
+        meal = "Refeição"
+    )
+
+    override val validationTexts = ValidationTexts(
+        fieldRequired = "O campo não pode estar vazio",
+        minLengthFormat = "Deve ter pelo menos {0} caracteres",
+        invalidEmailFormat = "Formato de email inválido",
+        passwordRequired = "A senha não pode estar vazia",
+        passwordMinLengthFormat = "A senha deve ter pelo menos {0} caracteres",
+        passwordMaxLengthFormat = "A senha não pode exceder {0} caracteres",
+        passwordNeedsUppercase = "A senha deve conter pelo menos uma maiúscula",
+        passwordNeedsNumber = "A senha deve conter pelo menos um número",
+        passwordNeedsSpecialChar = "A senha deve conter pelo menos um caractere especial",
+        passwordsDontMatch = "As senhas não coincidem",
+        usernameRequired = "O nome de usuário não pode estar vazio",
+        usernameMinLengthFormat = "O nome de usuário deve ter pelo menos {0} caracteres",
+        usernameInvalidChars = "Apenas letras, números e underscores",
+        fullNameRequired = "O nome não pode estar vazio",
+        fullNameTooShort = "O nome é muito curto",
+        fullNameInvalidChars = "O nome só pode conter letras",
+        invalidFullName = "Nome inválido",
+        invalidUsername = "Nome de usuário inválido",
+        invalidEmail = "Email inválido",
+        invalidPassword = "Senha inválida"
+    )
+
+    override val errorTexts = ErrorTexts(
+        loginError = "Erro ao fazer login",
+        registerError = "Erro ao registrar",
+        unexpectedState = "Estado inesperado",
+        operationInProgress = "Operação em andamento",
+        userLoadError = "Erro ao carregar usuário",
+        logoutError = "Erro ao fazer logout",
+        noAuthenticatedUser = "Nenhum usuário autenticado",
+        dataLoadError = "Erro ao carregar dados",
+        connectionError = "Erro de conexão",
+        serverErrorFormat = "Erro do servidor (código: {0})",
+        unknownError = "Erro desconhecido",
+        mustAcceptTerms = "Você deve aceitar os termos e condições"
+    )
+
+    override val dailyTexts = DailyTexts(
+        dailyProgressFormat = "Progresso diário: {0}%",
+        completedOfFormat = "{0} de {1} concluídos",
+        totalForDayFormat = "Total do dia: {0} itens",
+        schedulePrefix = "Horário",
+        serverError = "Erro do servidor",
+        sessionExpired = "Sessão expirada",
+        noData = "Sem dados",
+        noPermissions = "Sem permissões",
+        invalidRequest = "Solicitação inválida",
+        error = "Erro",
+        tapToRetry = "Toque para tentar novamente"
+    )
+
+    override val mainScaffoldTexts = MainScaffoldTexts(
+        routine = "Rotina",
+        nutrition = "Alimentação",
+        weight = "Peso",
+        supplements = "Suplementos",
+        activity = "Atividade",
+        others = "Outros",
+        dailySummary = "Resumo diário",
+        breakfast = "Café da manhã",
+        lunch = "Almoço",
+        dinner = "Jantar",
+        snack = "Lanche",
+        preWorkout = "Pré-treino",
+        postWorkout = "Pós-treino",
+        tabDaily = "Diário",
+        tabWorkouts = "Treinos",
+        tabFood = "Comida",
+        tabMore = "Mais",
+        tabExercises = "Exercícios",
+        tabMyExercises = "Meus exercícios",
+        tabStatistics = "Estatísticas"
+    )
+
+    override val homeTexts = HomeTexts(
+        welcome = "Bem-vindo!",
+        sessionActive = "Você fez login com sucesso.\nSua sessão está ativa.",
+        logout = "Sair",
+        error = "Erro",
+        retry = "Tentar novamente"
+    )
+
+    override val authTexts = AuthTexts(
+        loginSubtitle = "Seu bem-estar, seu ritmo",
+        emailOrUsername = "Email ou nome de usuário",
+        password = "Senha",
+        login = "Entrar",
+        createAccount = "Criar Conta",
+        or = "ou",
+        loginWithGoogle = "Entrar com Google",
+        loginWithApple = "Entrar com Apple",
+        enableBiometricLogin = "Ativar login biométrico",
+        termsPrefix = "Ao continuar, você aceita nossos ",
+        terms = "Termos",
+        and = " e ",
+        privacy = "Privacidade",
+        register = "Cadastrar",
+        registerSubtitle = "Crie sua conta para começar sua vida saudável",
+        fullName = "Nome completo",
+        username = "Nome de usuário",
+        email = "Email",
+        confirmPassword = "Confirmar senha",
+        termsAndConditions = "Termos e Condições",
+        alreadyHaveAccount = "Já tem uma conta? ",
+        ok = "OK",
+        biometricPromptTitle = "Entrar no GoodLife",
+        biometricPromptSubtitle = "Use sua digital, rosto, PIN ou padrão",
+        biometricPromptCancel = "Cancelar",
+        loginSuccess = "Login realizado com sucesso"
+    )
+
+    override val accessibilityTexts = AccessibilityTexts(
+        hide = "Ocultar",
+        show = "Mostrar",
+        openCalendar = "Abrir calendário",
+        previousDay = "Dia anterior",
+        nextDay = "Próximo dia",
+        notifications = "Notificações",
+        filter = "Filtrar",
+        add = "Adicionar",
+        goToDaily = "Ir para tarefas diárias",
+        goToWorkouts = "Ir para treinos",
+        goToMeals = "Ir para refeições",
+        goToMore = "Mais opções e configurações"
+    )
+
+    override val formats = DateFormats(
+        full = LocalDate.Format {
+            dayOfMonth()
+            chars(" de ")
+            monthName(monthNames)
+            chars(" de ")
+            year()
+        },
+        dayMonth = LocalDate.Format {
+            dayOfMonth()
+            chars(" de ")
+            monthName(monthNames)
+        },
+        dayNameAndDate = LocalDate.Format {
+            dayOfWeek(dayNamesShort)
+            chars(", ")
+            dayOfMonth()
+            chars(" de ")
+            monthName(monthNames)
+        }
+    )
+}

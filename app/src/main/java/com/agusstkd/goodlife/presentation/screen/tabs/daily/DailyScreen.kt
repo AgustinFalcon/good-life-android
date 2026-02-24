@@ -13,11 +13,12 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.core.datetime.language.DailyTexts
+import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.presentation.components.header.DateHeaderParams
 import com.agusstkd.goodlife.domain.model.daily.DailyItemType
 import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
@@ -51,10 +52,12 @@ fun DailyScreen(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         item {
+            val onPreviousDay = remember(onAction) { { onAction(DailyUiAction.OnPreviousDay) } }
+            val onNextDay = remember(onAction) { { onAction(DailyUiAction.OnNextDay) } }
             DateHeaderComponent(
                 params = dateHeaderParams,
-                onPreviousDay = { onAction(DailyUiAction.OnPreviousDay) },
-                onNextDay = { onAction(DailyUiAction.OnNextDay) }
+                onPreviousDay = onPreviousDay,
+                onNextDay = onNextDay
             )
         }
 
@@ -135,10 +138,10 @@ private fun CompletionRateCard(
 @Preview(showBackground = true, name = "DailyScreen - Hoy con items")
 @Composable
 private fun DailyScreenWithItemsPreview() {
-    val a = AppLanguage.Spanish.accessibilityTexts
+    val a = Spanish.accessibilityTexts
     GoodLifeTheme {
         DailyScreen(
-            dailyTexts = AppLanguage.Spanish.dailyTexts,
+            dailyTexts = Spanish.dailyTexts,
             dateHeaderParams = DateHeaderParams(
                 dayNumber = 10, headerText = "Hoy", monthYear = null,
                 openCalendarLabel = a.openCalendar, previousDayLabel = a.previousDay,
@@ -198,10 +201,10 @@ private fun DailyScreenWithItemsPreview() {
 @Preview(showBackground = true, name = "DailyScreen - Fecha absoluta sin items")
 @Composable
 private fun DailyScreenEmptyPreview() {
-    val a = AppLanguage.Spanish.accessibilityTexts
+    val a = Spanish.accessibilityTexts
     GoodLifeTheme {
         DailyScreen(
-            dailyTexts = AppLanguage.Spanish.dailyTexts,
+            dailyTexts = Spanish.dailyTexts,
             dateHeaderParams = DateHeaderParams(
                 dayNumber = 9, headerText = "Lun, 09 de feb", monthYear = "Febrero 2026",
                 openCalendarLabel = a.openCalendar, previousDayLabel = a.previousDay,
