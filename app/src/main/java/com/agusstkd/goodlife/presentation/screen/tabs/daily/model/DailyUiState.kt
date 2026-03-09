@@ -1,9 +1,13 @@
 package com.agusstkd.goodlife.presentation.screen.tabs.daily.model
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
+import com.agusstkd.goodlife.core.extensions.toDisplayString
 import com.agusstkd.goodlife.domain.model.daily.DailyItem
 import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 import com.agusstkd.goodlife.domain.model.daily.DailyItemType
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.LocalDate
 
 /**
@@ -77,19 +81,15 @@ sealed interface DailyUiState {
         val monthYear: String,
         val showFullDate: Boolean,
         val completionRate: Double,
-        val items: List<DailyItemUiModel>,
+        val items: ImmutableList<DailyItemUiModel>,
         val isRefreshing: Boolean = false,
         val activeFilter: DailyFilter = DailyFilter.ALL,
     ) : DailyUiState {
 
-        /**
-         * Items visibles según el filtro activo.
-         * Se recalcula automáticamente cuando cambia activeFilter o items.
-         */
-        val filteredItems: List<DailyItemUiModel>
+        val filteredItems: ImmutableList<DailyItemUiModel>
             get() = when (activeFilter) {
                 DailyFilter.ALL -> items
-                else -> items.filter { it.type == activeFilter.toItemType() }
+                else -> items.filter { it.type == activeFilter.toItemType() }.toImmutableList()
             }
     }
 
@@ -118,6 +118,7 @@ sealed interface DailyUiState {
  * @property scheduledTime Hora programada formateada ("08:30") o null
  * @property status Status actual (COMPLETED, PENDING, SKIPPED)
  */
+@Immutable
 data class DailyItemUiModel(
     val id: Long,
     val type: DailyItemType,
@@ -143,9 +144,7 @@ fun DailyItem.toUiModel(typeLabel: String, highlight: DailyItemHighlight = Daily
         type = type,
         title = title,
         description = description,
-        scheduledTime = scheduledTime?.let {
-            "${it.hour}:${it.minute.toString().padStart(2, '0')}"
-        },
+        scheduledTime = scheduledTime?.toDisplayString(),
         status = status,
         typeLabel = typeLabel,
         highlight = highlight

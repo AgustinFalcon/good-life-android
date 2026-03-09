@@ -14,10 +14,8 @@ import com.agusstkd.goodlife.domain.biometric.BiometricPromptConfig
  * Implementación Android de [BiometricAuthenticator].
  *
  * Usa AndroidX BiometricPrompt para autenticación con huella/rostro.
- *
- * NOTA IMPORTANTE:
- * Esta clase es específica de Android y NO debe usarse directamente en código compartido.
- * El código de dominio y presentation debe usar la interface [BiometricAuthenticator].
+ * No retiene ninguna referencia a Activity — recibe [FragmentActivity]
+ * como [platformContext] en cada llamada a [authenticate], evitando memory leaks.
  *
  * @property context Context de Android para acceder a BiometricManager
  */
@@ -27,22 +25,7 @@ class AndroidBiometricAuthenticator(
 
     private val biometricManager = BiometricManager.from(context)
 
-    // Referencia a la Activity para mostrar el prompt
-    // Se configura desde el Owner/Composable
-    private var currentActivity: FragmentActivity? = null
-
-    /**
-     * Configura la Activity actual.
-     *
-     * Debe llamarse desde el Composable/Owner antes de authenticate().
-     * Esto es necesario porque BiometricPrompt requiere FragmentActivity.
-     */
-    fun setActivity(activity: FragmentActivity?) {
-        currentActivity = activity
-    }
-
     override fun checkAvailability(): BiometricAvailability {
-        // Verificar biometría O credenciales del dispositivo
         return when (biometricManager.canAuthenticate(
             BiometricManager.Authenticators.BIOMETRIC_STRONG or
             BiometricManager.Authenticators.DEVICE_CREDENTIAL
@@ -66,10 +49,11 @@ class AndroidBiometricAuthenticator(
 
     override fun authenticate(
         config: BiometricPromptConfig,
+        platformContext: Any?,
         onResult: (BiometricResult) -> Unit
     ) {
-        val activity = currentActivity ?: run {
-            onResult(BiometricResult.Error(-1, "Activity not set. Call setActivity() first."))
+        val activity = platformContext as? FragmentActivity ?: run {
+            onResult(BiometricResult.Error(-1, "platformContext must be a FragmentActivity"))
             return
         }
 
@@ -109,8 +93,8 @@ class AndroidBiometricAuthenticator(
             }
         }
 
-        // Permitir biometría O credenciales del dispositivo (PIN/patrón/password)
-        // NOTA: Cuando se usa DEVICE_CREDENTIAL, NO se puede usar setNegativeButtonText
+        // DEVICE_CREDENTIAL permite PIN/patrón/password como fallback.
+        // Cuando se usa DEVICE_CREDENTIAL, Android prohibe setNegativeButtonText.
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle(config.title)
             .setSubtitle(config.subtitle)

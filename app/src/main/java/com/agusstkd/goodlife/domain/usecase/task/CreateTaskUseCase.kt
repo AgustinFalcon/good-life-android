@@ -75,6 +75,10 @@ class CreateTaskUseCase(
             return CreateTaskResult.ValidationError("Debes seleccionar una fecha de inicio para tareas recurrentes")
         }
 
+        if (endDate != null && startDate != null && endDate < startDate) {
+            return CreateTaskResult.ValidationError("La fecha de fin no puede ser anterior al inicio")
+        }
+
         return withContext(dispatcher.io) {
             val result = repository.createTask(
                 title = title,

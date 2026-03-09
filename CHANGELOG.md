@@ -7,6 +7,106 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [Unreleased] - 2026-03-09
+
+### Added
+
+#### ✅ Módulo Create Task — Pantalla completa de creación de tareas (SPEC-010)
+
+- **Flujo completo** de creación de tareas con dos modos de scheduling:
+  - **Una vez (ONCE)**: fecha puntual + hora opcional
+  - **Se repite (RECURRENT)**: días de la semana + rango de fechas + hora opcional
+
+- **Navegación integrada**:
+  - `AppRoute.CreateTask` registrado en `AppGraph` como ruta de nivel app (full-screen)
+  - FAB "+" del `MainScaffold` navega a `CreateTask` via `QuickActionType.TASK`
+  - `ComposeNavigationController` inyectado en `CreateTaskViewModel` para `navigateUp()`
+
+- **QuickActionType actualizado**:
+  - Reemplazados tipos genéricos (ROUTINE, NUTRITION, WEIGHT, SUPPLEMENTS, ACTIVITY)
+  - Nuevos tipos: `TASK`, `HABIT`, `WORKOUT`, `MEAL` + `OTHER`
+
+- **Componentes reutilizables creados**:
+  - `SwitchComponent` — Switch con label, thumb blanco fijo sobre track verde, soporte para icono opcional. Thumb en `Box` con tamaño fijo para evitar el bug de Material3 donde se achica al cambiar de estado
+  - `DayChipComponent` — Chip circular (42dp) para selección de días. Selected: fondo `LightGreen` con texto blanco bold. Unselected: borde gris con fondo transparente
+  - `DateSelectorComponent` — OutlinedCard para selección de fecha con icono de calendario
+  - `TimeSelectorComponent` — OutlinedCard para selección de hora con icono de reloj
+  - `TimePickerDialogComponent` — Material3 TimePicker en AlertDialog reutilizable
+  - `DatePickerBottomSheetComponent` — Renombrado de `DatePickerBottomSheet` + `skipPartiallyExpanded = true` para que se abra completo sin necesidad de arrastrar
+  - `SnackbarComponent` — Snackbar con 3 variantes (SUCCESS, ERROR, INFO), animación slide+fade, auto-dismiss configurable, botón de acción opcional
+  - `SuccessDialog` — Dialog con animación Lottie para feedback de éxito
+
+- **Integración backend**:
+  - `POST /api/v1/tasks` → 201 Created (probado en emulador)
+  - `CreateTaskUseCase` con result types semánticos (`Success`, `ValidationError`, `ServerError`, `NetworkError`)
+  - `TaskApiService`, `TaskRemoteDataSource`, `TaskRepositoryImpl`, `TaskModule`
+
+- **Localización**:
+  - `CreateTaskTexts` — strings de la pantalla (título, badge, botón guardar, éxito)
+  - `CreateItemSharedTexts` — strings compartidos entre formularios de creación (labels de campos, modos, fechas, toggles, confirm/cancel/retry)
+  - Traducciones en Español, English, Português
+
+- **Daily refresh al volver**:
+  - `LifecycleResumeEffect` en `DailyScreenOwner` llama `viewModel.refresh()` cuando la pantalla vuelve a ser visible
+  - `DailyTabViewModel.refresh()` expuesto como función pública
+
+- **Dependencia Lottie**:
+  - `lottie-compose` agregado en `libs.versions.toml` (reemplaza `lottie` para Views)
+
+#### 📁 Nuevos Archivos
+
+**Presentation — Componentes:**
+- `presentation/components/common/SwitchComponent.kt`
+- `presentation/components/common/DayChipComponent.kt`
+- `presentation/components/common/DateSelectorComponent.kt`
+- `presentation/components/common/TimeSelectorComponent.kt`
+- `presentation/components/common/SnackbarComponent.kt`
+- `presentation/components/dialog/SuccessDialog.kt`
+- `presentation/components/dialog/TimePickerDialogComponent.kt`
+
+**Presentation — Pantalla:**
+- `presentation/screen/add/task/CreateTaskScreen.kt`
+- `presentation/screen/add/task/CreateTaskScreenOwner.kt`
+- `presentation/screen/add/task/CreateTaskViewModel.kt`
+- `presentation/screen/add/task/model/CreateTaskUiState.kt`
+- `presentation/screen/add/task/model/CreateTaskUiAction.kt`
+
+**Domain:**
+- `domain/usecase/task/CreateTaskUseCase.kt`
+- `domain/usecase/task/result/CreateTaskResult.kt`
+- `domain/repository/TaskRepository.kt`
+
+**Data:**
+- `data/remote/api/task/TaskApiService.kt`
+- `data/remote/datasource/TaskRemoteDataSource.kt`
+- `data/remote/dto/request/CreateTaskRequest.kt`
+- `data/repository/TaskRepositoryImpl.kt`
+
+**DI:**
+- `di/TaskModule.kt`
+
+**Resources:**
+- `res/raw/success_animation.json` (Lottie)
+
+### Changed
+
+- **MainScaffoldViewModel**: Inyecta `ComposeNavigationController`, navega a `CreateTask` via quick actions
+- **MainScaffoldUiState**: Quick actions actualizados con nuevos `QuickActionType`
+- **DailyScreenOwner**: Agrega `LifecycleResumeEffect` para refresh automático al volver
+- **DailyTabViewModel**: Expone `refresh()` público
+- **DatePickerBottomSheetComponent**: Renombrado + `skipPartiallyExpanded = true`
+- **AppRoute.kt**: Agregado `CreateTask`
+- **AppGraph.kt**: Registrado `CreateTaskScreenOwner`
+- **AuthModule.kt**: Limpieza de referencias a `HomeViewModel` inexistente
+- **libs.versions.toml**: `lottie` → `lottie-compose`
+
+### Fixed
+
+- **DatePicker cortado**: Bottom sheet se abría parcialmente y requería arrastrar manualmente. Solucionado con `skipPartiallyExpanded = true`
+- **Referencias rotas**: Eliminadas imports de `HomeViewModel` y `HomeScreenOwner` que ya no existían en `AuthModule.kt` y `AppGraph.kt`
+
+---
+
 ## [Unreleased] - 2026-02-03
 
 ### Added

@@ -5,17 +5,15 @@ import kotlinx.serialization.Serializable
 /**
  * Resumen de un meal plan incluido en el daily log.
  *
- * @param id ID del meal plan
- * @param mealName Nombre de la comida ("Arroz con Pollo")
- * @param mealType Tipo de comida ("BREAKFAST", "LUNCH", "DINNER", "SNACK")
- * @param calories Calorías totales
- * @param protein Proteína en gramos
+ * NOTA: Estructura provisional — todos los campos son nullable con default
+ * para evitar crashes por desalineación con el backend.
+ * Alinear con la respuesta real cuando se implemente el módulo Meals.
  */
 @Serializable
 data class MealSummaryDto(
-    val id: Long,
-    val mealName: String,
-    val mealType: String,
-    val calories: Int,
-    val protein: Int
+    val id: Long? = null,
+    val mealName: String? = null,
+    val mealType: String? = null,
+    val calories: Int? = null,
+    val protein: Int? = null,
 )

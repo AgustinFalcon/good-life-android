@@ -1,6 +1,6 @@
 # Progreso de Implementación - GoodLife Android
 
-> Última actualización: 2026-02-24
+> Última actualización: 2026-03-09
 
 ---
 
@@ -11,16 +11,25 @@
 | Splash Screen | ✅ Completado | 100% |
 | Login Screen | ✅ Completado | 100% |
 | Register Screen | ✅ Completado | 100% |
-| Biometric Login | ✅ Completado | 100% |
+| Biometric Login (refactored) | ✅ Completado | 100% |
 | DateProvider (SPEC-004) | ✅ Completado | 100% |
 | Network Service (SPEC-005) | ✅ Completado | 100% |
 | Localización AppLanguage (SPEC-007) | ✅ Completado | 100% |
 | Main Scaffold (SPEC-003) | 🚧 En Progreso | 90% |
-| **Daily Tab — Arquitectura** | ✅ Completado | 100% |
+| **Daily Tab — Arquitectura + SWR** | ✅ Completado | 100% |
 | **Daily Tab — DailyItemCard** | ✅ Completado | 100% |
+| **Create Task (SPEC-010)** | ✅ Completado | 100% |
+| **SWR Fase 1 (SPEC-006)** | ✅ Completado | 100% |
+| **Unit Tests (60+)** | ✅ Completado | 100% |
+| **Infraestructura (EncryptedSP, ImmutableList, @Stable)** | ✅ Completado | 100% |
+| **Create Habit** | ✅ Completado | 100% |
+| **HabitLogSummaryDto fix + DTOs defensivos** | ✅ Completado | 100% |
+| Create Routine/Workout | ⏸️ Próximo | 0% |
+| Create Meal Plan | ⏸️ Pendiente | 0% |
 | Workouts Tab | ⏸️ Pendiente | 0% |
 | Meals Tab | ⏸️ Pendiente | 0% |
 | More/Settings Tab | ⏸️ Pendiente | 0% |
+| SWR Fase 2 — Sync Offline (SPEC-006) | 📝 Planificado | 0% |
 | Notificaciones + Deep Links (SPEC-008) | 📝 Planificado | 0% |
 
 ---
@@ -313,28 +322,158 @@ sealed interface XxxResult {
 
 ---
 
+## ✅ Sesión 2026-03-04 — Biometric Fixes, SWR, Tests, Optimizaciones
+
+### Resumen
+
+Sesión intensiva de mejoras de infraestructura y calidad de código. Se aplicaron todas las mejoras biométricas, se implementó SWR Fase 1 con Room, se crearon 60+ unit tests, y se optimizó Compose con ImmutableList y anotaciones de estabilidad.
+
+### Mejoras Biométricas
+
+| Mejora | Descripción |
+|--------|-------------|
+| Memory Leak Fix | Eliminado `setActivity()` de `AndroidBiometricAuthenticator`. Ahora recibe `platformContext: Any?` en `authenticate()` |
+| Channel Events | `BiometricLoginHandler` migrado de `SharedFlow.tryEmit` a `Channel(BUFFERED).trySend` para eventos one-shot confiables |
+| Suspend Init | `buildInitialState()` ahora es `suspend` para evitar bloqueo del main thread por `EncryptedSharedPreferences` |
+| Dependency biometric | Downgrade de `1.2.0-alpha05` a `1.1.0` (stable) |
+
+### SWR Fase 1 (SPEC-006)
+
+- Creadas entidades Room: `DailyLogEntity`, `DailyItemEntity`, `DailyLogWithItems`
+- Creado `DailyDao` con queries y transacciones atómicas
+- Reescrito `DailyRepositoryImpl` con patrón SWR Backend-First
+- Room v2 con nuevas tablas + migration
+- SPEC-006 v2.0 escrito con Fase 1 (implementada) y Fase 2 (sync offline planificada)
+
+### Unit Tests (60+ tests)
+
+| Área | Tests |
+|------|-------|
+| `BiometricLoginHandlerTest` | buildInitialState, authenticate, handleToggle, saveCredentials, canShowPrompt |
+| `CreateTaskUseCaseTest` | validaciones locales, creación exitosa, error mapping |
+| `GetDailyItemsUseCaseTest` | success, NotFound, ServerError, NetworkError |
+| `UpdateItemStatusUseCaseTest` | success, NotFound, ServerError, NetworkError |
+| `LoginUseCaseTest` | credenciales, campos vacíos, formatos inválidos, errores de repo |
+| `CreateTaskViewModelTest` | estado inicial, acciones UI, submit success/error, navegación |
+| `DailyTabViewModelTest` | init, navigación de días, refresh, OnItemStatusChange |
+
+Infraestructura de test: `TestDispatcherProvider`, `FakeAuthRepository`, `FakeDailyRepository`, `FakeTaskRepository`, `FakeBiometricAuthenticator`, `FakeSecureCredentialsStorage`, `FakeNavigationController`.
+
+### Optimizaciones Compose
+
+| Mejora | Descripción |
+|--------|-------------|
+| ImmutableList | `DailyUiState.Success.items` y `MainScaffoldUiState` usan `ImmutableList` con `persistentListOf()` |
+| @Stable | Todos los UiStates llevan `@Stable` |
+| @Immutable | Modelos de lista puros (`DailyItemUiModel`, `BottomNavItemModel`) llevan `@Immutable` |
+| Extension Functions | `formatArgs()`, `toDisplayString()`, `parseLocalDateOrNull()`, `findFragmentActivity()` |
+| Strings | Reducidos hardcoded strings → `AppLanguage` (`SplashTexts`, `AccessibilityTexts.close/appLogo`) |
+| Private const | `DATABASE_NAME` y otras constantes internas marcadas como `private` |
+
+---
+
+## ✅ Sesión 2026-03-09 — Create Task + Componentes reutilizables
+
+### Resumen
+
+Implementación completa del flujo de creación de tareas (SPEC-010), desde el FAB hasta la persistencia en backend con feedback visual. Se crearon 7 componentes reutilizables siguiendo el patrón `*Params` + `*Component` del proyecto.
+
+### Componentes creados
+
+| Componente | Propósito |
+|------------|-----------|
+| `SwitchComponent` | Switch con label, thumb blanco fijo, track verde. Icono opcional |
+| `DayChipComponent` | Chip circular para días de la semana |
+| `DateSelectorComponent` | OutlinedCard para abrir date picker |
+| `TimeSelectorComponent` | OutlinedCard para abrir time picker |
+| `TimePickerDialogComponent` | Material3 TimePicker en AlertDialog |
+| `SnackbarComponent` | Snackbar con variantes SUCCESS/ERROR/INFO |
+| `SuccessDialog` | Dialog con Lottie animation |
+
+### Decisiones técnicas
+
+- **CreateTask como AppRoute** (no TabRoute): pantalla full-screen sobre el bottom nav, navegación via `ComposeNavigationController`
+- **Daily refresh con LifecycleResumeEffect**: recarga al volver de crear tarea. Pragmático para v1, se puede migrar a navigation result si el re-fetch frecuente afecta performance
+- **Sin isError en título**: el botón disabled comunica el estado, evitando UI noise innecesaria
+- **DatePicker skipPartiallyExpanded**: resuelve el bug de bottom sheet cortado
+
+---
+
+## ✅ Sesión 2026-03-09 — Create Habit + Fixes + Unificación Task/Habit
+
+### Resumen
+
+Implementación completa del flujo de creación de hábitos siguiendo el mismo patrón de Create Task. Se crearon 2 componentes nuevos, se unificaron ambas pantallas, se corrigió un bug crítico en DailyScreen que impedía mostrar hábitos, y se hicieron defensivos todos los DTOs del daily log.
+
+### Archivos creados (Create Habit)
+
+| Capa | Archivos |
+|------|----------|
+| Domain | `Habit.kt`, `HabitCategory.kt`, `HabitRepository.kt`, `CreateHabitUseCase.kt`, `CreateHabitResult.kt` |
+| Data | `HabitApiService.kt`, `HabitRemoteDataSource.kt`, `CreateHabitRequest.kt`, `HabitResponse.kt` + mapper |
+| Presentation | `CreateHabitUiState.kt`, `CreateHabitUiAction.kt`, `CreateHabitViewModel.kt`, `CreateHabitScreen.kt`, `CreateHabitScreenOwner.kt` |
+| DI + Nav | `HabitModule.kt`, `AppRoute.CreateHabit`, registro en `AppGraph`, conexión `QuickActionType.HABIT` en `MainScaffoldViewModel` |
+| Localización | `HabitCategoryTexts` + `CreateHabitTexts` en `UiTexts.kt`, traducciones ES/EN/PT |
+| Tests | `CreateHabitUseCaseTest.kt`, `CreateHabitViewModelTest.kt`, `FakeHabitRepository.kt` |
+
+### Componentes nuevos
+
+| Componente | Propósito |
+|------------|-----------|
+| `CategorySelectorComponent` | `ExposedDropdownMenuBox` (M3) con íconos por categoría. Inicialmente era FlowRow con 13 chips pero ocupaba demasiado espacio — se migró a dropdown |
+| `NumericGoalComponent` | Row con campo numérico (targetValue) + campo de texto (unit). Ej: `[8] [vasos]` |
+
+### Bug fix: DailyScreen no mostraba hábitos
+
+**Causa raíz:** `HabitLogSummaryDto` esperaba campos planos (`habitName`, `unit`, `progress`) que no existían en la respuesta del backend. El backend devuelve estructura anidada con `habit: { name, unit, targetValue, category }`. La deserialización fallaba silenciosamente y el repositorio caía al fallback de Room (solo tasks en caché).
+
+**Fix:** Reescrito `HabitLogSummaryDto` para coincidir con la respuesta real. Nuevo `HabitSummaryDto` como objeto anidado. Actualizado mapper en `DailyItemResponse.extractTitleAndDescription()`.
+
+### DTOs defensivos (prevención de futuros crashes)
+
+Se hicieron defensivos `WorkoutSummaryDto` y `MealSummaryDto` — todos los campos `nullable` con `default = null`. Combinado con `ignoreUnknownKeys = true` y `coerceInputValues = true` del Json config, los DTOs ahora resisten desalineaciones con el backend sin crashear.
+
+### Unificación Task / Habit
+
+| Aspecto | Cambio |
+|---------|--------|
+| `SectionLabel` + `SectionDivider` | Agregados a CreateTaskScreen (antes usaba Text inline sin estilo consistente) |
+| Day chips | `Arrangement.SpaceEvenly` en ambas Screens (antes `spacedBy(6.dp)` no ocupaba el ancho completo) |
+| `toggleDay` | Extraído como `Set<DayOfWeek>.toggleDay(day)` en `DateTimeExtensions.kt`, usado por ambos ViewModels |
+| `endDate >= startDate` | Validación agregada a `CreateTaskUseCase` (Habit ya la tenía) |
+| Firma de composables | Unificada: `uiState` primero, `modifier` último en ambas Screens |
+| Spacer final | Agregado a CreateTaskScreen (Habit ya lo tenía) |
+| @Preview | Agregados a ambas Screens, `CategorySelectorComponent`, `NumericGoalComponent` |
+
+### Decisiones técnicas
+
+- **Dropdown vs Chips para categorías**: 13 categorías con FlowRow ocupaban ~3 filas. `ExposedDropdownMenuBox` ocupa 1 línea cerrado, desplegable con íconos. 100% Compose, sin memory leaks
+- **`HabitCategory.icon()` pública**: Se hizo pública (antes era private) para reutilizarla en futuros listados de hábitos
+- **categoryPlaceholder**: Nuevo campo en `CreateHabitTexts` para el placeholder del dropdown (localizado en 3 idiomas)
+- **No genéricos para DTOs**: Se evaluó `JsonElement` genérico pero pierde type safety. Mejor approach: DTOs tipados pero defensivos (nullable + defaults)
+
+---
+
 ## 📋 Próximos Pasos
 
 ### Corto plazo
 
-1. Implementar WorkoutsTabScreen + WorkoutsTabViewModel
-2. Implementar MealsTabScreen + MealsTabViewModel
-3. Implementar MoreTabScreen + MoreTabViewModel
-4. `EncryptedSharedPreferences` en `TokenManager` (crítico para seguridad)
+1. **Create Routine/Workout Screen** — wizard multi-paso con paginado de ejercicios del backend. Componente de búsqueda de ejercicios reutilizable para WorkoutsTab
+2. **Create Meal Plan Screen** — ingredientes + macros + scheduling
+3. **Pantalla de detalle de item** — tocar card en DailyScreen abre detalle (para habits: registrar progreso parcial, para tasks: ver descripción completa + confirmar)
 
 ### Mediano plazo
 
-5. Backend Integration: conectar `DailyTabViewModel` con API real
-6. Offline-First SWR en `DailyRepositoryImpl` (SPEC-006)
-7. Deep links: implementar `AndroidManifest.xml` + Navigation (SPEC-008)
-8. Tests unitarios: DailyTabViewModel, LoginViewModel
+4. Tabs restantes: Workouts, Meals, More/Settings
+5. SWR Fase 2: Cola de sincronización offline (SPEC-006 Sección 4)
+6. Backend: Rate limiting + Caching + Security Headers
 
 ### Largo plazo
 
-9. Dark mode completo
-10. Profile screen / Settings
-11. Migración a KMP (shared module)
-12. iOS target
+7. Dark mode completo
+8. Push Notifications + Deep Links (SPEC-008)
+9. Estadísticas de hábitos (streaks, gráficos)
+10. Migración a KMP (shared module) → iOS target
 
 ---
 
@@ -344,5 +483,6 @@ sealed interface XxxResult {
 - [SPEC-004: DateProvider](./specs/SPEC-004-date-provider.md)
 - [SPEC-007: AppLanguage](./specs/SPEC-007-app-language.md)
 - [SPEC-008: Notificaciones + Deep Links](./specs/SPEC-008-notifications-deeplinks.md)
+- [SPEC-010: Create Task Screen](./specs/SPEC-010-create-task-screen.md)
 - [ARCHITECTURE.md](./ARCHITECTURE.md)
 - [DAILY-IMPLEMENTATION-PLAN](./plans/DAILY-IMPLEMENTATION-PLAN.md)

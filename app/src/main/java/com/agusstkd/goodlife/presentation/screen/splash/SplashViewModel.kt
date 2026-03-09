@@ -2,6 +2,7 @@ package com.agusstkd.goodlife.presentation.screen.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.domain.usecase.session.CheckSessionUseCase
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
 import com.agusstkd.goodlife.presentation.navigation.route.navigateToLogin
@@ -15,8 +16,12 @@ import kotlinx.coroutines.launch
 
 class SplashViewModel(
     private val navigationController: ComposeNavigationController,
-    private val checkSessionUseCase: CheckSessionUseCase
+    private val checkSessionUseCase: CheckSessionUseCase,
+    private val language: AppLanguage,
 ) : ViewModel() {
+
+    val splashTexts get() = language.splashTexts
+    val accessibilityTexts get() = language.accessibilityTexts
 
     private val _uiState = MutableStateFlow<SplashUiState>(SplashUiState.Loading)
     val uiState: StateFlow<SplashUiState> = _uiState.asStateFlow()

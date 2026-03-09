@@ -3,10 +3,11 @@ package com.agusstkd.goodlife.domain.auth
 import com.agusstkd.goodlife.core.biometric.BiometricAvailability
 import com.agusstkd.goodlife.core.biometric.BiometricResult
 import com.agusstkd.goodlife.domain.biometric.BiometricAuthenticator
+import com.agusstkd.goodlife.domain.biometric.BiometricPromptConfig
 import com.agusstkd.goodlife.domain.storage.SecureCredentialsStorage
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.receiveAsFlow
 
 /**
  * Encapsula la state machine de autenticación biométrica para Login.
@@ -17,12 +18,12 @@ import kotlinx.coroutines.flow.asSharedFlow
  * ## Responsabilidades
  * - Verificar disponibilidad y estado de biometría del dispositivo.
  * - Gestionar el toggle de habilitación biométrica.
- * - Emitir [Event.CredentialsReady] cuando la autenticación biométrica fue exitosa,
- *   para que el ViewModel ejecute el login con las credenciales guardadas.
+ * - Orquestar la autenticación: recibe [platformContext], delega al [BiometricAuthenticator],
+ *   y emite [Event.CredentialsReady] cuando la autenticación fue exitosa.
  *
  * ## Lo que NO hace
  * - No llama a [com.agusstkd.goodlife.domain.usecase.login.LoginUseCase] directamente.
- *   Eso es responsabilidad del ViewModel, que reacciona al evento [Event.CredentialsReady].
+ *   El ViewModel reacciona al evento [Event.CredentialsReady].
  * - No actualiza el [com.agusstkd.goodlife.presentation.screen.login.model.LoginUiState].
  *   El ViewModel es dueño del estado de UI.
  *
@@ -30,16 +31,16 @@ import kotlinx.coroutines.flow.asSharedFlow
  * ```
  * Usuario toca ícono biométrico
  *     → LoginViewModel.handleBiometricIconClick()
- *     → LoginUiState.Content(shouldShowBiometricPrompt = true)   ← ViewModel
- *     → BiometricPrompt se muestra en pantalla                   ← UI
+ *     → LoginUiState.Content(shouldShowBiometricPrompt = true)
+ *     → Owner observa flag, envía OnBiometricAuthenticate(activity)
+ *     → LoginViewModel → BiometricLoginHandler.authenticate(config, platformContext, onUiResult)
+ *     → BiometricPrompt en pantalla
  *     → BiometricResult.Success
- *     → LoginViewModel.handleBiometricResult(Success)
- *     → BiometricLoginHandler.handleResult(Success)
- *     → Event.CredentialsReady(email, password)                  ← este handler
- *     → LoginViewModel.performLoginWithCredentials(email, pass)   ← ViewModel reacciona
+ *     → Handler emite Event.CredentialsReady(email, password) via Channel
+ *     → LoginViewModel.collectBiometricEvents → performLoginWithCredentials
  * ```
  *
- * @param biometricAuthenticator Verifica disponibilidad de biometría en el dispositivo.
+ * @param biometricAuthenticator Verifica disponibilidad y ejecuta autenticación.
  * @param credentialsStorage Almacenamiento seguro de credenciales del usuario.
  */
 class BiometricLoginHandler(
@@ -47,28 +48,10 @@ class BiometricLoginHandler(
     private val credentialsStorage: SecureCredentialsStorage
 ) {
 
-    /**
-     * Eventos emitidos por este handler hacia el ViewModel.
-     */
     sealed interface Event {
-        /**
-         * La autenticación biométrica fue exitosa y las credenciales guardadas están listas.
-         * El ViewModel debe llamar a [LoginUseCase] con estos datos.
-         *
-         * @param email Email recuperado del almacenamiento seguro.
-         * @param password Contraseña recuperada del almacenamiento seguro.
-         */
         data class CredentialsReady(val email: String, val password: String) : Event
     }
 
-    /**
-     * Estado inicial de biometría para poblar [LoginUiState.Content].
-     *
-     * @param isAvailable Si el hardware biométrico está disponible y configurado.
-     * @param isEnabled Si el usuario activó el login biométrico en esta app.
-     * @param savedEmail Email guardado para auto-completar el campo, o null.
-     * @param shouldShowPrompt Si debe mostrarse el prompt biométrico automáticamente al abrir.
-     */
     data class InitialState(
         val isAvailable: Boolean,
         val isEnabled: Boolean,
@@ -76,17 +59,22 @@ class BiometricLoginHandler(
         val shouldShowPrompt: Boolean
     )
 
-    private val _events = MutableSharedFlow<Event>(extraBufferCapacity = 1)
+    private val _events = Channel<Event>(Channel.BUFFERED)
 
     /**
      * Flow de eventos que el ViewModel debe colectar en su `init {}`.
+     * Usa [Channel] en lugar de SharedFlow para garantizar entrega de eventos one-shot.
      */
-    val events: SharedFlow<Event> = _events.asSharedFlow()
+    val events: Flow<Event> = _events.receiveAsFlow()
 
     /**
      * Calcula el estado biométrico inicial al abrir la pantalla de Login.
+     *
+     * Suspend porque [SecureCredentialsStorage] (EncryptedSharedPreferences) puede ser
+     * lento en la primera lectura al generar claves criptográficas.
+     * El ViewModel debe llamar esto en un coroutine scope con dispatcher IO.
      */
-    fun buildInitialState(): InitialState {
+    suspend fun buildInitialState(): InitialState {
         val isAvailable = biometricAuthenticator.checkAvailability() == BiometricAvailability.Available
         val isEnabled = credentialsStorage.isBiometricEnabled()
         val hasCredentials = credentialsStorage.hasCredentials()
@@ -98,6 +86,28 @@ class BiometricLoginHandler(
             savedEmail = if (effectiveEnabled) credentialsStorage.getSavedEmail() else null,
             shouldShowPrompt = isAvailable && effectiveEnabled
         )
+    }
+
+    /**
+     * Ejecuta la autenticación biométrica.
+     *
+     * Delega al [BiometricAuthenticator] pasando el [platformContext] opaco.
+     * Si la autenticación es exitosa, emite [Event.CredentialsReady] internamente
+     * y luego invoca [onUiResult] para que el ViewModel actualice el estado de UI.
+     *
+     * @param config Textos del prompt biométrico.
+     * @param platformContext En Android: FragmentActivity. Opaco para KMP.
+     * @param onUiResult Callback para que el ViewModel actualice UI (cancel, error, lockout).
+     */
+    fun authenticate(
+        config: BiometricPromptConfig,
+        platformContext: Any?,
+        onUiResult: (BiometricResult) -> Unit
+    ) {
+        biometricAuthenticator.authenticate(config, platformContext) { result ->
+            processResult(result)
+            onUiResult(result)
+        }
     }
 
     /**
@@ -120,10 +130,6 @@ class BiometricLoginHandler(
     /**
      * Guarda las credenciales en almacenamiento seguro si la biometría está habilitada.
      * Llamar después de un login exitoso con contraseña.
-     *
-     * @param email Email del usuario.
-     * @param password Contraseña del usuario.
-     * @param isEnabled Si la biometría está habilitada para este usuario.
      */
     fun saveCredentialsIfEnabled(email: String, password: String, isEnabled: Boolean) {
         if (isEnabled) {
@@ -132,19 +138,14 @@ class BiometricLoginHandler(
     }
 
     /**
-     * Procesa el resultado de la autenticación biométrica del sistema.
-     *
-     * En caso de éxito, recupera las credenciales guardadas y emite [Event.CredentialsReady].
-     * Los casos de cancelación, fallo y lockout no emiten evento — el ViewModel
-     * actualiza el estado de UI directamente.
-     *
-     * @param result Resultado de la autenticación biométrica del sistema.
+     * Procesa internamente el resultado de la autenticación.
+     * Si es exitosa, recupera credenciales y emite evento por el Channel.
      */
-    fun handleResult(result: BiometricResult) {
+    private fun processResult(result: BiometricResult) {
         if (result is BiometricResult.Success) {
             val credentials = credentialsStorage.getCredentials()
             if (credentials != null) {
-                _events.tryEmit(Event.CredentialsReady(credentials.first, credentials.second))
+                _events.trySend(Event.CredentialsReady(credentials.first, credentials.second))
             }
         }
     }

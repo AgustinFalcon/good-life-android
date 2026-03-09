@@ -49,4 +49,7 @@ sealed interface AppLanguage {
     val datePickerTexts: DatePickerTexts
     val createItemSharedTexts: CreateItemSharedTexts
     val createTaskTexts: CreateTaskTexts
+    val habitCategoryTexts: HabitCategoryTexts
+    val createHabitTexts: CreateHabitTexts
+    val splashTexts: SplashTexts
 }

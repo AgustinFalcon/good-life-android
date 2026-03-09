@@ -45,7 +45,10 @@ val dailyModule = module {
      * Singleton porque puede cachear estado (FASE 2).
      */
     single<DailyRepository> {
-        DailyRepositoryImpl(remoteDataSource = get())
+        DailyRepositoryImpl(
+            remoteDataSource = get(),
+            dailyDao = get()
+        )
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════════════

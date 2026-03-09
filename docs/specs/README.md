@@ -16,6 +16,8 @@ Este directorio contiene las especificaciones técnicas detalladas para las feat
 | [SPEC-006](./SPEC-006-offline-first-swr.md) | Offline-First SWR | Architecture Pattern | 📝 Planificado |
 | [SPEC-007](./SPEC-007-app-language.md) | Sistema de Localización KMP-Ready (AppLanguage) | Core Architecture | ✅ Completado |
 | [SPEC-008](./SPEC-008-notifications-deeplinks.md) | Notificaciones en Tiempo Real + Deep Links | Feature | 📝 Planificado |
+| [SPEC-009](./SPEC-009-add-to-daily.md) | Add to Daily (Task + Habit desde FAB) | Feature | 🚧 En Progreso |
+| [SPEC-010](./SPEC-010-create-task-screen.md) | Pantalla Create Task | Feature | ✅ Completado |
 
 ---
 
@@ -70,6 +72,15 @@ SPEC-008 (Notifications + Deep Links)
 
 SPEC-007 (AppLanguage) ← Core para toda la app
     └── alimenta → todos los demás SPECs
+
+SPEC-009 (Add to Daily)
+    ├── implementa → SPEC-010 (Create Task) ✅
+    └── pendiente → Create Habit
+
+SPEC-010 (Create Task)
+    ├── usa → SPEC-007 (AppLanguage: CreateTaskTexts, CreateItemSharedTexts)
+    ├── usa → SPEC-004 (DateProvider)
+    └── usa → SPEC-003 (MainScaffold: QuickActionType.TASK, AppRoute)
 ```
 
 ---
@@ -87,6 +98,7 @@ SPEC-007 (AppLanguage) ← Core para toda la app
 | Main Scaffold | 🚧 En Progreso (90%) |
 | Daily Tab — Arquitectura | ✅ Completado |
 | Daily Tab — DailyItemCard | ✅ Completado |
+| Create Task (SPEC-010) | ✅ Completado |
 | Workouts Tab | ⏸️ Pendiente |
 | Meals Tab | ⏸️ Pendiente |
 | Settings/More Tab | ⏸️ Pendiente |
@@ -104,4 +116,4 @@ SPEC-007 (AppLanguage) ← Core para toda la app
 
 ---
 
-**Última actualización:** 2026-02-24
+**Última actualización:** 2026-03-09

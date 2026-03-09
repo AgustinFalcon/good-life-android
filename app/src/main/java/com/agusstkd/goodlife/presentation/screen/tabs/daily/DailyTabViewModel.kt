@@ -17,6 +17,7 @@ import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyItemHighl
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.toUiModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -190,7 +191,7 @@ class DailyTabViewModel(
                         else -> DailyItemHighlight.NONE
                     }
                 )
-            },
+            }.toImmutableList(),
             isRefreshing = false,
         )
     }

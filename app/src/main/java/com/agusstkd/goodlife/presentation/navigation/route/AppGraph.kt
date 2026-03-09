@@ -4,6 +4,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.agusstkd.goodlife.presentation.screen.add.habit.CreateHabitScreenOwner
 import com.agusstkd.goodlife.presentation.screen.add.task.CreateTaskScreenOwner
 import com.agusstkd.goodlife.presentation.screen.login.LoginScreenOwner
 import com.agusstkd.goodlife.presentation.screen.main.MainScaffoldScreenOwner
@@ -36,6 +37,10 @@ fun NavGraphBuilder.addAppGraph() {
 
     composable<AppRoute.CreateTask> {
         CreateTaskScreenOwner()
+    }
+
+    composable<AppRoute.CreateHabit> {
+        CreateHabitScreenOwner()
     }
 }
 

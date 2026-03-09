@@ -44,6 +44,7 @@ fun CreateTaskScreenOwner(
             createTaskTexts = viewModel.createTaskTexts,
             sharedTexts = viewModel.sharedTexts,
             dayNames = viewModel.dayNames,
+            closeContentDescription = viewModel.accessibilityTexts.close,
         )
 
         // ── 2. DatePicker bottom sheet ───────────────────────────────────

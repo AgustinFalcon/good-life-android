@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Badge
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.agusstkd.goodlife.core.datetime.language.CreateItemSharedTexts
 import com.agusstkd.goodlife.core.datetime.language.CreateTaskTexts
@@ -43,21 +45,22 @@ import com.agusstkd.goodlife.presentation.screen.add.task.model.CreateTaskUiActi
 import com.agusstkd.goodlife.presentation.screen.add.task.model.CreateTaskUiState
 import com.agusstkd.goodlife.presentation.screen.add.task.model.DatePickerField
 import com.agusstkd.goodlife.presentation.screen.add.task.model.SchedulingMode
+import com.agusstkd.goodlife.presentation.theme.DividerColor
+import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
 import com.agusstkd.goodlife.presentation.theme.TaskStyle
 import com.agusstkd.goodlife.presentation.theme.TextPrimary
 import kotlinx.datetime.DayOfWeek
 
-
 @Composable
 fun CreateTaskScreen(
-    modifier: Modifier = Modifier,
-    onAction: (CreateTaskUiAction) -> Unit,
     uiState: CreateTaskUiState,
+    onAction: (CreateTaskUiAction) -> Unit,
     createTaskTexts: CreateTaskTexts,
     sharedTexts: CreateItemSharedTexts,
     dayNames: List<String>,
+    closeContentDescription: String,
+    modifier: Modifier = Modifier,
 ) {
-
     Column(
         modifier = modifier
             .padding(16.dp)
@@ -65,6 +68,7 @@ fun CreateTaskScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
+        // ── Header ───────────────────────────────────────────────
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -75,26 +79,28 @@ fun CreateTaskScreen(
                 style = MaterialTheme.typography.headlineSmall,
                 color = TextPrimary,
             )
-
             IconButton(onClick = { onAction(CreateTaskUiAction.OnDismiss) }) {
-                Icon(imageVector = Icons.Default.Close, contentDescription = "Cerrar")
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = closeContentDescription,
+                )
             }
         }
 
-        // Badge centrado — usá los colores de TaskStyle que ya existen
         Badge(
             containerColor = TaskStyle.badgeBackground,
             contentColor = TaskStyle.badgeText,
         ) {
             Text(
                 text = createTaskTexts.typeBadge,
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             )
         }
 
-        // INPUTS
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = sharedTexts.fieldTitleLabel, style = MaterialTheme.typography.titleMedium)
+
+        // ── Nombre ───────────────────────────────────────────────
+        SectionLabel(text = sharedTexts.fieldTitleLabel)
         TextFieldComponent(
             params = TextFieldParams(
                 value = uiState.title,
@@ -105,7 +111,9 @@ fun CreateTaskScreen(
         )
 
         Spacer(modifier = Modifier.height(4.dp))
-        Text(text = sharedTexts.fieldDescriptionLabel, style = MaterialTheme.typography.titleMedium)
+
+        // ── Descripción ──────────────────────────────────────────
+        SectionLabel(text = sharedTexts.fieldDescriptionLabel)
         TextFieldComponent(
             params = TextFieldParams(
                 value = uiState.description,
@@ -115,9 +123,11 @@ fun CreateTaskScreen(
             onValueChange = { onAction(CreateTaskUiAction.OnDescriptionChange(it)) },
         )
 
+        SectionDivider()
 
-        // DATES
-        Text(text = sharedTexts.whenSectionTitle)
+        // ── Modo de scheduling ───────────────────────────────────
+        SectionLabel(text = sharedTexts.whenSectionTitle)
+        Spacer(modifier = Modifier.height(8.dp))
 
         SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
             SegmentedButton(
@@ -136,6 +146,8 @@ fun CreateTaskScreen(
             }
         }
 
+        Spacer(modifier = Modifier.height(8.dp))
+
         when (uiState.schedulingMode) {
             SchedulingMode.ONCE -> {
                 DateSelectorComponent(
@@ -150,7 +162,7 @@ fun CreateTaskScreen(
             SchedulingMode.RECURRENT -> {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
                 ) {
                     DayOfWeek.entries.forEachIndexed { index, day ->
                         DayChipComponent(
@@ -163,7 +175,8 @@ fun CreateTaskScreen(
                     }
                 }
 
-                // From
+                Spacer(modifier = Modifier.height(12.dp))
+
                 DateSelectorComponent(
                     params = DateSelectorParams(
                         displayText = uiState.startDateDisplay,
@@ -172,7 +185,8 @@ fun CreateTaskScreen(
                     onClick = { onAction(CreateTaskUiAction.OnDatePickerOpen(DatePickerField.START_DATE)) },
                 )
 
-                // Toggle end date
+                Spacer(modifier = Modifier.height(8.dp))
+
                 SwitchComponent(
                     params = SwitchParams(
                         label = if (uiState.hasEndDate) sharedTexts.hasEndDate else sharedTexts.noEndDate,
@@ -181,7 +195,6 @@ fun CreateTaskScreen(
                     onCheckedChange = { onAction(CreateTaskUiAction.OnHasEndDateToggle) },
                 )
 
-                // To
                 if (uiState.hasEndDate) {
                     DateSelectorComponent(
                         params = DateSelectorParams(
@@ -194,7 +207,9 @@ fun CreateTaskScreen(
             }
         }
 
-        // Toggle time
+        SectionDivider()
+
+        // ── Toggle + hora ────────────────────────────────────────
         SwitchComponent(
             params = SwitchParams(
                 label = if (uiState.hasTime) sharedTexts.timeLabel else sharedTexts.noSpecificTime,
@@ -213,7 +228,7 @@ fun CreateTaskScreen(
             )
         }
 
-        // Active notification
+        // ── Recordatorio ─────────────────────────────────────────
         SwitchComponent(
             params = SwitchParams(
                 label = sharedTexts.reminderLabel,
@@ -223,6 +238,8 @@ fun CreateTaskScreen(
         )
 
         Spacer(modifier = Modifier.height(24.dp))
+
+        // ── Botón guardar ────────────────────────────────────────
         ButtonComponent(
             modifier = Modifier.fillMaxWidth(),
             params = ButtonParams(
@@ -234,5 +251,131 @@ fun CreateTaskScreen(
             onClick = { onAction(CreateTaskUiAction.OnSubmit) },
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+private fun SectionLabel(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.titleMedium,
+        color = TextPrimary,
+        modifier = Modifier.fillMaxWidth(),
+    )
+}
+
+@Composable
+private fun SectionDivider() {
+    Spacer(modifier = Modifier.height(16.dp))
+    HorizontalDivider(color = DividerColor)
+    Spacer(modifier = Modifier.height(16.dp))
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun CreateTaskScreenOncePreview() {
+    val previewSharedTexts = CreateItemSharedTexts(
+        fieldTitleLabel = "Nombre",
+        fieldTitlePlaceholder = "Ej: Ir al gimnasio",
+        fieldDescriptionLabel = "Descripción",
+        fieldDescriptionPlaceholder = "Opcional",
+        whenSectionTitle = "¿Cuándo?",
+        modeOnce = "Una vez",
+        modeRepeats = "Se repite",
+        daysRowTitle = "Días de la semana",
+        fromDateLabel = "Desde",
+        toDateLabel = "Hasta",
+        noEndDate = "Sin fecha de fin",
+        hasEndDate = "Fecha de fin",
+        noSpecificTime = "Sin hora específica",
+        timeLabel = "Hora",
+        reminderLabel = "Recordatorio",
+        cancelButton = "Cancelar",
+        confirmLabel = "Confirmar",
+        cancelLabel = "Cancelar",
+        retryLabel = "Reintentar",
+    )
+    val previewTaskTexts = CreateTaskTexts(
+        screenTitle = "Nueva tarea",
+        typeBadge = "TAREA",
+        saveButton = "Guardar tarea",
+        successTitle = "Tarea creada con éxito",
+        errorTitleEmpty = "",
+        errorNoDate = "",
+        errorNoDays = "",
+        errorEndBeforeStart = "",
+        errorServer = "",
+        errorNetwork = "",
+    )
+    GoodLifeTheme {
+        CreateTaskScreen(
+            uiState = CreateTaskUiState(
+                title = "Ir al gimnasio",
+                schedulingMode = SchedulingMode.ONCE,
+                scheduledDateDisplay = "10 de marzo, 2026",
+            ),
+            onAction = {},
+            createTaskTexts = previewTaskTexts,
+            sharedTexts = previewSharedTexts,
+            dayNames = listOf("L", "M", "X", "J", "V", "S", "D"),
+            closeContentDescription = "Cerrar",
+        )
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun CreateTaskScreenRecurrentPreview() {
+    val previewSharedTexts = CreateItemSharedTexts(
+        fieldTitleLabel = "Nombre",
+        fieldTitlePlaceholder = "Ej: Ir al gimnasio",
+        fieldDescriptionLabel = "Descripción",
+        fieldDescriptionPlaceholder = "Opcional",
+        whenSectionTitle = "¿Cuándo?",
+        modeOnce = "Una vez",
+        modeRepeats = "Se repite",
+        daysRowTitle = "Días de la semana",
+        fromDateLabel = "Desde",
+        toDateLabel = "Hasta",
+        noEndDate = "Sin fecha de fin",
+        hasEndDate = "Fecha de fin",
+        noSpecificTime = "Sin hora específica",
+        timeLabel = "Hora",
+        reminderLabel = "Recordatorio",
+        cancelButton = "Cancelar",
+        confirmLabel = "Confirmar",
+        cancelLabel = "Cancelar",
+        retryLabel = "Reintentar",
+    )
+    val previewTaskTexts = CreateTaskTexts(
+        screenTitle = "Nueva tarea",
+        typeBadge = "TAREA",
+        saveButton = "Guardar tarea",
+        successTitle = "Tarea creada con éxito",
+        errorTitleEmpty = "",
+        errorNoDate = "",
+        errorNoDays = "",
+        errorEndBeforeStart = "",
+        errorServer = "",
+        errorNetwork = "",
+    )
+    GoodLifeTheme {
+        CreateTaskScreen(
+            uiState = CreateTaskUiState(
+                title = "Estudiar Kotlin",
+                schedulingMode = SchedulingMode.RECURRENT,
+                recurrentDays = setOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY),
+                startDateDisplay = "10 de marzo, 2026",
+                hasEndDate = true,
+                endDateDisplay = "30 de junio, 2026",
+                hasTime = true,
+            ),
+            onAction = {},
+            createTaskTexts = previewTaskTexts,
+            sharedTexts = previewSharedTexts,
+            dayNames = listOf("L", "M", "X", "J", "V", "S", "D"),
+            closeContentDescription = "Cerrar",
+        )
     }
 }

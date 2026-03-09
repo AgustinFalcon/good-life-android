@@ -2,6 +2,11 @@ package com.agusstkd.goodlife.data.repository
 
 import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.core.result.map
+import com.agusstkd.goodlife.data.local.dao.DailyDao
+import com.agusstkd.goodlife.data.local.entity.DailyLogWithItems
+import com.agusstkd.goodlife.data.local.entity.toDomain
+import com.agusstkd.goodlife.data.local.entity.toEntity
+import com.agusstkd.goodlife.data.local.entity.toItemEntity
 import com.agusstkd.goodlife.data.remote.datasource.DailyRemoteDataSource
 import com.agusstkd.goodlife.data.remote.dto.response.daily.toDomain
 import com.agusstkd.goodlife.domain.model.daily.DailyLog
@@ -9,52 +14,73 @@ import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 import com.agusstkd.goodlife.domain.repository.DailyRepository
 import kotlinx.datetime.LocalDate
 
-
 /**
- * Implementación del repositorio de daily logs.
+ * Implementación del repositorio de daily logs con patrón SWR (Stale-While-Revalidate).
  *
- * FASE 1: Solo backend (fuente de verdad 100%).
- * Backend maneja toda la lógica de generación y cálculo de daily logs.
+ * ## Estrategia SWR:
+ * 1. Intenta obtener data fresca del backend (fuente de verdad).
+ * 2. Si el backend responde OK → guarda en cache y devuelve data fresca.
+ * 3. Si el backend falla → usa cache como fallback (offline-first).
+ * 4. Si no hay cache ni backend → devuelve el error original.
  *
- * FASE 2 (futuro): Agregar Room para cache offline y SWR.
- *
- * ## Responsabilidades:
- * - Llamar al DataSource (capa de red)
- * - Mapear Response → Domain Model usando `.toDomain()`
- * - Devolver Result<DailyLog> (NO Result<DailyLogResponse>)
+ * ## Flujo:
+ * ```
+ * getDailyLog(date)
+ *     ├─ Backend OK → save to Room → return fresh
+ *     ├─ Backend FAIL + Cache exists → return stale (offline fallback)
+ *     └─ Backend FAIL + No cache → return error
+ * ```
  *
  * @param remoteDataSource DataSource para llamadas HTTP
+ * @param dailyDao DAO Room para cache local
  */
 class DailyRepositoryImpl(
-    private val remoteDataSource: DailyRemoteDataSource
+    private val remoteDataSource: DailyRemoteDataSource,
+    private val dailyDao: DailyDao,
 ) : DailyRepository {
 
-    /**
-     * Obtiene el daily log de una fecha específica.
-     *
-     * LocalDate.toString() devuelve ISO-8601 ("2026-02-05"), compatible con el backend.
-     * Response del backend se mapea a Domain Model antes de devolver.
-     *
-     * @param date Fecha del daily log
-     * @return Result con DailyLog (Domain Model)
-     */
     override suspend fun getDailyLog(date: LocalDate): Result<DailyLog> {
-        return remoteDataSource.getDailyLogByDate(date.toString())
-            .map { response -> response.toDomain() }
+        val dateString = date.toString()
+
+        return when (val remoteResult = remoteDataSource.getDailyLogByDate(dateString)) {
+            is Result.Success -> {
+                val freshLog = remoteResult.data.toDomain()
+                saveToCacheQuietly(freshLog)
+                Result.Success(freshLog)
+            }
+            is Result.Error -> {
+                val cached = dailyDao.getDailyLogByDate(dateString)
+                if (cached != null) {
+                    Result.Success(cached.toDomain())
+                } else {
+                    remoteResult
+                }
+            }
+        }
+    }
+
+    override suspend fun updateItemStatus(itemId: Long, status: DailyItemStatus): Result<DailyLog> {
+        return when (val remoteResult = remoteDataSource.updateItemStatus(itemId, status)) {
+            is Result.Success -> {
+                val freshLog = remoteResult.data.toDomain()
+                saveToCacheQuietly(freshLog)
+                Result.Success(freshLog)
+            }
+            is Result.Error -> remoteResult
+        }
     }
 
     /**
-     * Actualiza el status de un item del daily log.
-     *
-     * El backend recalcula automáticamente el completionRate del daily log.
-     * Response del backend se mapea a Domain Model antes de devolver.
-     *
-     * @param itemId ID del item a actualizar
-     * @param status Nuevo status (COMPLETED, SKIPPED, PENDING)
-     * @return Result con DailyLog actualizado
+     * Guarda el daily log en cache sin propagar errores de Room.
+     * Si Room falla, la app sigue funcionando con data del backend.
      */
-    override suspend fun updateItemStatus(itemId: Long, status: DailyItemStatus): Result<DailyLog> {
-        return remoteDataSource.updateItemStatus(itemId, status)
-            .map { response -> response.toDomain() }
+    private suspend fun saveToCacheQuietly(dailyLog: DailyLog) {
+        try {
+            val logEntity = dailyLog.toEntity()
+            val itemEntities = dailyLog.items.map { it.toItemEntity(dailyLog.id) }
+            dailyDao.saveDailyLog(logEntity, itemEntities)
+        } catch (_: Exception) {
+            // Cache failure is non-critical; backend data already returned
+        }
     }
 }

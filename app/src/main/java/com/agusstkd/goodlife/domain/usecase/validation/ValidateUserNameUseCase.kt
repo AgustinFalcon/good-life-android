@@ -1,6 +1,7 @@
 package com.agusstkd.goodlife.domain.usecase.validation
 
 import com.agusstkd.goodlife.core.datetime.language.AppLanguage
+import com.agusstkd.goodlife.core.extensions.formatArgs
 import com.agusstkd.goodlife.domain.model.validation.ValidationResult
 
 /**
@@ -30,7 +31,7 @@ class ValidateUserNameUseCase(
         if (username.length < MIN_LENGTH) {
             return ValidationResult(
                 isValid = false,
-                errorMessage = texts.usernameMinLengthFormat.replace("{0}", MIN_LENGTH.toString())
+                errorMessage = texts.usernameMinLengthFormat.formatArgs(MIN_LENGTH)
             )
         }
 

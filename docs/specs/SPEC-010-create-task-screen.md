@@ -1,8 +1,8 @@
 # ✅ SPEC-010 — Create Task Screen (Android)
 
-**Versión:** 1.0  
-**Estado:** 📋 En diseño  
-**Última actualización:** 28 de Febrero, 2026  
+**Versión:** 1.1  
+**Estado:** ✅ Completado  
+**Última actualización:** 09 de Marzo, 2026  
 **Relacionado con:** `SPEC-009-add-to-daily.md`, backend `tasks.spec.md`
 
 ---
@@ -376,4 +376,40 @@ val taskModule = module {
 
 ---
 
-*Spec generado el 28/02/2026.*
+---
+
+## 14. Notas de Implementación (2026-03-09)
+
+### Diferencias con el diseño original
+
+| Aspecto | Diseño original | Implementación final |
+|---------|----------------|---------------------|
+| Contenedor | ModalBottomSheet | Full-screen via `AppRoute.CreateTask` |
+| Validación de título | `isError` en TextField | Botón "Guardar" disabled si título vacío |
+| Selección de días | `FilterChip` | `DayChipComponent` circular personalizado |
+| Toggle hora/endDate | Texto `○ / ●` | `SwitchComponent` con icono |
+| Componentes de fecha/hora | Inline en CreateTaskScreen | Extraídos a `*Component.kt` reutilizables |
+| Feedback de éxito | Genérico | `SuccessDialog` con animación Lottie |
+| Feedback de error | Genérico | `SnackbarComponent` con variantes |
+| Refresh Daily | `onSuccess` callback | `LifecycleResumeEffect` en `DailyScreenOwner` |
+
+### Componentes reutilizables extraídos
+
+Todos siguen el patrón `data class *Params` + `@Composable fun *Component`:
+
+- `SwitchComponent` / `SwitchParams`
+- `DayChipComponent` / `DayChipParams`
+- `DateSelectorComponent` / `DateSelectorParams`
+- `TimeSelectorComponent` / `TimeSelectorParams`
+- `TimePickerDialogComponent` / `TimePickerDialogParams`
+- `DatePickerBottomSheetComponent` (renombrado)
+- `SnackbarComponent` / `SnackbarParams`
+- `SuccessDialog` / `SuccessDialogParams`
+
+### Archivos creados
+
+Ver `CHANGELOG.md` sección `[Unreleased] - 2026-03-09` para listado completo.
+
+---
+
+*Spec generado el 28/02/2026. Actualizado el 09/03/2026 con notas de implementación.*

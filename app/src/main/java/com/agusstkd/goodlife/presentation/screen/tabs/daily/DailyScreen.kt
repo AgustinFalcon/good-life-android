@@ -1,5 +1,8 @@
 package com.agusstkd.goodlife.presentation.screen.tabs.daily
 
+import com.agusstkd.goodlife.core.extensions.formatArgs
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -110,8 +113,7 @@ fun DailyScreen(
 
         item {
             Text(
-                text = dailyTexts.totalForDayFormat
-                    .replace("{0}", totalItems.toString()),
+                text = dailyTexts.totalForDayFormat.formatArgs(totalItems),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(16.dp)
@@ -137,8 +139,7 @@ private fun CompletionRateCard(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = dailyTexts.dailyProgressFormat
-                    .replace("{0}", percentage.toString()),
+                text = dailyTexts.dailyProgressFormat.formatArgs(percentage),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -147,9 +148,7 @@ private fun CompletionRateCard(
                 modifier = Modifier.fillMaxWidth()
             )
             Text(
-                text = dailyTexts.completedOfFormat
-                    .replace("{0}", completedItems.toString())
-                    .replace("{1}", totalItems.toString()),
+                text = dailyTexts.completedOfFormat.formatArgs(completedItems, totalItems),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -176,7 +175,7 @@ private fun DailyScreenWithItemsPreview() {
                 monthYear = "Febrero 2026",
                 showFullDate = false,
                 completionRate = 0.5,
-                items = listOf(
+                items = persistentListOf(
                     DailyItemUiModel(
                         id = 1L,
                         type = DailyItemType.TASK,
@@ -239,7 +238,7 @@ private fun DailyScreenEmptyPreview() {
                 monthYear = "Febrero 2026",
                 showFullDate = true,
                 completionRate = 0.0,
-                items = emptyList()
+                items = persistentListOf()
             ),
             onAction = {}
         )

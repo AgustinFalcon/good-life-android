@@ -123,7 +123,8 @@ val authModule = module {
     viewModel {
         SplashViewModel(
             navigationController = get(),
-            checkSessionUseCase = get()
+            checkSessionUseCase = get(),
+            language = get()
         )
     }
 

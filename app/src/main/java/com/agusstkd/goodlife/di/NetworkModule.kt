@@ -8,6 +8,7 @@ import com.agusstkd.goodlife.core.network.RetrofitFactory
 import com.agusstkd.goodlife.core.storage.TokenManager
 import com.agusstkd.goodlife.data.remote.api.auth.AuthApiService
 import com.agusstkd.goodlife.data.remote.api.daily.DailyApiService
+import com.agusstkd.goodlife.data.remote.api.habit.HabitApiService
 import com.agusstkd.goodlife.data.remote.api.task.TaskApiService
 import kotlinx.serialization.json.Json
 import okhttp3.Authenticator
@@ -151,5 +152,9 @@ val networkModule = module {
      */
     single<TaskApiService> {
         get<Retrofit>().create(TaskApiService::class.java)
+    }
+
+    single<HabitApiService> {
+        get<Retrofit>().create(HabitApiService::class.java)
     }
 }

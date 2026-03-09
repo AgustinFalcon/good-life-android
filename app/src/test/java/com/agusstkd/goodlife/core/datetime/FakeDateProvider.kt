@@ -90,6 +90,7 @@ import kotlinx.datetime.atStartOfDayIn
  * @see DateProvider Interfaz abstraída
  * @see RealDateProvider Implementación real
  */
+@OptIn(kotlin.time.ExperimentalTime::class)
 class FakeDateProvider(
     private val fixedDate: LocalDate
 ) : DateProvider {

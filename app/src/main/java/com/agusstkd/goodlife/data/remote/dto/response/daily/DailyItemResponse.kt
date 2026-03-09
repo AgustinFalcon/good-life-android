@@ -84,23 +84,28 @@ private fun DailyItemResponse.extractTitleAndDescription(): Pair<String, String?
             (task?.title ?: "Tarea sin título") to task?.description
         }
         DailyItemType.HABIT -> {
-            val habitName = habitLog?.habitName ?: "Hábito sin nombre"
-            val description = habitLog?.let {
-                "${it.currentValue} / ${it.targetValue} ${it.unit}"
-            }
+            val habitName = habitLog?.habit?.name ?: "Hábito sin nombre"
+            val unit = habitLog?.habit?.unit ?: ""
+            val current = habitLog?.currentValue?.toInt() ?: 0
+            val target = habitLog?.targetValue?.toInt() ?: 0
+            val description = "$current / $target $unit"
             habitName to description
         }
         DailyItemType.WORKOUT -> {
             val name = workout?.name ?: "Entrenamiento"
             val description = workout?.let {
-                "Rutina: ${it.routineName} • ${it.exerciseCount} ejercicios"
+                val routine = it.routineName ?: "Sin rutina"
+                val count = it.exerciseCount ?: 0
+                "Rutina: $routine • $count ejercicios"
             }
             name to description
         }
         DailyItemType.MEAL -> {
             val name = mealPlan?.mealName ?: "Comida"
             val description = mealPlan?.let {
-                "${it.calories} kcal • ${it.protein}g proteína"
+                val cal = it.calories ?: 0
+                val prot = it.protein ?: 0
+                "$cal kcal • ${prot}g proteína"
             }
             name to description
         }

@@ -11,6 +11,7 @@ import com.agusstkd.goodlife.presentation.screen.add.task.model.CreateTaskUiActi
 import com.agusstkd.goodlife.presentation.screen.add.task.model.CreateTaskUiState
 import com.agusstkd.goodlife.presentation.screen.add.task.model.DatePickerField
 import com.agusstkd.goodlife.presentation.screen.add.task.model.SchedulingMode
+import com.agusstkd.goodlife.core.extensions.toggleDay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -174,11 +175,7 @@ class CreateTaskViewModel(
     }
 
     private fun changeDaySelected(day: DayOfWeek) {
-        _uiState.update {
-            val days = it.recurrentDays
-            val newDays = if (day in days) days - day else days + day
-            it.copy(recurrentDays = newDays)
-        }
+        _uiState.update { it.copy(recurrentDays = it.recurrentDays.toggleDay(day)) }
     }
 
     private fun descriptionChange(description: String) {

@@ -1,6 +1,7 @@
 package com.agusstkd.goodlife.domain.usecase.validation
 
 import com.agusstkd.goodlife.core.datetime.language.AppLanguage
+import com.agusstkd.goodlife.core.extensions.formatArgs
 import com.agusstkd.goodlife.domain.model.validation.ValidationResult
 
 /**
@@ -38,13 +39,13 @@ class ValidatePasswordUseCase(
         val minLength = if (strictMode) MIN_LENGTH_STRICT else MIN_LENGTH_BASIC
         if (password.length < minLength) {
             return ValidationResult.error(
-                texts.passwordMinLengthFormat.replace("{0}", minLength.toString())
+                texts.passwordMinLengthFormat.formatArgs(minLength)
             )
         }
 
         if (password.length > MAX_LENGTH) {
             return ValidationResult.error(
-                texts.passwordMaxLengthFormat.replace("{0}", MAX_LENGTH.toString())
+                texts.passwordMaxLengthFormat.formatArgs(MAX_LENGTH)
             )
         }
 

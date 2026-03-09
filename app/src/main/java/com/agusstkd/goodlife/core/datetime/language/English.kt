@@ -159,7 +159,9 @@ data object English : AppLanguage {
         goToDaily = "Go to daily tasks",
         goToWorkouts = "Go to workouts",
         goToMeals = "Go to meals",
-        goToMore = "More options and settings"
+        goToMore = "More options and settings",
+        close = "Close",
+        appLogo = "GoodLife logo",
     )
 
     override val formats = DateFormats(
@@ -224,5 +226,45 @@ data object English : AppLanguage {
         errorEndBeforeStart = "End date can't be before start date",
         errorServer = "Server error, please try again",
         errorNetwork = "No connection, check your internet",
+    )
+
+    override val habitCategoryTexts = HabitCategoryTexts(
+        hydration = "Hydration",
+        meditation = "Meditation",
+        reading = "Reading",
+        exercise = "Exercise",
+        sleep = "Sleep",
+        nutrition = "Nutrition",
+        learning = "Learning",
+        mindfulness = "Mindfulness",
+        social = "Social",
+        creativity = "Creativity",
+        productivity = "Productivity",
+        health = "Health",
+        custom = "Custom",
+    )
+
+    override val createHabitTexts = CreateHabitTexts(
+        screenTitle = "New habit",
+        typeBadge = "HABIT",
+        saveButton = "Save habit",
+        successTitle = "Habit created successfully",
+        categorySectionTitle = "Category",
+        categoryPlaceholder = "Select category",
+        goalSectionTitle = "Daily goal",
+        targetValuePlaceholder = "E.g. 8",
+        unitPlaceholder = "E.g. glasses",
+        errorNameEmpty = "Name can't be empty",
+        errorNoDays = "Select at least one day",
+        errorNoCategory = "Select a category",
+        errorInvalidGoal = "Goal must be greater than 0",
+        errorUnitEmpty = "Unit can't be empty",
+        errorEndBeforeStart = "End date can't be before start date",
+        errorServer = "Server error, please try again",
+        errorNetwork = "No connection, check your internet",
+    )
+
+    override val splashTexts = SplashTexts(
+        tapToContinue = "Tap to continue",
     )
 }

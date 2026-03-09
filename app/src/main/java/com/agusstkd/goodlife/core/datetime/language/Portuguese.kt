@@ -158,7 +158,9 @@ data object Portuguese : AppLanguage {
         goToDaily = "Ir para tarefas diárias",
         goToWorkouts = "Ir para treinos",
         goToMeals = "Ir para refeições",
-        goToMore = "Mais opções e configurações"
+        goToMore = "Mais opções e configurações",
+        close = "Fechar",
+        appLogo = "Logo GoodLife",
     )
 
     override val formats = DateFormats(
@@ -223,5 +225,45 @@ data object Portuguese : AppLanguage {
         errorEndBeforeStart = "A data de fim não pode ser anterior ao início",
         errorServer = "Erro do servidor, tente novamente",
         errorNetwork = "Sem conexão, verifique sua internet",
+    )
+
+    override val habitCategoryTexts = HabitCategoryTexts(
+        hydration = "Hidratação",
+        meditation = "Meditação",
+        reading = "Leitura",
+        exercise = "Exercício",
+        sleep = "Sono",
+        nutrition = "Nutrição",
+        learning = "Aprendizado",
+        mindfulness = "Mindfulness",
+        social = "Social",
+        creativity = "Criatividade",
+        productivity = "Produtividade",
+        health = "Saúde",
+        custom = "Personalizado",
+    )
+
+    override val createHabitTexts = CreateHabitTexts(
+        screenTitle = "Novo hábito",
+        typeBadge = "HÁBITO",
+        saveButton = "Salvar hábito",
+        successTitle = "Hábito criado com sucesso",
+        categorySectionTitle = "Categoria",
+        categoryPlaceholder = "Selecionar categoria",
+        goalSectionTitle = "Meta diária",
+        targetValuePlaceholder = "Ex: 8",
+        unitPlaceholder = "Ex: copos",
+        errorNameEmpty = "O nome não pode estar vazio",
+        errorNoDays = "Selecione pelo menos um dia",
+        errorNoCategory = "Selecione uma categoria",
+        errorInvalidGoal = "A meta deve ser maior que 0",
+        errorUnitEmpty = "A unidade não pode estar vazia",
+        errorEndBeforeStart = "A data de fim não pode ser anterior ao início",
+        errorServer = "Erro do servidor, tente novamente",
+        errorNetwork = "Sem conexão, verifique sua internet",
+    )
+
+    override val splashTexts = SplashTexts(
+        tapToContinue = "Toque para continuar",
     )
 }

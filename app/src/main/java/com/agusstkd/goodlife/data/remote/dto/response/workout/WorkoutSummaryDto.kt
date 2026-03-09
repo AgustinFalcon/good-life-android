@@ -5,15 +5,14 @@ import kotlinx.serialization.Serializable
 /**
  * Resumen de un workout incluido en el daily log.
  *
- * @param id ID del workout
- * @param name Nombre del workout ("Push Day")
- * @param routineName Nombre de la rutina a la que pertenece ("PPL")
- * @param exerciseCount Cantidad de ejercicios del workout
+ * NOTA: Estructura provisional — todos los campos son nullable con default
+ * para evitar crashes por desalineación con el backend.
+ * Alinear con la respuesta real cuando se implemente el módulo Workouts.
  */
 @Serializable
 data class WorkoutSummaryDto(
-    val id: Long,
-    val name: String,
-    val routineName: String,
-    val exerciseCount: Int
+    val id: Long? = null,
+    val name: String? = null,
+    val routineName: String? = null,
+    val exerciseCount: Int? = null,
 )

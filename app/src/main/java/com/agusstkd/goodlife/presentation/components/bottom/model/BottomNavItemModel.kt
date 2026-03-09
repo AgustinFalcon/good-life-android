@@ -9,12 +9,14 @@ import androidx.compose.material.icons.outlined.FitnessCenter
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.Restaurant
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.agusstkd.goodlife.core.datetime.language.AccessibilityTexts
 import com.agusstkd.goodlife.core.datetime.language.MainScaffoldTexts
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
-@Stable
+@Immutable
 data class BottomNavItemModel(
     val label: String,
     val icon: ImageVector,
@@ -26,7 +28,7 @@ data class BottomNavItemModel(
 fun getDefaultBottomNavItems(
     scaffoldTexts: MainScaffoldTexts,
     accessibilityTexts: AccessibilityTexts
-): List<BottomNavItemModel> = listOf(
+): ImmutableList<BottomNavItemModel> = persistentListOf(
     BottomNavItemModel(
         label = scaffoldTexts.tabDaily,
         icon = Icons.Outlined.Home,

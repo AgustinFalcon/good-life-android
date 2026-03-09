@@ -34,7 +34,9 @@ import com.agusstkd.goodlife.presentation.theme.LinkTextStyle
 fun SplashScreen(
     uiState: SplashUiState,
     onAction: (SplashUiAction) -> Unit,
-    modifier: Modifier = Modifier
+    tapToContinueText: String,
+    logoContentDescription: String,
+    modifier: Modifier = Modifier,
 ) {
     BackgroundGradientComponent(modifier = modifier) {
         Column(
@@ -44,7 +46,7 @@ fun SplashScreen(
         ) {
             Image(
                 painter = painterResource(R.drawable.good_life_logo),
-                contentDescription = "Logo GoodLife",
+                contentDescription = logoContentDescription,
                 modifier = Modifier.size(250.dp),
                 contentScale = ContentScale.Fit
             )
@@ -52,7 +54,7 @@ fun SplashScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "GoodLife",
+                text = APP_NAME,
                 style = AppTitleStyle,
                 color = DarkGreen,
                 textAlign = TextAlign.Center,
@@ -70,7 +72,7 @@ fun SplashScreen(
 
                 is SplashUiState.Ready -> {
                     Text(
-                        text = "Toca para continuar",
+                        text = tapToContinueText,
                         style = LinkTextStyle,
                         color = LightGreen,
                         textDecoration = TextDecoration.Underline,
@@ -84,13 +86,17 @@ fun SplashScreen(
     }
 }
 
+private const val APP_NAME = "GoodLife"
+
 @Preview(showBackground = true, name = "Loading")
 @Composable
 fun SplashScreenLoadingPreview() {
     GoodLifeTheme {
         SplashScreen(
             uiState = SplashUiState.Loading,
-            onAction = {}
+            onAction = {},
+            tapToContinueText = "Toca para continuar",
+            logoContentDescription = "Logo GoodLife",
         )
     }
 }
@@ -101,7 +107,9 @@ fun SplashScreenReadyPreview() {
     GoodLifeTheme {
         SplashScreen(
             uiState = SplashUiState.Ready,
-            onAction = {}
+            onAction = {},
+            tapToContinueText = "Toca para continuar",
+            logoContentDescription = "Logo GoodLife",
         )
     }
 }

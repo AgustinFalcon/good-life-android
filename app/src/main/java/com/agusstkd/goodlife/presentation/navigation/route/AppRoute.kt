@@ -32,4 +32,8 @@ sealed interface AppRoute {
     /** Formulario de creación de tarea (puntual o recurrente). */
     @Serializable
     data object CreateTask : AppRoute
+
+    /** Formulario de creación de hábito recurrente con meta numérica. */
+    @Serializable
+    data object CreateHabit : AppRoute
 }

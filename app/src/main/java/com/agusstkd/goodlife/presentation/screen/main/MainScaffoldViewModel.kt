@@ -25,6 +25,8 @@ import com.agusstkd.goodlife.presentation.theme.EmeraldGreen
 import com.agusstkd.goodlife.presentation.theme.InfoBlue
 import com.agusstkd.goodlife.presentation.theme.SuccessGreen
 import com.agusstkd.goodlife.presentation.theme.WarningOrange
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -89,14 +91,14 @@ class MainScaffoldViewModel(
     private fun navigateToQuickAction(type: QuickActionType) {
         when (type) {
             QuickActionType.TASK -> navigationController.navigateTo(AppRoute.CreateTask)
-            QuickActionType.HABIT -> { /* TODO: NavigateTo CreateHabit */ }
+            QuickActionType.HABIT -> navigationController.navigateTo(AppRoute.CreateHabit)
             QuickActionType.WORKOUT -> { /* TODO: NavigateTo CreateWorkout */ }
             QuickActionType.MEAL -> { /* TODO: NavigateTo CreateMeal */ }
             QuickActionType.OTHER -> { /* TODO: NavigateTo Other */ }
         }
     }
 
-    private fun buildQuickActions(): List<QuickActionItem> {
+    private fun buildQuickActions(): ImmutableList<QuickActionItem> {
         val t = language.mainScaffoldTexts
         return listOf(
             QuickActionItem(QuickActionType.TASK, t.task, Icons.Default.CheckBox, SuccessGreen),
@@ -104,10 +106,10 @@ class MainScaffoldViewModel(
             QuickActionItem(QuickActionType.WORKOUT, t.workout, Icons.Default.FitnessCenter, EmeraldGreen),
             QuickActionItem(QuickActionType.MEAL, t.meal, Icons.Default.Restaurant, WarningOrange),
             QuickActionItem(QuickActionType.OTHER, t.others, Icons.Default.MoreHoriz, WarningOrange),
-        )
+        ).toImmutableList()
     }
 
-    private fun buildMealOptions(): List<MealOptionItem> {
+    private fun buildMealOptions(): ImmutableList<MealOptionItem> {
         val t = language.mainScaffoldTexts
         return listOf(
             MealOptionItem(null, t.dailySummary, Icons.Default.WbSunny),
@@ -117,7 +119,7 @@ class MainScaffoldViewModel(
             MealOptionItem(MealType.SNACK, t.snack, Icons.Default.LocalDining),
             MealOptionItem(MealType.PRE_WORKOUT, t.preWorkout, Icons.Default.FitnessCenter),
             MealOptionItem(MealType.POST_WORKOUT, t.postWorkout, Icons.Default.FitnessCenter)
-        )
+        ).toImmutableList()
     }
 
     /**

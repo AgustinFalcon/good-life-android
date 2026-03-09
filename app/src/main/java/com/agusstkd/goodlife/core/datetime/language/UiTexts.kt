@@ -139,6 +139,15 @@ data class AccessibilityTexts(
     val goToWorkouts: String,
     val goToMeals: String,
     val goToMore: String,
+    val close: String,
+    val appLogo: String,
+)
+
+/**
+ * Textos para la pantalla Splash.
+ */
+data class SplashTexts(
+    val tapToContinue: String,
 )
 
 /**
@@ -229,6 +238,51 @@ data class CreateTaskTexts(
     val errorTitleEmpty: String,
     val errorNoDate: String,
     val errorNoDays: String,
+    val errorEndBeforeStart: String,
+    val errorServer: String,
+    val errorNetwork: String,
+)
+
+/**
+ * Nombres localizados para las 13 categorías de hábito.
+ *
+ * Cada propiedad corresponde a un valor del enum [HabitCategory].
+ * Se usan en el selector de categoría de la pantalla Create Habit.
+ */
+data class HabitCategoryTexts(
+    val hydration: String,
+    val meditation: String,
+    val reading: String,
+    val exercise: String,
+    val sleep: String,
+    val nutrition: String,
+    val learning: String,
+    val mindfulness: String,
+    val social: String,
+    val creativity: String,
+    val productivity: String,
+    val health: String,
+    val custom: String,
+)
+
+/**
+ * Textos específicos para la pantalla de creación de Hábito.
+ */
+data class CreateHabitTexts(
+    val screenTitle: String,
+    val typeBadge: String,
+    val saveButton: String,
+    val successTitle: String,
+    val categorySectionTitle: String,
+    val categoryPlaceholder: String,
+    val goalSectionTitle: String,
+    val targetValuePlaceholder: String,
+    val unitPlaceholder: String,
+    val errorNameEmpty: String,
+    val errorNoDays: String,
+    val errorNoCategory: String,
+    val errorInvalidGoal: String,
+    val errorUnitEmpty: String,
     val errorEndBeforeStart: String,
     val errorServer: String,
     val errorNetwork: String,
