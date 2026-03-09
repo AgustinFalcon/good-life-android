@@ -28,4 +28,8 @@ sealed interface AppRoute {
     /** Pantalla principal con tabs (Home, Workouts, Meals, Settings). */
     @Serializable
     data object Main : AppRoute
+
+    /** Formulario de creación de tarea (puntual o recurrente). */
+    @Serializable
+    data object CreateTask : AppRoute
 }

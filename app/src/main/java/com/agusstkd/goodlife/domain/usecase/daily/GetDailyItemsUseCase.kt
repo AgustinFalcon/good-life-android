@@ -52,7 +52,6 @@ class GetDailyItemsUseCase(
                     )
                     else -> GetDailyItemsResult.NetworkError
                 }
-                is Result.Loading -> GetDailyItemsResult.NetworkError
             }
         }
     }

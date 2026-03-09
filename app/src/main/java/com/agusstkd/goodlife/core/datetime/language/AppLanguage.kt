@@ -46,4 +46,7 @@ sealed interface AppLanguage {
     val homeTexts: HomeTexts
     val authTexts: AuthTexts
     val accessibilityTexts: AccessibilityTexts
+    val datePickerTexts: DatePickerTexts
+    val createItemSharedTexts: CreateItemSharedTexts
+    val createTaskTexts: CreateTaskTexts
 }

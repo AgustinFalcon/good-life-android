@@ -58,7 +58,6 @@ class AuthRepositoryImpl(
                 Result.Success(user)
             }
             is Result.Error -> loginResult
-            is Result.Loading -> loginResult
         }
     }
 
@@ -75,7 +74,6 @@ class AuthRepositoryImpl(
                 Result.Success(user)
             }
             is Result.Error -> registerResult
-            is Result.Loading -> registerResult
         }
     }
 

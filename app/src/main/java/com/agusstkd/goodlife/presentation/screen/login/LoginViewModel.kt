@@ -2,13 +2,10 @@ package com.agusstkd.goodlife.presentation.screen.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.agusstkd.goodlife.core.biometric.BiometricResult
 import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.core.datetime.language.AuthScreenTexts
-import com.agusstkd.goodlife.core.biometric.BiometricAvailability
-import com.agusstkd.goodlife.core.biometric.BiometricResult
-import com.agusstkd.goodlife.core.dispatcher.DispatcherProvider
-import com.agusstkd.goodlife.domain.biometric.BiometricAuthenticator
-import com.agusstkd.goodlife.domain.storage.SecureCredentialsStorage
+import com.agusstkd.goodlife.domain.auth.BiometricLoginHandler
 import com.agusstkd.goodlife.domain.usecase.login.LoginResult
 import com.agusstkd.goodlife.domain.usecase.login.LoginUseCase
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
@@ -24,30 +21,38 @@ import kotlinx.coroutines.launch
 /**
  * ViewModel para la pantalla de Login.
  *
- * ## Responsabilidades:
- * - Mantener el estado de UI (LoginUiState)
- * - Procesar las acciones del usuario (LoginUiAction)
- * - Delegar validaciones y login al LoginUseCase
- * - Navegar a otras pantallas via ComposeNavigationController
+ * ## Responsabilidades
+ * - Mantener el estado de UI ([LoginUiState])
+ * - Procesar las acciones del usuario ([LoginUiAction])
+ * - Delegar login al [LoginUseCase]
+ * - Delegar lógica biométrica al [BiometricLoginHandler]
+ * - Navegar a otras pantallas via [ComposeNavigationController]
  *
- * ## Arquitectura Clean:
+ * ## Sobre el dispatcher
+ * Este ViewModel NO recibe ni usa [DispatcherProvider].
+ * El dispatcher IO es responsabilidad del [LoginUseCase] (decisión arquitectónica #1).
+ * Todos los launches usan `viewModelScope.launch { }` sin dispatcher.
+ *
+ * ## Arquitectura
  * ```
  * LoginViewModel
- *     └── LoginUseCase
- *             ├── ValidateEmailUseCase
- *             ├── ValidatePasswordUseCase
- *             └── AuthRepository
+ *     ├── LoginUseCase
+ *     │       ├── ValidateEmailUseCase
+ *     │       ├── ValidatePasswordUseCase
+ *     │       └── AuthRepository
+ *     └── BiometricLoginHandler
+ *             ├── BiometricAuthenticator
+ *             └── SecureCredentialsStorage
  * ```
  *
- * @property loginUseCase Caso de uso que encapsula la lógica de login
+ * @property loginUseCase Caso de uso que encapsula validación y login
  * @property navigationController Controlador de navegación reactivo
+ * @property biometricLoginHandler State machine de autenticación biométrica
  */
 class LoginViewModel(
     private val loginUseCase: LoginUseCase,
     private val navigationController: ComposeNavigationController,
-    private val biometricAuthenticator: BiometricAuthenticator,
-    private val credentialsStorage: SecureCredentialsStorage,
-    private val dispatcherProvider: DispatcherProvider,
+    private val biometricLoginHandler: BiometricLoginHandler,
     private val language: AppLanguage,
 ) : ViewModel() {
 
@@ -59,47 +64,50 @@ class LoginViewModel(
 
     init {
         checkBiometricStatus()
+        collectBiometricEvents()
     }
 
     private fun checkBiometricStatus() {
-        val isAvailable = biometricAuthenticator.checkAvailability() == BiometricAvailability.Available
-        val isEnabled = credentialsStorage.isBiometricEnabled()
-        val hasCredentials = credentialsStorage.hasCredentials()
-        
-        // Si tiene biometría activada y credenciales, cargar el email guardado
-        val savedEmail = if (isEnabled && hasCredentials) {
-            credentialsStorage.getSavedEmail()
-        } else null
-
-        // Si tiene biometría activada y credenciales, mostrar prompt automáticamente
-        val shouldShowPrompt = isAvailable && isEnabled && hasCredentials
-
+        val state = biometricLoginHandler.buildInitialState()
         _uiState.value = LoginUiState.Content(
-            email = savedEmail ?: "",
-            isBiometricAvailable = isAvailable,
-            isBiometricEnabled = isEnabled && hasCredentials,
-            shouldShowBiometricPrompt = shouldShowPrompt
+            email = state.savedEmail ?: "",
+            isBiometricAvailable = state.isAvailable,
+            isBiometricEnabled = state.isEnabled,
+            shouldShowBiometricPrompt = state.shouldShowPrompt
         )
     }
 
     /**
-     * Procesa las acciones del usuario.
+     * Colecta eventos del [BiometricLoginHandler].
+     * Cuando la biometría es exitosa, el handler emite [BiometricLoginHandler.Event.CredentialsReady]
+     * y el ViewModel ejecuta el login con esas credenciales.
      */
+    private fun collectBiometricEvents() {
+        viewModelScope.launch {
+            biometricLoginHandler.events.collect { event ->
+                when (event) {
+                    is BiometricLoginHandler.Event.CredentialsReady ->
+                        performLoginWithCredentials(event.email, event.password)
+                }
+            }
+        }
+    }
+
     fun onAction(action: LoginUiAction) {
         when (action) {
-            is LoginUiAction.OnEmailChange -> updateEmail(action.value)
-            is LoginUiAction.OnPasswordChange -> updatePassword(action.value)
-            is LoginUiAction.OnRememberUserToggle -> toggleRememberUser()
-            is LoginUiAction.OnLoginClick -> performLogin()
-            is LoginUiAction.OnRegisterClick -> navigateToRegister()
-            is LoginUiAction.OnForgotPasswordClick -> navigateToForgotPassword()
-            is LoginUiAction.OnGoogleLoginClick -> loginWithGoogle()
-            is LoginUiAction.OnAppleLoginClick -> loginWithApple()
-            is LoginUiAction.OnTermsClick -> navigateToTerms()
-            is LoginUiAction.OnPrivacyClick -> navigateToPrivacy()
-            is LoginUiAction.OnBiometricToggle -> handleBiometricToggle()
-            is LoginUiAction.OnBiometricIconClick -> handleBiometricIconClick()
-            is LoginUiAction.OnBiometricResult -> handleBiometricResult(action.result)
+            is LoginUiAction.OnEmailChange          -> updateEmail(action.value)
+            is LoginUiAction.OnPasswordChange       -> updatePassword(action.value)
+            is LoginUiAction.OnRememberUserToggle   -> toggleRememberUser()
+            is LoginUiAction.OnLoginClick           -> performLogin()
+            is LoginUiAction.OnRegisterClick        -> navigateToRegister()
+            is LoginUiAction.OnForgotPasswordClick  -> navigateToForgotPassword()
+            is LoginUiAction.OnGoogleLoginClick     -> loginWithGoogle()
+            is LoginUiAction.OnAppleLoginClick      -> loginWithApple()
+            is LoginUiAction.OnTermsClick           -> navigateToTerms()
+            is LoginUiAction.OnPrivacyClick         -> navigateToPrivacy()
+            is LoginUiAction.OnBiometricToggle      -> handleBiometricToggle()
+            is LoginUiAction.OnBiometricIconClick   -> handleBiometricIconClick()
+            is LoginUiAction.OnBiometricResult      -> handleBiometricResult(action.result)
             is LoginUiAction.OnBiometricPromptShown -> handleBiometricPromptShown()
         }
     }
@@ -109,152 +117,67 @@ class LoginViewModel(
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
     private fun updateEmail(value: String) {
-        val currentState = _uiState.value
-        if (currentState is LoginUiState.Content) {
-            _uiState.value = currentState.copy(
-                email = value,
-                isEmailError = false // Limpiar error al escribir
-            )
-        }
+        val current = _uiState.value as? LoginUiState.Content ?: return
+        _uiState.value = current.copy(email = value, isEmailError = false)
     }
 
     private fun updatePassword(value: String) {
-        val currentState = _uiState.value
-        if (currentState is LoginUiState.Content) {
-            _uiState.value = currentState.copy(
-                password = value,
-                isPasswordError = false // Limpiar error al escribir
-            )
-        }
+        val current = _uiState.value as? LoginUiState.Content ?: return
+        _uiState.value = current.copy(password = value, isPasswordError = false)
     }
 
     private fun toggleRememberUser() {
-        val currentState = _uiState.value
-        if (currentState is LoginUiState.Content) {
-            _uiState.value = currentState.copy(
-                rememberUser = !currentState.rememberUser
-            )
-        }
+        val current = _uiState.value as? LoginUiState.Content ?: return
+        _uiState.value = current.copy(rememberUser = !current.rememberUser)
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════════════
-    // LOGIN ACTION - Usa LoginUseCase
+    // LOGIN
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
     private fun performLogin() {
-        val currentState = _uiState.value
-        if (currentState !is LoginUiState.Content) return
+        val current = _uiState.value as? LoginUiState.Content ?: return
+        if (current.isLoading) return
 
-        // Evitar múltiples clicks
-        if (currentState.isLoading) return
+        viewModelScope.launch {
+            _uiState.value = current.copy(isLoading = true)
 
-        viewModelScope.launch(dispatcherProvider.io) {
-            // Mostrar loading en el botón (no cambiar toda la pantalla)
-            _uiState.value = currentState.copy(isLoading = true)
-
-            // Ejecutar login via UseCase
             val result = loginUseCase(
-                email = currentState.email,
-                password = currentState.password
+                email = current.email,
+                password = current.password
             )
 
-            // Procesar resultado
             when (result) {
                 is LoginResult.Success -> {
-                    // Guardar credenciales ANTES de cambiar el estado (si biometría está activada)
-                    if (currentState.isBiometricEnabled) {
-                        credentialsStorage.saveCredentials(
-                            currentState.email,
-                            currentState.password
-                        )
-                    }
+                    biometricLoginHandler.saveCredentialsIfEnabled(
+                        email = current.email,
+                        password = current.password,
+                        isEnabled = current.isBiometricEnabled
+                    )
                     _uiState.value = LoginUiState.Success
                     navigationController.navigateToMain()
                 }
-
                 is LoginResult.ValidationError -> {
-                    _uiState.value = currentState.copy(
+                    _uiState.value = current.copy(
                         isLoading = false,
                         isEmailError = result.emailError != null,
                         isPasswordError = result.passwordError != null
                     )
-                    // TODO: Mostrar mensaje de error específico
                 }
-
                 is LoginResult.Error -> {
-                    _uiState.value = currentState.copy(
+                    _uiState.value = current.copy(
                         isLoading = false,
                         isEmailError = true,
                         isPasswordError = true
                     )
-                    // TODO: Mostrar mensaje de error general
                 }
-            }
-        }
-    }
-
-
-    // ═══════════════════════════════════════════════════════════════════════════════════════════
-    // BIOMETRIC - NO DEBERIA ESTAR EN UNA CLASE QUE HANDLEE BIOMETRIC?
-    // ═══════════════════════════════════════════════════════════════════════════════════════════
-    private fun handleBiometricToggle() {
-        val current = (_uiState.value as? LoginUiState.Content) ?: return
-        val newEnabled = !current.isBiometricEnabled
-
-        // Solo actualizar preferencia, las credenciales se guardan al hacer login exitoso
-        credentialsStorage.setBiometricEnabled(newEnabled)
-
-        _uiState.value = current.copy(isBiometricEnabled = newEnabled)
-    }
-
-    private fun handleBiometricIconClick() {
-        val current = (_uiState.value as? LoginUiState.Content) ?: return
-
-        // Solo mostrar prompt si está habilitado y hay credenciales
-        if (current.isBiometricEnabled && credentialsStorage.hasCredentials()) {
-            _uiState.value = current.copy(shouldShowBiometricPrompt = true)
-        }
-    }
-
-    private fun handleBiometricPromptShown() {
-        val current = (_uiState.value as? LoginUiState.Content) ?: return
-        _uiState.value = current.copy(shouldShowBiometricPrompt = false)
-    }
-
-    private fun handleBiometricResult(result: BiometricResult) {
-        when (result) {
-            is BiometricResult.Success -> {
-                // Obtener credenciales y hacer login automáticamente
-                val credentials = credentialsStorage.getCredentials()
-                if (credentials != null) {
-                    performLoginWithCredentials(credentials.first, credentials.second)
-                }
-            }
-            is BiometricResult.Cancelled -> {
-                // Usuario canceló → El email ya está autocompletado, solo resetear el flag
-                val current = (_uiState.value as? LoginUiState.Content) ?: return
-                _uiState.value = current.copy(shouldShowBiometricPrompt = false)
-            }
-            is BiometricResult.Failed -> {
-                // Huella no reconocida - Android maneja reintentos automáticamente
-            }
-            is BiometricResult.Lockout -> {
-                // Bloqueo temporal por muchos intentos fallidos
-                val current = (_uiState.value as? LoginUiState.Content) ?: return
-                _uiState.value = current.copy(shouldShowBiometricPrompt = false)
-                // TODO: Mostrar Snackbar con mensaje de bloqueo
-            }
-            is BiometricResult.Error -> {
-                // Error del sistema
-                val current = (_uiState.value as? LoginUiState.Content) ?: return
-                _uiState.value = current.copy(shouldShowBiometricPrompt = false)
             }
         }
     }
 
     private fun performLoginWithCredentials(email: String, password: String) {
-        viewModelScope.launch(dispatcherProvider.io) {
-            val current = (_uiState.value as? LoginUiState.Content) ?: return@launch
+        viewModelScope.launch {
+            val current = _uiState.value as? LoginUiState.Content ?: return@launch
             _uiState.value = current.copy(isLoading = true)
 
             when (val result = loginUseCase(email, password)) {
@@ -281,6 +204,39 @@ class LoginViewModel(
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════════════
+    // BIOMETRIC — delegado a BiometricLoginHandler
+    // ═══════════════════════════════════════════════════════════════════════════════════════════
+
+    private fun handleBiometricToggle() {
+        val current = _uiState.value as? LoginUiState.Content ?: return
+        val newEnabled = biometricLoginHandler.handleToggle(current.isBiometricEnabled)
+        _uiState.value = current.copy(isBiometricEnabled = newEnabled)
+    }
+
+    private fun handleBiometricIconClick() {
+        val current = _uiState.value as? LoginUiState.Content ?: return
+        if (current.isBiometricEnabled && biometricLoginHandler.canShowPrompt()) {
+            _uiState.value = current.copy(shouldShowBiometricPrompt = true)
+        }
+    }
+
+    private fun handleBiometricPromptShown() {
+        val current = _uiState.value as? LoginUiState.Content ?: return
+        _uiState.value = current.copy(shouldShowBiometricPrompt = false)
+    }
+
+    private fun handleBiometricResult(result: BiometricResult) {
+        val current = _uiState.value as? LoginUiState.Content ?: return
+        when (result) {
+            is BiometricResult.Cancelled,
+            is BiometricResult.Lockout,
+            is BiometricResult.Error -> _uiState.value = current.copy(shouldShowBiometricPrompt = false)
+            else -> Unit
+        }
+        biometricLoginHandler.handleResult(result)
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════════════════
     // NAVIGATION
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
@@ -290,7 +246,6 @@ class LoginViewModel(
 
     private fun navigateToForgotPassword() {
         // TODO: Implementar navegación a pantalla de recuperar contraseña
-        // navigationController.navigateTo(AppRoute.ForgotPassword)
     }
 
     private fun loginWithGoogle() {

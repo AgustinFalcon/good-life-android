@@ -1,7 +1,7 @@
 package com.agusstkd.goodlife.data.remote.datasource
 
 import com.agusstkd.goodlife.core.result.Result
-import com.agusstkd.goodlife.data.remote.api.GoodLifeApiService
+import com.agusstkd.goodlife.data.remote.api.daily.DailyApiService
 import com.agusstkd.goodlife.data.remote.api.executeApiCall
 import com.agusstkd.goodlife.data.remote.dto.response.daily.DailyLogResponse
 import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
@@ -15,7 +15,7 @@ import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
  * - Convertir respuestas a Result<T>
  */
 class DailyRemoteDataSource(
-    private val apiService: GoodLifeApiService
+    private val apiService: DailyApiService
 ) {
 
     /**

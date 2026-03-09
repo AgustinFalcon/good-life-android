@@ -4,7 +4,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.agusstkd.goodlife.presentation.screen.home.HomeScreenOwner
+import com.agusstkd.goodlife.presentation.screen.add.task.CreateTaskScreenOwner
 import com.agusstkd.goodlife.presentation.screen.login.LoginScreenOwner
 import com.agusstkd.goodlife.presentation.screen.main.MainScaffoldScreenOwner
 import com.agusstkd.goodlife.presentation.screen.register.RegisterScreenOwner
@@ -32,7 +32,10 @@ fun NavGraphBuilder.addAppGraph() {
 
     composable<AppRoute.Main> {
         MainScaffoldScreenOwner()
-        //HomeScreenOwner()
+    }
+
+    composable<AppRoute.CreateTask> {
+        CreateTaskScreenOwner()
     }
 }
 

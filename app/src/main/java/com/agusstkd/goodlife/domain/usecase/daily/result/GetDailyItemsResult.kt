@@ -1,5 +1,6 @@
 package com.agusstkd.goodlife.domain.usecase.daily.result
 
+import androidx.compose.runtime.Stable
 import com.agusstkd.goodlife.domain.model.daily.DailyLog
 
 /**

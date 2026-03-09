@@ -78,15 +78,21 @@ data object Spanish : AppLanguage {
         noPermissions = "Sin permisos",
         invalidRequest = "Solicitud inválida",
         error = "Error",
-        tapToRetry = "Tap para reintentar"
+        tapToRetry = "Tap para reintentar",
+        nextUp = "PRÓXIMO",
+        inProgress = "EN PROGRESO",
+        all = "Todos",
+        task = "Tareas",
+        habit = "Hábitos",
+        workout = "Entrenos",
+        meal = "Comidas"
     )
 
     override val mainScaffoldTexts = MainScaffoldTexts(
-        routine = "Rutina",
-        nutrition = "Alimentación",
-        weight = "Peso",
-        supplements = "Suplementos",
-        activity = "Actividad",
+        task = "Tarea",
+        habit = "Hábito",
+        workout = "Rutina",
+        meal = "Comida",
         others = "Otros",
         dailySummary = "Resumen diario",
         breakfast = "Desayuno",
@@ -176,5 +182,47 @@ data object Spanish : AppLanguage {
             chars(" de ")
             monthName(monthNames)
         }
+    )
+
+    override val datePickerTexts = DatePickerTexts(
+        title = "Seleccionar fecha",
+        cancel = "Cancelar",
+        confirm = "Confirmar",
+        pastDaysHint = "Los días anteriores no están disponibles",
+    )
+
+    override val createItemSharedTexts = CreateItemSharedTexts(
+        fieldTitleLabel = "Título",
+        fieldTitlePlaceholder = "Ej: Comprar verduras",
+        fieldDescriptionLabel = "Descripción (opcional)",
+        fieldDescriptionPlaceholder = "Añade una nota...",
+        whenSectionTitle = "¿Cuándo?",
+        modeOnce = "Una vez",
+        modeRepeats = "Se repite",
+        daysRowTitle = "Días de la semana",
+        fromDateLabel = "Desde",
+        toDateLabel = "Hasta",
+        noEndDate = "Sin fecha de fin",
+        hasEndDate = "Con fecha de fin",
+        noSpecificTime = "Sin hora específica",
+        timeLabel = "Hora de inicio",
+        reminderLabel = "Recordatorio",
+        cancelButton = "Cancelar",
+        confirmLabel = "Confirmar",
+        cancelLabel = "Cancelar",
+        retryLabel = "Reintentar",
+    )
+
+    override val createTaskTexts = CreateTaskTexts(
+        screenTitle = "Nueva tarea",
+        typeBadge = "TAREA",
+        saveButton = "Guardar tarea",
+        successTitle = "Tarea creada con éxito",
+        errorTitleEmpty = "El título no puede estar vacío",
+        errorNoDate = "Seleccioná una fecha",
+        errorNoDays = "Seleccioná al menos un día",
+        errorEndBeforeStart = "La fecha de fin no puede ser anterior al inicio",
+        errorServer = "Error del servidor, intentá de nuevo",
+        errorNetwork = "Sin conexión, revisá tu internet",
     )
 }

@@ -3,13 +3,19 @@ package com.agusstkd.goodlife.core.result
 /**
  * Wrapper genérico para operaciones que pueden fallar.
  *
- * Proporciona un manejo uniforme de éxito, error y estado de carga
- * en toda la aplicación. Es Kotlin puro, preparado para KMP.
+ * Usado exclusivamente en funciones `suspend` (repositorios → UseCases).
+ * Solo tiene dos estados posibles porque una función suspend o devuelve
+ * un resultado o lanza una excepción — nunca está "cargando".
+ *
+ * El estado de carga es responsabilidad de la capa de presentación
+ * ([com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState.Loading], etc.),
+ * no del resultado de una operación.
+ *
+ * Es Kotlin puro, preparado para KMP.
  *
  * @param T El tipo de dato contenido en caso de éxito.
  * @see Success
  * @see Error
- * @see Loading
  */
 sealed class Result<out T> {
 
@@ -29,26 +35,17 @@ sealed class Result<out T> {
         val exception: Throwable
     ) : Result<Nothing>() {
         /**
-         * Mensaje de error único expuesto a presentation.
-         *
+         * Mensaje de error expuesto a las capas superiores.
          * Fuente de verdad: [exception.message].
          */
         val message: String? get() = exception.message
     }
 
-    /**
-     * Representa una operación en progreso.
-     */
-    data object Loading : Result<Nothing>()
-
     /** Indica si el resultado es exitoso. */
-    public val isSuccess: Boolean get() = this is Success
+    val isSuccess: Boolean get() = this is Success
 
     /** Indica si el resultado es un error. */
     val isError: Boolean get() = this is Error
-
-    /** Indica si la operación está en progreso. */
-    val isLoading: Boolean get() = this is Loading
 
     /**
      * Obtiene el dato si es [Success], null en caso contrario.
@@ -78,17 +75,6 @@ sealed class Result<out T> {
         if (this is Error) action(this)
         return this
     }
-
-    /**
-     * Ejecuta [action] si el resultado es [Loading].
-     *
-     * @param action Acción a ejecutar.
-     * @return Este mismo Result para encadenamiento.
-     */
-    inline fun onLoading(action: () -> Unit): Result<T> {
-        if (this is Loading) action()
-        return this
-    }
 }
 
 /**
@@ -99,8 +85,7 @@ sealed class Result<out T> {
  */
 inline fun <T, R> Result<T>.map(transform: (T) -> R): Result<R> = when (this) {
     is Result.Success -> Result.Success(transform(data))
-    is Result.Error -> this
-    is Result.Loading -> this
+    is Result.Error   -> this
 }
 
 /**

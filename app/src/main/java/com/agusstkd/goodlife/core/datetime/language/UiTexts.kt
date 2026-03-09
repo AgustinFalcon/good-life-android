@@ -56,34 +56,13 @@ data class ErrorTexts(
 )
 
 /**
- * Textos para la pantalla Daily (tab de tareas diarias).
- *
- * Incluye labels de UI y títulos de error que el Owner usa
- * para decidir qué UI mostrar.
- */
-data class DailyTexts(
-    val dailyProgressFormat: String,
-    val completedOfFormat: String,
-    val totalForDayFormat: String,
-    val schedulePrefix: String,
-    val serverError: String,
-    val sessionExpired: String,
-    val noData: String,
-    val noPermissions: String,
-    val invalidRequest: String,
-    val error: String,
-    val tapToRetry: String,
-)
-
-/**
  * Textos del MainScaffold (acciones rápidas y opciones de comida).
  */
 data class MainScaffoldTexts(
-    val routine: String,
-    val nutrition: String,
-    val weight: String,
-    val supplements: String,
-    val activity: String,
+    val task: String,
+    val habit: String,
+    val workout: String,
+    val meal: String,
     val others: String,
     val dailySummary: String,
     val breakfast: String,
@@ -171,4 +150,86 @@ data class AccessibilityTexts(
 data class AuthScreenTexts(
     val auth: AuthTexts,
     val accessibility: AccessibilityTexts
+)
+
+/**
+ * Textos para la pantalla Daily (tab de tareas diarias).
+ *
+ * Incluye labels de UI y títulos de error que el Owner usa
+ * para decidir qué UI mostrar.
+ */
+data class DailyTexts(
+    val dailyProgressFormat: String,
+    val completedOfFormat: String,
+    val totalForDayFormat: String,
+    val schedulePrefix: String,
+    val serverError: String,
+    val sessionExpired: String,
+    val noData: String,
+    val noPermissions: String,
+    val invalidRequest: String,
+    val error: String,
+    val tapToRetry: String,
+    /** Badge "NEXT UP" visible en el primer item pendiente de la lista. */
+    val nextUp: String,
+    val inProgress: String,
+    val all: String,
+    val task: String,
+    val habit: String,
+    val workout: String,
+    val meal: String,
+)
+
+/**
+ * Textos compartidos del selector de fecha (calendario).
+ * Usado en todos los bottom sheets de selección de fecha.
+ */
+data class DatePickerTexts(
+    val title: String,
+    val cancel: String,
+    val ok: String = "OK",
+    val confirm: String,
+    val pastDaysHint: String,
+)
+
+/**
+ * Textos compartidos para pantallas de creación de items diarios.
+ * Task, Habit, Workout y Meal comparten estos labels de scheduling.
+ */
+data class CreateItemSharedTexts(
+    val fieldTitleLabel: String,
+    val fieldTitlePlaceholder: String,
+    val fieldDescriptionLabel: String,
+    val fieldDescriptionPlaceholder: String,
+    val whenSectionTitle: String,
+    val modeOnce: String,
+    val modeRepeats: String,
+    val daysRowTitle: String,
+    val fromDateLabel: String,
+    val toDateLabel: String,
+    val noEndDate: String,
+    val hasEndDate: String,
+    val noSpecificTime: String,
+    val timeLabel: String,
+    val reminderLabel: String,
+    val cancelButton: String,
+    val confirmLabel: String,
+    val cancelLabel: String,
+    val retryLabel: String,
+)
+
+/**
+ * Textos específicos para la pantalla de creación de Tarea.
+ */
+data class CreateTaskTexts(
+    val screenTitle: String,
+    val typeBadge: String,
+    val saveButton: String,
+    val successTitle: String,
+    val errorTitleEmpty: String,
+    val errorNoDate: String,
+    val errorNoDays: String,
+    val errorEndBeforeStart: String,
+    val errorServer: String,
+    val errorNetwork: String,
 )

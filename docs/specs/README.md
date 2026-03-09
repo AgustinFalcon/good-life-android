@@ -10,11 +10,12 @@ Este directorio contiene las especificaciones técnicas detalladas para las feat
 |----|---------|------|--------|
 | [SPEC-001](./SPEC-001-register-screen.md) | Pantalla de Registro | Feature | ✅ Completado |
 | [SPEC-002](./SPEC-002-biometric-login.md) | Login con Huella Digital | Feature | ✅ Completado |
-| [SPEC-003](./SPEC-003-main-scaffold.md) | Main Scaffold + Bottom Nav | Feature | 🚧 En Progreso (85%) |
+| [SPEC-003](./SPEC-003-main-scaffold.md) | Main Scaffold + Bottom Nav | Feature | 🚧 En Progreso (90%) |
 | [SPEC-004](./SPEC-004-date-provider.md) | DateProvider Pattern (Core de Fechas) | Core Architecture | ✅ Completado |
-| [SPEC-005](./SPEC-005-network-service.md) | Network Service | Core Architecture | 🚧 En Desarrollo (Auth 401 pendiente) |
+| [SPEC-005](./SPEC-005-network-service.md) | Network Service | Core Architecture | ✅ Completado |
 | [SPEC-006](./SPEC-006-offline-first-swr.md) | Offline-First SWR | Architecture Pattern | 📝 Planificado |
 | [SPEC-007](./SPEC-007-app-language.md) | Sistema de Localización KMP-Ready (AppLanguage) | Core Architecture | ✅ Completado |
+| [SPEC-008](./SPEC-008-notifications-deeplinks.md) | Notificaciones en Tiempo Real + Deep Links | Feature | 📝 Planificado |
 
 ---
 
@@ -63,6 +64,10 @@ SPEC-004 (DateProvider)
 SPEC-005 (Network)
     └── usa → SPEC-007 (AppLanguage: ErrorTexts)
 
+SPEC-008 (Notifications + Deep Links)
+    ├── usa → SPEC-005 (Network: OkHttpClient compartido para WebSocket)
+    └── usa → SPEC-007 (AppLanguage: ErrorTexts, NotificationTexts)
+
 SPEC-007 (AppLanguage) ← Core para toda la app
     └── alimenta → todos los demás SPECs
 ```
@@ -78,13 +83,16 @@ SPEC-007 (AppLanguage) ← Core para toda la app
 | Registro | ✅ Completado |
 | DateProvider | ✅ Completado |
 | Network Service | ✅ Completado |
-| **Localización (AppLanguage)** | ✅ Completado |
-| **Main Scaffold** | 🚧 En Progreso (85%) |
-| Daily Tab | ✅ Completado |
+| Localización (AppLanguage) | ✅ Completado |
+| Main Scaffold | 🚧 En Progreso (90%) |
+| Daily Tab — Arquitectura | ✅ Completado |
+| Daily Tab — DailyItemCard | ✅ Completado |
 | Workouts Tab | ⏸️ Pendiente |
 | Meals Tab | ⏸️ Pendiente |
 | Settings/More Tab | ⏸️ Pendiente |
+| EncryptedSharedPreferences (TokenManager) | ⏸️ Pendiente (crítico) |
 | Offline-First SWR | 📝 Planificado |
+| Notificaciones + Deep Links | 📝 Planificado |
 
 ---
 
@@ -96,4 +104,4 @@ SPEC-007 (AppLanguage) ← Core para toda la app
 
 ---
 
-**Última actualización:** 2026-02-03
+**Última actualización:** 2026-02-24

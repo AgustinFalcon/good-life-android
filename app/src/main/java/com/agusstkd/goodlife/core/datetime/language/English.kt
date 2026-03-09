@@ -78,15 +78,21 @@ data object English : AppLanguage {
         noPermissions = "No permissions",
         invalidRequest = "Invalid request",
         error = "Error",
-        tapToRetry = "Tap to retry"
+        tapToRetry = "Tap to retry",
+        nextUp = "NEXT UP",
+        inProgress = "IN PROGRESS",
+        all = "All",
+        task = "Task",
+        habit = "Habit",
+        workout = "Workout",
+        meal = "Meal"
     )
 
     override val mainScaffoldTexts = MainScaffoldTexts(
-        routine = "Routine",
-        nutrition = "Nutrition",
-        weight = "Weight",
-        supplements = "Supplements",
-        activity = "Activity",
+        task = "Task",
+        habit = "Habit",
+        workout = "Workout",
+        meal = "Meal",
         others = "Others",
         dailySummary = "Daily summary",
         breakfast = "Breakfast",
@@ -176,5 +182,47 @@ data object English : AppLanguage {
             char(' ')
             dayOfMonth()
         }
+    )
+
+    override val datePickerTexts = DatePickerTexts(
+        title = "Select date",
+        cancel = "Cancel",
+        confirm = "Confirm",
+        pastDaysHint = "Past days are not available",
+    )
+
+    override val createItemSharedTexts = CreateItemSharedTexts(
+        fieldTitleLabel = "Title",
+        fieldTitlePlaceholder = "E.g. Buy groceries",
+        fieldDescriptionLabel = "Description (optional)",
+        fieldDescriptionPlaceholder = "Add a note...",
+        whenSectionTitle = "When?",
+        modeOnce = "Once",
+        modeRepeats = "Repeating",
+        daysRowTitle = "Days of the week",
+        fromDateLabel = "From",
+        toDateLabel = "Until",
+        noEndDate = "No end date",
+        hasEndDate = "Set end date",
+        noSpecificTime = "No specific time",
+        timeLabel = "Start time",
+        reminderLabel = "Reminder",
+        cancelButton = "Cancel",
+        confirmLabel = "Confirm",
+        cancelLabel = "Cancel",
+        retryLabel = "Retry",
+    )
+
+    override val createTaskTexts = CreateTaskTexts(
+        screenTitle = "New task",
+        typeBadge = "TASK",
+        saveButton = "Save task",
+        successTitle = "Task created successfully",
+        errorTitleEmpty = "Title can't be empty",
+        errorNoDate = "Select a date",
+        errorNoDays = "Select at least one day",
+        errorEndBeforeStart = "End date can't be before start date",
+        errorServer = "Server error, please try again",
+        errorNetwork = "No connection, check your internet",
     )
 }

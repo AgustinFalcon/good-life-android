@@ -8,6 +8,7 @@ import com.agusstkd.goodlife.presentation.screen.tabs.daily.DailyTabViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
+import com.agusstkd.goodlife.data.remote.api.daily.DailyApiService
 import com.agusstkd.goodlife.data.remote.datasource.DailyRemoteDataSource
 
 /**
@@ -32,7 +33,7 @@ val dailyModule = module {
      * DailyRemoteDataSource - Llamadas HTTP de daily logs.
      */
     factory {
-        DailyRemoteDataSource(apiService = get())
+        DailyRemoteDataSource(apiService = get<DailyApiService>())
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════════════

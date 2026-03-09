@@ -3,7 +3,7 @@ package com.agusstkd.goodlife.core.network
 import android.util.Log
 import com.agusstkd.goodlife.core.session.SessionEventBus
 import com.agusstkd.goodlife.core.storage.TokenManager
-import com.agusstkd.goodlife.data.remote.api.GoodLifeApiService
+import com.agusstkd.goodlife.data.remote.api.auth.AuthApiService
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -39,11 +39,12 @@ import okhttp3.Route
  * ```
  *
  * @param tokenManager Gestión de tokens JWT
- * @param apiService Lazy para romper dependencia circular con OkHttpClient/Retrofit
+ * @param authApiService Lazy para romper dependencia circular con OkHttpClient/Retrofit.
+ *                       Solo necesita [AuthApiService] porque el único endpoint que usa es refreshToken.
  */
 class GoodLifeAuthenticator(
     private val tokenManager: TokenManager,
-    private val apiService: Lazy<GoodLifeApiService>
+    private val authApiService: Lazy<AuthApiService>
 ) : Authenticator {
 
     private val refreshMutex = Mutex()
@@ -91,7 +92,7 @@ class GoodLifeAuthenticator(
                             .build()
                     }
 
-                    val result = apiService.value.refreshToken(
+                    val result = authApiService.value.refreshToken(
                         grantType = GRANT_TYPE_REFRESH,
                         refreshToken = refreshToken
                     )

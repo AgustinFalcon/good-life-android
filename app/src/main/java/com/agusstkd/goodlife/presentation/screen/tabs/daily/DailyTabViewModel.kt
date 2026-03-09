@@ -12,6 +12,8 @@ import com.agusstkd.goodlife.domain.usecase.daily.GetDailyItemsUseCase
 import com.agusstkd.goodlife.domain.usecase.daily.UpdateItemStatusUseCase
 import com.agusstkd.goodlife.domain.usecase.daily.result.GetDailyItemsResult
 import com.agusstkd.goodlife.domain.usecase.daily.result.UpdateItemStatusResult
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyFilter
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyItemHighlight
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.toUiModel
@@ -43,7 +45,7 @@ import kotlinx.datetime.plus
  *     ↓
  * DailyRepository.getDailyLog(date)
  *     ↓
- * DailyRemoteDataSource → GoodLifeApiService → Backend
+ * DailyRemoteDataSource → DailyApiService → Backend
  *     ↓
  * GetDailyItemsResult (subtipo semántico)
  *     ↓
@@ -78,6 +80,10 @@ class DailyTabViewModel(
         loadItems()
     }
 
+    fun refresh() {
+        loadItems()
+    }
+
     fun onAction(action: DailyUiAction) {
         when (action) {
             DailyUiAction.OnPreviousDay -> navigateToPreviousDay()
@@ -85,6 +91,14 @@ class DailyTabViewModel(
             DailyUiAction.OnRefresh -> loadItems()
             is DailyUiAction.OnItemClick -> navigateToDetail(action.itemId)
             is DailyUiAction.OnItemStatusChange -> updateItemStatus(action.itemId, action.newStatus)
+            is DailyUiAction.OnFilterChange -> filterItems(action.filter)
+        }
+    }
+
+    private fun filterItems(filter: DailyFilter) {
+        val currentState = _uiState.value
+        if (currentState is DailyUiState.Success) {
+            _uiState.value = currentState.copy(activeFilter = filter)
         }
     }
 
@@ -98,9 +112,11 @@ class DailyTabViewModel(
             _uiState.value = DailyUiState.Loading
 
             when (val result = getDailyItemsUseCase(currentDate)) {
-                is GetDailyItemsResult.Success      -> _uiState.value = buildSuccessState(result.dailyLog)
-                is GetDailyItemsResult.NotFound     -> showEmptyState()
-                is GetDailyItemsResult.ServerError  -> showServerError(result.message)
+                is GetDailyItemsResult.Success -> _uiState.value =
+                    buildSuccessState(result.dailyLog)
+
+                is GetDailyItemsResult.NotFound -> showEmptyState()
+                is GetDailyItemsResult.ServerError -> showServerError(result.message)
                 is GetDailyItemsResult.NetworkError -> showNetworkError()
             }
         }
@@ -123,9 +139,11 @@ class DailyTabViewModel(
             }
 
             when (val result = updateItemStatusUseCase(itemId, newStatus)) {
-                is UpdateItemStatusResult.Success      -> _uiState.value = buildSuccessState(result.dailyLog)
-                is UpdateItemStatusResult.NotFound     -> loadItems()
-                is UpdateItemStatusResult.ServerError  -> showServerError(result.message)
+                is UpdateItemStatusResult.Success -> _uiState.value =
+                    buildSuccessState(result.dailyLog)
+
+                is UpdateItemStatusResult.NotFound -> loadItems()
+                is UpdateItemStatusResult.ServerError -> showServerError(result.message)
                 is UpdateItemStatusResult.NetworkError -> showNetworkError()
             }
         }
@@ -154,6 +172,8 @@ class DailyTabViewModel(
      * @return [DailyUiState.Success] con datos listos para renderizar
      */
     private fun buildSuccessState(dailyLog: DailyLog): DailyUiState.Success {
+        val nextUpId: Long? =
+            dailyLog.items.firstOrNull { it.status == DailyItemStatus.PENDING }?.id
         return DailyUiState.Success(
             date = currentDate,
             dayNumber = currentDate.day,
@@ -162,9 +182,16 @@ class DailyTabViewModel(
             showFullDate = !isRelativeDate(currentDate),
             completionRate = dailyLog.completionRate,
             items = dailyLog.items.map { domainItem ->
-                domainItem.toUiModel(typeLabel = resolveTypeLabel(domainItem.type))
+                domainItem.toUiModel(
+                    typeLabel = resolveTypeLabel(domainItem.type),
+                    highlight = when {
+                        domainItem.status == DailyItemStatus.IN_PROGRESS -> DailyItemHighlight.IN_PROGRESS
+                        domainItem.id == nextUpId -> DailyItemHighlight.NEXT_UP
+                        else -> DailyItemHighlight.NONE
+                    }
+                )
             },
-            isRefreshing = false
+            isRefreshing = false,
         )
     }
 
@@ -186,10 +213,10 @@ class DailyTabViewModel(
         val tomorrow = dateProvider.tomorrow()
 
         return when (date) {
-            today     -> language.relativeTexts.today
+            today -> language.relativeTexts.today
             yesterday -> language.relativeTexts.yesterday
-            tomorrow  -> language.relativeTexts.tomorrow
-            else      -> date.format(language.formats.dayNameAndDate)
+            tomorrow -> language.relativeTexts.tomorrow
+            else -> date.format(language.formats.dayNameAndDate)
                 .replaceFirstChar { it.uppercase() }
         }
     }
@@ -197,10 +224,10 @@ class DailyTabViewModel(
     private fun resolveTypeLabel(type: DailyItemType): String {
         val labels = language.dailyItemLabels
         return when (type) {
-            DailyItemType.TASK    -> labels.task
-            DailyItemType.HABIT   -> labels.habit
+            DailyItemType.TASK -> labels.task
+            DailyItemType.HABIT -> labels.habit
             DailyItemType.WORKOUT -> labels.workout
-            DailyItemType.MEAL    -> labels.meal
+            DailyItemType.MEAL -> labels.meal
         }
     }
 

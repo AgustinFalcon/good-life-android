@@ -1,5 +1,14 @@
 package com.agusstkd.goodlife.presentation.screen.main
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckBox
+import androidx.compose.material.icons.filled.Dining
+import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.material.icons.filled.LocalDining
+import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material.icons.filled.WbSunny
 import androidx.lifecycle.ViewModel
 import com.agusstkd.goodlife.core.datetime.DateProvider
 import com.agusstkd.goodlife.core.datetime.language.AppLanguage
@@ -8,30 +17,33 @@ import com.agusstkd.goodlife.presentation.components.bottom.model.getDefaultBott
 import com.agusstkd.goodlife.presentation.components.modal.model.MealOptionItem
 import com.agusstkd.goodlife.presentation.components.modal.model.QuickActionItem
 import com.agusstkd.goodlife.presentation.components.modal.model.QuickActionType
+import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
+import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
 import com.agusstkd.goodlife.presentation.screen.main.model.MainScaffoldUiAction
 import com.agusstkd.goodlife.presentation.screen.main.model.MainScaffoldUiState
 import com.agusstkd.goodlife.presentation.theme.EmeraldGreen
 import com.agusstkd.goodlife.presentation.theme.InfoBlue
-import com.agusstkd.goodlife.presentation.theme.LightGreen
 import com.agusstkd.goodlife.presentation.theme.SuccessGreen
 import com.agusstkd.goodlife.presentation.theme.WarningOrange
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DirectionsRun
-import androidx.compose.material.icons.filled.FitnessCenter
-import androidx.compose.material.icons.filled.LocalDining
-import androidx.compose.material.icons.filled.Medication
-import androidx.compose.material.icons.filled.MonitorWeight
-import androidx.compose.material.icons.filled.MoreHoriz
-import androidx.compose.material.icons.filled.WbSunny
-import androidx.compose.material.icons.filled.Dining
 import kotlinx.datetime.format
 
+/**
+ * ViewModel del MainScaffold.
+ *
+ * Gestiona el estado del bottom navigation, modal de acciones rápidas
+ * y la navegación a las pantallas de creación.
+ *
+ * @param navigationController Controlador de navegación para flujos de creación.
+ * @param dateProvider Proveedor de fechas para el header del modal.
+ * @param language Textos localizados de la aplicación.
+ */
 class MainScaffoldViewModel(
+    private val navigationController: ComposeNavigationController,
     private val dateProvider: DateProvider,
-    private val language: AppLanguage
+    private val language: AppLanguage,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -63,6 +75,7 @@ class MainScaffoldViewModel(
             }
             is MainScaffoldUiAction.OnQuickActionClick -> {
                 _uiState.value = current.copy(isModalOpen = false)
+                navigateToQuickAction(action.action)
             }
             is MainScaffoldUiAction.OnMealOptionClick -> {
                 _uiState.value = current.copy(isModalOpen = false)
@@ -70,15 +83,27 @@ class MainScaffoldViewModel(
         }
     }
 
+    /**
+     * Navega a la pantalla de creación según el tipo de acción rápida seleccionada.
+     */
+    private fun navigateToQuickAction(type: QuickActionType) {
+        when (type) {
+            QuickActionType.TASK -> navigationController.navigateTo(AppRoute.CreateTask)
+            QuickActionType.HABIT -> { /* TODO: NavigateTo CreateHabit */ }
+            QuickActionType.WORKOUT -> { /* TODO: NavigateTo CreateWorkout */ }
+            QuickActionType.MEAL -> { /* TODO: NavigateTo CreateMeal */ }
+            QuickActionType.OTHER -> { /* TODO: NavigateTo Other */ }
+        }
+    }
+
     private fun buildQuickActions(): List<QuickActionItem> {
         val t = language.mainScaffoldTexts
         return listOf(
-            QuickActionItem(QuickActionType.ROUTINE, t.routine, Icons.Default.FitnessCenter, SuccessGreen),
-            QuickActionItem(QuickActionType.NUTRITION, t.nutrition, Icons.Default.LocalDining, WarningOrange),
-            QuickActionItem(QuickActionType.WEIGHT, t.weight, Icons.Default.MonitorWeight, InfoBlue),
-            QuickActionItem(QuickActionType.SUPPLEMENTS, t.supplements, Icons.Default.Medication, EmeraldGreen),
-            QuickActionItem(QuickActionType.ACTIVITY, t.activity, Icons.Default.DirectionsRun, LightGreen),
-            QuickActionItem(QuickActionType.OTHER, t.others, Icons.Default.MoreHoriz, WarningOrange)
+            QuickActionItem(QuickActionType.TASK, t.task, Icons.Default.CheckBox, SuccessGreen),
+            QuickActionItem(QuickActionType.HABIT, t.habit, Icons.Default.Repeat, InfoBlue),
+            QuickActionItem(QuickActionType.WORKOUT, t.workout, Icons.Default.FitnessCenter, EmeraldGreen),
+            QuickActionItem(QuickActionType.MEAL, t.meal, Icons.Default.Restaurant, WarningOrange),
+            QuickActionItem(QuickActionType.OTHER, t.others, Icons.Default.MoreHoriz, WarningOrange),
         )
     }
 

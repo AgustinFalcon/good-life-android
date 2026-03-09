@@ -1,13 +1,14 @@
 package com.agusstkd.goodlife.di
 
-import com.agusstkd.goodlife.core.network.ApiServiceFactory
 import com.agusstkd.goodlife.core.network.GoodLifeAuthenticator
 import com.agusstkd.goodlife.core.network.GoodLifeInterceptor
 import com.agusstkd.goodlife.core.network.JsonSerializerFactory
 import com.agusstkd.goodlife.core.network.OkHttpClientFactory
 import com.agusstkd.goodlife.core.network.RetrofitFactory
 import com.agusstkd.goodlife.core.storage.TokenManager
-import com.agusstkd.goodlife.data.remote.api.GoodLifeApiService
+import com.agusstkd.goodlife.data.remote.api.auth.AuthApiService
+import com.agusstkd.goodlife.data.remote.api.daily.DailyApiService
+import com.agusstkd.goodlife.data.remote.api.task.TaskApiService
 import kotlinx.serialization.json.Json
 import okhttp3.Authenticator
 import okhttp3.OkHttpClient
@@ -20,21 +21,27 @@ import retrofit2.Retrofit
  * Módulo de Koin para configuración de red.
  *
  * Provee:
- * - TokenManager: Gestión de tokens JWT
- * - Json: Serializador Kotlinx
- * - OkHttpClient: Cliente HTTP con interceptors
- * - Retrofit: Cliente REST
- * - GoodLifeApiService: Interface de API
+ * - [TokenManager]: Gestión de tokens JWT
+ * - [Json]: Serializador Kotlinx
+ * - [GoodLifeInterceptor]: Interceptor de autenticación (Bearer token)
+ * - [GoodLifeAuthenticator]: Refresh automático en 401
+ * - [OkHttpClient]: Cliente HTTP con interceptors
+ * - [Retrofit]: Cliente REST
+ * - [AuthApiService]: Endpoints de Auth (login, refreshToken, register)
+ * - [DailyApiService]: Endpoints de Daily (getDailyLog, updateItemStatus)
+ * - [TaskApiService]: Endpoints de Task (createTask)
  *
- * Las factories están en clases separadas para:
- * - Mayor testabilidad
- * - Reutilización
- * - Separación de responsabilidades
+ * ## Cómo agregar un nuevo service
+ * ```kotlin
+ * single<WorkoutsApiService> {
+ *     get<Retrofit>().create(WorkoutsApiService::class.java)
+ * }
+ * ```
+ * No es necesario tocar nada más — Retrofit reutiliza el mismo [OkHttpClient].
  *
  * @see JsonSerializerFactory
  * @see OkHttpClientFactory
  * @see RetrofitFactory
- * @see ApiServiceFactory
  */
 val networkModule = module {
 
@@ -54,10 +61,6 @@ val networkModule = module {
     // JSON SERIALIZER
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
-    /**
-     * Configuración de Kotlinx Serialization.
-     * Usa JsonSerializerFactory para la creación.
-     */
     single<Json> {
         JsonSerializerFactory.create()
     }
@@ -68,7 +71,7 @@ val networkModule = module {
 
     /**
      * Interceptor de autenticación.
-     * Añade Bearer token a requests privados.
+     * Añade Bearer token a todos los requests privados.
      */
     single<GoodLifeInterceptor> {
         GoodLifeInterceptor(tokenManager = get())
@@ -76,7 +79,6 @@ val networkModule = module {
 
     /**
      * Interceptor de logging (solo para debug).
-     * Usa OkHttpClientFactory para la creación.
      */
     single<HttpLoggingInterceptor> {
         OkHttpClientFactory.createLoggingInterceptor()
@@ -87,14 +89,15 @@ val networkModule = module {
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
     /**
-     * Authenticator como singleton (registrado por interfaz para que Koin lo resuelva).
-     * Usa inject() (Lazy) para romper dependencia circular:
-     * OkHttpClient → Authenticator → ApiService → Retrofit → OkHttpClient
+     * GoodLifeAuthenticator — refresh automático de access token en 401.
+     *
+     * Usa inject() (Lazy<AuthApiService>) para romper la dependencia circular:
+     * OkHttpClient → Authenticator → AuthApiService → Retrofit → OkHttpClient
      */
     single<Authenticator> {
         GoodLifeAuthenticator(
             tokenManager = get(),
-            apiService = inject()
+            authApiService = inject()
         )
     }
 
@@ -102,9 +105,6 @@ val networkModule = module {
     // OKHTTP CLIENT
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
-    /**
-     * OkHttpClient configurado con interceptors y authenticator.
-     */
     single<OkHttpClient> {
         OkHttpClientFactory.create(
             authInterceptor = get(),
@@ -117,10 +117,6 @@ val networkModule = module {
     // RETROFIT
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
-    /**
-     * Retrofit configurado.
-     * Usa RetrofitFactory para la creación.
-     */
     single<Retrofit> {
         RetrofitFactory.create(
             okHttpClient = get(),
@@ -129,14 +125,31 @@ val networkModule = module {
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════════════
-    // API SERVICE
+    // API SERVICES
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
     /**
-     * GoodLifeApiService - Interface principal de API.
-     * Usa ApiServiceFactory para la creación.
+     * AuthApiService — endpoints de autenticación.
+     * Usado por [com.agusstkd.goodlife.data.remote.datasource.AuthRemoteDataSource]
+     * y por [GoodLifeAuthenticator] (via Lazy para el refresh token).
      */
-    single<GoodLifeApiService> {
-        ApiServiceFactory.createGoodLifeApiService(retrofit = get())
+    single<AuthApiService> {
+        get<Retrofit>().create(AuthApiService::class.java)
+    }
+
+    /**
+     * DailyApiService — endpoints del módulo Daily.
+     * Usado por [com.agusstkd.goodlife.data.remote.datasource.DailyRemoteDataSource].
+     */
+    single<DailyApiService> {
+        get<Retrofit>().create(DailyApiService::class.java)
+    }
+
+    /**
+     * TaskApiService — endpoints del módulo Task.
+     * Usado por [com.agusstkd.goodlife.data.remote.datasource.TaskRemoteDataSource].
+     */
+    single<TaskApiService> {
+        get<Retrofit>().create(TaskApiService::class.java)
     }
 }

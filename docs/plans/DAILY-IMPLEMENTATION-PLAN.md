@@ -41,42 +41,50 @@ DailyScreen → DailyTabViewModel → GetDailyItemsUseCase → DailyRepository �
 
 ## ✅ Checklist de FASE 1
 
-### Paso 1: Domain Layer (30 min)
-- [ ] Crear `domain/model/daily/DailyLog.kt`
-- [ ] Crear `domain/model/daily/DailyItem.kt`
-- [ ] Crear `domain/model/daily/DailyItemType.kt`
-- [ ] Crear `domain/model/daily/ItemStatus.kt`
-- [ ] Crear `domain/repository/DailyRepository.kt`
-- [ ] Crear `domain/usecase/daily/GetDailyItemsUseCase.kt`
-- [ ] Crear `domain/usecase/daily/UpdateItemStatusUseCase.kt`
+### Paso 1: Domain Layer ✅
+- [x] Crear `domain/model/daily/DailyLog.kt`
+- [x] Crear `domain/model/daily/DailyItem.kt`
+- [x] Crear `domain/model/daily/DailyItemType.kt`
+- [x] Crear `domain/model/daily/DailyItemStatus.kt`
+- [x] Crear `domain/repository/DailyRepository.kt`
+- [x] Crear `domain/usecase/daily/GetDailyItemsUseCase.kt` — retorna `GetDailyItemsResult` (Option B)
+- [x] Crear `domain/usecase/daily/UpdateItemStatusUseCase.kt` — retorna `UpdateItemStatusResult` (Option B)
+- [x] Crear `domain/usecase/daily/result/GetDailyItemsResult.kt`
+- [x] Crear `domain/usecase/daily/result/UpdateItemStatusResult.kt`
 
-### Paso 2: Data Layer - DTOs (30 min)
-- [ ] Crear `data/remote/dto/response/DailyLogDto.kt`
-- [ ] Crear `data/remote/dto/response/DailyLogItemDto.kt`
-- [ ] Crear `data/remote/dto/response/TaskSummaryDto.kt`
-- [ ] Crear `data/remote/dto/response/HabitLogSummaryDto.kt`
-- [ ] Crear `data/remote/mapper/DailyLogMapper.kt`
-- [ ] Agregar endpoints en `GoodLifeApiService.kt`
+### Paso 2: Data Layer - DTOs ✅
+- [x] Crear `data/remote/dto/response/DailyLogDto.kt`
+- [x] Crear `data/remote/dto/response/DailyLogItemDto.kt`
+- [x] Crear `data/remote/dto/response/TaskSummaryDto.kt`
+- [x] Crear `data/remote/dto/response/HabitLogSummaryDto.kt`
+- [x] Crear `data/remote/mapper/DailyLogMapper.kt`
+- [x] Endpoints en `DailyApiService.kt` (GoodLifeApiService fue splitteada)
 
-### Paso 3: Repository (20 min)
-- [ ] Crear `data/repository/DailyRepositoryImpl.kt` (sin Room)
+### Paso 3: Repository ✅
+- [x] Crear `data/repository/DailyRepositoryImpl.kt`
 
-### Paso 4: Presentation (30 min)
-- [ ] Actualizar `DailyUiState.kt` (Success/Error/Loading)
-- [ ] Actualizar `DailyUiAction.kt`
-- [ ] Actualizar `DailyTabViewModel.kt`
-- [ ] Actualizar `DailyScreen.kt` con LazyColumn
-- [ ] Crear `DailyItemCard.kt`
+### Paso 4: Presentation ✅
+- [x] `DailyUiState.kt` — Success / Empty / Error / Loading + DailyItemHighlight enum
+- [x] `DailyUiAction.kt`
+- [x] `DailyTabViewModel.kt` — buildSuccessState con highlight logic
+- [x] `DailyScreen.kt` con LazyColumn
+- [x] `DailyItemCard.kt` — diseño completo con badge straddling, colores por tipo, toggle status
 
-### Paso 5: DI (15 min)
-- [ ] Crear `di/DailyModule.kt`
-- [ ] Registrar en `GoodLifeApp.kt`
+### Paso 5: DI ✅
+- [x] `di/DailyModule.kt`
+- [x] Registrado en `GoodLifeApp.kt`
 
-### Paso 6: Testing (15 min)
-- [ ] Probar con internet
+### Paso 6: Testing con API Real ⏸️ Pendiente
+- [ ] Conectar con backend real (actualmente usa datos de preview)
 - [ ] Verificar carga de datos
 - [ ] Verificar navegación entre días
 - [ ] Verificar actualización de status
+
+### Extras completados (no estaban en el plan original)
+- [x] `DailyTexts.nextUp` y `DailyTexts.inProgress` en los 3 idiomas
+- [x] `DailyItemStyle.iconCircleBackground` — paleta refinada según spec de diseño
+- [x] Badge highlight a caballo del borde: `Box.padding(top) + badge.offset(y = -halfHeight)`
+- [x] `HighlightBadge` extraído como composable privado reutilizable
 
 ---
 
@@ -1379,5 +1387,5 @@ Implementa FASE 2 cuando:
 ---
 
 **Autor:** GoodLife Development Team  
-**Fecha:** 2026-02-05  
-**Estado:** 📋 FASE 1 lista para implementar
+**Fecha creación:** 2026-02-05 | **Última actualización:** 2026-02-24  
+**Estado:** ✅ FASE 1 completada — pendiente conectar con API real

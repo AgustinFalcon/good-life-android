@@ -25,11 +25,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Dining
-import androidx.compose.material.icons.filled.DirectionsRun
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.LocalDining
-import androidx.compose.material.icons.filled.Medication
-import androidx.compose.material.icons.filled.MonitorWeight
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.HorizontalDivider
@@ -264,12 +261,11 @@ private fun AddActionModalPreview() {
         isVisible = true,
         dateFormatted = "Hoy, 28 de enero de 2026",
         quickActions = listOf(
-            QuickActionItem(QuickActionType.ROUTINE, "Rutina", Icons.Default.FitnessCenter, Color(0xFF4CAF50)),
-            QuickActionItem(QuickActionType.NUTRITION, "Alimentación", Icons.Default.LocalDining, Color(0xFFFF9800)),
-            QuickActionItem(QuickActionType.WEIGHT, "Peso", Icons.Default.MonitorWeight, Color(0xFF2196F3)),
-            QuickActionItem(QuickActionType.SUPPLEMENTS, "Suplementos", Icons.Default.Medication, Color(0xFF9C27B0)),
-            QuickActionItem(QuickActionType.ACTIVITY, "Actividad", Icons.Default.DirectionsRun, Color(0xFFE91E63)),
-            QuickActionItem(QuickActionType.OTHER, "Otros", Icons.Default.MoreHoriz, Color(0xFF607D8B))
+            QuickActionItem(QuickActionType.TASK, "Tarea", Icons.Default.FitnessCenter, Color(0xFF4CAF50)),
+            QuickActionItem(QuickActionType.HABIT, "Hábito", Icons.Default.LocalDining, Color(0xFF2196F3)),
+            QuickActionItem(QuickActionType.WORKOUT, "Rutina", Icons.Default.FitnessCenter, Color(0xFF4CAF50)),
+            QuickActionItem(QuickActionType.MEAL, "Comida", Icons.Default.LocalDining, Color(0xFFFF9800)),
+            QuickActionItem(QuickActionType.OTHER, "Otros", Icons.Default.MoreHoriz, Color(0xFF607D8B)),
         ),
         mealOptions = listOf(
             MealOptionItem(null, "Resumen diario", Icons.Default.WbSunny),

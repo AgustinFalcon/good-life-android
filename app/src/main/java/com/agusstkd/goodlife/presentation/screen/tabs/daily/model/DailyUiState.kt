@@ -1,6 +1,7 @@
 package com.agusstkd.goodlife.presentation.screen.tabs.daily.model
 
 import androidx.compose.runtime.Stable
+import com.agusstkd.goodlife.domain.model.daily.DailyItem
 import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 import com.agusstkd.goodlife.domain.model.daily.DailyItemType
 import kotlinx.datetime.LocalDate
@@ -77,8 +78,20 @@ sealed interface DailyUiState {
         val showFullDate: Boolean,
         val completionRate: Double,
         val items: List<DailyItemUiModel>,
-        val isRefreshing: Boolean = false
-    ) : DailyUiState
+        val isRefreshing: Boolean = false,
+        val activeFilter: DailyFilter = DailyFilter.ALL,
+    ) : DailyUiState {
+
+        /**
+         * Items visibles según el filtro activo.
+         * Se recalcula automáticamente cuando cambia activeFilter o items.
+         */
+        val filteredItems: List<DailyItemUiModel>
+            get() = when (activeFilter) {
+                DailyFilter.ALL -> items
+                else -> items.filter { it.type == activeFilter.toItemType() }
+            }
+    }
 
     /**
      * Estado de error técnico (red o servidor).
@@ -113,6 +126,7 @@ data class DailyItemUiModel(
     val description: String?,
     val scheduledTime: String?,
     val status: DailyItemStatus,
+    val highlight: DailyItemHighlight = DailyItemHighlight.NONE,
 )
 
 /**
@@ -123,7 +137,7 @@ data class DailyItemUiModel(
  * (el mapeo Response→Domain se hizo en el Repository).
  * Este método solo formatea la hora para la UI.
  */
-fun com.agusstkd.goodlife.domain.model.daily.DailyItem.toUiModel(typeLabel: String): DailyItemUiModel {
+fun DailyItem.toUiModel(typeLabel: String, highlight: DailyItemHighlight = DailyItemHighlight.NONE): DailyItemUiModel {
     return DailyItemUiModel(
         id = id,
         type = type,
@@ -133,6 +147,9 @@ fun com.agusstkd.goodlife.domain.model.daily.DailyItem.toUiModel(typeLabel: Stri
             "${it.hour}:${it.minute.toString().padStart(2, '0')}"
         },
         status = status,
-        typeLabel = typeLabel
+        typeLabel = typeLabel,
+        highlight = highlight
     )
 }
+
+enum class DailyItemHighlight { NONE, NEXT_UP, IN_PROGRESS }

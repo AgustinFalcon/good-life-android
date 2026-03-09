@@ -3,7 +3,6 @@ package com.agusstkd.goodlife.core.datetime.language
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format.DayOfWeekNames
 import kotlinx.datetime.format.MonthNames
-import kotlinx.datetime.format.char
 
 data object Portuguese : AppLanguage {
 
@@ -78,15 +77,21 @@ data object Portuguese : AppLanguage {
         noPermissions = "Sem permissões",
         invalidRequest = "Solicitação inválida",
         error = "Erro",
-        tapToRetry = "Toque para tentar novamente"
+        tapToRetry = "Toque para tentar novamente",
+        nextUp = "PRÓXIMO",
+        inProgress = "EM ANDAMENTO",
+        all = "Todos",
+        task = "Tarefa",
+        habit = "Hábito",
+        workout = "Treino",
+        meal = "Refeição"
     )
 
     override val mainScaffoldTexts = MainScaffoldTexts(
-        routine = "Rotina",
-        nutrition = "Alimentação",
-        weight = "Peso",
-        supplements = "Suplementos",
-        activity = "Atividade",
+        task = "Tarefa",
+        habit = "Hábito",
+        workout = "Treino",
+        meal = "Refeição",
         others = "Outros",
         dailySummary = "Resumo diário",
         breakfast = "Café da manhã",
@@ -176,5 +181,47 @@ data object Portuguese : AppLanguage {
             chars(" de ")
             monthName(monthNames)
         }
+    )
+
+    override val datePickerTexts = DatePickerTexts(
+        title = "Selecionar data",
+        cancel = "Cancelar",
+        confirm = "Confirmar",
+        pastDaysHint = "Dias anteriores não estão disponíveis",
+    )
+
+    override val createItemSharedTexts = CreateItemSharedTexts(
+        fieldTitleLabel = "Título",
+        fieldTitlePlaceholder = "Ex: Comprar legumes",
+        fieldDescriptionLabel = "Descrição (opcional)",
+        fieldDescriptionPlaceholder = "Adicione uma nota...",
+        whenSectionTitle = "Quando?",
+        modeOnce = "Uma vez",
+        modeRepeats = "Repetir",
+        daysRowTitle = "Dias da semana",
+        fromDateLabel = "De",
+        toDateLabel = "Até",
+        noEndDate = "Sem data de fim",
+        hasEndDate = "Com data de fim",
+        noSpecificTime = "Sem hora específica",
+        timeLabel = "Hora de início",
+        reminderLabel = "Lembrete",
+        cancelButton = "Cancelar",
+        confirmLabel = "Confirmar",
+        cancelLabel = "Cancelar",
+        retryLabel = "Tentar novamente",
+    )
+
+    override val createTaskTexts = CreateTaskTexts(
+        screenTitle = "Nova tarefa",
+        typeBadge = "TAREFA",
+        saveButton = "Salvar tarefa",
+        successTitle = "Tarefa criada com sucesso",
+        errorTitleEmpty = "O título não pode estar vazio",
+        errorNoDate = "Selecione uma data",
+        errorNoDays = "Selecione pelo menos um dia",
+        errorEndBeforeStart = "A data de fim não pode ser anterior ao início",
+        errorServer = "Erro do servidor, tente novamente",
+        errorNetwork = "Sem conexão, verifique sua internet",
     )
 }

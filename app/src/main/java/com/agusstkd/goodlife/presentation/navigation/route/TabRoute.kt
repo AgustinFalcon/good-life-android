@@ -25,6 +25,7 @@ sealed interface TabRoute {
     @Serializable
     data class DailyDetail(val taskId: Long) : TabRoute
 
+
     // ===== WORKOUTS TAB =====
 
     /** Lista de entrenamientos. */

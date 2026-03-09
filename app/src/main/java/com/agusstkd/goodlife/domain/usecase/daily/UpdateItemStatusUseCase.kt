@@ -53,7 +53,6 @@ class UpdateItemStatusUseCase(
                     )
                     else -> UpdateItemStatusResult.NetworkError
                 }
-                is Result.Loading -> UpdateItemStatusResult.NetworkError
             }
         }
     }

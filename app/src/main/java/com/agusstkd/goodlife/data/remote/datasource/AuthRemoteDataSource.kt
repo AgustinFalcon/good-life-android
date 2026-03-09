@@ -1,7 +1,7 @@
 package com.agusstkd.goodlife.data.remote.datasource
 
 import com.agusstkd.goodlife.core.result.Result
-import com.agusstkd.goodlife.data.remote.api.GoodLifeApiService
+import com.agusstkd.goodlife.data.remote.api.auth.AuthApiService
 import com.agusstkd.goodlife.data.remote.api.executeApiCall
 import com.agusstkd.goodlife.data.remote.dto.request.RegisterRequest
 import com.agusstkd.goodlife.data.remote.dto.response.AuthResponse
@@ -15,10 +15,10 @@ import com.agusstkd.goodlife.data.remote.dto.response.RegisterResponse
  * - Interpretar códigos de respuesta (code en BaseResponse)
  * - Convertir respuestas a Result<T>
  *
- * @param apiService Servicio Retrofit para las llamadas HTTP
+ * @param apiService Servicio Retrofit para las llamadas HTTP de autenticación
  */
 class AuthRemoteDataSource(
-    private val apiService: GoodLifeApiService
+    private val apiService: AuthApiService
 ) {
 
     /**

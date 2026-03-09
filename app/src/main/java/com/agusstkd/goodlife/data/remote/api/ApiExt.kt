@@ -15,7 +15,7 @@ import com.agusstkd.goodlife.data.remote.dto.response.BaseResponse
  *
  * ### ✅ CORRECTO (actual):
  * ```kotlin
- * class AuthRemoteDataSource(private val apiService: GoodLifeApiService) {
+ * class AuthRemoteDataSource(private val apiService: AuthApiService) {
  *     suspend fun login(...): Result<AuthResponse> {
  *         return executeApiCall { apiService.login(...) }
  *     }
@@ -30,11 +30,11 @@ import com.agusstkd.goodlife.data.remote.dto.response.BaseResponse
  *
  * ### ❌ INCORRECTO (BaseDataSource):
  * ```kotlin
- * abstract class BaseDataSource(private val apiService: GoodLifeApiService) {
+ * abstract class BaseDataSource(private val apiService: AuthApiService) {
  *     suspend fun <T> executeApiCall(...): Result<T> { ... }
  * }
  *
- * class AuthRemoteDataSource(apiService: GoodLifeApiService) : BaseDataSource(apiService) {
+ * class AuthRemoteDataSource(apiService: AuthApiService) : BaseDataSource(apiService) {
  *     suspend fun login(...): Result<AuthResponse> {
  *         return executeApiCall { apiService.login(...) }
  *     }

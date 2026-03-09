@@ -39,6 +39,7 @@ securityCrypto = "1.1.0"
 
 # DateTime (KMP-ready)
 kotlinxDatetime = "0.7.1"
+foundation = "1.10.4"
 
 [libraries]
 androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
@@ -64,8 +65,8 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 # Icons
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
 
-# Lottie
-lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
+# Lottie (Compose)
+lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 
 # Navigation
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
@@ -94,6 +95,7 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 
 # DateTime (KMP-ready)
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

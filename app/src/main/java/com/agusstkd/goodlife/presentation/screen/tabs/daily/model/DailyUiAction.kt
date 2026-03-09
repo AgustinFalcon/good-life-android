@@ -55,6 +55,13 @@ sealed interface DailyUiAction {
     data class OnItemClick(val itemId: Long) : DailyUiAction
 
     /**
+     * Usuario cambia el filtro activo (All / Task / Habit / Workout / Meal).
+     *
+     * @property filter Nuevo filtro seleccionado
+     */
+    data class OnFilterChange(val filter: DailyFilter): DailyUiAction
+
+    /**
      * Usuario cambia el status de un item (checkmark, skip, etc).
      *
      * @property itemId ID del item

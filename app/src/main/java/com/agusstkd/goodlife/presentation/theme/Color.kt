@@ -46,19 +46,21 @@ val EmeraldGreen = Color(0xFF50C878)
 
 
 /**
- * Colores que representan a cada TAREA en el daily item.
+ * Colores de fondo y acento para cada tipo de Daily Item.
+ * Paleta refinada según spec de diseño: fondos pastel ultra-claros,
+ * acentos saturados para textos e íconos.
  */
-val HabitBackground = Color(0xFFE8F5E9)
-val HabitAccent = Color(0xFF4CAF50)
+val HabitBackground = Color(0xFFF1F8E9)
+val HabitAccent     = Color(0xFF4CAF50)
 
-val WorkoutBackground = Color(0xFFFFEBEE)
-val WorkoutAccent = Color(0xFFFF5252)
+val WorkoutBackground = Color(0xFFFCE4EC)
+val WorkoutAccent     = Color(0xFFE91E63)
 
-val MealBackground = Color(0xFFFFF8E1)
-val MealAccent = Color(0xFFFFB300)
+val MealBackground = Color(0xFFFFF9E6)
+val MealAccent     = Color(0xFFA67C00)
 
 val TaskBackground = Color(0xFFE3F2FD)
-val TaskAccent = Color(0xFF2196F3)
+val TaskAccent     = Color(0xFF1976D2)
 
 val CompletionGreen = Color(0xFF2ECC71)
 
