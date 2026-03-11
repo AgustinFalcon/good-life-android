@@ -1,6 +1,6 @@
 package com.agusstkd.goodlife.data.remote.api.auth
 
-import com.agusstkd.goodlife.data.remote.dto.request.RegisterRequest
+import com.agusstkd.goodlife.data.remote.dto.request.auth.RegisterRequest
 import com.agusstkd.goodlife.data.remote.dto.response.AuthResponse
 import com.agusstkd.goodlife.data.remote.dto.response.BaseResponse
 import com.agusstkd.goodlife.data.remote.dto.response.RegisterResponse

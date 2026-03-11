@@ -2,7 +2,7 @@ package com.agusstkd.goodlife.data.remote.datasource
 
 import com.agusstkd.goodlife.data.remote.api.executeApiCall
 import com.agusstkd.goodlife.data.remote.api.task.TaskApiService
-import com.agusstkd.goodlife.data.remote.dto.request.CreateTaskRequest
+import com.agusstkd.goodlife.data.remote.dto.request.task.CreateTaskRequest
 import com.agusstkd.goodlife.data.remote.dto.response.task.TaskResponse
 import com.agusstkd.goodlife.core.result.Result
 

@@ -1,6 +1,6 @@
 package com.agusstkd.goodlife.data.remote.api.task
 
-import com.agusstkd.goodlife.data.remote.dto.request.CreateTaskRequest
+import com.agusstkd.goodlife.data.remote.dto.request.task.CreateTaskRequest
 import com.agusstkd.goodlife.data.remote.dto.response.BaseResponse
 import com.agusstkd.goodlife.data.remote.dto.response.task.TaskResponse
 import retrofit2.http.Body
