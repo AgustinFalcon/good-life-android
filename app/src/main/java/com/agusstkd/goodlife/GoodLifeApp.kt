@@ -8,6 +8,7 @@ import com.agusstkd.goodlife.di.dailyModule
 import com.agusstkd.goodlife.di.databaseModule
 import com.agusstkd.goodlife.di.networkModule
 import com.agusstkd.goodlife.di.habitModule
+import com.agusstkd.goodlife.di.routineModule
 import com.agusstkd.goodlife.di.taskModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -58,6 +59,7 @@ class GoodLifeApp : Application() {
                 dailyModule,
                 taskModule,
                 habitModule,
+                routineModule,
             )
         }
     }

@@ -8,10 +8,10 @@
 ## Roadmap General
 
 ```
-Fase 1: Create Habit Screen ◄── PRÓXIMO
+Fase 1: Create Habit Screen ✅ COMPLETADO
     │
     ▼
-Fase 2: Create Routine/Workout Screen
+Fase 2: Create Routine/Workout Screen ✅ COMPLETADO (SPEC-011)
     │
     ▼
 Fase 3: Create Meal Plan Screen

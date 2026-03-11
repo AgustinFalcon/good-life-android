@@ -1,6 +1,6 @@
 # Progreso de Implementación - GoodLife Android
 
-> Última actualización: 2026-03-09
+> Última actualización: 2026-03-11
 
 ---
 
@@ -24,13 +24,87 @@
 | **Infraestructura (EncryptedSP, ImmutableList, @Stable)** | ✅ Completado | 100% |
 | **Create Habit** | ✅ Completado | 100% |
 | **HabitLogSummaryDto fix + DTOs defensivos** | ✅ Completado | 100% |
-| Create Routine/Workout | ⏸️ Próximo | 0% |
+| **Create Routine (SPEC-011)** | ✅ Completado | 100% |
 | Create Meal Plan | ⏸️ Pendiente | 0% |
 | Workouts Tab | ⏸️ Pendiente | 0% |
 | Meals Tab | ⏸️ Pendiente | 0% |
 | More/Settings Tab | ⏸️ Pendiente | 0% |
 | SWR Fase 2 — Sync Offline (SPEC-006) | 📝 Planificado | 0% |
 | Notificaciones + Deep Links (SPEC-008) | 📝 Planificado | 0% |
+
+---
+
+## ✅ Sesión 2026-03-11 — Create Routine Screen (SPEC-011)
+
+### Resumen de la sesión
+
+Implementación completa del wizard multi-paso para crear rutinas de entrenamiento (SPEC-011).
+Incluye catálogo paginado de ejercicios del backend, configuración de sets por ejercicio,
+y activación opcional de rutina.
+
+### Archivos creados
+
+#### Domain Layer (8 archivos)
+- `domain/model/training/DifficultyLevel.kt` — enum
+- `domain/model/training/GoalType.kt` — enum
+- `domain/model/training/MuscleGroup.kt` — modelo de grupo muscular
+- `domain/model/training/ExerciseMaster.kt` — modelo de ejercicio del catálogo
+- `domain/model/training/Routine.kt` — modelo completo con Workout/WorkoutExercise/WorkoutSet
+- `domain/model/training/RoutineDraft.kt` — modelos draft (WorkoutDraft/ExerciseDraft/SetDraft)
+- `domain/repository/TrainingCatalogRepository.kt` — interface catálogo
+- `domain/repository/RoutineRepository.kt` — interface rutinas
+- `domain/usecase/routine/` — 4 UseCases + 4 Result types
+- `core/pagination/PageResult.kt` — genérico reutilizable para paginación
+
+#### Data Layer (8 archivos)
+- `data/remote/api/training/TrainingCatalogApiService.kt` — Retrofit GET endpoints
+- `data/remote/api/training/RoutineApiService.kt` — Retrofit POST/PATCH endpoints
+- `data/remote/dto/request/routine/CreateRoutineRequest.kt` — DTOs anidados de request
+- `data/remote/dto/response/training/` — 4 archivos de DTOs defensivos con mappers
+- `data/remote/datasource/TrainingCatalogRemoteDataSource.kt`
+- `data/remote/datasource/RoutineRemoteDataSource.kt`
+- `data/repository/TrainingCatalogRepositoryImpl.kt`
+- `data/repository/RoutineRepositoryImpl.kt`
+
+#### Presentation Layer (10 archivos)
+- `presentation/screen/add/routine/model/CreateRoutineUiState.kt` — @Stable, 4 pasos wizard
+- `presentation/screen/add/routine/model/CreateRoutineUiAction.kt` — sealed interface
+- `presentation/screen/add/routine/CreateRoutineViewModel.kt` — 4 UseCases, paginación
+- `presentation/screen/add/routine/CreateRoutineScreen.kt` — AnimatedContent orchestrador
+- `presentation/screen/add/routine/CreateRoutineScreenOwner.kt` — DI + dialogs + bottom sheets
+- `presentation/screen/add/routine/steps/RoutineInfoStep.kt` — Paso 1
+- `presentation/screen/add/routine/steps/WorkoutsStep.kt` — Paso 2
+- `presentation/screen/add/routine/steps/WorkoutExercisesStep.kt` — Paso 3 con scroll infinito
+- `presentation/screen/add/routine/steps/RoutineSummaryStep.kt` — Paso 4
+- `presentation/screen/add/routine/steps/PreviewHelpers.kt` — textos mock para @Preview
+
+#### DI + Navigation + Localización
+- `di/RoutineModule.kt` — DataSources, Repositories, UseCases, ViewModel
+- `NetworkModule.kt` — TrainingCatalogApiService + RoutineApiService
+- `AppRoute.CreateRoutine` — nueva ruta
+- `AppGraph` — composable con CreateRoutineScreenOwner
+- `MainScaffoldViewModel` — FAB Workout → CreateRoutine
+- `CreateRoutineTexts` en UiTexts.kt + Spanish/English/Portuguese
+
+#### Tests (4 archivos)
+- `fake/FakeRoutineRepository.kt`
+- `fake/FakeTrainingCatalogRepository.kt`
+- `domain/usecase/routine/CreateRoutineUseCaseTest.kt` — 11 tests
+- `presentation/screen/add/routine/CreateRoutineViewModelTest.kt` — 25 tests
+
+### Decisiones técnicas
+
+1. **Wizard con AnimatedContent**: Slide horizontal entre pasos, manejado por un único ViewModel
+2. **DTOs defensivos**: Todos los campos nullable con defaults para evitar crashes por cambios del backend
+3. **PageResult genérico**: Movido a `core/pagination/` para reutilización en WorkoutsTab y otros módulos
+4. **Draft models**: WorkoutDraft/ExerciseDraft/SetDraft en domain — representan datos pre-persistencia
+5. **Scroll infinito**: LazyColumn detecta fin de lista y carga más ejercicios automáticamente
+6. **SetEditorBottomSheet**: Editor de sets con mutableStateListOf local antes de confirmar
+
+### Pendiente (próxima iteración)
+
+- Implementar lógica de `activateRoutineUseCase` tras creación exitosa cuando el toggle está activado
+- Pantalla de detalle de item (UpdateItemStatus) para registrar progreso gradual de habits
 
 ---
 
@@ -458,7 +532,7 @@ Se hicieron defensivos `WorkoutSummaryDto` y `MealSummaryDto` — todos los camp
 
 ### Corto plazo
 
-1. **Create Routine/Workout Screen** — wizard multi-paso con paginado de ejercicios del backend. Componente de búsqueda de ejercicios reutilizable para WorkoutsTab
+1. **Activate Routine + UpdateItemStatus** — lógica de activar rutina post-creación + pantalla de detalle/progreso de items
 2. **Create Meal Plan Screen** — ingredientes + macros + scheduling
 3. **Pantalla de detalle de item** — tocar card en DailyScreen abre detalle (para habits: registrar progreso parcial, para tasks: ver descripción completa + confirmar)
 
@@ -484,5 +558,6 @@ Se hicieron defensivos `WorkoutSummaryDto` y `MealSummaryDto` — todos los camp
 - [SPEC-007: AppLanguage](./specs/SPEC-007-app-language.md)
 - [SPEC-008: Notificaciones + Deep Links](./specs/SPEC-008-notifications-deeplinks.md)
 - [SPEC-010: Create Task Screen](./specs/SPEC-010-create-task-screen.md)
+- [SPEC-011: Create Routine Screen](./specs/SPEC-011-create-routine-screen.md)
 - [ARCHITECTURE.md](./ARCHITECTURE.md)
 - [DAILY-IMPLEMENTATION-PLAN](./plans/DAILY-IMPLEMENTATION-PLAN.md)

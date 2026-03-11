@@ -36,4 +36,8 @@ sealed interface AppRoute {
     /** Formulario de creación de hábito recurrente con meta numérica. */
     @Serializable
     data object CreateHabit : AppRoute
+
+    /** Wizard multi-paso para crear una rutina de entrenamiento. */
+    @Serializable
+    data object CreateRoutine : AppRoute
 }

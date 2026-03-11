@@ -10,6 +10,8 @@ import com.agusstkd.goodlife.data.remote.api.auth.AuthApiService
 import com.agusstkd.goodlife.data.remote.api.daily.DailyApiService
 import com.agusstkd.goodlife.data.remote.api.habit.HabitApiService
 import com.agusstkd.goodlife.data.remote.api.task.TaskApiService
+import com.agusstkd.goodlife.data.remote.api.training.RoutineApiService
+import com.agusstkd.goodlife.data.remote.api.training.TrainingCatalogApiService
 import kotlinx.serialization.json.Json
 import okhttp3.Authenticator
 import okhttp3.OkHttpClient
@@ -156,5 +158,13 @@ val networkModule = module {
 
     single<HabitApiService> {
         get<Retrofit>().create(HabitApiService::class.java)
+    }
+
+    single<TrainingCatalogApiService> {
+        get<Retrofit>().create(TrainingCatalogApiService::class.java)
+    }
+
+    single<RoutineApiService> {
+        get<Retrofit>().create(RoutineApiService::class.java)
     }
 }

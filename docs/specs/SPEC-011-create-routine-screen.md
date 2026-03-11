@@ -1,8 +1,8 @@
 # SPEC-011 — Create Routine Screen (Android)
 
 **Versión:** 1.0  
-**Estado:** 📝 Planificado  
-**Última actualización:** 09 de Marzo, 2026  
+**Estado:** ✅ Implementado  
+**Última actualización:** 11 de Marzo, 2026  
 **Relacionado con:** backend `training.spec.md`, mockups en `assets/`
 
 ---
@@ -816,4 +816,10 @@ val routineModule = module {
 
 ---
 
-*Spec creado el 09/03/2026.*
+*Spec creado el 09/03/2026. Implementado el 11/03/2026.*
+
+### Nota de implementación
+
+- La lógica de `activateRoutineUseCase` post-creación (cuando el toggle está activado en el paso 4) queda pendiente para la próxima iteración.
+- El toggle ya existe en la UI (`RoutineSummaryStep`) y el UseCase está creado (`ActivateRoutineUseCase`), solo falta conectar en `submitRoutine()`.
+- Se usó `ButtonVariant.OUTLINE` para los botones "Atrás" (no existía `SECONDARY`).

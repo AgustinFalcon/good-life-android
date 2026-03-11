@@ -92,7 +92,7 @@ class MainScaffoldViewModel(
         when (type) {
             QuickActionType.TASK -> navigationController.navigateTo(AppRoute.CreateTask)
             QuickActionType.HABIT -> navigationController.navigateTo(AppRoute.CreateHabit)
-            QuickActionType.WORKOUT -> { /* TODO: NavigateTo CreateWorkout */ }
+            QuickActionType.WORKOUT -> navigationController.navigateTo(AppRoute.CreateRoutine)
             QuickActionType.MEAL -> { /* TODO: NavigateTo CreateMeal */ }
             QuickActionType.OTHER -> { /* TODO: NavigateTo Other */ }
         }
