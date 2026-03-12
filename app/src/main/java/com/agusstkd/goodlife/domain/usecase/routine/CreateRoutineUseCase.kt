@@ -80,7 +80,7 @@ class CreateRoutineUseCase(
             )
 
             when (result) {
-                is Result.Success -> CreateRoutineResult.Success
+                is Result.Success -> CreateRoutineResult.Success(routineId = result.data.id)
                 is Result.Error -> when (val ex = result.exception) {
                     is ApiException.BadRequestException -> CreateRoutineResult.ValidationError(ex.message)
                     is ApiException.ServerException -> CreateRoutineResult.ServerError(ex.message)

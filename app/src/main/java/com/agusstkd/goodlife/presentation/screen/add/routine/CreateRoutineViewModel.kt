@@ -386,7 +386,25 @@ class CreateRoutineViewModel(
 
             when (result) {
                 is CreateRoutineResult.Success -> {
-                    _uiState.update { it.copy(isLoading = false, isSuccess = true) }
+                    if (state.activateOnCreate) {
+                        // Activar la rutina recién creada
+                        val activateResult = activateRoutineUseCase(result.routineId)
+                        when (activateResult) {
+                            is ActivateRoutineResult.Success -> {
+                                _uiState.update { it.copy(isLoading = false, isSuccess = true) }
+                            }
+                            is ActivateRoutineResult.ServerError -> {
+                                _uiState.update { it.copy(isLoading = false, errorMessage = activateResult.message) }
+                            }
+                            ActivateRoutineResult.NetworkError -> {
+                                _uiState.update {
+                                    it.copy(isLoading = false, errorMessage = language.errorTexts.connectionError)
+                                }
+                            }
+                        }
+                    } else {
+                        _uiState.update { it.copy(isLoading = false, isSuccess = true) }
+                    }
                 }
                 is CreateRoutineResult.ValidationError -> {
                     _uiState.update { it.copy(isLoading = false, errorMessage = result.message) }

@@ -349,6 +349,50 @@ class CreateRoutineViewModelTest {
         assertEquals(Spanish.errorTexts.connectionError, viewModel.uiState.value.errorMessage)
     }
 
+    @Test
+    fun `submit with activateOnCreate true calls activateRoutineUseCase`() = runTest(testDispatcher) {
+        fillCompleteForm()
+        viewModel.onAction(CreateRoutineUiAction.OnActivateToggle(true))
+
+        viewModel.onAction(CreateRoutineUiAction.OnSubmit)
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.isSuccess)
+        assertFalse(viewModel.uiState.value.isLoading)
+        assertEquals(1, routineRepository.createRoutineCallCount)
+        assertEquals(1, routineRepository.activateRoutineCallCount)
+    }
+
+    @Test
+    fun `submit with activateOnCreate true but activate fails shows error`() = runTest(testDispatcher) {
+        routineRepository.activateRoutineResult = Result.Error(
+            ApiException.ServerException("No se pudo activar la rutina")
+        )
+        fillCompleteForm()
+        viewModel.onAction(CreateRoutineUiAction.OnActivateToggle(true))
+
+        viewModel.onAction(CreateRoutineUiAction.OnSubmit)
+        advanceUntilIdle()
+
+        assertFalse(viewModel.uiState.value.isSuccess)
+        assertEquals("No se pudo activar la rutina", viewModel.uiState.value.errorMessage)
+        assertEquals(1, routineRepository.createRoutineCallCount)
+        assertEquals(1, routineRepository.activateRoutineCallCount)
+    }
+
+    @Test
+    fun `submit with activateOnCreate false does not call activateRoutineUseCase`() = runTest(testDispatcher) {
+        fillCompleteForm()
+        // activateOnCreate defaults to false, no need to set it
+
+        viewModel.onAction(CreateRoutineUiAction.OnSubmit)
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.isSuccess)
+        assertEquals(1, routineRepository.createRoutineCallCount)
+        assertEquals(0, routineRepository.activateRoutineCallCount)  // Should not be called
+    }
+
     // ═══════════════════════════════════════════════════════════════════
     // Navegación
     // ═══════════════════════════════════════════════════════════════════

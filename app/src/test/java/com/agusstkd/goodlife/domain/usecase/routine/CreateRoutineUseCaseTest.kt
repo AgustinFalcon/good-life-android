@@ -224,6 +224,7 @@ class CreateRoutineUseCaseTest {
         )
 
         assertTrue(result is CreateRoutineResult.Success)
+        assertEquals(1L, (result as CreateRoutineResult.Success).routineId)
         assertEquals(1, repository.createRoutineCallCount)
         assertEquals("Push Pull Legs", repository.lastName)
     }
