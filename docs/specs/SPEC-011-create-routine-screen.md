@@ -727,40 +727,350 @@ di/
 
 ---
 
-## 11. Paginación del Catálogo
+## 11. Paginación del Catálogo de Ejercicios
 
-La paginación se maneja con **scroll infinito** (load more al llegar al final):
+### 11.1 Estrategia actual: Manual con `derivedStateOf`
+
+No se usa Paging 3. La paginación se implementa manualmente con **scroll infinito** (load more al llegar al final de la lista).
+
+#### ¿Por qué manual y no Paging 3?
+
+| Aspecto | Paging 3 | Manual con derivedStateOf |
+|---------|----------|--------------------------|
+| Complejidad | Alta (`PagingSource`, `PagingData`, `Pager`, `collectAsLazyPagingItems`) | Baja (`page: Int` + lista en UiState) |
+| Control | Bajo (el lib maneja todo) | Total (decidís cuándo, cómo, con qué condición) |
+| Integración con UseCases puros | Difícil — `PagingData` no se puede mapear limpiamente en Domain | Limpia — UseCase devuelve `PageResult<T>` normal |
+| Testing | Complejo (mocks especiales del lib) | Simple — ViewModel testeable con datos normales |
+| Diff de items | Su propio engine interno | Compose nativo con `key = { it.id }` en `LazyColumn` |
+| Cache offline (Room) | Integración nativa con `RemoteMediator` | Requiere implementación manual |
+
+**Conclusión actual:** Para paginación simple sin cache, el approach manual es más limpio y testeable. La migración a Paging 3 tiene sentido **solo cuando se agregue Room** como fuente de verdad local (SWR Fase 2), porque ahí la integración `RemoteMediator` de Paging 3 justifica su complejidad.
+
+---
+
+#### 11.2 Cómo funciona el scroll infinito en Compose
+
+En XML con RecyclerView había un `Adapter` como intermediario: mantenía la lista, calculaba diff, notificaba cambios. **En Compose no hay intermediario**: la `LazyColumn` lee directamente el estado y Compose se encarga del diff automáticamente.
+
+```
+Usuario scrollea hacia abajo
+       ↓
+LazyColumn dibuja solo los items visibles (lazy rendering)
+       ↓
+rememberLazyListState() trackea qué items son visibles en pantalla
+       ↓
+derivedStateOf calcula: "¿el último item visible está a 3 del final?"
+       ↓  (solo recalcula cuando cambia lastVisibleIndex, no en cada frame)
+shouldLoadMore: Boolean cambia de false → true
+       ↓
+LaunchedEffect(shouldLoadMore) se dispara EXACTAMENTE UNA VEZ
+       ↓
+onAction(OnLoadMoreExercises) → ViewModel.loadMoreExercises()
+       ↓
+searchExercisesUseCase(page = catalogPage + 1, size = 20)
+       ↓
+resultado se AGREGA (no reemplaza) a exerciseCatalog en UiState
+       ↓
+LazyColumn recibe lista más larga → renderiza los nuevos items
+```
+
+#### ¿Por qué `derivedStateOf` es crítico?
+
+Compose recompone con mucha frecuencia — al hacer scroll, **en cada frame**. Sin `derivedStateOf`, la lambda de `shouldLoadMore` se ejecutaría en cada frame, potencialmente disparando cientos de requests al backend por segundo.
 
 ```kotlin
-// En el ViewModel
+// ❌ SIN derivedStateOf — se ejecuta en cada recomposición (cada frame del scroll)
+val shouldLoadMore = run {
+    val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+    val totalItems = listState.layoutInfo.totalItemsCount
+    lastVisible >= totalItems - 3
+}
+
+// ✅ CON derivedStateOf — solo recalcula cuando cambia lastVisible o totalItems
+val shouldLoadMore by remember {
+    derivedStateOf {
+        val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+        val totalItems = listState.layoutInfo.totalItemsCount
+        lastVisible >= totalItems - 3 && uiState.catalogHasMore && !uiState.isLoadingCatalog
+    }
+}
+```
+
+`derivedStateOf` registra cuáles estados Compose leyó durante la ejecución y **solo recalcula cuando alguno de esos estados cambia**. El resultado: cuando `shouldLoadMore` pasa de `false` a `true`, el `LaunchedEffect` detecta el cambio y dispara exactamente 1 request.
+
+#### Código completo del mecanismo en la UI
+
+```kotlin
+// WorkoutExercisesStep.kt
+val listState = rememberLazyListState()
+
+val shouldLoadMore by remember {
+    derivedStateOf {
+        val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+        val totalItems = listState.layoutInfo.totalItemsCount
+        // Buffer de 3: empieza a cargar antes de llegar al último item
+        lastVisible >= totalItems - 3 &&
+        uiState.catalogHasMore &&      // el backend confirmó que hay más páginas
+        !uiState.isLoadingCatalog      // evita requests paralelos
+    }
+}
+
+LaunchedEffect(shouldLoadMore) {
+    if (shouldLoadMore) {
+        onAction(CreateRoutineUiAction.OnLoadMoreExercises)
+    }
+}
+
+LazyColumn(
+    state = listState,  // conecta el scroll tracking
+) {
+    // key = { it.id } → Compose calcula diff por ID, no recrea todos los items
+    items(uiState.exerciseCatalog, key = { it.id }) { exercise ->
+        CatalogExerciseCard(exercise = exercise, ...)
+    }
+
+    // Spinner al final mientras carga
+    if (uiState.isLoadingCatalog) {
+        item { CircularProgressIndicator() }
+    }
+}
+```
+
+#### ViewModel — lógica de paginación
+
+```kotlin
+// Estado en UiState
+val exerciseCatalog: List<ExerciseMaster> = emptyList()
+val catalogPage: Int = 0
+val catalogHasMore: Boolean = true
+val isLoadingCatalog: Boolean = false
+
+// Carga inicial o al cambiar filtros/búsqueda (resetList = true)
 private fun loadExercises(page: Int = 0, resetList: Boolean = false) {
     viewModelScope.launch {
         _uiState.update { it.copy(isLoadingCatalog = true) }
 
+        val state = _uiState.value
         val result = searchExercisesUseCase(
-            muscleGroupId = uiState.value.selectedMuscleGroupId,
-            search = uiState.value.exerciseSearchQuery.takeIf { it.isNotBlank() },
+            query = state.exerciseSearchQuery.takeIf { it.isNotBlank() },
+            muscleGroupId = state.selectedMuscleGroupId,
             page = page,
-            size = 20,
+            pageSize = 20,
         )
 
         when (result) {
             is SearchExercisesResult.Success -> {
-                val currentList = if (resetList) emptyList() else uiState.value.exerciseCatalog
+                // APPEND si es page > 0, REPLACE si es reset
+                val currentList = if (resetList) emptyList() else state.exerciseCatalog
                 _uiState.update {
                     it.copy(
-                        exerciseCatalog = currentList + result.exercises,
+                        exerciseCatalog = currentList + result.page.items,
                         catalogPage = page,
-                        catalogHasMore = !result.isLastPage,
+                        catalogHasMore = !result.page.isLastPage,  // del Spring Page
                         isLoadingCatalog = false,
                     )
                 }
             }
-            // error handling...
+            // ... error handling
+        }
+    }
+}
+
+// Carga siguiente página (llamada por OnLoadMoreExercises)
+private fun loadMoreExercises() {
+    val state = _uiState.value
+    if (state.isLoadingCatalog || !state.catalogHasMore) return  // guard
+    loadExercises(page = state.catalogPage + 1)
+}
+
+// Reset al cambiar búsqueda o filtro de grupo muscular
+private fun onSearchQueryChange(query: String) {
+    _uiState.update { it.copy(exerciseSearchQuery = query) }
+    loadExercises(page = 0, resetList = true)
+}
+```
+
+---
+
+### 11.3 Integración futura con SWR + Room (cache offline)
+
+#### Estado actual (Fase 1 — Solo backend)
+
+```
+UI → ViewModel → SearchExercisesUseCase → Repository → RemoteDataSource → API
+                                                  ↑
+                                          Sin cache local
+```
+
+El catálogo **no tiene cache**. Si el usuario no tiene internet, la lista de ejercicios está vacía. Cada vez que entra al Paso 3, se hace un GET al backend desde página 0.
+
+#### Fase 2 — SWR con Room (a implementar)
+
+El objetivo es aplicar la misma estrategia SWR que ya tiene el DailyTab:
+- **Backend como fuente de verdad** (always-fresh)
+- **Room como fallback offline** (si no hay red, mostrar lo último que se cargó)
+
+```
+UI → ViewModel → SearchExercisesUseCase → Repository
+                                               │
+                                    ┌──────────┴──────────┐
+                                    ↓                     ↓
+                               RemoteDataSource      LocalDataSource
+                               (Retrofit/API)        (Room DAO)
+                                    │                     │
+                            Si éxito → guardar       Si falla red →
+                            en Room + devolver        leer de Room
+```
+
+**Cambios necesarios para implementar el cache:**
+
+1. **Nueva tabla en Room**
+```kotlin
+@Entity(tableName = "exercise_catalog")
+data class ExerciseMasterEntity(
+    @PrimaryKey val id: Long,
+    val name: String,
+    val description: String?,
+    val imageUrl: String?,
+    val muscleGroupId: Long,
+    val muscleGroupName: String,
+    val score: Int,
+    val muscleGroupFilter: Long?,   // null = "Todos"
+    val searchQuery: String?,       // null = sin filtro
+    val page: Int,                  // número de página cacheada
+    val cachedAt: Long,             // timestamp para expiración
+)
+```
+
+2. **TrainingCatalogLocalDataSource**
+```kotlin
+class TrainingCatalogLocalDataSource(private val dao: ExerciseCatalogDao) {
+    suspend fun getExercises(muscleGroupId: Long?, query: String?, page: Int): List<ExerciseMasterEntity>
+    suspend fun saveExercises(exercises: List<ExerciseMasterEntity>, page: Int)
+    suspend fun clearStaleCache(olderThanMs: Long)
+}
+```
+
+3. **Repository SWR — backend primero, Room como fallback**
+```kotlin
+override suspend fun searchExercises(
+    query: String?, muscleGroupId: Long?, page: Int, pageSize: Int
+): Result<PageResult<ExerciseMaster>> {
+    // 1. Intentar backend
+    val remoteResult = remoteDataSource.searchExercises(query, muscleGroupId, page, pageSize)
+
+    return when (remoteResult) {
+        is Result.Success -> {
+            // Guardar en cache antes de devolver
+            localDataSource.saveExercises(remoteResult.data.items.toEntities(), page)
+            remoteResult
+        }
+        is Result.Error -> {
+            // Fallback a cache local
+            val cached = localDataSource.getExercises(muscleGroupId, query, page)
+            if (cached.isNotEmpty()) {
+                Result.Success(PageResult(items = cached.toDomain(), isLastPage = true))
+            } else {
+                remoteResult  // devolver el error original si no hay cache
+            }
         }
     }
 }
 ```
+
+---
+
+### 11.4 Migración a Paging 3 (cuando se agregue Room)
+
+Una vez implementado el cache con Room, **Paging 3 + RemoteMediator** se vuelve el approach correcto porque fue diseñado exactamente para esta arquitectura (red + base de datos local).
+
+#### Cuándo migrar
+
+✅ Migrar a Paging 3 cuando:
+- Room esté integrado como cache del catálogo
+- La lista de ejercicios supere los 200 items (memory pressure)
+- Se necesite prefetch automático configurable
+- Se quiera invalidación automática del cache por página
+
+❌ No migrar todavía porque:
+- Agrega complejidad sin beneficio inmediato (sin Room, no hay `RemoteMediator`)
+- Los tests del UseCase/ViewModel se complican significativamente
+- `PagingData` es un tipo opaco que rompe el flujo limpio `UseCase → Result<T>`
+
+#### Cómo quedaría con Paging 3
+
+```kotlin
+// PagingSource que usa Room + API
+class ExercisePagingSource(
+    private val remoteDataSource: TrainingCatalogRemoteDataSource,
+    private val localDataSource: TrainingCatalogLocalDataSource,
+    private val muscleGroupId: Long?,
+    private val query: String?,
+) : RemoteMediator<Int, ExerciseMasterEntity>() {
+
+    override suspend fun load(
+        loadType: LoadType,
+        state: PagingState<Int, ExerciseMasterEntity>
+    ): MediatorResult {
+        // ... fetch API, guardar en Room, return MediatorResult
+    }
+}
+
+// Repository
+fun searchExercises(muscleGroupId: Long?, query: String?): Flow<PagingData<ExerciseMaster>> {
+    return Pager(
+        config = PagingConfig(pageSize = 20, prefetchDistance = 3),
+        remoteMediator = ExercisePagingSource(remoteDs, localDs, muscleGroupId, query),
+        pagingSourceFactory = { dao.getExercisesPaged(muscleGroupId, query) }
+    ).flow.map { pagingData -> pagingData.map { it.toDomain() } }
+}
+
+// En la UI — collectAsLazyPagingItems reemplaza al derivedStateOf manual
+val exercises = viewModel.exercisesFlow.collectAsLazyPagingItems()
+
+LazyColumn {
+    items(exercises, key = { it.id }) { exercise ->
+        CatalogExerciseCard(exercise = exercise ?: return@items)
+    }
+    // append state automático — no necesitás derivedStateOf
+    if (exercises.loadState.append is LoadState.Loading) {
+        item { CircularProgressIndicator() }
+    }
+}
+```
+
+#### Plan de migración cuando llegue el momento
+
+```
+AHORA (Fase 1)                    FUTURO (SWR Fase 2 + Paging 3)
+──────────────────────────        ────────────────────────────────
+SearchExercisesUseCase            Eliminar SearchExercisesUseCase
+  → Result<PageResult<T>>           → Reemplazar por Flow<PagingData<T>>
+
+TrainingCatalogRepositoryImpl     TrainingCatalogRepositoryImpl
+  → solo RemoteDataSource           → RemoteDataSource + LocalDataSource
+                                    → ExercisePagingSource (RemoteMediator)
+
+WorkoutExercisesStep              WorkoutExercisesStep
+  → derivedStateOf manual           → collectAsLazyPagingItems()
+  → LaunchedEffect para loadMore    → Sin LaunchedEffect manual
+  → isLoadingCatalog, catalogPage   → LoadState automático del PagingData
+  → catalogHasMore flags            → Sin flags manuales
+
+CreateRoutineUiState              CreateRoutineUiState
+  → exerciseCatalog: List<T>        → exercisesFlow: Flow<PagingData<T>>
+  → catalogPage, catalogHasMore     → Eliminar estos campos
+  → isLoadingCatalog                → Reemplazado por LoadState
+```
+
+**Archivos impactados en la migración:**
+- `TrainingCatalogRepository.kt` — firma del método searchExercises
+- `TrainingCatalogRepositoryImpl.kt` — añadir Room + RemoteMediator
+- `SearchExercisesUseCase.kt` — cambiar a Flow o eliminar
+- `CreateRoutineUiState.kt` — reemplazar lista por Flow
+- `CreateRoutineViewModel.kt` — eliminar derivedStateOf logic
+- `WorkoutExercisesStep.kt` — usar `collectAsLazyPagingItems`
+- Tests — reescribir tests del catálogo
 
 ---
 
@@ -816,10 +1126,11 @@ val routineModule = module {
 
 ---
 
-*Spec creado el 09/03/2026. Implementado el 11/03/2026.*
+*Spec creado el 09/03/2026. Implementado el 11/03/2026. Actualizado el 09/03/2026.*
 
-### Nota de implementación
+### Notas de implementación
 
-- La lógica de `activateRoutineUseCase` post-creación (cuando el toggle está activado en el paso 4) queda pendiente para la próxima iteración.
-- El toggle ya existe en la UI (`RoutineSummaryStep`) y el UseCase está creado (`ActivateRoutineUseCase`), solo falta conectar en `submitRoutine()`.
+- ✅ La lógica de `activateRoutineUseCase` post-creación está implementada. Cuando `activateOnCreate = true`, después de `createRoutineUseCase` exitoso se llama `activateRoutineUseCase(routineId)`. Si la activación falla, se muestra el error al usuario.
+- `CreateRoutineResult.Success` lleva `routineId: Long` como payload para permitir la activación encadenada.
 - Se usó `ButtonVariant.OUTLINE` para los botones "Atrás" (no existía `SECONDARY`).
+- La paginación del catálogo es manual (`derivedStateOf`). Ver Sección 11 para detalles técnicos y el plan de migración a Paging 3 cuando se integre Room.
