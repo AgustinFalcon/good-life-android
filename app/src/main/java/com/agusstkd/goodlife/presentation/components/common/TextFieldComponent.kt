@@ -50,19 +50,25 @@ import com.agusstkd.goodlife.presentation.theme.TextTertiary
 
 /**
  * Tipo de campo de texto que determina el icono y comportamiento.
+ *
+ * - [USER], [PASSWORD], [EMAIL], [TEXT]: campo de una sola línea con icono leading.
+ * - [MULTILINE]: área de texto sin icono leading, altura configurable via [TextFieldParams.minLines].
  */
 enum class TextFieldType {
     USER,
     PASSWORD,
     EMAIL,
-    TEXT
+    TEXT,
+    MULTILINE,
 }
 
-private fun TextFieldType.getIcon(): ImageVector = when (this) {
+/** Devuelve el icono leading, o null si el tipo no usa icono (ej: [TextFieldType.MULTILINE]). */
+private fun TextFieldType.getIcon(): ImageVector? = when (this) {
     TextFieldType.USER -> Icons.Default.Person
     TextFieldType.PASSWORD -> Icons.Default.Lock
     TextFieldType.EMAIL -> Icons.Default.Email
     TextFieldType.TEXT -> Icons.Default.Edit
+    TextFieldType.MULTILINE -> null
 }
 
 private fun TextFieldType.needsPasswordToggle(): Boolean = this == TextFieldType.PASSWORD
@@ -111,18 +117,22 @@ data class TextFieldVisualState(
 /**
  * Parámetros del campo de texto.
  *
- * @property value Valor actual del campo
- * @property placeholder Texto placeholder
- * @property type Tipo de campo [TextFieldType]
- * @property isError Indica si hay error de validación
+ * @property value Valor actual del campo.
+ * @property placeholder Texto placeholder.
+ * @property type Tipo de campo [TextFieldType].
+ * @property isError Indica si hay error de validación.
+ * @property minLines Número mínimo de líneas visibles. Solo aplica cuando [type] es [TextFieldType.MULTILINE].
+ * @property maxLines Número máximo de líneas antes de hacer scroll. Solo aplica cuando [type] es [TextFieldType.MULTILINE].
  */
 data class TextFieldParams(
     val value: String,
     val placeholder: String,
     val type: TextFieldType,
     val isError: Boolean = false,
+    val minLines: Int = 1,
+    val maxLines: Int = Int.MAX_VALUE,
     val passwordToggleHide: String = "",
-    val passwordToggleShow: String = ""
+    val passwordToggleShow: String = "",
 )
 
 /**
@@ -157,6 +167,9 @@ fun TextFieldComponent(
         VisualTransformation.None
     }
 
+    val isMultiline = params.type == TextFieldType.MULTILINE
+    val leadingIcon = params.type.getIcon()
+
     BasicTextField(
         value = params.value,
         onValueChange = onValueChange,
@@ -170,21 +183,24 @@ fun TextFieldComponent(
             .padding(horizontal = 16.dp, vertical = 16.dp),
         interactionSource = interactionSource,
         cursorBrush = SolidColor(visualState.cursorColor),
-        singleLine = true,
+        singleLine = !isMultiline,
+        minLines = if (isMultiline) params.minLines else 1,
+        maxLines = if (isMultiline) params.maxLines else 1,
         visualTransformation = visualTransformation,
         textStyle = PlaceholderStyle.copy(color = visualState.textColor),
         decorationBox = { innerTextField ->
             Row(
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = if (isMultiline) Alignment.Top else Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Icon(
-                    imageVector = params.type.getIcon(),
-                    contentDescription = null,
-                    tint = visualState.iconColor
-                )
-
-                Spacer(Modifier.width(12.dp))
+                if (leadingIcon != null) {
+                    Icon(
+                        imageVector = leadingIcon,
+                        contentDescription = null,
+                        tint = visualState.iconColor
+                    )
+                    Spacer(Modifier.width(12.dp))
+                }
 
                 Box(modifier = Modifier.weight(1f)) {
                     if (params.value.isEmpty()) {
@@ -211,7 +227,7 @@ fun TextFieldComponent(
     )
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "TextFieldComponent — todos los tipos")
 @Composable
 private fun TextFieldComponentPreview() {
     GoodLifeTheme {
@@ -243,6 +259,16 @@ private fun TextFieldComponentPreview() {
                     placeholder = "Contraseña",
                     type = TextFieldType.PASSWORD,
                     isError = true
+                ),
+                onValueChange = {}
+            )
+            TextFieldComponent(
+                params = TextFieldParams(
+                    value = "",
+                    placeholder = "Añade detalles sobre la preparación...",
+                    type = TextFieldType.MULTILINE,
+                    minLines = 4,
+                    maxLines = 6,
                 ),
                 onValueChange = {}
             )

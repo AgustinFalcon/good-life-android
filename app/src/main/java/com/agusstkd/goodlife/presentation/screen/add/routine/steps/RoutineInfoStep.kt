@@ -22,6 +22,7 @@ import com.agusstkd.goodlife.core.datetime.language.CreateItemSharedTexts
 import com.agusstkd.goodlife.core.datetime.language.CreateRoutineTexts
 import com.agusstkd.goodlife.domain.model.training.DifficultyLevel
 import com.agusstkd.goodlife.domain.model.training.GoalType
+import com.agusstkd.goodlife.presentation.components.common.ButtonColorScheme
 import com.agusstkd.goodlife.presentation.components.common.ButtonComponent
 import com.agusstkd.goodlife.presentation.components.common.ButtonParams
 import com.agusstkd.goodlife.presentation.components.common.ButtonVariant
@@ -211,6 +212,7 @@ fun RoutineInfoStep(
                 text = routineTexts.nextButton,
                 enabled = uiState.canGoNext,
                 variant = ButtonVariant.PRIMARY,
+                colorScheme = ButtonColorScheme.Workout,
             ),
             onClick = { onAction(CreateRoutineUiAction.OnNextStep) },
         )

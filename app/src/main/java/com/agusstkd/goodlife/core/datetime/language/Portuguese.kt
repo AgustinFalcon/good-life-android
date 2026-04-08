@@ -212,6 +212,8 @@ data object Portuguese : AppLanguage {
         confirmLabel = "Confirmar",
         cancelLabel = "Cancelar",
         retryLabel = "Tentar novamente",
+        loadingMessage = "Isso vai levar apenas um momento...",
+        errorTitle = "Não foi possível salvar",
     )
 
     override val createTaskTexts = CreateTaskTexts(
@@ -225,6 +227,7 @@ data object Portuguese : AppLanguage {
         errorEndBeforeStart = "A data de fim não pode ser anterior ao início",
         errorServer = "Erro do servidor, tente novamente",
         errorNetwork = "Sem conexão, verifique sua internet",
+        loadingTitle = "Salvando tarefa...",
     )
 
     override val habitCategoryTexts = HabitCategoryTexts(
@@ -261,6 +264,7 @@ data object Portuguese : AppLanguage {
         errorEndBeforeStart = "A data de fim não pode ser anterior ao início",
         errorServer = "Erro do servidor, tente novamente",
         errorNetwork = "Sem conexão, verifique sua internet",
+        loadingTitle = "Salvando hábito...",
     )
 
     override val createRoutineTexts = CreateRoutineTexts(
@@ -312,6 +316,81 @@ data object Portuguese : AppLanguage {
         errorEndBeforeStart = "A data de término não pode ser anterior ao início",
         errorServer = "Erro no servidor, tente novamente",
         errorNetwork = "Sem conexão, verifique sua internet",
+        loadingTitle = "Salvando rotina...",
+    )
+
+    override val mealTypeTexts = MealTypeTexts(
+        breakfast = "Café da manhã",
+        lunch = "Almoço",
+        dinner = "Jantar",
+        snack = "Lanche",
+        preWorkout = "Pré-treino",
+        postWorkout = "Pós-treino",
+    )
+
+    override val createMealPlanTexts = CreateMealPlanTexts(
+        // ── Cabeçalho ──
+        screenTitle = "Nova refeição",
+        typeBadge = "REFEIÇÃO",
+        stepOf = "Passo %d de %d",
+        nextButton = "Próximo",
+        backButton = "Voltar",
+        createPlanButton = "Criar plano",
+        successTitle = "Plano de refeição criado com sucesso",
+        // ── Passo 1A: Catálogo ──
+        searchMealPlaceholder = "Buscar refeições...",
+        filterAll = "Todos",
+        chooseMealButton = "Escolher",
+        createNewMealButton = "Criar nova refeição",
+        // ── Passo 1B: Nova refeição ──
+        newMealNameLabel = "Nome da refeição",
+        newMealNamePlaceholder = "Ex: Vitamina de proteína",
+        newMealDescriptionLabel = "Descrição (opcional)",
+        newMealDescriptionPlaceholder = "Ex: Shake pós-treino...",
+        newMealTypeLabel = "Tipo de refeição",
+        // ── Passo 2: Ingredientes ──
+        macrosSummaryTitle = "Macros totais",
+        macroProteinLabel = "Proteína",
+        macroCarbsLabel = "Carbos",
+        macroFatLabel = "Gordura",
+        myIngredientsSectionTitle = "Meus ingredientes",
+        ingredientCatalogSectionTitle = "Catálogo de ingredientes",
+        searchIngredientPlaceholder = "Buscar ingredientes...",
+        addIngredientButton = "Adicionar",
+        createCustomIngredientButton = "Criar ingrediente personalizado",
+        // ── Bottom Sheet ──
+        quantitySheetQuantityLabel = "Quantidade",
+        quantitySheetUnitLabel = "Unidade",
+        quantitySheetConfirmButton = "Confirmar",
+        quantitySheetCancelButton = "Cancelar",
+        quantitySheetMacroTooltip = "Proteína, carboidratos e gorduras expressos em gramas (g).",
+        // ── Dialog ingrediente ──
+        createIngredientDialogTitle = "Novo Ingrediente",
+        ingredientNameLabel = "Nome",
+        ingredientNamePlaceholder = "Ex: Aveia instantânea",
+        ingredientBrandLabel = "Marca (opcional)",
+        ingredientBrandPlaceholder = "Ex: Quaker",
+        ingredientServingSizeLabel = "Porção de referência",
+        ingredientCaloriesLabel = "kcal",
+        ingredientProteinLabel = "Proteína (g)",
+        ingredientCarbsLabel = "Carboidratos (g)",
+        ingredientFatLabel = "Gordura (g)",
+        saveIngredientButton = "Salvar",
+        // ── Passo 3 ──
+        mealSummaryTitle = "Resumo da refeição",
+        mealTypeSectionTitle = "Tipo de refeição",
+        // ── Erros ──
+        errorNoMealSelected = "Selecione uma refeição para continuar",
+        errorMealNameEmpty = "O nome da refeição não pode estar vazio",
+        errorNoIngredients = "Adicione pelo menos um ingrediente",
+        errorNoMealType = "Selecione o tipo de refeição",
+        errorNoDays = "Selecione pelo menos um dia",
+        errorEndBeforeStart = "A data de fim não pode ser anterior ao início",
+        errorQuantityZero = "A quantidade deve ser maior que 0",
+        errorIngredientNameEmpty = "O nome do ingrediente não pode estar vazio",
+        errorServer = "Erro do servidor, tente novamente",
+        errorNetwork = "Sem conexão, verifique sua internet",
+        loadingTitle = "Salvando plano de refeição...",
     )
 
     override val splashTexts = SplashTexts(

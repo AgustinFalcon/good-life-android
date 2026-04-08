@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.agusstkd.goodlife.core.datetime.language.CreateHabitTexts
 import com.agusstkd.goodlife.core.datetime.language.CreateItemSharedTexts
 import com.agusstkd.goodlife.domain.model.habit.HabitCategory
+import com.agusstkd.goodlife.presentation.components.common.ButtonColorScheme
 import com.agusstkd.goodlife.presentation.components.common.ButtonComponent
 import com.agusstkd.goodlife.presentation.components.common.ButtonParams
 import com.agusstkd.goodlife.presentation.components.common.ButtonVariant
@@ -260,6 +261,7 @@ fun CreateHabitScreen(
                         && !uiState.isLoading,
                 isLoading = uiState.isLoading,
                 variant = ButtonVariant.PRIMARY,
+                colorScheme = ButtonColorScheme.Habit,
             ),
             onClick = { onAction(CreateHabitUiAction.OnSubmit) },
         )
@@ -308,6 +310,8 @@ private fun CreateHabitScreenPreview() {
         confirmLabel = "Confirmar",
         cancelLabel = "Cancelar",
         retryLabel = "Reintentar",
+        loadingMessage = "",
+        errorTitle = "",
     )
     val previewHabitTexts = CreateHabitTexts(
         screenTitle = "Nuevo hábito",
@@ -327,6 +331,7 @@ private fun CreateHabitScreenPreview() {
         errorEndBeforeStart = "",
         errorServer = "",
         errorNetwork = "",
+        loadingTitle = "",
     )
     val previewCategories = listOf(
         HabitCategory.HYDRATION to "Hidratación",

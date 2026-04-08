@@ -1,7 +1,8 @@
 package com.agusstkd.goodlife.data.remote.api.training
 
 import com.agusstkd.goodlife.data.remote.dto.response.BaseResponse
-import com.agusstkd.goodlife.data.remote.dto.response.training.ExercisePageResponse
+import com.agusstkd.goodlife.data.remote.dto.response.PageResponseDto
+import com.agusstkd.goodlife.data.remote.dto.response.training.ExerciseMasterResponse
 import com.agusstkd.goodlife.data.remote.dto.response.training.MuscleGroupResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -17,5 +18,5 @@ interface TrainingCatalogApiService {
         @Query("search") search: String? = null,
         @Query("page") page: Int = 0,
         @Query("size") size: Int = 20,
-    ): BaseResponse<ExercisePageResponse>
+    ): BaseResponse<PageResponseDto<ExerciseMasterResponse>>
 }

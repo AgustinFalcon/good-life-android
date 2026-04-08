@@ -1,7 +1,7 @@
 package com.agusstkd.goodlife.di
 
 import com.agusstkd.goodlife.data.remote.api.habit.HabitApiService
-import com.agusstkd.goodlife.data.remote.datasource.HabitRemoteDataSource
+import com.agusstkd.goodlife.data.remote.datasource.remote.HabitRemoteDataSource
 import com.agusstkd.goodlife.data.repository.HabitRepositoryImpl
 import com.agusstkd.goodlife.domain.repository.HabitRepository
 import com.agusstkd.goodlife.domain.usecase.habit.CreateHabitUseCase

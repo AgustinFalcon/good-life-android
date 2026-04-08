@@ -133,7 +133,7 @@ val networkModule = module {
 
     /**
      * AuthApiService — endpoints de autenticación.
-     * Usado por [com.agusstkd.goodlife.data.remote.datasource.AuthRemoteDataSource]
+     * Usado por [com.agusstkd.goodlife.data.remote.datasource.remote.AuthRemoteDataSource]
      * y por [GoodLifeAuthenticator] (via Lazy para el refresh token).
      */
     single<AuthApiService> {
@@ -142,7 +142,7 @@ val networkModule = module {
 
     /**
      * DailyApiService — endpoints del módulo Daily.
-     * Usado por [com.agusstkd.goodlife.data.remote.datasource.DailyRemoteDataSource].
+     * Usado por [com.agusstkd.goodlife.data.remote.datasource.remote.DailyRemoteDataSource].
      */
     single<DailyApiService> {
         get<Retrofit>().create(DailyApiService::class.java)
@@ -150,7 +150,7 @@ val networkModule = module {
 
     /**
      * TaskApiService — endpoints del módulo Task.
-     * Usado por [com.agusstkd.goodlife.data.remote.datasource.TaskRemoteDataSource].
+     * Usado por [com.agusstkd.goodlife.data.remote.datasource.remote.TaskRemoteDataSource].
      */
     single<TaskApiService> {
         get<Retrofit>().create(TaskApiService::class.java)

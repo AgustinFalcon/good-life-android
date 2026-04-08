@@ -1,4 +1,4 @@
-package com.agusstkd.goodlife.data.remote.dto.response.meal
+package com.agusstkd.goodlife.data.remote.dto.response.nutrition
 
 import kotlinx.serialization.Serializable
 

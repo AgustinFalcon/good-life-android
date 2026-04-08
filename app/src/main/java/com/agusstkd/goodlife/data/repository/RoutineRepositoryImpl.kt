@@ -1,7 +1,7 @@
 package com.agusstkd.goodlife.data.repository
 
 import com.agusstkd.goodlife.core.result.Result
-import com.agusstkd.goodlife.data.remote.datasource.RoutineRemoteDataSource
+import com.agusstkd.goodlife.data.remote.datasource.remote.RoutineRemoteDataSource
 import com.agusstkd.goodlife.data.remote.dto.request.routine.CreateRoutineRequest
 import com.agusstkd.goodlife.data.remote.dto.request.routine.CreateWorkoutExerciseRequest
 import com.agusstkd.goodlife.data.remote.dto.request.routine.CreateWorkoutRequest

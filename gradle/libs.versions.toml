@@ -1,14 +1,14 @@
 [versions]
-agp = "8.8.0"
+agp = "8.10.0"
 biometric = "1.1.0"
 kotlin = "2.1.0"
-coreKtx = "1.15.0"
+coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
-activityCompose = "1.10.0"
-composeBom = "2025.02.00"
+activityCompose = "1.9.3"
+composeBom = "2024.12.01"
 
 # Navigation & Serialization
 navigationCompose = "2.8.7"
@@ -42,7 +42,6 @@ archCoreTesting = "2.2.0"
 
 # DateTime (KMP-ready)
 kotlinxDatetime = "0.7.1"
-foundation = "1.10.4"
 collectionsImmutable = "0.3.8"
 
 [libraries]
@@ -100,7 +99,7 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 # DateTime (KMP-ready)
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "collectionsImmutable" }
-androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 
 # Testing
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutinesTest" }

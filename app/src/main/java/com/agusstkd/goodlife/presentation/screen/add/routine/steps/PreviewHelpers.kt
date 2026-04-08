@@ -52,6 +52,7 @@ internal fun previewRoutineTexts() = CreateRoutineTexts(
     errorEndBeforeStart = "",
     errorServer = "",
     errorNetwork = "",
+    loadingTitle = "",
 )
 
 internal fun previewSharedTexts() = CreateItemSharedTexts(
@@ -74,4 +75,6 @@ internal fun previewSharedTexts() = CreateItemSharedTexts(
     confirmLabel = "Confirmar",
     cancelLabel = "Cancelar",
     retryLabel = "Reintentar",
+    loadingMessage = "",
+    errorTitle = "",
 )

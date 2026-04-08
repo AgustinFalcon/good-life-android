@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.agusstkd.goodlife.core.datetime.language.CreateItemSharedTexts
 import com.agusstkd.goodlife.core.datetime.language.CreateTaskTexts
+import com.agusstkd.goodlife.presentation.components.common.ButtonColorScheme
 import com.agusstkd.goodlife.presentation.components.common.ButtonComponent
 import com.agusstkd.goodlife.presentation.components.common.ButtonParams
 import com.agusstkd.goodlife.presentation.components.common.ButtonVariant
@@ -247,6 +248,7 @@ fun CreateTaskScreen(
                 enabled = uiState.title.isNotBlank() && !uiState.isLoading,
                 isLoading = uiState.isLoading,
                 variant = ButtonVariant.PRIMARY,
+                colorScheme = ButtonColorScheme.Task,
             ),
             onClick = { onAction(CreateTaskUiAction.OnSubmit) },
         )
@@ -295,6 +297,8 @@ private fun CreateTaskScreenOncePreview() {
         confirmLabel = "Confirmar",
         cancelLabel = "Cancelar",
         retryLabel = "Reintentar",
+        loadingMessage = "",
+        errorTitle = "",
     )
     val previewTaskTexts = CreateTaskTexts(
         screenTitle = "Nueva tarea",
@@ -307,6 +311,7 @@ private fun CreateTaskScreenOncePreview() {
         errorEndBeforeStart = "",
         errorServer = "",
         errorNetwork = "",
+        loadingTitle = "",
     )
     GoodLifeTheme {
         CreateTaskScreen(
@@ -347,6 +352,8 @@ private fun CreateTaskScreenRecurrentPreview() {
         confirmLabel = "Confirmar",
         cancelLabel = "Cancelar",
         retryLabel = "Reintentar",
+        loadingMessage = "",
+        errorTitle = "",
     )
     val previewTaskTexts = CreateTaskTexts(
         screenTitle = "Nueva tarea",
@@ -359,6 +366,7 @@ private fun CreateTaskScreenRecurrentPreview() {
         errorEndBeforeStart = "",
         errorServer = "",
         errorNetwork = "",
+        loadingTitle = "",
     )
     GoodLifeTheme {
         CreateTaskScreen(

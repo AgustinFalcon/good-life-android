@@ -38,11 +38,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.agusstkd.goodlife.domain.model.training.SetDraft
 import com.agusstkd.goodlife.presentation.components.bottom.datepicker.DatePickerBottomSheetComponent
-import com.agusstkd.goodlife.presentation.components.common.SnackbarComponent
-import com.agusstkd.goodlife.presentation.components.common.SnackbarParams
-import com.agusstkd.goodlife.presentation.components.common.SnackbarVariant
-import com.agusstkd.goodlife.presentation.components.dialog.SuccessDialog
-import com.agusstkd.goodlife.presentation.components.dialog.SuccessDialogParams
+import com.agusstkd.goodlife.presentation.components.dialog.CreationItemType
+import com.agusstkd.goodlife.presentation.components.dialog.PopupResultComponent
+import com.agusstkd.goodlife.presentation.components.dialog.PopupResultParams
+import com.agusstkd.goodlife.presentation.components.dialog.PopupResultState
 import com.agusstkd.goodlife.presentation.components.dialog.TimePickerDialogComponent
 import com.agusstkd.goodlife.presentation.components.dialog.TimePickerDialogParams
 import com.agusstkd.goodlife.presentation.screen.add.routine.model.CreateRoutineUiAction
@@ -52,6 +51,19 @@ import com.agusstkd.goodlife.presentation.theme.TextPrimary
 import com.agusstkd.goodlife.presentation.theme.TextSecondary
 import org.koin.androidx.compose.koinViewModel
 
+/**
+ * Owner composable que orquesta el wizard de creación de rutina.
+ *
+ * Responsabilidades:
+ * - Inyecta el [CreateRoutineViewModel] via Koin.
+ * - Renderiza [CreateRoutineScreen] (wizard de pasos puro).
+ * - Muestra [DatePickerBottomSheetComponent] cuando [CreateRoutineUiState.activeDatePickerField] != null.
+ * - Muestra [TimePickerDialogComponent] cuando [CreateRoutineUiState.showTimePicker] es true.
+ * - Muestra [AddWorkoutDialog] cuando [CreateRoutineUiState.showAddWorkoutDialog] es true.
+ * - Muestra [SetEditorBottomSheet] cuando [CreateRoutineUiState.showSetEditorForExerciseIndex] != null.
+ * - Muestra el [PopupResultComponent] cuando [CreateRoutineUiState.isLoading], [CreateRoutineUiState.isSuccess]
+ *   o [CreateRoutineUiState.errorMessage] están activos, cubriendo los tres estados del flujo de creación.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateRoutineScreenOwner(
@@ -147,36 +159,37 @@ fun CreateRoutineScreenOwner(
             }
         }
 
-        // ── 6. Success dialog (Lottie) ──
-        if (uiState.isSuccess) {
-            SuccessDialog(
-                params = SuccessDialogParams(
-                    title = viewModel.routineTexts.successTitle,
-                    subtitle = uiState.name,
-                    detail = uiState.startDateDisplay.ifEmpty { null },
+        // ── 6. Popup de resultado (loading / success / error) ────────────
+        val showPopup = uiState.isLoading || uiState.isSuccess || uiState.errorMessage != null
+        if (showPopup) {
+            PopupResultComponent(
+                params = PopupResultParams(
+                    state = when {
+                        uiState.isLoading -> PopupResultState.LOADING
+                        uiState.isSuccess -> PopupResultState.SUCCESS
+                        else              -> PopupResultState.ERROR
+                    },
+                    itemType = CreationItemType.WORKOUT,
+                    title = when {
+                        uiState.isLoading -> viewModel.routineTexts.loadingTitle
+                        uiState.isSuccess -> viewModel.routineTexts.successTitle
+                        else              -> viewModel.sharedTexts.errorTitle
+                    },
+                    message = when {
+                        uiState.isLoading -> viewModel.sharedTexts.loadingMessage
+                        uiState.isSuccess -> uiState.name
+                        else              -> uiState.errorMessage ?: ""
+                    },
+                    detail = if (uiState.isSuccess) {
+                        uiState.startDateDisplay.ifEmpty { null }
+                    } else null,
+                    loadingProgress = null,
+                    retryLabel = viewModel.sharedTexts.retryLabel,
+                    cancelLabel = viewModel.sharedTexts.cancelLabel,
                 ),
-                onAnimationFinished = {
-                    viewModel.onAction(CreateRoutineUiAction.OnSuccessAnimationFinished)
-                },
-            )
-        }
-
-        // ── 7. Snackbar de error ──
-        uiState.errorMessage?.let { error ->
-            SnackbarComponent(
-                params = SnackbarParams(
-                    message = error,
-                    variant = SnackbarVariant.ERROR,
-                    actionLabel = viewModel.sharedTexts.retryLabel,
-                    autoDismissMs = 6_000L,
-                ),
-                isVisible = true,
-                onDismiss = {
-                    viewModel.onAction(CreateRoutineUiAction.OnErrorDismissed)
-                },
-                onActionClick = {
-                    viewModel.onAction(CreateRoutineUiAction.OnSubmit)
-                },
+                onSuccess = { viewModel.onAction(CreateRoutineUiAction.OnSuccessAnimationFinished) },
+                onRetry   = { viewModel.onAction(CreateRoutineUiAction.OnSubmit) },
+                onCancel  = { viewModel.onAction(CreateRoutineUiAction.OnErrorDismissed) },
             )
         }
     }

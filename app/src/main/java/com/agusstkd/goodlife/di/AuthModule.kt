@@ -1,7 +1,7 @@
 package com.agusstkd.goodlife.di
 
 import com.agusstkd.goodlife.data.remote.api.auth.AuthApiService
-import com.agusstkd.goodlife.data.remote.datasource.AuthRemoteDataSource
+import com.agusstkd.goodlife.data.remote.datasource.remote.AuthRemoteDataSource
 import com.agusstkd.goodlife.data.repository.AuthRepositoryImpl
 import com.agusstkd.goodlife.domain.auth.BiometricLoginHandler
 import com.agusstkd.goodlife.domain.repository.AuthRepository

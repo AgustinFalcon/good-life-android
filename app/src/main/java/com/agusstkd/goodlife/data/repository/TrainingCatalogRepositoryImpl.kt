@@ -1,8 +1,9 @@
 package com.agusstkd.goodlife.data.repository
 
 import com.agusstkd.goodlife.core.result.Result
-import com.agusstkd.goodlife.data.remote.datasource.TrainingCatalogRemoteDataSource
+import com.agusstkd.goodlife.data.remote.datasource.remote.TrainingCatalogRemoteDataSource
 import com.agusstkd.goodlife.data.remote.dto.response.training.toDomain
+import com.agusstkd.goodlife.data.remote.dto.response.toDomain
 import com.agusstkd.goodlife.domain.model.training.MuscleGroup
 import com.agusstkd.goodlife.domain.repository.ExercisePage
 import com.agusstkd.goodlife.domain.repository.TrainingCatalogRepository
@@ -14,7 +15,7 @@ class TrainingCatalogRepositoryImpl(
     override suspend fun getMuscleGroups(): Result<List<MuscleGroup>> {
         return when (val result = trainingCatalogRemoteDataSource.getMuscleGroups()) {
             is Result.Success -> Result.Success(result.data.map { it.toDomain() })
-            is Result.Error -> Result.Error(result.exception)
+            is Result.Error -> result
         }
     }
 
@@ -30,8 +31,8 @@ class TrainingCatalogRepositoryImpl(
             page = page,
             pageSize = pageSize,
         )) {
-            is Result.Success -> Result.Success(result.data.toDomain())
-            is Result.Error -> Result.Error(result.exception)
+            is Result.Success -> Result.Success(result.data.toDomain { it.toDomain() })
+            is Result.Error -> result
         }
     }
 }

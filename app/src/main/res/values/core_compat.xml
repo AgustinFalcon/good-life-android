@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Overrides para recursos de androidx.core que usan <drawable>hex</drawable>,
+     formato que el compilador AAPT2 JVM (AGP 8.x) rechaza.
+     Definimos los colores primero y luego referenciamos desde el drawable. -->
+<resources>
+    <color name="notification_template_icon_bg_compat">#3333B5E5</color>
+    <color name="notification_template_icon_low_bg_compat">#0cffffff</color>
+
+    <drawable name="notification_template_icon_bg">@color/notification_template_icon_bg_compat</drawable>
+    <drawable name="notification_template_icon_low_bg">@color/notification_template_icon_low_bg_compat</drawable>
+</resources>

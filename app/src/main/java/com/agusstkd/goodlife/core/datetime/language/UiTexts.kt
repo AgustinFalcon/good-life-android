@@ -225,6 +225,8 @@ data class CreateItemSharedTexts(
     val confirmLabel: String,
     val cancelLabel: String,
     val retryLabel: String,
+    val loadingMessage: String,
+    val errorTitle: String,
 )
 
 /**
@@ -241,6 +243,7 @@ data class CreateTaskTexts(
     val errorEndBeforeStart: String,
     val errorServer: String,
     val errorNetwork: String,
+    val loadingTitle: String,
 )
 
 /**
@@ -286,6 +289,106 @@ data class CreateHabitTexts(
     val errorEndBeforeStart: String,
     val errorServer: String,
     val errorNetwork: String,
+    val loadingTitle: String,
+)
+
+/**
+ * Nombres localizados para los 6 tipos de comida del enum [MealType].
+ *
+ * Se usan como chips de filtro en el catálogo (Paso 1A)
+ * y como selector de tipo en el Paso 3 del wizard de comidas.
+ */
+data class MealTypeTexts(
+    val breakfast: String,
+    val lunch: String,
+    val dinner: String,
+    val snack: String,
+    val preWorkout: String,
+    val postWorkout: String,
+)
+
+/**
+ * Textos para el wizard de creación de Plan de Comida (SPEC-012).
+ *
+ * Cubre los 3 pasos del wizard:
+ * - Paso 1A: Catálogo de meals (buscar y seleccionar existente)
+ * - Paso 1B: Crear nueva meal (nombre + descripción)
+ * - Paso 2: Ingredientes + macros calculados en tiempo real
+ * - Paso 3: Planificación (tipo, días, fechas, hora)
+ *
+ * También incluye textos del [QuantityBottomSheet] y [CreateIngredientDialog].
+ */
+data class CreateMealPlanTexts(
+    // ── Header del wizard ──
+    val screenTitle: String,
+    val typeBadge: String,
+    val stepOf: String,
+    val nextButton: String,
+    val backButton: String,
+    val createPlanButton: String,
+    val successTitle: String,
+
+    // ── Paso 1A: Catálogo de meals ──
+    val searchMealPlaceholder: String,
+    val filterAll: String,
+    val chooseMealButton: String,
+    val createNewMealButton: String,
+
+    // ── Paso 1B: Crear nueva meal ──
+    val newMealNameLabel: String,
+    val newMealNamePlaceholder: String,
+    val newMealDescriptionLabel: String,
+    val newMealDescriptionPlaceholder: String,
+    val newMealTypeLabel: String,
+
+    // ── Paso 2: Ingredientes ──
+    val macrosSummaryTitle: String,
+    val macroProteinLabel: String,   // Label corto para MacrosSummaryCard: "Proteína" / "Protein"
+    val macroCarbsLabel: String,     // Label corto: "Carbos" / "Carbs"
+    val macroFatLabel: String,       // Label corto: "Grasas" / "Fat"
+    val myIngredientsSectionTitle: String,
+    val ingredientCatalogSectionTitle: String,
+    val searchIngredientPlaceholder: String,
+    val addIngredientButton: String,
+    val createCustomIngredientButton: String,
+
+    // ── Bottom Sheet: cantidad de ingrediente ──
+    val quantitySheetQuantityLabel: String,
+    val quantitySheetUnitLabel: String,
+    val quantitySheetConfirmButton: String,
+    val quantitySheetCancelButton: String,
+    val quantitySheetMacroTooltip: String,
+
+    // ── Dialog: crear ingrediente custom ──
+    val createIngredientDialogTitle: String,
+    val ingredientNameLabel: String,
+    val ingredientNamePlaceholder: String,
+    val ingredientBrandLabel: String,
+    val ingredientBrandPlaceholder: String,
+    val ingredientServingSizeLabel: String,
+    val ingredientCaloriesLabel: String,
+    val ingredientProteinLabel: String,
+    val ingredientCarbsLabel: String,
+    val ingredientFatLabel: String,
+    val saveIngredientButton: String,
+
+    // ── Paso 3: Planificación ──
+    val mealSummaryTitle: String,
+    val mealTypeSectionTitle: String,
+
+    // ── Errores ──
+    val errorNoMealSelected: String,
+    val errorMealNameEmpty: String,
+    val errorNoIngredients: String,
+    val errorNoMealType: String,
+    val errorNoDays: String,
+    val errorEndBeforeStart: String,
+    val errorQuantityZero: String,
+    val errorIngredientNameEmpty: String,
+    val errorServer: String,
+    val errorNetwork: String,
+
+    val loadingTitle: String,
 )
 
 /**
@@ -340,4 +443,5 @@ data class CreateRoutineTexts(
     val errorEndBeforeStart: String,
     val errorServer: String,
     val errorNetwork: String,
+    val loadingTitle: String,
 )

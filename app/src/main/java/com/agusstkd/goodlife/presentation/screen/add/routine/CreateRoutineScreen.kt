@@ -4,25 +4,12 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Badge
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,6 +17,7 @@ import com.agusstkd.goodlife.core.datetime.language.CreateItemSharedTexts
 import com.agusstkd.goodlife.core.datetime.language.CreateRoutineTexts
 import com.agusstkd.goodlife.domain.model.training.DifficultyLevel
 import com.agusstkd.goodlife.domain.model.training.GoalType
+import com.agusstkd.goodlife.presentation.components.wizard.WizardHeaderComponent
 import com.agusstkd.goodlife.presentation.screen.add.routine.model.CreateRoutineUiAction
 import com.agusstkd.goodlife.presentation.screen.add.routine.model.CreateRoutineUiState
 import com.agusstkd.goodlife.presentation.screen.add.routine.model.RoutineWizardStep
@@ -40,7 +28,6 @@ import com.agusstkd.goodlife.presentation.screen.add.routine.steps.WorkoutsStep
 import com.agusstkd.goodlife.presentation.screen.add.routine.steps.previewRoutineTexts
 import com.agusstkd.goodlife.presentation.screen.add.routine.steps.previewSharedTexts
 import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
-import com.agusstkd.goodlife.presentation.theme.TextPrimary
 import com.agusstkd.goodlife.presentation.theme.WorkoutAccent
 import com.agusstkd.goodlife.presentation.theme.WorkoutBackground
 
@@ -62,56 +49,19 @@ fun CreateRoutineScreen(
             .padding(16.dp),
     ) {
         // ── Header ──
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            if (uiState.currentStep != RoutineWizardStep.ROUTINE_INFO) {
-                IconButton(onClick = { onAction(CreateRoutineUiAction.OnPreviousStep) }) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null,
-                    )
-                }
-            }
-
-            Text(
-                text = routineTexts.screenTitle,
-                style = MaterialTheme.typography.headlineSmall,
-                color = TextPrimary,
-                modifier = Modifier.weight(1f),
-            )
-
-            Badge(
-                containerColor = WorkoutBackground,
-                contentColor = WorkoutAccent,
-            ) {
-                Text(
-                    text = routineTexts.typeBadge,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                )
-            }
-
-            IconButton(onClick = { onAction(CreateRoutineUiAction.OnDismiss) }) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = closeContentDescription,
-                )
-            }
-        }
-
-        // ── Step indicator ──
-        Text(
-            text = String.format(routineTexts.stepOf, uiState.stepNumber, uiState.totalSteps),
-            style = MaterialTheme.typography.bodySmall,
-            color = WorkoutAccent,
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        LinearProgressIndicator(
-            progress = { uiState.stepNumber.toFloat() / uiState.totalSteps },
-            modifier = Modifier.fillMaxWidth(),
-            color = WorkoutAccent,
+        WizardHeaderComponent(
+            title = routineTexts.screenTitle,
+            badgeText = routineTexts.typeBadge,
+            badgeContainerColor = WorkoutBackground,
+            badgeContentColor = WorkoutAccent,
+            stepLabel = String.format(routineTexts.stepOf, uiState.stepNumber, uiState.totalSteps),
+            progress = uiState.stepNumber.toFloat() / uiState.totalSteps,
+            accentColor = WorkoutAccent,
+            onBack = if (uiState.currentStep != RoutineWizardStep.ROUTINE_INFO) {
+                { onAction(CreateRoutineUiAction.OnPreviousStep) }
+            } else null,
+            onClose = { onAction(CreateRoutineUiAction.OnDismiss) },
+            closeContentDescription = closeContentDescription,
         )
 
         Spacer(modifier = Modifier.height(16.dp))

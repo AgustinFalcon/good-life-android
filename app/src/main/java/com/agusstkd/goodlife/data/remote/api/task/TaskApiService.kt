@@ -10,7 +10,7 @@ import retrofit2.http.POST
  * Endpoints del módulo Task.
  *
  * Separado de otros services siguiendo el Interface Segregation Principle:
- * - [com.agusstkd.goodlife.data.remote.datasource.TaskRemoteDataSource] inyecta
+ * - [com.agusstkd.goodlife.data.remote.datasource.remote.TaskRemoteDataSource] inyecta
  *   solo los endpoints de tareas.
  * - Cambios en Auth o Daily no afectan la compilación de Task.
  *

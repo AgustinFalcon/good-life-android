@@ -1,7 +1,7 @@
 package com.agusstkd.goodlife.di
 
 import com.agusstkd.goodlife.data.remote.api.task.TaskApiService
-import com.agusstkd.goodlife.data.remote.datasource.TaskRemoteDataSource
+import com.agusstkd.goodlife.data.remote.datasource.remote.TaskRemoteDataSource
 import com.agusstkd.goodlife.data.repository.TaskRepositoryImpl
 import com.agusstkd.goodlife.domain.repository.TaskRepository
 import com.agusstkd.goodlife.domain.usecase.task.CreateTaskUseCase

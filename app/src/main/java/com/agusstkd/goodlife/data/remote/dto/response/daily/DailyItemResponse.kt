@@ -1,7 +1,7 @@
 package com.agusstkd.goodlife.data.remote.dto.response.daily
 
 import com.agusstkd.goodlife.data.remote.dto.response.habit.HabitLogSummaryDto
-import com.agusstkd.goodlife.data.remote.dto.response.meal.MealSummaryDto
+import com.agusstkd.goodlife.data.remote.dto.response.nutrition.MealSummaryDto
 import com.agusstkd.goodlife.data.remote.dto.response.task.TaskSummaryDto
 import com.agusstkd.goodlife.data.remote.dto.response.workout.WorkoutSummaryDto
 import com.agusstkd.goodlife.domain.model.daily.DailyItem

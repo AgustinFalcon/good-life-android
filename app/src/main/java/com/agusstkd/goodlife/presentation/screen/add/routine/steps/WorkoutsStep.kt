@@ -29,6 +29,7 @@ import com.agusstkd.goodlife.core.datetime.language.CreateRoutineTexts
 import com.agusstkd.goodlife.domain.model.training.ExerciseDraft
 import com.agusstkd.goodlife.domain.model.training.SetDraft
 import com.agusstkd.goodlife.domain.model.training.WorkoutDraft
+import com.agusstkd.goodlife.presentation.components.common.ButtonColorScheme
 import com.agusstkd.goodlife.presentation.components.common.ButtonComponent
 import com.agusstkd.goodlife.presentation.components.common.ButtonParams
 import com.agusstkd.goodlife.presentation.components.common.ButtonVariant
@@ -101,6 +102,7 @@ fun WorkoutsStep(
                 params = ButtonParams(
                     text = routineTexts.backButton,
                     variant = ButtonVariant.OUTLINE,
+                    colorScheme = ButtonColorScheme.Workout,
                 ),
                 onClick = { onAction(CreateRoutineUiAction.OnPreviousStep) },
             )
@@ -110,6 +112,7 @@ fun WorkoutsStep(
                     text = routineTexts.nextButton,
                     enabled = uiState.canGoNext,
                     variant = ButtonVariant.PRIMARY,
+                    colorScheme = ButtonColorScheme.Workout,
                 ),
                 onClick = { onAction(CreateRoutineUiAction.OnNextStep) },
             )

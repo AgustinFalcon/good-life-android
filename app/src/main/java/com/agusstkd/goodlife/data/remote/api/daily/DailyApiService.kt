@@ -11,7 +11,7 @@ import retrofit2.http.Query
  * Endpoints del módulo Daily.
  *
  * Separado de otros services para que:
- * - [com.agusstkd.goodlife.data.remote.datasource.DailyRemoteDataSource] inyecte
+ * - [com.agusstkd.goodlife.data.remote.datasource.remote.DailyRemoteDataSource] inyecte
  *   solo los endpoints que usa.
  * - Un cambio en Auth o Meals no afecte la compilación de Daily.
  */

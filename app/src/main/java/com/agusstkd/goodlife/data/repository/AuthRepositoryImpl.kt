@@ -6,7 +6,7 @@ import com.agusstkd.goodlife.core.util.JwtUtils
 import com.agusstkd.goodlife.data.local.dao.UserDao
 import com.agusstkd.goodlife.data.local.entity.toDomain
 import com.agusstkd.goodlife.data.local.entity.toEntity
-import com.agusstkd.goodlife.data.remote.datasource.AuthRemoteDataSource
+import com.agusstkd.goodlife.data.remote.datasource.remote.AuthRemoteDataSource
 import com.agusstkd.goodlife.data.remote.dto.response.toDomain
 import com.agusstkd.goodlife.domain.exception.NoSessionException
 import com.agusstkd.goodlife.domain.model.auth.User

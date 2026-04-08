@@ -12,7 +12,7 @@ import retrofit2.http.POST
  * FASE 1: Solo creación de hábito.
  * FASE 2 (futuro): GET listar, PATCH actualizar, PATCH activar/desactivar.
  *
- * @see com.agusstkd.goodlife.data.remote.datasource.HabitRemoteDataSource
+ * @see com.agusstkd.goodlife.data.remote.datasource.remote.HabitRemoteDataSource
  */
 interface HabitApiService {
 

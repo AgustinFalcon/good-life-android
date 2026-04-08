@@ -1,4 +1,4 @@
-package com.agusstkd.goodlife.data.remote.datasource
+package com.agusstkd.goodlife.data.remote.datasource.remote
 
 import com.agusstkd.goodlife.data.remote.api.executeApiCall
 import com.agusstkd.goodlife.data.remote.api.task.TaskApiService

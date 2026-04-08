@@ -213,6 +213,8 @@ data object English : AppLanguage {
         confirmLabel = "Confirm",
         cancelLabel = "Cancel",
         retryLabel = "Retry",
+        loadingMessage = "This will only take a moment...",
+        errorTitle = "Could not save",
     )
 
     override val createTaskTexts = CreateTaskTexts(
@@ -226,6 +228,7 @@ data object English : AppLanguage {
         errorEndBeforeStart = "End date can't be before start date",
         errorServer = "Server error, please try again",
         errorNetwork = "No connection, check your internet",
+        loadingTitle = "Saving task...",
     )
 
     override val habitCategoryTexts = HabitCategoryTexts(
@@ -262,6 +265,7 @@ data object English : AppLanguage {
         errorEndBeforeStart = "End date can't be before start date",
         errorServer = "Server error, please try again",
         errorNetwork = "No connection, check your internet",
+        loadingTitle = "Saving habit...",
     )
 
     override val createRoutineTexts = CreateRoutineTexts(
@@ -313,6 +317,81 @@ data object English : AppLanguage {
         errorEndBeforeStart = "End date cannot be before start date",
         errorServer = "Server error, please try again",
         errorNetwork = "No connection, check your internet",
+        loadingTitle = "Saving routine...",
+    )
+
+    override val mealTypeTexts = MealTypeTexts(
+        breakfast = "Breakfast",
+        lunch = "Lunch",
+        dinner = "Dinner",
+        snack = "Snack",
+        preWorkout = "Pre-workout",
+        postWorkout = "Post-workout",
+    )
+
+    override val createMealPlanTexts = CreateMealPlanTexts(
+        // ── Header ──
+        screenTitle = "New meal",
+        typeBadge = "MEAL",
+        stepOf = "Step %d of %d",
+        nextButton = "Next",
+        backButton = "Back",
+        createPlanButton = "Create plan",
+        successTitle = "Meal plan created successfully",
+        // ── Step 1A: Catalog ──
+        searchMealPlaceholder = "Search meals...",
+        filterAll = "All",
+        chooseMealButton = "Choose",
+        createNewMealButton = "Create new meal",
+        // ── Step 1B: New meal ──
+        newMealNameLabel = "Meal name",
+        newMealNamePlaceholder = "E.g. Protein smoothie",
+        newMealDescriptionLabel = "Description (optional)",
+        newMealDescriptionPlaceholder = "E.g. Post-workout shake...",
+        newMealTypeLabel = "Meal type",
+        // ── Step 2: Ingredients ──
+        macrosSummaryTitle = "Total macros",
+        macroProteinLabel = "Protein",
+        macroCarbsLabel = "Carbs",
+        macroFatLabel = "Fat",
+        myIngredientsSectionTitle = "My ingredients",
+        ingredientCatalogSectionTitle = "Ingredient catalog",
+        searchIngredientPlaceholder = "Search ingredients...",
+        addIngredientButton = "Add",
+        createCustomIngredientButton = "Create custom ingredient",
+        // ── Bottom Sheet ──
+        quantitySheetQuantityLabel = "Quantity",
+        quantitySheetUnitLabel = "Unit",
+        quantitySheetConfirmButton = "Confirm",
+        quantitySheetCancelButton = "Cancel",
+        quantitySheetMacroTooltip = "Protein, carbs and fat expressed in grams (g).",
+        // ── Ingredient dialog ──
+        createIngredientDialogTitle = "New Ingredient",
+        ingredientNameLabel = "Name",
+        ingredientNamePlaceholder = "E.g. Instant oats",
+        ingredientBrandLabel = "Brand (optional)",
+        ingredientBrandPlaceholder = "E.g. Quaker",
+        ingredientServingSizeLabel = "Reference serving",
+        ingredientCaloriesLabel = "kcal",
+        ingredientProteinLabel = "Protein (g)",
+        ingredientCarbsLabel = "Carbs (g)",
+        ingredientFatLabel = "Fat (g)",
+        saveIngredientButton = "Save",
+        // ── Step 3 ──
+        mealSummaryTitle = "Meal summary",
+        mealTypeSectionTitle = "Meal type",
+        // ── Errors ──
+        errorNoMealSelected = "Select a meal to continue",
+        errorMealNameEmpty = "Meal name can't be empty",
+        errorNoIngredients = "Add at least one ingredient",
+        errorNoMealType = "Select a meal type",
+        errorNoDays = "Select at least one day",
+        errorEndBeforeStart = "End date can't be before start date",
+        errorQuantityZero = "Quantity must be greater than 0",
+        errorIngredientNameEmpty = "Ingredient name can't be empty",
+        errorServer = "Server error, please try again",
+        errorNetwork = "No connection, check your internet",
+        loadingTitle = "Saving meal plan...",
     )
 
     override val splashTexts = SplashTexts(

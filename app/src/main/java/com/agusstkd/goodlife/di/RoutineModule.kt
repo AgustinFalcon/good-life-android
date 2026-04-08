@@ -1,9 +1,7 @@
 package com.agusstkd.goodlife.di
 
-import com.agusstkd.goodlife.data.remote.api.training.RoutineApiService
-import com.agusstkd.goodlife.data.remote.api.training.TrainingCatalogApiService
-import com.agusstkd.goodlife.data.remote.datasource.RoutineRemoteDataSource
-import com.agusstkd.goodlife.data.remote.datasource.TrainingCatalogRemoteDataSource
+import com.agusstkd.goodlife.data.remote.datasource.remote.RoutineRemoteDataSource
+import com.agusstkd.goodlife.data.remote.datasource.remote.TrainingCatalogRemoteDataSource
 import com.agusstkd.goodlife.data.repository.RoutineRepositoryImpl
 import com.agusstkd.goodlife.data.repository.TrainingCatalogRepositoryImpl
 import com.agusstkd.goodlife.domain.repository.RoutineRepository

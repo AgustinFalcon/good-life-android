@@ -1,13 +1,11 @@
 package com.agusstkd.goodlife.data.repository
 
 import com.agusstkd.goodlife.core.result.Result
-import com.agusstkd.goodlife.core.result.map
 import com.agusstkd.goodlife.data.local.dao.DailyDao
-import com.agusstkd.goodlife.data.local.entity.DailyLogWithItems
 import com.agusstkd.goodlife.data.local.entity.toDomain
 import com.agusstkd.goodlife.data.local.entity.toEntity
 import com.agusstkd.goodlife.data.local.entity.toItemEntity
-import com.agusstkd.goodlife.data.remote.datasource.DailyRemoteDataSource
+import com.agusstkd.goodlife.data.remote.datasource.remote.DailyRemoteDataSource
 import com.agusstkd.goodlife.data.remote.dto.response.daily.toDomain
 import com.agusstkd.goodlife.domain.model.daily.DailyLog
 import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus

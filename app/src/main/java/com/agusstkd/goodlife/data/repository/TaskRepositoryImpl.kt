@@ -1,7 +1,7 @@
 package com.agusstkd.goodlife.data.repository
 
 import com.agusstkd.goodlife.core.result.Result
-import com.agusstkd.goodlife.data.remote.datasource.TaskRemoteDataSource
+import com.agusstkd.goodlife.data.remote.datasource.remote.TaskRemoteDataSource
 import com.agusstkd.goodlife.data.remote.dto.request.task.CreateTaskRequest
 import com.agusstkd.goodlife.data.remote.dto.response.task.toDomain
 import com.agusstkd.goodlife.domain.model.task.Task

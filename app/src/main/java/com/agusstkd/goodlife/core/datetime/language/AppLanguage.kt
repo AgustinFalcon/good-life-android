@@ -52,5 +52,7 @@ sealed interface AppLanguage {
     val habitCategoryTexts: HabitCategoryTexts
     val createHabitTexts: CreateHabitTexts
     val createRoutineTexts: CreateRoutineTexts
+    val mealTypeTexts: MealTypeTexts
+    val createMealPlanTexts: CreateMealPlanTexts
     val splashTexts: SplashTexts
 }

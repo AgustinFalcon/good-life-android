@@ -7,11 +7,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.agusstkd.goodlife.presentation.components.bottom.datepicker.DatePickerBottomSheetComponent
-import com.agusstkd.goodlife.presentation.components.common.SnackbarComponent
-import com.agusstkd.goodlife.presentation.components.common.SnackbarParams
-import com.agusstkd.goodlife.presentation.components.common.SnackbarVariant
-import com.agusstkd.goodlife.presentation.components.dialog.SuccessDialog
-import com.agusstkd.goodlife.presentation.components.dialog.SuccessDialogParams
+import com.agusstkd.goodlife.presentation.components.dialog.CreationItemType
+import com.agusstkd.goodlife.presentation.components.dialog.PopupResultComponent
+import com.agusstkd.goodlife.presentation.components.dialog.PopupResultParams
+import com.agusstkd.goodlife.presentation.components.dialog.PopupResultState
 import com.agusstkd.goodlife.presentation.components.dialog.TimePickerDialogComponent
 import com.agusstkd.goodlife.presentation.components.dialog.TimePickerDialogParams
 import com.agusstkd.goodlife.presentation.screen.add.task.model.CreateTaskUiAction
@@ -26,8 +25,8 @@ import org.koin.androidx.compose.koinViewModel
  * - Renderiza [CreateTaskScreen] (formulario puro).
  * - Muestra el [DatePickerBottomSheetComponent] cuando [CreateTaskUiState.activeDatePickerField] != null.
  * - Muestra el [TimePickerDialogComponent] cuando [CreateTaskUiState.showTimePicker] es true.
- * - Muestra el [SuccessDialog] con Lottie cuando [CreateTaskUiState.isSuccess] es true.
- * - Muestra el [SnackbarComponent] de error cuando [CreateTaskUiState.errorMessage] != null.
+ * - Muestra el [PopupResultComponent] cuando [CreateTaskUiState.isLoading], [CreateTaskUiState.isSuccess]
+ *   o [CreateTaskUiState.errorMessage] están activos, cubriendo los tres estados del flujo de creación.
  */
 @Composable
 fun CreateTaskScreenOwner(
@@ -83,38 +82,37 @@ fun CreateTaskScreenOwner(
             )
         }
 
-        // ── 4. Success dialog (Lottie) ───────────────────────────────────
-        if (uiState.isSuccess) {
-            SuccessDialog(
-                params = SuccessDialogParams(
-                    title = viewModel.createTaskTexts.successTitle,
-                    subtitle = uiState.title,
-                    detail = uiState.scheduledDateDisplay.ifEmpty {
-                        uiState.startDateDisplay
-                    }.ifEmpty { null },
+        // ── 4. Popup de resultado (loading / success / error) ────────────
+        val showPopup = uiState.isLoading || uiState.isSuccess || uiState.errorMessage != null
+        if (showPopup) {
+            PopupResultComponent(
+                params = PopupResultParams(
+                    state = when {
+                        uiState.isLoading -> PopupResultState.LOADING
+                        uiState.isSuccess -> PopupResultState.SUCCESS
+                        else -> PopupResultState.ERROR
+                    },
+                    itemType = CreationItemType.TASK,
+                    title = when {
+                        uiState.isLoading -> viewModel.createTaskTexts.loadingTitle
+                        uiState.isSuccess -> viewModel.createTaskTexts.successTitle
+                        else -> viewModel.sharedTexts.errorTitle
+                    },
+                    message = when {
+                        uiState.isLoading -> viewModel.sharedTexts.loadingMessage
+                        uiState.isSuccess -> uiState.title // title task
+                        else -> uiState.errorMessage ?: ""
+                    },
+                    detail = if (uiState.isSuccess) {
+                        uiState.scheduledDateDisplay.ifEmpty { uiState.startDateDisplay }.ifEmpty { null }
+                    } else null,
+                    loadingProgress = null,
+                    retryLabel = viewModel.sharedTexts.retryLabel,
+                    cancelLabel = viewModel.sharedTexts.cancelLabel,
                 ),
-                onAnimationFinished = {
-                    viewModel.onAction(CreateTaskUiAction.OnSuccessAnimationFinished)
-                },
-            )
-        }
-
-        // ── 5. Snackbar de error ─────────────────────────────────────────
-        uiState.errorMessage?.let { error ->
-            SnackbarComponent(
-                params = SnackbarParams(
-                    message = error,
-                    variant = SnackbarVariant.ERROR,
-                    actionLabel = viewModel.sharedTexts.retryLabel,
-                    autoDismissMs = 6_000L,
-                ),
-                isVisible = true,
-                onDismiss = {
-                    viewModel.onAction(CreateTaskUiAction.OnErrorDismissed)
-                },
-                onActionClick = {
-                    viewModel.onAction(CreateTaskUiAction.OnSubmit)
-                },
+                onSuccess = { viewModel.onAction(CreateTaskUiAction.OnSuccessAnimationFinished) },
+                onRetry = { viewModel.onAction(CreateTaskUiAction.OnSubmit) },
+                onCancel = { viewModel.onAction(CreateTaskUiAction.OnErrorDismissed) },
             )
         }
     }

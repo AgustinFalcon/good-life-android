@@ -7,11 +7,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.agusstkd.goodlife.presentation.components.bottom.datepicker.DatePickerBottomSheetComponent
-import com.agusstkd.goodlife.presentation.components.common.SnackbarComponent
-import com.agusstkd.goodlife.presentation.components.common.SnackbarParams
-import com.agusstkd.goodlife.presentation.components.common.SnackbarVariant
-import com.agusstkd.goodlife.presentation.components.dialog.SuccessDialog
-import com.agusstkd.goodlife.presentation.components.dialog.SuccessDialogParams
+import com.agusstkd.goodlife.presentation.components.dialog.CreationItemType
+import com.agusstkd.goodlife.presentation.components.dialog.PopupResultComponent
+import com.agusstkd.goodlife.presentation.components.dialog.PopupResultParams
+import com.agusstkd.goodlife.presentation.components.dialog.PopupResultState
 import com.agusstkd.goodlife.presentation.components.dialog.TimePickerDialogComponent
 import com.agusstkd.goodlife.presentation.components.dialog.TimePickerDialogParams
 import com.agusstkd.goodlife.presentation.screen.add.habit.model.CreateHabitUiAction
@@ -22,12 +21,12 @@ import org.koin.androidx.compose.koinViewModel
  * Owner composable que orquesta la pantalla de creación de hábito.
  *
  * Responsabilidades:
- * - Inyecta el [CreateHabitViewModel] via Koin (único koinViewModel).
+ * - Inyecta el [CreateHabitViewModel] via Koin.
  * - Renderiza [CreateHabitScreen] (formulario puro).
  * - Muestra [DatePickerBottomSheetComponent] cuando [CreateHabitUiState.activeDatePickerField] != null.
  * - Muestra [TimePickerDialogComponent] cuando [CreateHabitUiState.showTimePicker] es true.
- * - Muestra [SuccessDialog] con Lottie cuando [CreateHabitUiState.isSuccess] es true.
- * - Muestra [SnackbarComponent] de error cuando [CreateHabitUiState.errorMessage] != null.
+ * - Muestra el [PopupResultComponent] cuando [CreateHabitUiState.isLoading], [CreateHabitUiState.isSuccess]
+ *   o [CreateHabitUiState.errorMessage] están activos, cubriendo los tres estados del flujo de creación.
  */
 @Composable
 fun CreateHabitScreenOwner(
@@ -83,36 +82,37 @@ fun CreateHabitScreenOwner(
             )
         }
 
-        // ── 4. Success dialog (Lottie) ───────────────────────────────────
-        if (uiState.isSuccess) {
-            SuccessDialog(
-                params = SuccessDialogParams(
-                    title = viewModel.createHabitTexts.successTitle,
-                    subtitle = uiState.name,
-                    detail = uiState.startDateDisplay.ifEmpty { null },
+        // ── 4. Popup de resultado (loading / success / error) ────────────
+        val showPopup = uiState.isLoading || uiState.isSuccess || uiState.errorMessage != null
+        if (showPopup) {
+            PopupResultComponent(
+                params = PopupResultParams(
+                    state = when {
+                        uiState.isLoading -> PopupResultState.LOADING
+                        uiState.isSuccess -> PopupResultState.SUCCESS
+                        else              -> PopupResultState.ERROR
+                    },
+                    itemType = CreationItemType.HABIT,
+                    title = when {
+                        uiState.isLoading -> viewModel.createHabitTexts.loadingTitle
+                        uiState.isSuccess -> viewModel.createHabitTexts.successTitle
+                        else              -> viewModel.sharedTexts.errorTitle
+                    },
+                    message = when {
+                        uiState.isLoading -> viewModel.sharedTexts.loadingMessage
+                        uiState.isSuccess -> uiState.name
+                        else              -> uiState.errorMessage ?: ""
+                    },
+                    detail = if (uiState.isSuccess) {
+                        uiState.startDateDisplay.ifEmpty { null }
+                    } else null,
+                    loadingProgress = null,
+                    retryLabel = viewModel.sharedTexts.retryLabel,
+                    cancelLabel = viewModel.sharedTexts.cancelLabel,
                 ),
-                onAnimationFinished = {
-                    viewModel.onAction(CreateHabitUiAction.OnSuccessAnimationFinished)
-                },
-            )
-        }
-
-        // ── 5. Snackbar de error ─────────────────────────────────────────
-        uiState.errorMessage?.let { error ->
-            SnackbarComponent(
-                params = SnackbarParams(
-                    message = error,
-                    variant = SnackbarVariant.ERROR,
-                    actionLabel = viewModel.sharedTexts.retryLabel,
-                    autoDismissMs = 6_000L,
-                ),
-                isVisible = true,
-                onDismiss = {
-                    viewModel.onAction(CreateHabitUiAction.OnErrorDismissed)
-                },
-                onActionClick = {
-                    viewModel.onAction(CreateHabitUiAction.OnSubmit)
-                },
+                onSuccess = { viewModel.onAction(CreateHabitUiAction.OnSuccessAnimationFinished) },
+                onRetry   = { viewModel.onAction(CreateHabitUiAction.OnSubmit) },
+                onCancel  = { viewModel.onAction(CreateHabitUiAction.OnErrorDismissed) },
             )
         }
     }

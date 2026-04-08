@@ -950,3 +950,41 @@ val nutritionModule = module {
 ---
 
 *Spec creado el 09/03/2026.*
+
+---
+
+## 17. Mejoras Futuras
+
+### 17.1 — "Usar como plantilla" al seleccionar una meal del catálogo
+
+**Idea:** Al seleccionar una meal existente del catálogo (Paso 1A), en lugar de ir directo al Paso 3, el usuario podría elegir **"Usar como base"** para editarla (modificar ingredientes, imagen, descripción) y guardarla como una nueva meal custom propia, usando la original como punto de partida.
+
+**Flujo propuesto:**
+```
+Paso 1A — Usuario toca "Elegir" en una meal del catálogo
+    │
+    ├─ [Planificar tal como está]  →  saltar al Paso 3 (flujo actual)
+    │
+    └─ [Usar como base / Personalizar]
+            │
+            ▼
+        Paso 1B (precargado con nombre, descripción y tipo de la meal original)
+            │
+            ▼
+        Paso 2 (ingredientes precargados de la meal original, editables)
+            │
+            ▼
+        Al confirmar: se crea una nueva meal custom del usuario
+            │
+            ▼
+        Paso 3 — planificar la nueva meal
+```
+
+**Impacto backend:** ninguno — sigue usando `POST /api/v1/meals` con los datos modificados.
+
+**Impacto Android:**
+- `UiState` necesita `templateMeal: MealDetail?` para precargar el form (requiere `GET /api/v1/meals/{id}`)
+- El diálogo de elección puede ser un simple `AlertDialog` o un `BottomSheet` con 2 opciones
+- Agregar acción `OnUseAsTemplate(meal: MealSummary)` al `CreateMealPlanUiAction`
+
+**Prioridad:** Media — añade valor UX sin complejidad de backend. Implementar en v1.1 una vez el flujo base esté estable.

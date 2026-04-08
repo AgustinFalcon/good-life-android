@@ -9,7 +9,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 import com.agusstkd.goodlife.data.remote.api.daily.DailyApiService
-import com.agusstkd.goodlife.data.remote.datasource.DailyRemoteDataSource
+import com.agusstkd.goodlife.data.remote.datasource.remote.DailyRemoteDataSource
 
 /**
  * Módulo de Koin para Daily feature.

@@ -19,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -30,9 +29,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import com.agusstkd.goodlife.presentation.components.common.SearchBarComponent
+import com.agusstkd.goodlife.presentation.components.common.SearchBarParams
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -49,6 +49,7 @@ import com.agusstkd.goodlife.domain.model.training.ExerciseMaster
 import com.agusstkd.goodlife.domain.model.training.MuscleGroup
 import com.agusstkd.goodlife.domain.model.training.SetDraft
 import com.agusstkd.goodlife.domain.model.training.WorkoutDraft
+import com.agusstkd.goodlife.presentation.components.common.ButtonColorScheme
 import com.agusstkd.goodlife.presentation.components.common.ButtonComponent
 import com.agusstkd.goodlife.presentation.components.common.ButtonParams
 import com.agusstkd.goodlife.presentation.components.common.ButtonVariant
@@ -148,15 +149,12 @@ fun WorkoutExercisesStep(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Search bar
-                OutlinedTextField(
-                    value = uiState.exerciseSearchQuery,
-                    onValueChange = { onAction(CreateRoutineUiAction.OnSearchQueryChange(it)) },
-                    placeholder = { Text(routineTexts.searchPlaceholder) },
-                    leadingIcon = {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = null)
-                    },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
+                SearchBarComponent(
+                    params = SearchBarParams(
+                        query = uiState.exerciseSearchQuery,
+                        placeholder = routineTexts.searchPlaceholder,
+                    ),
+                    onQueryChange = { onAction(CreateRoutineUiAction.OnSearchQueryChange(it)) },
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -227,6 +225,7 @@ fun WorkoutExercisesStep(
                 text = routineTexts.saveWorkoutButton,
                 enabled = workout.exercises.isNotEmpty(),
                 variant = ButtonVariant.PRIMARY,
+                colorScheme = ButtonColorScheme.Workout,
             ),
             onClick = { onAction(CreateRoutineUiAction.OnSaveWorkout) },
         )
