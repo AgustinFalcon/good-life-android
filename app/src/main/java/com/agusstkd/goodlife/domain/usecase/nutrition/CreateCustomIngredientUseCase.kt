@@ -21,8 +21,8 @@ class CreateCustomIngredientUseCase(
 
         return@withContext when (val result = repository.createCustomIngredient(request)) {
             is Result.Success -> CreateCustomIngredientResult.Success(result.data)
-            is Result.Error -> when (result.exception) {
-                is ApiException.ServerException -> CreateCustomIngredientResult.ServerError
+            is Result.Error -> when (val ex = result.exception) {
+                is ApiException.ServerException -> CreateCustomIngredientResult.ServerError(ex.message)
                 else -> CreateCustomIngredientResult.NetworkError
             }
         }

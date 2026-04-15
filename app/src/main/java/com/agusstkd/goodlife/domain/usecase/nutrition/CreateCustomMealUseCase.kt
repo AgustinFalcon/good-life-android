@@ -21,8 +21,8 @@ class CreateCustomMealUseCase(
 
         return@withContext when (val result = repository.createCustomMeal(request)) {
             is Result.Success -> CreateCustomMealResult.Success(result.data)
-            is Result.Error -> when (result.exception) {
-                is ApiException.ServerException -> CreateCustomMealResult.ServerError
+            is Result.Error -> when (val ex = result.exception) {
+                is ApiException.ServerException -> CreateCustomMealResult.ServerError(ex.message)
                 else -> CreateCustomMealResult.NetworkError
             }
         }

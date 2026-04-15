@@ -18,8 +18,8 @@ class SearchMealsUseCase(
     ): SearchMealsResult = withContext(dispatcher.io) {
         return@withContext when (val result = repository.searchMeals(query, page, pageSize)) {
             is Result.Success -> SearchMealsResult.Success(result.data)
-            is Result.Error -> when (result.exception) {
-                is ApiException.ServerException -> SearchMealsResult.ServerError
+            is Result.Error -> when (val ex = result.exception) {
+                is ApiException.ServerException -> SearchMealsResult.ServerError(ex.message)
                 else -> SearchMealsResult.NetworkError
             }
         }

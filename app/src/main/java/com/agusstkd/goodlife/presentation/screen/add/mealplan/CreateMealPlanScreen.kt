@@ -94,10 +94,16 @@ fun CreateMealPlanScreen(
                     } else {
                         texts.nextButton
                     },
-                    primaryEnabled = true,
-                    isLoading = false,
+                    primaryEnabled = !uiState.isLoading,
+                    isLoading = uiState.isLoading,
                 ),
-                onPrimary = { onAction(CreateMealPlanUiAction.OnNextStep) },
+                onPrimary = {
+                    if (uiState.currentStep == MealPlanWizardStep.SCHEDULE) {
+                        onAction(CreateMealPlanUiAction.OnSubmit)
+                    } else {
+                        onAction(CreateMealPlanUiAction.OnNextStep)
+                    }
+                },
             )
         },
     ) { paddingValues ->

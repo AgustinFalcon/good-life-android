@@ -1,8 +1,8 @@
 # SPEC-012 — Create Meal Plan Screen (Android)
 
 **Versión:** 1.0  
-**Estado:** 📝 Planificado  
-**Última actualización:** 09 de Marzo, 2026  
+**Estado:** ✅ Completado  
+**Última actualización:** 14 de Abril, 2026  
 **Relacionado con:** backend `nutrition.spec.md`, `SPEC-011-create-routine-screen.md`
 
 ---

@@ -26,8 +26,8 @@ class CreateMealPlanUseCase(
 
         return@withContext when (val result = repository.createMealPlan(request)) {
             is Result.Success -> CreateMealPlanResult.Success(result.data.id ?: 0L)
-            is Result.Error -> when (result.exception) {
-                is ApiException.ServerException -> CreateMealPlanResult.ServerError
+            is Result.Error -> when (val ex = result.exception) {
+                is ApiException.ServerException -> CreateMealPlanResult.ServerError(ex.message)
                 else -> CreateMealPlanResult.NetworkError
             }
         }

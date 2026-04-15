@@ -18,6 +18,8 @@ Este directorio contiene las especificaciones técnicas detalladas para las feat
 | [SPEC-008](./SPEC-008-notifications-deeplinks.md) | Notificaciones en Tiempo Real + Deep Links | Feature | 📝 Planificado |
 | [SPEC-009](./SPEC-009-add-to-daily.md) | Add to Daily (Task + Habit desde FAB) | Feature | 🚧 En Progreso |
 | [SPEC-010](./SPEC-010-create-task-screen.md) | Pantalla Create Task | Feature | ✅ Completado |
+| [SPEC-011](./SPEC-011-create-routine-screen.md) | Pantalla Create Routine | Feature | ✅ Completado |
+| [SPEC-012](./SPEC-012-create-meal-plan-screen.md) | Pantalla Create Meal Plan | Feature | ✅ Completado |
 
 ---
 
@@ -81,6 +83,16 @@ SPEC-010 (Create Task)
     ├── usa → SPEC-007 (AppLanguage: CreateTaskTexts, CreateItemSharedTexts)
     ├── usa → SPEC-004 (DateProvider)
     └── usa → SPEC-003 (MainScaffold: QuickActionType.TASK, AppRoute)
+
+SPEC-011 (Create Routine)
+    ├── usa → SPEC-007 (AppLanguage: CreateRoutineTexts, CreateItemSharedTexts)
+    ├── usa → SPEC-004 (DateProvider)
+    └── usa → SPEC-003 (MainScaffold: QuickActionType.WORKOUT, AppRoute)
+
+SPEC-012 (Create Meal Plan)
+    ├── usa → SPEC-007 (AppLanguage: CreateMealPlanTexts, CreateItemSharedTexts)
+    ├── usa → SPEC-004 (DateProvider)
+    └── usa → SPEC-003 (MainScaffold: QuickActionType.MEAL, AppRoute)
 ```
 
 ---
@@ -99,6 +111,9 @@ SPEC-010 (Create Task)
 | Daily Tab — Arquitectura | ✅ Completado |
 | Daily Tab — DailyItemCard | ✅ Completado |
 | Create Task (SPEC-010) | ✅ Completado |
+| Create Habit | ✅ Completado |
+| Create Routine (SPEC-011) | ✅ Completado |
+| Create Meal Plan (SPEC-012) | ✅ Completado |
 | Workouts Tab | ⏸️ Pendiente |
 | Meals Tab | ⏸️ Pendiente |
 | Settings/More Tab | ⏸️ Pendiente |
@@ -116,4 +131,4 @@ SPEC-010 (Create Task)
 
 ---
 
-**Última actualización:** 2026-03-09
+**Última actualización:** 2026-04-14

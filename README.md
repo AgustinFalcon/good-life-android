@@ -8,10 +8,16 @@ Aplicación Android para gestión de bienestar personal: tareas diarias, hábito
 - ✅ **Login/Logout** funcional
 - ✅ **Login Biométrico** (huella, Face ID, PIN, patrón)
 - ✅ **Registro de usuarios** con validación en tiempo real
-- ✅ **Persistencia local** con Room (usuario logueado)
+- ✅ **Persistencia local** con Room + SWR cache (fallback offline)
 - ✅ **Navegación type-safe** con Compose Navigation
-- ✅ **UI optimizada** con `@Stable` states
+- ✅ **Daily Tab** con `DailyItemCard`, refresh automático y SWR
+- ✅ **Create Task** (SPEC-010) — modos once/recurrente, DatePicker, TimePicker
+- ✅ **Create Habit** — categoría, meta numérica, días de la semana
+- ✅ **Create Routine** (SPEC-011) — wizard 4 pasos, catálogo paginado de ejercicios, sets
+- ✅ **Create Meal Plan** (SPEC-012) — wizard 3 pasos, ingredientes, macros, scheduling
+- ✅ **UI optimizada** con `@Stable` states, `ImmutableList`, `@Immutable`
 - ✅ **Arquitectura KMP-Ready** (domain layer en Kotlin puro)
+- ✅ **60+ unit tests** (domain, data, presentation)
 - 🚧 Auto-login con token guardado
 
 ## 🚀 Quick Start
@@ -172,14 +178,21 @@ Seguimos [Conventional Commits](https://www.conventionalcommits.org/):
 
 ## 🗺️ Roadmap
 
-- [x] Pantalla de Registro ✅
-- [x] Login Biométrico ✅
+- [x] Pantalla de Registro
+- [x] Login Biométrico
+- [x] Daily Tab completo (DailyItemCard + SWR)
+- [x] Create Task (SPEC-010)
+- [x] Create Habit
+- [x] Create Routine (SPEC-011)
+- [x] Create Meal Plan (SPEC-012)
+- [x] 60+ Unit Tests
 - [ ] Auto-login con token guardado
-- [ ] Refresh token automático
-- [ ] Modo offline con caché
-- [ ] Pantallas principales (Tasks, Habits, Workouts, Meals)
+- [ ] Tabs restantes (Workouts, Meals, More/Settings)
+- [ ] Activate Routine + detalle de item en DailyScreen
+- [ ] SWR Fase 2 — cola de sincronización offline
+- [ ] Notificaciones push + Deep Links (SPEC-008)
+- [ ] Dark mode completo
 - [ ] Sistema de gamificación (XP, niveles)
-- [ ] Notificaciones push
 
 ## 📜 Licencia
 

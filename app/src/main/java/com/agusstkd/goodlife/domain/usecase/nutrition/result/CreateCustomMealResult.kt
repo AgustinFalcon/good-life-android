@@ -6,5 +6,5 @@ sealed interface CreateCustomMealResult {
     data class Success(val meal: MealSummary) : CreateCustomMealResult
     data object ValidationError : CreateCustomMealResult
     data object NetworkError : CreateCustomMealResult
-    data object ServerError : CreateCustomMealResult
+    data class ServerError(val message: String) : CreateCustomMealResult
 }

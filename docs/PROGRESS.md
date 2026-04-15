@@ -1,6 +1,6 @@
 # Progreso de Implementación - GoodLife Android
 
-> Última actualización: 2026-03-11
+> Última actualización: 2026-04-14
 
 ---
 
@@ -25,12 +25,78 @@
 | **Create Habit** | ✅ Completado | 100% |
 | **HabitLogSummaryDto fix + DTOs defensivos** | ✅ Completado | 100% |
 | **Create Routine (SPEC-011)** | ✅ Completado | 100% |
-| Create Meal Plan | ⏸️ Pendiente | 0% |
+| **Create Meal Plan (SPEC-012)** | ✅ Completado | 100% |
 | Workouts Tab | ⏸️ Pendiente | 0% |
 | Meals Tab | ⏸️ Pendiente | 0% |
 | More/Settings Tab | ⏸️ Pendiente | 0% |
 | SWR Fase 2 — Sync Offline (SPEC-006) | 📝 Planificado | 0% |
 | Notificaciones + Deep Links (SPEC-008) | 📝 Planificado | 0% |
+
+---
+
+## ✅ Sesión 2026-04-14 — Create Meal Plan Screen (SPEC-012)
+
+### Resumen de la sesión
+
+Implementación completa del wizard multi-paso para planificar comidas (SPEC-012). Incluye catálogo
+paginado de ingredientes y meals, creación de ingredientes custom, cálculo de macros en tiempo real,
+y scheduling con tipo de comida, días, fecha y hora.
+
+### Archivos creados
+
+#### Domain Layer
+- `domain/model/nutrition/` — `Ingredient`, `IngredientEntry`, `Meal`, `MealSummary`, `MealPlan`, `MealPlanDraft`, `ScheduledMealDraft`, `PortionUnit`
+- `domain/repository/` — `IngredientRepository`, `MealRepository`, `MealPlanRepository`
+- `domain/usecase/nutrition/` — 5 UseCases: `GetIngredientCatalog`, `GetMealCatalog`, `CreateCustomIngredient`, `CreateCustomMeal`, `CreateMealPlan`
+- `domain/usecase/nutrition/result/` — 5 Result types con `ServerError(val message: String)`
+
+#### Data Layer
+- `data/remote/api/nutrition/` — `IngredientApiService`, `MealApiService`, `MealPlanApiService`
+- `data/remote/datasource/` — 3 DataSources
+- `data/remote/dto/request/nutrition/` — 3 Request DTOs
+- `data/remote/dto/response/nutrition/` — DTOs defensivos con mappers
+- `data/repository/` — 3 `*RepositoryImpl`
+
+#### Presentation Layer (12 archivos)
+- `presentation/screen/add/mealplan/model/CreateMealPlanUiState.kt` — `@Stable`, todos los campos del wizard
+- `presentation/screen/add/mealplan/model/CreateMealPlanUiAction.kt` — sealed interface
+- `presentation/screen/add/mealplan/model/MealPlanWizardStep.kt` — 3 pasos del wizard
+- `presentation/screen/add/mealplan/model/MealDatePickerField.kt` — enum START_DATE / END_DATE
+- `presentation/screen/add/mealplan/CreateMealPlanViewModel.kt` — 5 UseCases, paginación, guards de validación, KDoc completo
+- `presentation/screen/add/mealplan/CreateMealPlanScreen.kt` — AnimatedContent con slide horizontal entre pasos
+- `presentation/screen/add/mealplan/CreateMealPlanScreenOwner.kt` — todos los overlays conectados
+- `presentation/screen/add/mealplan/steps/SelectMealStep.kt` — catálogo de meals + nuevo meal
+- `presentation/screen/add/mealplan/steps/MealIngredientsStep.kt` — macros summary + catálogo de ingredientes
+- `presentation/screen/add/mealplan/steps/ScheduleStep.kt` — tipo de comida, días, fechas, hora
+- `presentation/screen/add/mealplan/steps/PreviewHelpers.kt` — helpers para `@Preview`
+
+#### Componentes de Nutrición (7 archivos en `presentation/components/nutrition/`)
+- `CreateIngredientDialog.kt` — ModalBottomSheet con campos nombre/marca, selector unidad, cards de macros con `BasicTextField` + placeholder overlay
+- `QuantityBottomSheet.kt` — selector de cantidad con cálculo de macros proporcional en tiempo real
+- `MealCatalogItem.kt`, `IngredientCatalogSection.kt`, `MyIngredientsSection.kt`, `MacrosSummaryCard.kt`, `MealHeaderCard.kt`
+
+#### DI + Navigation + Localización
+- `di/NutritionModule.kt` — DataSources, Repositories, UseCases, ViewModel
+- `NetworkModule.kt` — 3 nuevos ApiServices registrados
+- `AppRoute.CreateMealPlan` + `AppGraph` con `CreateMealPlanScreenOwner`
+- `MainScaffoldViewModel` — FAB Meal → CreateMealPlan
+- `CreateMealPlanTexts` en `UiTexts.kt` + traducciones ES/EN/PT
+
+### Decisiones técnicas
+
+1. **Submit routing en Screen**: `WizardBottomBarComponent` despacha `OnSubmit` en paso SCHEDULE y `OnNextStep` en los demás; `isLoading` y `primaryEnabled` conectados al `uiState`
+2. **Guards independientes en `submitMealPlan()`**: cada validación tiene su propio `if (...) { update; return }` — no acumuladores que se sobreescriban
+3. **`it.copy(...)` en `_uiState.update {}`**: evita usar estado stale capturado antes de llamadas async
+4. **`ServerError(val message: String)`**: los 3 result types corregidos de `data object` a `data class`; UseCases pasan `ex.message`
+5. **`BasicTextField` + placeholder overlay en `CreateIngredientDialog`**: `OutlinedTextField` tiene borde visual no deseado; `BasicTextField` con `Box {}` condicional para placeholder da control total
+6. **`PortionUnit.entries`** para mostrar las 3 unidades en `CreateIngredientDialog` (GRAM, MILLILITER, PIECE)
+
+### Bugs críticos corregidos
+
+- Submit nunca se ejecutaba: el botón del `WizardBottomBarComponent` siempre despachaba `OnNextStep` en todos los pasos
+- `state.copy(...)` stale en `submitMealPlan()` → corregido a `it.copy(...)`
+- Guards que se sobreescribían → guards independientes con `return`
+- `ServerError` sin campo `message` en los 3 result types
 
 ---
 
@@ -532,8 +598,8 @@ Se hicieron defensivos `WorkoutSummaryDto` y `MealSummaryDto` — todos los camp
 
 ### Corto plazo
 
-1. **Activate Routine + UpdateItemStatus** — lógica de activar rutina post-creación + pantalla de detalle/progreso de items
-2. **Create Meal Plan Screen** — ingredientes + macros + scheduling
+1. **Tabs restantes** — Workouts Tab, Meals Tab, More/Settings Tab
+2. **Activate Routine + UpdateItemStatus** — lógica de activar rutina post-creación + pantalla de detalle/progreso de items
 3. **Pantalla de detalle de item** — tocar card en DailyScreen abre detalle (para habits: registrar progreso parcial, para tasks: ver descripción completa + confirmar)
 
 ### Mediano plazo
@@ -559,5 +625,6 @@ Se hicieron defensivos `WorkoutSummaryDto` y `MealSummaryDto` — todos los camp
 - [SPEC-008: Notificaciones + Deep Links](./specs/SPEC-008-notifications-deeplinks.md)
 - [SPEC-010: Create Task Screen](./specs/SPEC-010-create-task-screen.md)
 - [SPEC-011: Create Routine Screen](./specs/SPEC-011-create-routine-screen.md)
+- [SPEC-012: Create Meal Plan Screen](./specs/SPEC-012-create-meal-plan-screen.md)
 - [ARCHITECTURE.md](./ARCHITECTURE.md)
 - [DAILY-IMPLEMENTATION-PLAN](./plans/DAILY-IMPLEMENTATION-PLAN.md)

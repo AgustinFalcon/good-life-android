@@ -52,7 +52,7 @@ data class CreateMealPlanUiState(
 
     // ── Paso 3: Planificación ───────────────────────────────────────────
     val mealType: MealType? = null,
-    val selectedDays: ImmutableList<DayOfWeek> = emptyList<DayOfWeek>().toImmutableList(),
+    val selectedDays: Set<DayOfWeek> = emptySet(),
     val hasStartDate: Boolean = false,
     val startDate: LocalDate? = null,
     val startDateDisplay: String = "",

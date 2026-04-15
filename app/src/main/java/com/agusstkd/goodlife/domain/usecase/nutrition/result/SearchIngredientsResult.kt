@@ -5,6 +5,6 @@ import com.agusstkd.goodlife.core.pagination.PageResult
 
 sealed interface SearchIngredientsResult {
     data class Success(val data: PageResult<Ingredient>) : SearchIngredientsResult
+    data class ServerError(val message: String) : SearchIngredientsResult
     data object NetworkError : SearchIngredientsResult
-    data object ServerError : SearchIngredientsResult
 }

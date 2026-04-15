@@ -18,8 +18,8 @@ class SearchIngredientsUseCase(
     ): SearchIngredientsResult = withContext(dispatcher.io) {
         return@withContext when (val result = repository.searchIngredients(query, page, pageSize)) {
             is Result.Success -> SearchIngredientsResult.Success(result.data)
-            is Result.Error -> when (result.exception) {
-                is ApiException.ServerException -> SearchIngredientsResult.ServerError
+            is Result.Error -> when (val ex = result.exception) {
+                is ApiException.ServerException -> SearchIngredientsResult.ServerError(ex.message)
                 else -> SearchIngredientsResult.NetworkError
             }
         }

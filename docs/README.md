@@ -12,10 +12,16 @@ Documentación oficial de features core implementadas.
 |------|---------|--------|-------------|
 | [SPEC-001](specs/SPEC-001-register-screen.md) | Register Screen | ✅ Completado | Pantalla de registro |
 | [SPEC-002](specs/SPEC-002-biometric-login.md) | Biometric Login | ✅ Completado | Autenticación biométrica |
-| [SPEC-003](specs/SPEC-003-main-scaffold.md) | Main Scaffold | ✅ Completado | Bottom Navigation + Tabs |
+| [SPEC-003](specs/SPEC-003-main-scaffold.md) | Main Scaffold | 🚧 En Progreso (90%) | Bottom Navigation + Tabs |
 | [SPEC-004](specs/SPEC-004-date-provider.md) | DateProvider | ✅ Completado | Core de fechas (KMP-ready) |
-| [SPEC-005](specs/SPEC-005-network-service.md) | Network Service | 📝 En Desarrollo | BaseResponse, HttpCode, Cache |
-| [SPEC-006](specs/SPEC-006-offline-first-swr.md) | Offline-First + SWR | 📝 En Desarrollo | Stale-While-Revalidate |
+| [SPEC-005](specs/SPEC-005-network-service.md) | Network Service | ✅ Completado | BaseResponse, HttpCode, Cache |
+| [SPEC-006](specs/SPEC-006-offline-first-swr.md) | Offline-First + SWR (Fase 1) | ✅ Completado | Stale-While-Revalidate con Room |
+| [SPEC-007](specs/SPEC-007-app-language.md) | AppLanguage | ✅ Completado | Localización KMP-ready (ES/EN/PT) |
+| [SPEC-008](specs/SPEC-008-notifications-deeplinks.md) | Notificaciones + Deep Links | 📝 Planificado | FCM + esquema goodlife:// |
+| [SPEC-009](specs/SPEC-009-add-to-daily.md) | Add to Daily | 🚧 En Progreso | Task + Habit desde FAB |
+| [SPEC-010](specs/SPEC-010-create-task-screen.md) | Create Task Screen | ✅ Completado | Wizard once/recurrente |
+| [SPEC-011](specs/SPEC-011-create-routine-screen.md) | Create Routine Screen | ✅ Completado | Wizard 4 pasos, catálogo paginado |
+| [SPEC-012](specs/SPEC-012-create-meal-plan-screen.md) | Create Meal Plan Screen | ✅ Completado | Wizard 3 pasos, macros, scheduling |
 
 ---
 
@@ -206,4 +212,4 @@ sealed class UiState {
 
 ---
 
-**Última actualización:** 2026-02-04
+**Última actualización:** 2026-04-14

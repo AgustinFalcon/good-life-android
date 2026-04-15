@@ -7,6 +7,145 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [Unreleased] - 2026-04-14
+
+### Added
+
+#### ✅ Módulo Create Meal Plan — Wizard multi-paso de planificación de comidas (SPEC-012)
+
+- **Flujo wizard de 3 pasos** para crear planes de comida:
+  - **Paso 1 — Seleccionar Meal**: catálogo paginado de meals con búsqueda en tiempo real y filtros por tipo de comida; opción alternativa para crear una meal nueva directamente desde el wizard
+  - **Paso 2 — Ingredientes**: resumen de macros (calorías, proteínas, carbohidratos, grasas) con visualización en chip pills; catálogo paginado de ingredientes agrupados en "Mis ingredientes" y "Catálogo global"; modal para agregar cantidad con selector de unidad (g, ml, unidad)
+  - **Paso 3 — Scheduling**: selector de tipo de comida (Desayuno, Almuerzo, Cena, Snack), selector de días de la semana, DatePicker de fecha de inicio, TimePicker de hora
+
+- **Resultado final**: `POST /api/v1/meal-plans` crea el plan; el backend genera items `MEAL` en el Daily Log para los días configurados
+
+- **Result types semánticos** corregidos en toda la feature:
+  - `CreateCustomIngredientResult.ServerError(val message: String)` (era `data object`)
+  - `CreateCustomMealResult.ServerError(val message: String)` (era `data object`)
+  - `CreateMealPlanResult.ServerError(val message: String)` (era `data object`)
+  - Todos los UseCases pasan `ex.message` al construir `ServerError`
+
+- **Componente CreateIngredientDialog**: bottom sheet glassmorphic con:
+  - Campos Nombre y Marca con estilo filled (`NutritionBackground`, sin border en reposo, borde `NutritionAccent` al foco)
+  - Selector de unidad de porción con `FilterChip` (g / ml / unidad)
+  - Cards de macros con `BasicTextField` + placeholder overlay (sin `OutlinedTextField` para evitar borde visual)
+  - Botón Guardar habilitado solo si nombre no está vacío y porción > 0
+
+- **Componente QuantityBottomSheet**: selector de cantidad para agregar un ingrediente al plan, con cálculo de macros proporcional en tiempo real
+
+- **`CreateMealPlanViewModel`**: único ViewModel para todo el wizard:
+  - Paginación de ingredientes (scroll infinito) y catálogo de meals
+  - `OnCreateCustomIngredient` → llama `CreateCustomIngredientUseCase` y refleja el nuevo ingrediente en la lista
+  - `submitMealPlan()`: guarda completo con guards independientes (mealType, selectedDays), crea meal custom si `isCreatingNewMeal`, construye `ScheduledMealDraft` + `MealPlanDraft` y llama `CreateMealPlanUseCase`
+  - `viewModelScope.launch {}` sin `Dispatchers.IO` — ownership del dispatcher delegado al UseCase
+
+- **`CreateMealPlanScreen`**: bug fix crítico — el botón primario del `WizardBottomBarComponent` ahora despacha `OnSubmit` en el paso SCHEDULE y `OnNextStep` en los demás pasos; `isLoading` y `primaryEnabled` conectados al `uiState`
+
+- **`CreateMealPlanScreenOwner`**: orquesta todos los overlays:
+  - `DatePickerBottomSheetComponent` para `START_DATE` y `END_DATE`
+  - `TimePickerDialogComponent`
+  - `CreateIngredientDialog`
+  - `QuantityBottomSheet`
+  - `PopupResultComponent` (LOADING / ERROR)
+  - `SuccessDialog` con Lottie
+
+- **Navegación integrada**:
+  - `AppRoute.CreateMealPlan` registrado en `AppGraph`
+  - FAB "+" del MainScaffold con `QuickActionType.MEAL` navega a `CreateMealPlanScreenOwner`
+
+- **Localización completa** (`CreateMealPlanTexts`): título, badge, pasos, labels de campos, placeholders, botones, mensajes de error — en Español, English, Português
+
+#### 📁 Nuevos Archivos
+
+**Domain:**
+- `domain/model/nutrition/Ingredient.kt`
+- `domain/model/nutrition/IngredientEntry.kt`
+- `domain/model/nutrition/Meal.kt`
+- `domain/model/nutrition/MealSummary.kt`
+- `domain/model/nutrition/MealPlan.kt`
+- `domain/model/nutrition/MealPlanDraft.kt`
+- `domain/model/nutrition/ScheduledMealDraft.kt`
+- `domain/model/nutrition/PortionUnit.kt`
+- `domain/repository/IngredientRepository.kt`
+- `domain/repository/MealRepository.kt`
+- `domain/repository/MealPlanRepository.kt`
+- `domain/usecase/nutrition/GetIngredientCatalogUseCase.kt`
+- `domain/usecase/nutrition/GetMealCatalogUseCase.kt`
+- `domain/usecase/nutrition/CreateCustomIngredientUseCase.kt`
+- `domain/usecase/nutrition/CreateCustomMealUseCase.kt`
+- `domain/usecase/nutrition/CreateMealPlanUseCase.kt`
+- `domain/usecase/nutrition/result/GetIngredientCatalogResult.kt`
+- `domain/usecase/nutrition/result/GetMealCatalogResult.kt`
+- `domain/usecase/nutrition/result/CreateCustomIngredientResult.kt`
+- `domain/usecase/nutrition/result/CreateCustomMealResult.kt`
+- `domain/usecase/nutrition/result/CreateMealPlanResult.kt`
+
+**Data:**
+- `data/remote/api/nutrition/IngredientApiService.kt`
+- `data/remote/api/nutrition/MealApiService.kt`
+- `data/remote/api/nutrition/MealPlanApiService.kt`
+- `data/remote/datasource/IngredientRemoteDataSource.kt`
+- `data/remote/datasource/MealRemoteDataSource.kt`
+- `data/remote/datasource/MealPlanRemoteDataSource.kt`
+- `data/remote/dto/request/nutrition/CreateCustomIngredientRequest.kt`
+- `data/remote/dto/request/nutrition/CreateCustomMealRequest.kt`
+- `data/remote/dto/request/nutrition/CreateMealPlanRequest.kt`
+- `data/remote/dto/response/nutrition/` — DTOs defensivos con mappers
+- `data/repository/IngredientRepositoryImpl.kt`
+- `data/repository/MealRepositoryImpl.kt`
+- `data/repository/MealPlanRepositoryImpl.kt`
+
+**Presentation:**
+- `presentation/screen/add/mealplan/model/CreateMealPlanUiState.kt`
+- `presentation/screen/add/mealplan/model/CreateMealPlanUiAction.kt`
+- `presentation/screen/add/mealplan/model/MealPlanWizardStep.kt`
+- `presentation/screen/add/mealplan/model/MealDatePickerField.kt`
+- `presentation/screen/add/mealplan/CreateMealPlanViewModel.kt`
+- `presentation/screen/add/mealplan/CreateMealPlanScreen.kt`
+- `presentation/screen/add/mealplan/CreateMealPlanScreenOwner.kt`
+- `presentation/screen/add/mealplan/steps/SelectMealStep.kt`
+- `presentation/screen/add/mealplan/steps/MealIngredientsStep.kt`
+- `presentation/screen/add/mealplan/steps/ScheduleStep.kt`
+- `presentation/screen/add/mealplan/steps/PreviewHelpers.kt`
+- `presentation/components/nutrition/CreateIngredientDialog.kt`
+- `presentation/components/nutrition/QuantityBottomSheet.kt`
+- `presentation/components/nutrition/MealCatalogItem.kt`
+- `presentation/components/nutrition/IngredientCatalogSection.kt`
+- `presentation/components/nutrition/MyIngredientsSection.kt`
+- `presentation/components/nutrition/MacrosSummaryCard.kt`
+- `presentation/components/nutrition/MealHeaderCard.kt`
+
+**DI + Navigation:**
+- `di/NutritionModule.kt`
+
+### Fixed
+
+- **`CreateMealPlanScreen` — submit nunca se ejecutaba**: `WizardBottomBarComponent` siempre despachaba `OnNextStep` en todos los pasos; en el paso SCHEDULE `advanceWizardStep()` retorna inmediatamente sin efecto. Corregido para despachar `OnSubmit` cuando el paso actual es `SCHEDULE`
+- **`ServerError` sin mensaje**: los tres result types de nutrición tenían `data object ServerError` sin campo `message`; cambiados a `data class ServerError(val message: String)` y los UseCases actualizados para pasar `ex.message`
+- **`_uiState.update { state.copy(...) }` → `it.copy(...)`**: estado capturado antes de llamada async era stale; corregido en `submitMealPlan()`
+- **Guards de validación sobreescribiéndose**: user bug donde `var errorMessage` era asignado dos veces y la segunda sobreescribía la primera; corregido a guards independientes con `return`
+
+---
+
+## [Unreleased] - 2026-03-11
+
+### Added
+
+#### ✅ Módulo Create Routine — Wizard multi-paso de creación de rutinas (SPEC-011)
+
+- **Flujo wizard de 4 pasos**: Información de rutina → Agregar workouts → Agregar ejercicios con sets → Resumen y confirmación
+- **Catálogo paginado de ejercicios** con scroll infinito por grupo muscular
+- **`SetEditorBottomSheet`**: editor de sets con `mutableStateListOf` local antes de confirmar
+- **`PageResult<T>`** genérico movido a `core/pagination/` para reutilización
+- **Draft models** en domain: `WorkoutDraft`, `ExerciseDraft`, `SetDraft`
+- **4 UseCases** con result types semánticos + **4 archivos Result**
+- **Tests**: `CreateRoutineUseCaseTest` (11 tests) + `CreateRoutineViewModelTest` (25 tests)
+- `AppRoute.CreateRoutine` + registro en `AppGraph`; FAB `QuickActionType.WORKOUT` navega a `CreateRoutine`
+- `CreateRoutineTexts` en `UiTexts.kt` + traducciones ES/EN/PT
+
+---
+
 ## [Unreleased] - 2026-03-09
 
 ### Added

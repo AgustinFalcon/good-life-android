@@ -4,5 +4,5 @@ sealed interface CreateMealPlanResult {
     data class Success(val mealPlanId: Long) : CreateMealPlanResult
     data object ValidationError : CreateMealPlanResult
     data object NetworkError : CreateMealPlanResult
-    data object ServerError : CreateMealPlanResult
+    data class ServerError(val message: String) : CreateMealPlanResult
 }

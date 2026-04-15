@@ -14,7 +14,7 @@ Fase 1: Create Habit Screen ✅ COMPLETADO
 Fase 2: Create Routine/Workout Screen ✅ COMPLETADO (SPEC-011)
     │
     ▼
-Fase 3: Create Meal Plan Screen
+Fase 3: Create Meal Plan Screen ✅ COMPLETADO (SPEC-012)
     │
     ▼
 Fase 4: Tabs restantes (Workouts, Meals, More/Settings)
@@ -102,19 +102,15 @@ Esta pantalla es la más compleja del proyecto: es un wizard multi-paso (crear r
 
 ---
 
-## Fase 3 — Create Meal Plan Screen
+## ~~Fase 3 — Create Meal Plan Screen~~ ✅ COMPLETADO (SPEC-012)
 
 **Objetivo:** Planificar comidas con ingredientes y cálculo de macros.
 
-### Backend disponible (✅ Implementado)
+Wizard de 3 pasos: seleccionar/crear meal → ingredientes con macros → scheduling.
+Endpoints consumidos: `GET /api/v1/ingredients` (paginado), `POST /api/v1/meals`, `POST /api/v1/meal-plans`.
+Componentes creados: `CreateIngredientDialog`, `QuantityBottomSheet`, `MealCatalogItem`, `MacrosSummaryCard`, etc.
 
-- `GET /api/v1/ingredients` → Catálogo de ingredientes
-- `POST /api/v1/ingredients` → Crear ingrediente custom
-- `POST /api/v1/meals` → Crear meal (receta con ingredientes)
-- `POST /api/v1/meal-plans` → Crear plan de comidas con scheduling
-- Macros calculados automáticamente (calorías, proteínas, carbos, grasas)
-
-### Estimación: 8-10 horas
+Ver `SPEC-012-create-meal-plan-screen.md` y CHANGELOG 2026-04-14 para detalles.
 
 ---
 
@@ -201,8 +197,11 @@ Ver `SPEC-006-offline-first-swr.md` Sección 4.
 | Main Scaffold + Bottom Nav | ✅ 90% |
 | Daily Tab completo (DailyItemCard + refresh) | ✅ |
 | Create Task Screen (SPEC-010) | ✅ |
+| Create Habit Screen | ✅ |
+| Create Routine Screen (SPEC-011) | ✅ |
+| Create Meal Plan Screen (SPEC-012) | ✅ |
 | SWR Fase 1 (Room cache + backend fallback) | ✅ |
-| 7 Componentes reutilizables (Switch, DayChip, DateSelector, etc.) | ✅ |
+| 7+ Componentes reutilizables (Switch, DayChip, DateSelector, CreateIngredientDialog, QuantityBottomSheet, etc.) | ✅ |
 | Unit Tests (60+ tests: domain + data + presentation) | ✅ |
 | ImmutableList en UiStates | ✅ |
 | @Stable en states, @Immutable en modelos de lista | ✅ |
