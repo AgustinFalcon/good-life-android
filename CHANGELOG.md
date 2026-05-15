@@ -7,6 +7,23 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [Unreleased] - 2026-05-15
+
+### Merge: feature/daily_workflow → master
+
+#### ✅ Seguridad de tokens — ya implementados (aclaración)
+
+Los siguientes ítems figuraban como pendientes en documentación interna pero ya estaban implementados en la rama:
+
+- **`GoodLifeAuthenticator`** — refresh automático al 401 con `Mutex` para prevenir race conditions en requests concurrentes. Registrado en `NetworkModule` via `inject()` (Lazy) para romper la dependencia circular OkHttpClient ↔ AuthApiService.
+- **`TokenManager`** — ya usa `EncryptedSharedPreferences` con `MasterKey` (AES256-GCM) respaldada por Android Keystore. Los JWT nunca se guardan en texto plano.
+
+#### ✅ Daily workflow completo integrado a master
+
+Ver sección anterior (2026-04-14) para detalle completo de cambios de la rama.
+
+---
+
 ## [Unreleased] - 2026-04-14
 
 ### Added
