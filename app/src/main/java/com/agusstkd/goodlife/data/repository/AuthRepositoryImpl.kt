@@ -79,6 +79,8 @@ class AuthRepositoryImpl(
 
     override suspend fun logout(): Result<Unit> {
         return try {
+            // Notify backend to revoke refresh tokens (best-effort — always clear local state)
+            try { authRemoteDataSource.logout() } catch (_: Exception) { /* non-fatal */ }
             tokenManager.clearTokens()
             userDao.deleteUser()
             Result.Success(Unit)

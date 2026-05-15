@@ -82,4 +82,14 @@ interface AuthApiService {
      */
     @GET("api/v1/me")
     suspend fun getMe(): BaseResponse<UserMeResponse>
+
+    /**
+     * Revoca todos los refresh tokens del usuario en el servidor.
+     * Llamar antes de limpiar tokens locales para que el logout sea efectivo.
+     *
+     * Endpoint: POST /api/v1/logout
+     * Requiere: Authorization Bearer (JWT válido)
+     */
+    @POST("api/v1/logout")
+    suspend fun logout(): BaseResponse<Unit>
 }

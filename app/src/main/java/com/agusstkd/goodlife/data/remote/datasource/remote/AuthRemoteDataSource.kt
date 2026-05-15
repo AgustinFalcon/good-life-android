@@ -76,4 +76,7 @@ class AuthRemoteDataSource(
             )
         }
     }
+
+    /** Notifica al backend que revoque los refresh tokens del usuario. */
+    suspend fun logout(): Result<Unit> = executeApiCall { apiService.logout() }
 }
