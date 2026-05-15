@@ -3,6 +3,28 @@
 Todos los cambios notables de este proyecto serán documentados en este archivo.
 
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
+
+---
+
+## [Unreleased] - 2026-05-15 — MEJORAs aplicadas
+
+### ✨ Features
+- **MEJORA-001** `GET api/v1/me` client — `AuthApiService.getMe()` + `UserMeResponse` DTO con `toDomain()`
+- **MEJORA-012 (Android)** Cloudinary upload flow:
+  - `MediaApiService`, `CloudinaryUploadResultDto`, `MediaRepository`, `MediaRepositoryImpl`
+  - `UploadProfilePhotoUseCase`, `MediaModule` (Koin), registrado en `GoodLifeApp`
+  - `ProfileScreenOwner` + `ProfileViewModel` — reemplaza el placeholder de `/profile`
+  - Selector de galería con `ActivityResultContracts.GetContent`
+  - `AsyncImage` (Coil) para mostrar foto actual
+  - Guarda URL en Room `UserEntity.profileImageUrl` tras upload exitoso
+- **MEJORA-013** `Ingredient.availableUnits: List<String>` — DTO y domain model actualizados
+- **MEJORA-011 (Android)** Real logout — `AuthApiService.logout()`, `AuthRemoteDataSource.logout()`, `AuthRepositoryImpl` notifica al backend antes de limpiar storage local
+
+### 🔒 Security confirmada
+- `GoodLifeAuthenticator` (OkHttp `Authenticator`): refresh automático al 401 con Mutex anti-race-condition — ya estaba implementado
+- `TokenManager`: `EncryptedSharedPreferences` (AES256-GCM) — ya estaba implementado
+
+---
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
