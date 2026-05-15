@@ -6,8 +6,9 @@ import com.agusstkd.goodlife.di.biometricModule
 import com.agusstkd.goodlife.di.coreModule
 import com.agusstkd.goodlife.di.dailyModule
 import com.agusstkd.goodlife.di.databaseModule
-import com.agusstkd.goodlife.di.networkModule
 import com.agusstkd.goodlife.di.habitModule
+import com.agusstkd.goodlife.di.networkModule
+import com.agusstkd.goodlife.di.nutritionModule
 import com.agusstkd.goodlife.di.routineModule
 import com.agusstkd.goodlife.di.taskModule
 import org.koin.android.ext.koin.androidContext
@@ -44,7 +45,8 @@ class GoodLifeApp : Application() {
      * | [authModule]    | Auth DataSource/Repository/UseCases/ViewModels    |
      * | [dailyModule]   | Daily DataSource/Repository/UseCases/ViewModel    |
      * | [taskModule]    | Task DataSource/Repository/UseCase/ViewModel      |
-     * | [habitModule]   | Habit DataSource/Repository/UseCase/ViewModel     |
+     * | [habitModule]      | Habit DataSource/Repository/UseCase/ViewModel  |
+     * | [nutritionModule]  | Nutrition DataSources/Repos/UseCases/ViewModel |
      */
     private fun initKoin() {
         startKoin {
@@ -60,6 +62,7 @@ class GoodLifeApp : Application() {
                 taskModule,
                 habitModule,
                 routineModule,
+                nutritionModule,
             )
         }
     }

@@ -1,20 +1,30 @@
 package com.agusstkd.goodlife.presentation.screen.add.mealplan.steps
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import com.agusstkd.goodlife.core.datetime.language.CreateMealPlanTexts
 import com.agusstkd.goodlife.domain.model.nutrition.MealType
 import com.agusstkd.goodlife.presentation.components.common.ButtonColorScheme
@@ -67,7 +77,21 @@ fun SelectMealStep(
         )
 
     } else {
+        val listState = rememberLazyListState()
+
+        LaunchedEffect(listState) {
+            snapshotFlow {
+                val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+                val totalItems = listState.layoutInfo.totalItemsCount
+                totalItems > 0 && lastVisible >= totalItems - 3
+            }
+                .distinctUntilChanged()
+                .filter { it }
+                .collect { onAction(CreateMealPlanUiAction.OnLoadMoreMeals) }
+        }
+
         LazyColumn(
+            state = listState,
             modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(16.dp),
@@ -94,24 +118,29 @@ fun SelectMealStep(
                     items(mealTypeEntries) { (mealType, label) ->
                         FilterChip(
                             selected = uiState.selectedMealTypeFilter == mealType,
-                            onClick = {
-                                onAction(
-                                    CreateMealPlanUiAction.OnMealTypeFilterChange(
-                                        mealType
-                                    )
-                                )
-                            },
+                            onClick = { onAction(CreateMealPlanUiAction.OnMealTypeFilterChange(mealType)) },
                             label = { Text(text = label) },
                         )
                     }
                 }
             }
 
-            items(uiState.mealCatalog) { meal ->
+            items(uiState.mealCatalog, key = { it.id }) { meal ->
                 MealCatalogItem(
                     meal = meal,
                     onChoose = { onAction(CreateMealPlanUiAction.OnSelectMeal(meal)) },
                 )
+            }
+
+            if (uiState.isLoadingMeals) {
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    }
+                }
             }
 
             item {

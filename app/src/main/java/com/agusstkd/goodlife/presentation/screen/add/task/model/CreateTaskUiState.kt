@@ -1,6 +1,6 @@
 package com.agusstkd.goodlife.presentation.screen.add.task.model
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -25,7 +25,7 @@ import kotlinx.datetime.LocalTime
  * @see DatePickerField
  * @see SchedulingMode
  */
-@Stable
+@Immutable
 data class CreateTaskUiState(
     // Formulario básico
     val title: String = "",

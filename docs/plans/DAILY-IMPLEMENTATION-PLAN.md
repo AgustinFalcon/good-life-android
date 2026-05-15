@@ -4,6 +4,8 @@
 **Responsable:** Usuario  
 **Enfoque:** Paso a paso → FASE 1 (API REST) → FASE 2 (Room/Cache)
 
+> **Estado del código (2026-05-14):** En el repo ya existe **`DailyRepositoryImpl`** con **`DailyDao`** y estrategia **SWR** (éxito remoto → persiste en Room; error remoto → lectura desde cache). Este documento se conserva como guía y bitácora; si algo contradice `data/repository/DailyRepositoryImpl.kt` o `data/local/dao/DailyDao.kt`, **manda el código**.
+
 ---
 
 ## 🎯 Objetivo

@@ -1,6 +1,6 @@
 package com.agusstkd.goodlife.presentation.screen.add.mealplan.model
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import com.agusstkd.goodlife.domain.model.nutrition.Ingredient
 import com.agusstkd.goodlife.domain.model.nutrition.MealIngredientDraft
 import com.agusstkd.goodlife.domain.model.nutrition.MealSummary
@@ -15,7 +15,7 @@ enum class MealPlanWizardStep { SELECT_MEAL, MEAL_INGREDIENTS, SCHEDULE }
 
 enum class MealDatePickerField { START_DATE, END_DATE }
 
-@Stable
+@Immutable
 data class CreateMealPlanUiState(
 
     val currentStep: MealPlanWizardStep = MealPlanWizardStep.SELECT_MEAL,

@@ -36,6 +36,7 @@ sealed interface DailyUiState {
      * Estado de carga inicial.
      * Muestra skeleton/shimmer mientras se carga el daily log.
      */
+    @Immutable
     data object Loading : DailyUiState
 
     /**
@@ -44,6 +45,7 @@ sealed interface DailyUiState {
      * No es un error — simplemente no existe daily log para ese día.
      * La UI debe mostrar un mensaje invitando a agregar items.
      */
+    @Immutable
     data object Empty : DailyUiState
 
     /**
@@ -74,6 +76,7 @@ sealed interface DailyUiState {
      * @property items Lista de items del daily log (tasks, habits, workouts, meals)
      * @property isRefreshing Si está refrescando datos (pull-to-refresh o actualización de item)
      */
+    @Immutable
     data class Success(
         val date: LocalDate,
         val dayNumber: Int,
@@ -84,14 +87,7 @@ sealed interface DailyUiState {
         val items: ImmutableList<DailyItemUiModel>,
         val isRefreshing: Boolean = false,
         val activeFilter: DailyFilter = DailyFilter.ALL,
-    ) : DailyUiState {
-
-        val filteredItems: ImmutableList<DailyItemUiModel>
-            get() = when (activeFilter) {
-                DailyFilter.ALL -> items
-                else -> items.filter { it.type == activeFilter.toItemType() }.toImmutableList()
-            }
-    }
+    ) : DailyUiState
 
     /**
      * Estado de error técnico (red o servidor).
@@ -101,8 +97,15 @@ sealed interface DailyUiState {
      *
      * @property message Mensaje de error para mostrar al usuario.
      */
+    @Immutable
     data class Error(val message: String) : DailyUiState
 }
+
+val DailyUiState.Success.filteredItems: ImmutableList<DailyItemUiModel>
+    get() = when (activeFilter) {
+        DailyFilter.ALL -> items
+        else -> items.filter { it.type == activeFilter.toItemType() }.toImmutableList()
+    }
 
 /**
  * Modelo UI de un item del daily log.

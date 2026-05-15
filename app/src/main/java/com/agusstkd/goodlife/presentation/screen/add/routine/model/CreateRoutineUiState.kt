@@ -1,6 +1,6 @@
 package com.agusstkd.goodlife.presentation.screen.add.routine.model
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import com.agusstkd.goodlife.domain.model.training.DifficultyLevel
 import com.agusstkd.goodlife.domain.model.training.ExerciseMaster
 import com.agusstkd.goodlife.domain.model.training.GoalType
@@ -10,7 +10,7 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
-@Stable
+@Immutable
 data class CreateRoutineUiState(
     val currentStep: RoutineWizardStep = RoutineWizardStep.ROUTINE_INFO,
 

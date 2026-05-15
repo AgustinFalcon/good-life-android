@@ -40,4 +40,8 @@ sealed interface AppRoute {
     /** Wizard multi-paso para crear una rutina de entrenamiento. */
     @Serializable
     data object CreateRoutine : AppRoute
+
+    /** Wizard multi-paso para planificar comidas con ingredientes y macros. */
+    @Serializable
+    data object CreateMealPlan : AppRoute
 }

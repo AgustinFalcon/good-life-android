@@ -19,8 +19,10 @@ import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.toUiModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
@@ -75,11 +77,9 @@ class DailyTabViewModel(
     private var currentDate: LocalDate = dateProvider.today()
 
     private val _uiState = MutableStateFlow<DailyUiState>(DailyUiState.Loading)
-    val uiState: StateFlow<DailyUiState> = _uiState.asStateFlow()
-
-    init {
-        loadItems()
-    }
+    val uiState: StateFlow<DailyUiState> = _uiState
+        .onSubscription { loadItems() }
+        .stateIn(viewModelScope, SharingStarted.Lazily, DailyUiState.Loading)
 
     fun refresh() {
         loadItems()

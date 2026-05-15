@@ -8,6 +8,7 @@ import com.agusstkd.goodlife.core.datetime.language.CreateMealPlanTexts
 import com.agusstkd.goodlife.core.extensions.toggleDay
 import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateCustomIngredientRequestDto
 import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateCustomMealRequestDto
+import com.agusstkd.goodlife.data.remote.dto.request.nutrition.MealIngredientRequestDto
 import com.agusstkd.goodlife.domain.model.nutrition.MealIngredientDraft
 import com.agusstkd.goodlife.domain.model.nutrition.MealPlanDraft
 import com.agusstkd.goodlife.domain.model.nutrition.MealSummary
@@ -151,6 +152,8 @@ class CreateMealPlanViewModel(
         viewModelScope.launch {
             ingredientSharedFlow.debounce(300).collect { query -> searchIngredients(query = query) }
         }
+        // Carga inicial del catálogo de meals al abrir el wizard
+        viewModelScope.launch { searchMeals(query = "") }
     }
 
     /**
@@ -163,20 +166,18 @@ class CreateMealPlanViewModel(
     private suspend fun searchIngredients(query: String, page: Int = 0) {
         _uiState.update { it.copy(isLoadingIngredients = true) }
         when (val result = searchIngredientUseCase.execute(query = query, page = page)) {
-            is SearchIngredientsResult.Success -> _uiState.update {
-                it.copy(
-                    ingredientCatalog = if (page == 0) result.data.items.toImmutableList()
-                    else (it.ingredientCatalog + result.data.items).toImmutableList(),
+            is SearchIngredientsResult.Success -> _uiState.update { current ->
+                val base = if (page == 0) emptyList() else current.ingredientCatalog
+                current.copy(
+                    ingredientCatalog = (base + result.data.items).distinctBy { it.id }.toImmutableList(),
                     ingredientPage = result.data.page,
                     ingredientHasMore = !result.data.isLastPage,
-                    isLoadingIngredients = false
+                    isLoadingIngredients = false,
                 )
             }
-
             SearchIngredientsResult.NetworkError -> _uiState.update {
                 it.copy(isLoadingIngredients = false, errorMessage = texts.errorNetwork)
             }
-
             is SearchIngredientsResult.ServerError -> _uiState.update {
                 it.copy(isLoadingIngredients = false, errorMessage = result.message)
             }
@@ -193,21 +194,18 @@ class CreateMealPlanViewModel(
     private suspend fun searchMeals(query: String, page: Int = 0) {
         _uiState.update { it.copy(isLoadingMeals = true) }
         when (val result = searchMealUseCase.execute(query = query, page = page)) {
-            is SearchMealsResult.Success -> _uiState.update {
-                // página 0 = búsqueda nueva → reemplazar; página > 0 = cargar más → acumular
-                it.copy(
-                    mealCatalog = if (page == 0) result.data.items.toImmutableList()
-                    else (it.mealCatalog + result.data.items).toImmutableList(),
+            is SearchMealsResult.Success -> _uiState.update { current ->
+                val base = if (page == 0) emptyList() else current.mealCatalog
+                current.copy(
+                    mealCatalog = (base + result.data.items).distinctBy { it.id }.toImmutableList(),
                     mealCatalogPage = result.data.page,
                     mealCatalogHasMore = !result.data.isLastPage,
                     isLoadingMeals = false,
                 )
             }
-
             is SearchMealsResult.ServerError -> _uiState.update {
                 it.copy(isLoadingMeals = false, errorMessage = result.message)
             }
-
             SearchMealsResult.NetworkError -> _uiState.update {
                 it.copy(isLoadingMeals = false, errorMessage = texts.errorNetwork)
             }
@@ -499,7 +497,12 @@ class CreateMealPlanViewModel(
             MealPlanWizardStep.SCHEDULE -> return
         }
 
-        _uiState.update { it.copy(currentStep = nextStep) }
+        _uiState.update { it.copy(currentStep = nextStep, isLoadingIngredients = nextStep == MealPlanWizardStep.MEAL_INGREDIENTS) }
+
+        // Al entrar al paso de ingredientes cargamos el catálogo inicial
+        if (nextStep == MealPlanWizardStep.MEAL_INGREDIENTS) {
+            viewModelScope.launch { searchIngredients(query = "") }
+        }
     }
 
     /**
@@ -573,12 +576,14 @@ class CreateMealPlanViewModel(
             val dto = CreateCustomMealRequestDto(
                 name = state.newMealName,
                 description = state.newMealDescription.ifBlank { null },
-                servingSize = 100.0,
-                servingUnit = "g",
-                calories = state.previewCalories,
-                protein = state.previewProtein,
-                carbs = state.previewCarbs,
-                fat = state.previewFat,
+                tags = state.newMealType?.name?.lowercase()?.let { listOf(it) } ?: emptyList(),
+                ingredients = state.ingredients.map { draft ->
+                    MealIngredientRequestDto(
+                        ingredientId = draft.ingredient.id,
+                        quantity = draft.quantity,
+                        unit = draft.unit,
+                    )
+                },
             )
             when (val result = createCustomMealUseCase.execute(request = dto)) {
                 is CreateCustomMealResult.Success -> result.meal

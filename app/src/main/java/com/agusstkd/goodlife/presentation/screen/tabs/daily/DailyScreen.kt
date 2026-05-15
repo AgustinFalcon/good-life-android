@@ -34,6 +34,7 @@ import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyFilter
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyItemUiModel
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.filteredItems
 import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
 import kotlinx.datetime.LocalDate
 

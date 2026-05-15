@@ -62,34 +62,44 @@ com.agusstkd.goodlife/
 │       └── TokenManager.kt        # JWT con SharedPreferences
 │
 ├── data/                          # Capa de datos
-│   ├── local/                     # Room database
+│   ├── local/                     # Room database (v2)
 │   │   ├── dao/
-│   │   │   └── UserDao.kt
+│   │   │   ├── UserDao.kt
+│   │   │   └── DailyDao.kt        # cache SWR daily logs
 │   │   ├── database/
-│   │   │   └── GoodLifeDatabase.kt  # Singleton thread-safe
+│   │   │   └── GoodLifeDatabase.kt
 │   │   └── entity/
-│   │       └── UserEntity.kt        # + extension mappers
+│   │       ├── UserEntity.kt
+│   │       ├── DailyLogEntity.kt
+│   │       └── DailyItemEntity.kt
 │   │
-│   ├── remote/                    # Retrofit API
+│   ├── remote/                    # Retrofit (servicios por feature bajo api/)
 │   │   ├── api/
-│   │   │   └── GoodLifeApiService.kt
-│   │   ├── datasource/
-│   │   │   └── AuthRemoteDataSource.kt
-│   │   └── dto/
-│   │       ├── request/
-│   │       │   └── RegisterRequest.kt
-│   │       └── response/
-│   │           ├── BaseResponse.kt      # Wrapper del backend
-│   │           ├── AuthResponse.kt      # + extension mapper
-│   │           └── RegisterResponse.kt  # + extension mapper
+│   │   │   ├── auth/ …
+│   │   │   ├── daily/ …
+│   │   │   ├── task/ …
+│   │   │   ├── habit/ …
+│   │   │   ├── training/ …
+│   │   │   └── nutrition/ …
+│   │   ├── datasource/remote/
+│   │   └── dto/ (request / response + mappers .toDomain())
 │   │
-│   └── repository/                # Implementaciones
-│       └── AuthRepositoryImpl.kt
+│   └── repository/                # *RepositoryImpl (8 interfaces en domain)
+│       ├── AuthRepositoryImpl.kt
+│       ├── DailyRepositoryImpl.kt
+│       └── …
 │
-├── di/                            # Inyección de dependencias
-│   ├── AppModule.kt               # Core, UseCases, ViewModels, AppLanguage
-│   ├── NetworkModule.kt           # OkHttp, Retrofit, ApiService
-│   └── DatabaseModule.kt          # Room, DAOs
+├── di/                            # Inyección de dependencias (Koin)
+│   ├── AppModule.kt               # coreModule (Dispatcher, Navigation, DateProvider, AppLanguage)
+│   ├── NetworkModule.kt           # OkHttp, Retrofit, ApiServices, TokenManager
+│   ├── DatabaseModule.kt          # Room, DAOs
+│   ├── BiometricModule.kt         # BiometricAuthenticator, SecureCredentialsStorage
+│   ├── AuthModule.kt              # Auth DataSource / Repository / UseCases / ViewModels auth
+│   ├── DailyModule.kt
+│   ├── TaskModule.kt
+│   ├── HabitModule.kt
+│   ├── RoutineModule.kt
+│   └── NutritionModule.kt
 │
 ├── domain/                        # Lógica de negocio (Kotlin puro)
 │   ├── model/                     # Modelos de dominio
@@ -149,10 +159,11 @@ com.agusstkd.goodlife/
 │   │   │   ├── ComposeNavigationController.kt
 │   │   │   └── ComposeNavigationControllerImpl.kt
 │   │   ├── host/
-│   │   │   └── SmartNavHost.kt
+│   │   │   └── GoodLifeNavHost.kt
 │   │   └── route/
 │   │       ├── AppRoute.kt
 │   │       ├── TabRoute.kt
+│   │       ├── TabNavGraph.kt
 │   │       ├── NavigationExtensions.kt
 │   │       └── AppGraph.kt
 │   │
@@ -181,14 +192,6 @@ com.agusstkd.goodlife/
 │   │   │       ├── RegisterUiState.kt      # @Stable
 │   │   │       └── RegisterUiAction.kt     # @Stable
 │   │   │
-│   │   ├── home/
-│   │   │   ├── HomeScreen.kt              # homeTexts: HomeTexts
-│   │   │   ├── HomeScreenOwner.kt
-│   │   │   ├── HomeViewModel.kt           # homeTexts: HomeTexts
-│   │   │   └── model/
-│   │   │       ├── HomeUiState.kt         # @Stable
-│   │   │       └── HomeUiAction.kt        # @Stable
-│   │   │
 │   │   ├── main/
 │   │   │   ├── MainScaffoldScreen.kt      # uiState contiene fabContentDescription
 │   │   │   ├── MainScaffoldScreenOwner.kt
@@ -197,14 +200,20 @@ com.agusstkd.goodlife/
 │   │   │       ├── MainScaffoldUiState.kt # @Stable + fabContentDescription: String
 │   │   │       └── MainScaffoldUiAction.kt
 │   │   │
-│   │   └── tabs/
-│   │       └── daily/
-│   │           ├── DailyScreen.kt          # dailyTexts + dateHeaderParams
-│   │           ├── DailyScreenOwner.kt     # construye DateHeaderParams
-│   │           ├── DailyTabViewModel.kt    # dailyTexts + accessibilityTexts
-│   │           └── model/
-│   │               ├── DailyUiState.kt     # @Stable + strings formateados
-│   │               └── DailyUiAction.kt
+│   │   ├── tabs/
+│   │   │   └── daily/
+│   │   │       ├── DailyScreen.kt          # dailyTexts + dateHeaderParams
+│   │   │       ├── DailyScreenOwner.kt     # construye DateHeaderParams
+│   │   │       ├── DailyTabViewModel.kt    # dailyTexts + accessibilityTexts
+│   │   │       └── model/
+│   │   │           ├── DailyUiState.kt     # @Stable + strings formateados
+│   │   │           └── DailyUiAction.kt
+│   │   │
+│   │   └── add/                            # flujos full-screen desde AppRoute
+│   │       ├── task/    (CreateTask*)
+│   │       ├── habit/   (CreateHabit*)
+│   │       ├── routine/ (CreateRoutine*)
+│   │       └── mealplan/(CreateMealPlan*)
 │   │
 │   └── theme/                     # Material Theme
 │       ├── Color.kt               # Paleta completa light/dark + brushes + DailyItemStyle
@@ -228,10 +237,10 @@ com.agusstkd.goodlife/
 └──────────────┘                 └───────────┬─────────────┘
                                              │
                                              │ collect()
-                                             │ (repeatOnLifecycle)
+                                             │ (LaunchedEffect + collect)
                                              ▼
                                  ┌─────────────────────────┐
-                                 │      SmartNavHost       │
+                                 │     GoodLifeNavHost     │
                                  │                         │
                                  │  navController.navigate()│
                                  └─────────────────────────┘
@@ -244,7 +253,7 @@ com.agusstkd.goodlife/
 | `NavigationAction` | Sealed class con tipos de navegación |
 | `ComposeNavigationController` | Interface que usan los ViewModels |
 | `ComposeNavigationControllerImpl` | Implementación con SharedFlow |
-| `SmartNavHost` | Observa el flow y ejecuta navegación |
+| `GoodLifeNavHost` | Observa el flow y ejecuta navegación |
 | `AppRoute` / `TabRoute` | Rutas type-safe con @Serializable |
 | `NavigationExtensions` | Funciones de conveniencia |
 
@@ -277,7 +286,7 @@ class LoginViewModel(
 
 **Navegación = One-shot event** → SharedFlow evita re-navegación al rotar.
 
-## Patrón Owner (Actualizado — SPEC-007)
+La implementación usa `MutableSharedFlow(replay = 1)` para el arranque (evita condición de carrera con Splash). Ver `ComposeNavigationControllerImpl`.
 
 Separa la inyección de dependencias de la UI pura. El Owner es el **único punto** donde se usa `koinViewModel()`. Los textos localizados fluyen del ViewModel al Screen como parámetro.
 

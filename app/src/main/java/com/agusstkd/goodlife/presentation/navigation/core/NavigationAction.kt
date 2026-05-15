@@ -6,7 +6,7 @@ import androidx.navigation.NavOptions
  * Representa las acciones de navegación posibles en la aplicación.
  *
  * El ViewModel emite estas acciones a través de [ComposeNavigationController],
- * y [SmartNavHost] las procesa para ejecutar la navegación real.
+ * y [GoodLifeNavHost] las procesa para ejecutar la navegación real.
  *
  * @see ComposeNavigationController
  */

@@ -30,6 +30,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.datetime.format
 
 /**
@@ -60,27 +61,22 @@ class MainScaffoldViewModel(
     val uiState: StateFlow<MainScaffoldUiState> = _uiState.asStateFlow()
 
     fun onAction(action: MainScaffoldUiAction) {
-        val current = _uiState.value
-
         when (action) {
             is MainScaffoldUiAction.OnTabSelected -> {
-                _uiState.value = current.copy(
-                    selectedTab = action.tab,
-                    isModalOpen = false
-                )
+                _uiState.update { it.copy(selectedTab = action.tab, isModalOpen = false) }
             }
             MainScaffoldUiAction.OnFabClick -> {
-                _uiState.value = current.copy(isModalOpen = true)
+                _uiState.update { it.copy(isModalOpen = true) }
             }
             MainScaffoldUiAction.OnModalDismiss -> {
-                _uiState.value = current.copy(isModalOpen = false)
+                _uiState.update { it.copy(isModalOpen = false) }
             }
             is MainScaffoldUiAction.OnQuickActionClick -> {
-                _uiState.value = current.copy(isModalOpen = false)
+                _uiState.update { it.copy(isModalOpen = false) }
                 navigateToQuickAction(action.action)
             }
             is MainScaffoldUiAction.OnMealOptionClick -> {
-                _uiState.value = current.copy(isModalOpen = false)
+                _uiState.update { it.copy(isModalOpen = false) }
             }
         }
     }
@@ -93,7 +89,7 @@ class MainScaffoldViewModel(
             QuickActionType.TASK -> navigationController.navigateTo(AppRoute.CreateTask)
             QuickActionType.HABIT -> navigationController.navigateTo(AppRoute.CreateHabit)
             QuickActionType.WORKOUT -> navigationController.navigateTo(AppRoute.CreateRoutine)
-            QuickActionType.MEAL -> { /* TODO: NavigateTo CreateMeal */ }
+            QuickActionType.MEAL -> navigationController.navigateTo(AppRoute.CreateMealPlan)
             QuickActionType.OTHER -> { /* TODO: NavigateTo Other */ }
         }
     }

@@ -1,6 +1,6 @@
 package com.agusstkd.goodlife.presentation.screen.main.model
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import com.agusstkd.goodlife.presentation.components.bottom.model.BottomMenuOption
 import com.agusstkd.goodlife.presentation.components.bottom.model.BottomNavItemModel
 import com.agusstkd.goodlife.presentation.components.modal.model.MealOptionItem
@@ -8,7 +8,7 @@ import com.agusstkd.goodlife.presentation.components.modal.model.QuickActionItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-@Stable
+@Immutable
 data class MainScaffoldUiState(
     val bottomNavItems: ImmutableList<BottomNavItemModel> = persistentListOf(),
     val selectedTab: BottomMenuOption = BottomMenuOption.HOME,

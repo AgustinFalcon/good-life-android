@@ -1,8 +1,8 @@
 # Progreso de Implementación - GoodLife Android
 
-> Última actualización: 2026-04-14
+> Última actualización: 2026-05-14
 
----
+**Inventario técnico:** [IMPLEMENTATION-STATUS.md](IMPLEMENTATION-STATUS.md)
 
 ## 📊 Estado General
 
@@ -15,12 +15,13 @@
 | DateProvider (SPEC-004) | ✅ Completado | 100% |
 | Network Service (SPEC-005) | ✅ Completado | 100% |
 | Localización AppLanguage (SPEC-007) | ✅ Completado | 100% |
-| Main Scaffold (SPEC-003) | 🚧 En Progreso | 90% |
+| **FAB + modal creación (SPEC-009 core)** | ✅ Completado | ~90% |
+| Main Scaffold (SPEC-003) | 🚧 En Progreso | ~90% |
 | **Daily Tab — Arquitectura + SWR** | ✅ Completado | 100% |
 | **Daily Tab — DailyItemCard** | ✅ Completado | 100% |
 | **Create Task (SPEC-010)** | ✅ Completado | 100% |
 | **SWR Fase 1 (SPEC-006)** | ✅ Completado | 100% |
-| **Unit Tests (60+)** | ✅ Completado | 100% |
+| **Unit Tests** | ✅ En evolución | `app/src/test`: 12 archivos `.kt` (UseCases + ViewModels + auth) |
 | **Infraestructura (EncryptedSP, ImmutableList, @Stable)** | ✅ Completado | 100% |
 | **Create Habit** | ✅ Completado | 100% |
 | **HabitLogSummaryDto fix + DTOs defensivos** | ✅ Completado | 100% |
@@ -29,7 +30,7 @@
 | Workouts Tab | ⏸️ Pendiente | 0% |
 | Meals Tab | ⏸️ Pendiente | 0% |
 | More/Settings Tab | ⏸️ Pendiente | 0% |
-| SWR Fase 2 — Sync Offline (SPEC-006) | 📝 Planificado | 0% |
+| **SWR Fase 2 — cola escritura offline (SPEC-006)** | 📝 Planificado | 0% |
 | Notificaciones + Deep Links (SPEC-008) | 📝 Planificado | 0% |
 
 ---

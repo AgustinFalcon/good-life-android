@@ -228,6 +228,7 @@ class CreateRoutineViewModel(
             it.copy(
                 activeWorkoutIndex = index,
                 currentStep = RoutineWizardStep.WORKOUT_EXERCISES,
+                isLoadingCatalog = true,
             )
         }
         loadMuscleGroupsIfNeeded()
@@ -258,27 +259,25 @@ class CreateRoutineViewModel(
 
     private fun loadExercises(page: Int = 0, resetList: Boolean = false) {
         viewModelScope.launch {
+            val snapshot = _uiState.value
             _uiState.update { it.copy(isLoadingCatalog = true) }
 
-            val state = _uiState.value
             val result = searchExercisesUseCase(
-                query = state.exerciseSearchQuery.takeIf { it.isNotBlank() },
-                muscleGroupId = state.selectedMuscleGroupId,
+                query = snapshot.exerciseSearchQuery.takeIf { it.isNotBlank() },
+                muscleGroupId = snapshot.selectedMuscleGroupId,
                 page = page,
                 pageSize = 20,
             )
 
             when (result) {
-                is SearchExercisesResult.Success -> {
-                    val currentList = if (resetList) emptyList() else state.exerciseCatalog
-                    _uiState.update {
-                        it.copy(
-                            exerciseCatalog = currentList + result.page.items,
-                            catalogPage = page,
-                            catalogHasMore = !result.page.isLastPage,
-                            isLoadingCatalog = false,
-                        )
-                    }
+                is SearchExercisesResult.Success -> _uiState.update { current ->
+                    val base = if (resetList) emptyList() else current.exerciseCatalog
+                    current.copy(
+                        exerciseCatalog = (base + result.page.items).distinctBy { it.id },
+                        catalogPage = page,
+                        catalogHasMore = !result.page.isLastPage,
+                        isLoadingCatalog = false,
+                    )
                 }
                 is SearchExercisesResult.ServerError ->
                     _uiState.update { it.copy(isLoadingCatalog = false, errorMessage = result.message) }

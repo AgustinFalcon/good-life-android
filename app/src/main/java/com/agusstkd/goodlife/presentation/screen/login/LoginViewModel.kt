@@ -15,8 +15,10 @@ import com.agusstkd.goodlife.presentation.navigation.route.navigateToMain
 import com.agusstkd.goodlife.presentation.screen.login.model.LoginUiAction
 import com.agusstkd.goodlife.presentation.screen.login.model.LoginUiState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /**
@@ -48,10 +50,13 @@ class LoginViewModel(
         get() = AuthScreenTexts(language.authTexts, language.accessibilityTexts)
 
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Loading)
-    val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<LoginUiState> = _uiState
+        .onSubscription { initializeBiometricState() }
+        .stateIn(viewModelScope, SharingStarted.Lazily, LoginUiState.Loading)
 
     init {
-        initializeBiometricState()
+        // collectBiometricEvents permanece en init: es un Channel collector que debe
+        // correr durante todo el ciclo de vida del ViewModel, no es una carga de datos.
         collectBiometricEvents()
     }
 

@@ -223,7 +223,7 @@ presentation/
 │   │   ├── ComposeNavigationController.kt # interface
 │   │   └── ComposeNavigationControllerImpl.kt
 │   ├── host/
-│   │   └── SmartNavHost.kt               # GoodLifeNavHost
+│   │   └── GoodLifeNavHost.kt
 │   └── route/
 │       ├── AppRoute.kt                    # @Serializable rutas app
 │       ├── TabRoute.kt                    # @Serializable rutas tabs

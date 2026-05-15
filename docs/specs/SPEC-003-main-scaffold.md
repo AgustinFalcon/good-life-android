@@ -7,9 +7,9 @@
 | **ID** | SPEC-003 |
 | **Tipo** | Feature |
 | **Prioridad** | Alta |
-| **Estado** | 🚧 En Progreso (85% completado) |
+| **Estado** | 🚧 En progreso (~90%): Daily + scaffold listos; tabs Workouts/Meals/Settings siguen placeholders en código |
 | **Fecha Creación** | 2026-01-22 |
-| **Actualizado** | 2026-02-03 |
+| **Actualizado** | 2026-05-14 |
 | **Dependencia** | Login/Register completados ✅ |
 
 ---

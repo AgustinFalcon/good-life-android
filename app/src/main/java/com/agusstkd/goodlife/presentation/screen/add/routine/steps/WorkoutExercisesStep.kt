@@ -35,9 +35,10 @@ import com.agusstkd.goodlife.presentation.components.common.SearchBarComponent
 import com.agusstkd.goodlife.presentation.components.common.SearchBarParams
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -76,18 +77,15 @@ fun WorkoutExercisesStep(
         workout.exercises.map { it.exerciseId }.toSet()
     }
 
-    val shouldLoadMore by remember {
-        derivedStateOf {
+    LaunchedEffect(listState) {
+        snapshotFlow {
             val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
             val totalItems = listState.layoutInfo.totalItemsCount
-            lastVisible >= totalItems - 3 && uiState.catalogHasMore && !uiState.isLoadingCatalog
+            totalItems > 0 && lastVisible >= totalItems - 3
         }
-    }
-
-    LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore) {
-            onAction(CreateRoutineUiAction.OnLoadMoreExercises)
-        }
+            .distinctUntilChanged()
+            .filter { it }
+            .collect { onAction(CreateRoutineUiAction.OnLoadMoreExercises) }
     }
 
     Column(modifier = modifier.fillMaxWidth()) {

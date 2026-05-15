@@ -1,8 +1,8 @@
 # ➕ SPEC-009 — Add to Daily: Crear Task y Hábito desde el Daily Tab
 
-**Versión:** 1.0  
-**Estado:** 📋 Planificado  
-**Última actualización:** 28 de Febrero, 2026  
+**Versión:** 1.1  
+**Estado:** ✅ Implementado en app (FAB + modal + navegación a flujos de creación); pendientes menores (OTHER, meal options, checklist US)  
+**Última actualización:** 14 de Mayo, 2026  
 **Relacionado con:** `SPEC-003-main-scaffold.md`, backend `tasks.spec.md`, backend `habits.spec.md`
 
 ---

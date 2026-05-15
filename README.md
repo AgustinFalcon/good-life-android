@@ -17,7 +17,7 @@ Aplicación Android para gestión de bienestar personal: tareas diarias, hábito
 - ✅ **Create Meal Plan** (SPEC-012) — wizard 3 pasos, ingredientes, macros, scheduling
 - ✅ **UI optimizada** con `@Stable` states, `ImmutableList`, `@Immutable`
 - ✅ **Arquitectura KMP-Ready** (domain layer en Kotlin puro)
-- ✅ **60+ unit tests** (domain, data, presentation)
+- ✅ **Unit tests** enfocados en dominio y ViewModels clave — ver `app/src/test` (~12 archivos; expandir según cobertura deseada)
 - 🚧 Auto-login con token guardado
 
 ## 🚀 Quick Start
@@ -44,11 +44,12 @@ git clone <repository-url>
 # Click en Run (▶) o Shift+F10
 ```
 
-### Credenciales de Prueba
+### Credenciales de Prueba (DEV, tras migración Flyway V23+)
 ```
 Usuario: agusstkd
 Password: 2209
 ```
+Rol JWT incluye `USER`, `ADMIN`, `PREMIUM` y `FULL_ADMIN` (este último solo en este usuario de seed).
 
 ## 📁 Estructura del Proyecto
 
@@ -73,16 +74,10 @@ app/src/main/java/com/agusstkd/goodlife/
 ├── presentation/            # UI Layer
 │   ├── components/          # Componentes reutilizables
 │   ├── navigation/          # Sistema de navegación reactivo
-│   ├── screen/              # Pantallas (MVVM)
-│   │   ├── splash/model/    # UiState, UiAction (@Stable)
-│   │   ├── login/model/     # UiState, UiAction (@Stable)
-│   │   └── home/model/      # UiState, UiAction (@Stable)
+│   ├── screen/              # pantallas: splash, login, register, main, tabs/daily, add/*
 │   └── theme/               # Material3 Theme
 │
-└── di/                      # Koin modules
-    ├── AppModule.kt
-    ├── NetworkModule.kt
-    └── DatabaseModule.kt
+├── di/                      # Koin: AppModule(core), Network, Database, Biometric, Auth, Daily, Task, Habit, Routine, Nutrition
 ```
 
 ## 🏗️ Arquitectura
@@ -94,7 +89,7 @@ app/src/main/java/com/agusstkd/goodlife/
 - **Type-safe Routes** con kotlinx-serialization
 - **KMP Ready** - Domain y Core son Kotlin puro
 
-Ver [ARCHITECTURE.md](docs/ARCHITECTURE.md) para detalles completos.
+Ver [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) y el inventario [docs/IMPLEMENTATION-STATUS.md](docs/IMPLEMENTATION-STATUS.md).
 
 ## 🔐 Autenticación
 

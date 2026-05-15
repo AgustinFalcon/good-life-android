@@ -2,6 +2,8 @@
 
 Índice de especificaciones y guías del proyecto.
 
+**Inventario alineado al código:** [IMPLEMENTATION-STATUS.md](IMPLEMENTATION-STATUS.md) (ingeniería inversa + gaps).
+
 ---
 
 ## 🎯 Especificaciones (SPECs)
@@ -12,13 +14,13 @@ Documentación oficial de features core implementadas.
 |------|---------|--------|-------------|
 | [SPEC-001](specs/SPEC-001-register-screen.md) | Register Screen | ✅ Completado | Pantalla de registro |
 | [SPEC-002](specs/SPEC-002-biometric-login.md) | Biometric Login | ✅ Completado | Autenticación biométrica |
-| [SPEC-003](specs/SPEC-003-main-scaffold.md) | Main Scaffold | 🚧 En Progreso (90%) | Bottom Navigation + Tabs |
+| [SPEC-003](specs/SPEC-003-main-scaffold.md) | Main Scaffold | 🚧 En progreso (~90%) | Bottom nav + FAB + grafos por tab; **Daily** real; **Workouts / Meals / Settings** placeholders en `TabNavGraph.kt` |
 | [SPEC-004](specs/SPEC-004-date-provider.md) | DateProvider | ✅ Completado | Core de fechas (KMP-ready) |
 | [SPEC-005](specs/SPEC-005-network-service.md) | Network Service | ✅ Completado | BaseResponse, HttpCode, Cache |
-| [SPEC-006](specs/SPEC-006-offline-first-swr.md) | Offline-First + SWR (Fase 1) | ✅ Completado | Stale-While-Revalidate con Room |
+| [SPEC-006](specs/SPEC-006-offline-first-swr.md) | Offline-First + SWR | Fase 1 ✅ / Fase 2 📝 | Fase 1: Daily+Room en código; Fase 2: cola escritura offline (pendiente) |
 | [SPEC-007](specs/SPEC-007-app-language.md) | AppLanguage | ✅ Completado | Localización KMP-ready (ES/EN/PT) |
 | [SPEC-008](specs/SPEC-008-notifications-deeplinks.md) | Notificaciones + Deep Links | 📝 Planificado | FCM + esquema goodlife:// |
-| [SPEC-009](specs/SPEC-009-add-to-daily.md) | Add to Daily | 🚧 En Progreso | Task + Habit desde FAB |
+| [SPEC-009](specs/SPEC-009-add-to-daily.md) | Add to Daily | ✅ Navegación desde FAB (core) | Modal + acciones → CreateTask / CreateHabit / CreateRoutine / CreateMealPlan; pendientes: `QuickActionType.OTHER`, fila de opciones de comida del modal, checklist detallada en el SPEC |
 | [SPEC-010](specs/SPEC-010-create-task-screen.md) | Create Task Screen | ✅ Completado | Wizard once/recurrente |
 | [SPEC-011](specs/SPEC-011-create-routine-screen.md) | Create Routine Screen | ✅ Completado | Wizard 4 pasos, catálogo paginado |
 | [SPEC-012](specs/SPEC-012-create-meal-plan-screen.md) | Create Meal Plan Screen | ✅ Completado | Wizard 3 pasos, macros, scheduling |
@@ -31,7 +33,7 @@ Guías paso a paso para implementar features complejas.
 
 | Plan | Feature | Estado | Descripción |
 |------|---------|--------|-------------|
-| [DAILY-IMPLEMENTATION-PLAN](plans/DAILY-IMPLEMENTATION-PLAN.md) | Daily Screen | 🟡 Listo para implementar | LazyColumn con items + cache Room |
+| [DAILY-IMPLEMENTATION-PLAN](plans/DAILY-IMPLEMENTATION-PLAN.md) | Daily Screen | ✅ Implementado en código (ajustar plan) | LazyColumn + `DailyRepositoryImpl` con **Room + SWR** (`DailyDao`); el plan sigue como guía histórica / mejoras futuras |
 
 ---
 
@@ -206,10 +208,18 @@ sealed class UiState {
 
 ## 📞 Referencias
 
+- **Estado del código:** [IMPLEMENTATION-STATUS.md](IMPLEMENTATION-STATUS.md)
 - **Changelog:** [CHANGELOG.md](../CHANGELOG.md)
 - **Specs:** [specs/](specs/)
 - **Archive:** [archive/](archive/)
 
 ---
 
-**Última actualización:** 2026-04-14
+**Última actualización:** 2026-05-14 — Índice alineado con el código (`DailyRepositoryImpl`, `TabNavGraph`, FAB).
+
+---
+
+## Notas de sincronización doc ↔ código
+
+- Si un SPEC o plan **no coincide** con `app/src/main/java`, prima el **código** y actualizá el índice o el SPEC en el mismo espíritu que este commit.
+- **SPEC-008** (FCM + `goodlife://`) sigue **planificado**; no hay implementación en el grafo de navegación aún más allá de rutas definidas en documentación.

@@ -10,8 +10,10 @@ import com.agusstkd.goodlife.presentation.navigation.route.navigateToMainFromSpl
 import com.agusstkd.goodlife.presentation.screen.splash.model.SplashUiAction
 import com.agusstkd.goodlife.presentation.screen.splash.model.SplashUiState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SplashViewModel(
@@ -24,11 +26,9 @@ class SplashViewModel(
     val accessibilityTexts get() = language.accessibilityTexts
 
     private val _uiState = MutableStateFlow<SplashUiState>(SplashUiState.Loading)
-    val uiState: StateFlow<SplashUiState> = _uiState.asStateFlow()
-
-    init {
-        checkSession()
-    }
+    val uiState: StateFlow<SplashUiState> = _uiState
+        .onSubscription { checkSession() }
+        .stateIn(viewModelScope, SharingStarted.Lazily, SplashUiState.Loading)
 
     private fun checkSession() {
         viewModelScope.launch {

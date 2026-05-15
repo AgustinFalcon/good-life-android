@@ -20,8 +20,8 @@ import com.agusstkd.goodlife.data.remote.datasource.remote.DailyRemoteDataSource
  * - UseCases: GetDailyItems, UpdateItemStatus
  * - ViewModels: DailyTabViewModel
  *
- * FASE 1: Solo backend (sin Room/cache).
- * FASE 2 (futuro): Agregar DailyDao y SWR cache strategy.
+ * Cache: [DailyRepositoryImpl] usa [DailyDao] + patrón SWR (backend primero, fallback Room).
+ * Ver también [DAILY-IMPLEMENTATION-PLAN] en docs (texto puede estar desfasado respecto al código).
  */
 val dailyModule = module {
 
