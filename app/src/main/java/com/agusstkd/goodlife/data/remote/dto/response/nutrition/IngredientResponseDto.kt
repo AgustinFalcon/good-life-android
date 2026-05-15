@@ -17,12 +17,13 @@ data class IngredientResponseDto(
     val carbs: Double? = null,
     val fat: Double? = null,
     val imageUrl: String? = null,
+    val availableUnits: List<String>? = null,
 )
 
 fun IngredientResponseDto.toIngredient() = Ingredient(
     id = id ?: 0L,
     name = name ?: "Sin nombre",
-    brand = brand,  // ← Este puede ser null en domain
+    brand = brand,
     isGlobal = isGlobal ?: false,
     servingSize = servingSize ?: 100.0,
     servingUnit = servingUnit ?: "g",
@@ -31,4 +32,5 @@ fun IngredientResponseDto.toIngredient() = Ingredient(
     carbs = carbs ?: 0.0,
     fat = fat ?: 0.0,
     imageUrl = imageUrl,
+    availableUnits = availableUnits ?: listOf("g", "ml", "unit")
 )

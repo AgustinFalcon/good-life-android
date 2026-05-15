@@ -38,4 +38,5 @@ data class Ingredient(
     val fat: Double,
     val isGlobal: Boolean,
     val imageUrl: String?,
+    val availableUnits: List<String> = listOf("g", "ml", "unit")
 )
