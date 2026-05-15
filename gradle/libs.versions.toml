@@ -1,14 +1,14 @@
 [versions]
-agp = "8.8.0"
-biometric = "1.2.0-alpha05"
+agp = "8.10.0"
+biometric = "1.1.0"
 kotlin = "2.1.0"
-coreKtx = "1.15.0"
+coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
-activityCompose = "1.10.0"
-composeBom = "2025.02.00"
+activityCompose = "1.9.3"
+composeBom = "2024.12.01"
 
 # Navigation & Serialization
 navigationCompose = "2.8.7"
@@ -36,6 +36,13 @@ koin = "4.0.0"
 # Coroutines
 coroutines = "1.9.0"
 securityCrypto = "1.1.0"
+coroutinesTest = "1.9.0"
+turbine = "1.2.0"
+archCoreTesting = "2.2.0"
+
+# DateTime (KMP-ready)
+kotlinxDatetime = "0.7.1"
+collectionsImmutable = "0.3.8"
 
 [libraries]
 androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
@@ -61,8 +68,8 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 # Icons
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
 
-# Lottie
-lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
+# Lottie (Compose)
+lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 
 # Navigation
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
@@ -88,6 +95,16 @@ koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = 
 
 # Coroutines
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+
+# DateTime (KMP-ready)
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "collectionsImmutable" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+
+# Testing
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutinesTest" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+arch-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "archCoreTesting" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

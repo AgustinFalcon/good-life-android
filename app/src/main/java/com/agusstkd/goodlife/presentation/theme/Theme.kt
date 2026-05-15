@@ -177,6 +177,7 @@ fun GoodLifeTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = GoodLifeTypography,
+        shapes = GoodLifeShapes,
         content = content
     )
 }

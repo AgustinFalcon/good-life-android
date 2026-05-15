@@ -6,10 +6,10 @@ import com.agusstkd.goodlife.core.util.JwtUtils
 import com.agusstkd.goodlife.data.local.dao.UserDao
 import com.agusstkd.goodlife.data.local.entity.toDomain
 import com.agusstkd.goodlife.data.local.entity.toEntity
-import com.agusstkd.goodlife.data.remote.datasource.AuthRemoteDataSource
+import com.agusstkd.goodlife.data.remote.datasource.remote.AuthRemoteDataSource
 import com.agusstkd.goodlife.data.remote.dto.response.toDomain
 import com.agusstkd.goodlife.domain.exception.NoSessionException
-import com.agusstkd.goodlife.domain.model.User
+import com.agusstkd.goodlife.domain.model.auth.User
 import com.agusstkd.goodlife.domain.repository.AuthRepository
 
 /**
@@ -58,7 +58,6 @@ class AuthRepositoryImpl(
                 Result.Success(user)
             }
             is Result.Error -> loginResult
-            is Result.Loading -> loginResult
         }
     }
 
@@ -75,7 +74,6 @@ class AuthRepositoryImpl(
                 Result.Success(user)
             }
             is Result.Error -> registerResult
-            is Result.Loading -> registerResult
         }
     }
 
@@ -85,7 +83,7 @@ class AuthRepositoryImpl(
             userDao.deleteUser()
             Result.Success(Unit)
         } catch (e: Exception) {
-            Result.Error(e, "Error al cerrar sesión")
+            Result.Error(Exception("Error al cerrar sesión", e))
         }
     }
 
@@ -100,8 +98,7 @@ class AuthRepositoryImpl(
             Result.Success(userEntity.toDomain())
         } else {
             Result.Error(
-                exception = NoSessionException(),
-                message = "No hay usuario autenticado"
+                exception = NoSessionException("No hay usuario autenticado")
             )
         }
     }

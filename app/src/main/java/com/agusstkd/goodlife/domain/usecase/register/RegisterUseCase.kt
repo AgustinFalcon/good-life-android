@@ -1,41 +1,36 @@
 package com.agusstkd.goodlife.domain.usecase.register
 
+import com.agusstkd.goodlife.core.datetime.language.AppLanguage
+import com.agusstkd.goodlife.core.dispatcher.DispatcherProvider
 import com.agusstkd.goodlife.core.result.Result
-import com.agusstkd.goodlife.domain.model.User
 import com.agusstkd.goodlife.domain.repository.AuthRepository
+import com.agusstkd.goodlife.domain.usecase.register.result.RegisterResult
 import com.agusstkd.goodlife.domain.usecase.validation.ValidateEmailUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidateFullNameUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidatePasswordMatchUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidatePasswordUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidateUserNameUseCase
+import kotlinx.coroutines.withContext
 
 /**
- * Orquesta el proceso de registro de usuario.
+ * Caso de uso que orquesta el proceso de registro de usuario.
  *
- * ## Flujo de validación:
- * 1. Valida nombre completo (fullName)
- * 2. Valida nombre de usuario (userName)
+ * ## Responsabilidades
+ * - Validar todos los campos del formulario en orden.
+ * - Cambiar el dispatcher a IO (el ViewModel no especifica dispatcher).
+ * - Convertir el [Result] del repositorio a [RegisterResult].
+ *
+ * ## Flujo
+ * 1. Valida nombre completo
+ * 2. Valida nombre de usuario
  * 3. Valida email
  * 4. Valida contraseña
- * 5. Valida que las contraseñas coincidan
- * 6. Llama al repositorio para registrar
+ * 5. Valida coincidencia de contraseñas
+ * 6. Registra en backend (solo si todas las validaciones pasan)
  *
- * ## Uso:
- * ```kotlin
- * val result = registerUseCase(userName, fullName, email, password, confirmPassword)
- * when (result) {
- *     is RegisterResult.Success -> // Usuario registrado
- *     is RegisterResult.ValidationError -> // Error de validación
- *     is RegisterResult.ServerError -> // Error del servidor
- * }
- * ```
- *
- * @property authRepository Repositorio de autenticación
- * @property validateUserName Validador de nombre de usuario
- * @property validateFullName Validador de nombre completo
- * @property validateEmail Validador de email
- * @property validatePassword Validador de contraseña
- * @property validatePasswordMatch Validador de coincidencia de contraseñas
+ * ## Por qué el dispatcher vive aquí
+ * El UseCase sabe que necesita IO para la llamada al repositorio.
+ * El ViewModel solo hace `viewModelScope.launch { }` sin especificar dispatcher.
  */
 class RegisterUseCase(
     private val authRepository: AuthRepository,
@@ -43,53 +38,20 @@ class RegisterUseCase(
     private val validateFullName: ValidateFullNameUseCase,
     private val validateEmail: ValidateEmailUseCase,
     private val validatePassword: ValidatePasswordUseCase,
-    private val validatePasswordMatch: ValidatePasswordMatchUseCase
+    private val validatePasswordMatch: ValidatePasswordMatchUseCase,
+    private val dispatcher: DispatcherProvider,
+    private val language: AppLanguage
 ) {
-
-    /**
-     * Resultado del registro.
-     */
-    sealed interface RegisterResult {
-        /**
-         * Registro exitoso.
-         * @property user Usuario creado
-         */
-        data class Success(val user: User) : RegisterResult
-
-        /**
-         * Error de validación en un campo específico.
-         * @property field Campo con error
-         * @property message Mensaje de error
-         */
-        data class ValidationError(val field: Field, val message: String) : RegisterResult
-
-        /**
-         * Error del servidor.
-         * @property message Mensaje de error
-         */
-        data class ServerError(val message: String) : RegisterResult
-
-        /**
-         * Campos que pueden tener errores de validación.
-         */
-        enum class Field {
-            USERNAME,
-            FULL_NAME,
-            EMAIL,
-            PASSWORD,
-            CONFIRM_PASSWORD
-        }
-    }
 
     /**
      * Ejecuta el proceso de registro.
      *
-     * @param userName Nombre de usuario único
-     * @param fullName Nombre completo del usuario
-     * @param email Correo electrónico
-     * @param password Contraseña
-     * @param confirmPassword Confirmación de contraseña
-     * @return [RegisterResult] con el resultado del registro
+     * @param userName Nombre de usuario único.
+     * @param fullName Nombre completo del usuario.
+     * @param email Correo electrónico.
+     * @param password Contraseña.
+     * @param confirmPassword Confirmación de contraseña.
+     * @return [RegisterResult] con el subtipo correspondiente al resultado.
      */
     suspend operator fun invoke(
         userName: String,
@@ -98,63 +60,60 @@ class RegisterUseCase(
         password: String,
         confirmPassword: String
     ): RegisterResult {
+        return withContext(dispatcher.io) {
+            val v = language.validationTexts
+            val e = language.errorTexts
 
-        // 1. Validar nombre completo (no se envía al backend aún, pero se valida)
-        val fullNameResult = validateFullName(fullName)
-        if (!fullNameResult.isValid) {
-            return RegisterResult.ValidationError(
-                RegisterResult.Field.FULL_NAME,
-                fullNameResult.errorMessage ?: "Nombre inválido"
-            )
-        }
+            val fullNameResult = validateFullName(fullName)
+            if (!fullNameResult.isValid) {
+                return@withContext RegisterResult.ValidationError(
+                    RegisterResult.Field.FULL_NAME,
+                    fullNameResult.errorMessage ?: v.invalidFullName
+                )
+            }
 
-        // 2. Validar nombre de usuario
-        val userNameResult = validateUserName(userName)
-        if (!userNameResult.isValid) {
-            return RegisterResult.ValidationError(
-                RegisterResult.Field.USERNAME,
-                userNameResult.errorMessage ?: "Nombre de usuario inválido"
-            )
-        }
+            val userNameResult = validateUserName(userName)
+            if (!userNameResult.isValid) {
+                return@withContext RegisterResult.ValidationError(
+                    RegisterResult.Field.USERNAME,
+                    userNameResult.errorMessage ?: v.invalidUsername
+                )
+            }
 
-        // 3. Validar email
-        val emailResult = validateEmail(email)
-        if (!emailResult.isValid) {
-            return RegisterResult.ValidationError(
-                RegisterResult.Field.EMAIL,
-                emailResult.errorMessage ?: "Email inválido"
-            )
-        }
+            val emailResult = validateEmail(email)
+            if (!emailResult.isValid) {
+                return@withContext RegisterResult.ValidationError(
+                    RegisterResult.Field.EMAIL,
+                    emailResult.errorMessage ?: v.invalidEmail
+                )
+            }
 
-        // 4. Validar contraseña
-        val passwordResult = validatePassword(password)
-        if (!passwordResult.isValid) {
-            return RegisterResult.ValidationError(
-                RegisterResult.Field.PASSWORD,
-                passwordResult.errorMessage ?: "Contraseña inválida"
-            )
-        }
+            val passwordResult = validatePassword(password)
+            if (!passwordResult.isValid) {
+                return@withContext RegisterResult.ValidationError(
+                    RegisterResult.Field.PASSWORD,
+                    passwordResult.errorMessage ?: v.invalidPassword
+                )
+            }
 
-        // 5. Validar que las contraseñas coincidan
-        val matchResult = validatePasswordMatch(password, confirmPassword)
-        if (!matchResult.isValid) {
-            return RegisterResult.ValidationError(
-                RegisterResult.Field.CONFIRM_PASSWORD,
-                matchResult.errorMessage ?: "Las contraseñas no coinciden"
-            )
-        }
+            val matchResult = validatePasswordMatch(password, confirmPassword)
+            if (!matchResult.isValid) {
+                return@withContext RegisterResult.ValidationError(
+                    RegisterResult.Field.CONFIRM_PASSWORD,
+                    matchResult.errorMessage ?: v.passwordsDontMatch
+                )
+            }
 
-        // 6. Llamar al repositorio (username, email, password)
-        return when (val result = authRepository.register(
-            username = userName,
-            email = email,
-            password = password
-        )) {
-            is Result.Success -> RegisterResult.Success(result.data)
-            is Result.Error -> RegisterResult.ServerError(
-                result.exception.message ?: "Error al registrar"
-            )
-            is Result.Loading -> RegisterResult.ServerError("Operación en curso")
+            when (val result = authRepository.register(
+                username = userName,
+                email = email,
+                password = password
+            )) {
+                is Result.Success -> RegisterResult.Success(result.data)
+                is Result.Error   -> RegisterResult.ServerError(
+                    result.message ?: e.registerError
+                )
+            }
         }
     }
 }

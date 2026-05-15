@@ -15,7 +15,7 @@ sealed interface TabRoute {
 
     /** Pantalla principal del tab Home. */
     @Serializable
-    data object Home : TabRoute
+    data object Daily : TabRoute
 
     /**
      * Detalle de una tarea.
@@ -23,7 +23,8 @@ sealed interface TabRoute {
      * @param taskId Identificador de la tarea.
      */
     @Serializable
-    data class TaskDetail(val taskId: Long) : TabRoute
+    data class DailyDetail(val taskId: Long) : TabRoute
+
 
     // ===== WORKOUTS TAB =====
 
@@ -73,7 +74,7 @@ sealed interface TabRoute {
 sealed interface TabGraphRoute {
 
     @Serializable
-    data object HomeGraph : TabGraphRoute
+    data object DailyGraph : TabGraphRoute
 
     @Serializable
     data object WorkoutsGraph : TabGraphRoute

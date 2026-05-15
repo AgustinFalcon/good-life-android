@@ -1,5 +1,6 @@
 package com.agusstkd.goodlife.core.network
 
+import okhttp3.Authenticator
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
@@ -30,6 +31,7 @@ object OkHttpClientFactory {
     fun create(
         authInterceptor: GoodLifeInterceptor,
         loggingInterceptor: HttpLoggingInterceptor,
+        authenticator: Authenticator,
         connectTimeout: Long = NetworkConstants.CONNECT_TIMEOUT,
         readTimeout: Long = NetworkConstants.READ_TIMEOUT,
         writeTimeout: Long = NetworkConstants.WRITE_TIMEOUT
@@ -40,6 +42,7 @@ object OkHttpClientFactory {
             .writeTimeout(writeTimeout, TimeUnit.SECONDS)
             .addInterceptor(authInterceptor)
             .addInterceptor(loggingInterceptor)
+            .authenticator(authenticator)
             .build()
     }
 

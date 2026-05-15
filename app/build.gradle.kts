@@ -61,9 +61,13 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.foundation)
 
     // Testing
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
+    testImplementation(libs.arch.core.testing)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -104,10 +108,20 @@ dependencies {
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.collections.immutable)
+
+    // DateTime (KMP-ready)
+    implementation(libs.kotlinx.datetime)
 
     // Biometric Authentication
     implementation(libs.androidx.biometric)
 
-// Encrypted SharedPreferences (para guardar credenciales seguras)
+    // Encrypted SharedPreferences (para guardar credenciales seguras)
     implementation(libs.androidx.security.crypto)
+
+    // Icons
+    implementation(libs.androidx.material.icons.extended)
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.7.0")
 }

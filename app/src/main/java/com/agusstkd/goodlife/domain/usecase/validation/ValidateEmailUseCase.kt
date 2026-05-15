@@ -1,6 +1,8 @@
 package com.agusstkd.goodlife.domain.usecase.validation
 
-import com.agusstkd.goodlife.domain.model.ValidationResult
+import com.agusstkd.goodlife.core.datetime.language.AppLanguage
+import com.agusstkd.goodlife.core.extensions.formatArgs
+import com.agusstkd.goodlife.domain.model.validation.ValidationResult
 
 /**
  * Caso de uso para validar email/usuario.
@@ -16,43 +18,32 @@ import com.agusstkd.goodlife.domain.model.ValidationResult
  * 2. Mínimo 3 caracteres
  * 3. Si contiene @, debe ser un email válido
  */
-class ValidateEmailUseCase {
+class ValidateEmailUseCase(
+    private val language: AppLanguage
+) {
 
-    /**
-     * Valida un email o nombre de usuario.
-     *
-     * @param value Valor a validar (email o username)
-     * @return ValidationResult indicando si es válido o el error
-     */
     operator fun invoke(value: String): ValidationResult {
-        // Regla 1: No vacío
+        val texts = language.validationTexts
+
         if (value.isBlank()) {
-            return ValidationResult.error("El campo no puede estar vacío")
+            return ValidationResult.error(texts.fieldRequired)
         }
 
-        // Regla 2: Mínimo 3 caracteres
         if (value.length < MIN_LENGTH) {
-            return ValidationResult.error("Debe tener al menos $MIN_LENGTH caracteres")
+            return ValidationResult.error(
+                texts.minLengthFormat.formatArgs(MIN_LENGTH)
+            )
         }
 
-        // Regla 3: Si parece email, validar formato
-        if (value.contains("@")) {
-            if (!isValidEmailFormat(value)) {
-                return ValidationResult.error("El formato del email no es válido")
-            }
+        if (value.contains("@") && !isValidEmailFormat(value)) {
+            return ValidationResult.error(texts.invalidEmailFormat)
         }
 
         return ValidationResult.success()
     }
 
-    /**
-     * Valida el formato de un email.
-     * Patrón simple: texto@texto.texto
-     */
     private fun isValidEmailFormat(email: String): Boolean {
-        val emailPattern = Regex(
-            pattern = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
-        )
+        val emailPattern = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
         return emailPattern.matches(email)
     }
 

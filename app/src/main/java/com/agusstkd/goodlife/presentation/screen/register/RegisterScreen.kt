@@ -13,9 +13,9 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,75 +33,51 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.agusstkd.goodlife.R
-import com.agusstkd.goodlife.presentation.components.BackgroundGradientComponent
-import com.agusstkd.goodlife.presentation.components.ButtonComponent
-import com.agusstkd.goodlife.presentation.components.ButtonParams
-import com.agusstkd.goodlife.presentation.components.ButtonVariant
-import com.agusstkd.goodlife.presentation.components.CheckboxComponent
-import com.agusstkd.goodlife.presentation.components.CheckboxParams
-import com.agusstkd.goodlife.presentation.components.CheckboxParamsId
-import com.agusstkd.goodlife.presentation.components.TextFieldComponent
-import com.agusstkd.goodlife.presentation.components.TextFieldParams
-import com.agusstkd.goodlife.presentation.components.TextFieldType
-import com.agusstkd.goodlife.presentation.components.TitleComponent
+import com.agusstkd.goodlife.core.datetime.language.AccessibilityTexts
+import com.agusstkd.goodlife.presentation.components.common.BackgroundGradientComponent
+import com.agusstkd.goodlife.presentation.components.common.ButtonComponent
+import com.agusstkd.goodlife.presentation.components.common.ButtonParams
+import com.agusstkd.goodlife.presentation.components.common.ButtonVariant
+import com.agusstkd.goodlife.presentation.components.common.CheckboxComponent
+import com.agusstkd.goodlife.presentation.components.common.CheckboxParams
+import com.agusstkd.goodlife.presentation.components.common.CheckboxParamsId
+import com.agusstkd.goodlife.presentation.components.common.TextFieldComponent
+import com.agusstkd.goodlife.presentation.components.common.TextFieldParams
+import com.agusstkd.goodlife.presentation.components.common.TextFieldType
+import com.agusstkd.goodlife.presentation.components.common.TitleComponent
+import com.agusstkd.goodlife.core.datetime.language.AuthScreenTexts
+import com.agusstkd.goodlife.core.datetime.language.AuthTexts
+import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.presentation.screen.register.model.RegisterUiAction
 import com.agusstkd.goodlife.presentation.screen.register.model.RegisterUiState
 import com.agusstkd.goodlife.presentation.theme.DarkGreen
 import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
-import com.agusstkd.goodlife.presentation.theme.GoodLifeTypography
 import com.agusstkd.goodlife.presentation.theme.TextLink
 import com.agusstkd.goodlife.presentation.theme.TextSecondary
 
-/**
- * ═══════════════════════════════════════════════════════════════════════════════════════════
- * REGISTER SCREEN - UI PURA (sin dependencias)
- * ═══════════════════════════════════════════════════════════════════════════════════════════
- *
- * Renderiza el formulario de registro según el estado:
- * - **Loading** → Spinner de carga
- * - **Content** → Formulario completo
- * - **Success** → Se maneja en el Owner (navegación)
- *
- * ## Estructura:
- * - Header: Logo + Título + Subtítulo
- * - Formulario: Nombre completo + Username + Email + Passwords
- * - Checkbox: Términos y condiciones
- * - Botón: Registrarme
- * - Footer: ¿Ya tienes cuenta?
- *
- * @param uiState Estado actual de la pantalla
- * @param onAction Callback para acciones del usuario
- * @param modifier Modificador opcional
- */
 @Composable
 fun RegisterScreen(
     uiState: RegisterUiState,
     onAction: (RegisterUiAction) -> Unit,
+    texts: AuthScreenTexts,
     modifier: Modifier = Modifier
 ) {
+    val auth = texts.auth
+    val accessibility = texts.accessibility
+
     BackgroundGradientComponent(modifier = modifier) {
         when (uiState) {
-            is RegisterUiState.Loading -> {
-                LoadingView()
-            }
-
-            is RegisterUiState.Content -> {
-                RegisterContent(
-                    state = uiState,
-                    onAction = onAction
-                )
-            }
-
-            is RegisterUiState.Success -> {
-                // El Owner maneja la navegación
-            }
+            is RegisterUiState.Loading -> LoadingView()
+            is RegisterUiState.Content -> RegisterContent(
+                state = uiState,
+                onAction = onAction,
+                auth = auth,
+                accessibility = accessibility
+            )
+            is RegisterUiState.Success -> { }
         }
     }
 }
-
-// ═══════════════════════════════════════════════════════════════════════════════════════════
-// LOADING VIEW
-// ═══════════════════════════════════════════════════════════════════════════════════════════
 
 @Composable
 private fun LoadingView() {
@@ -116,23 +92,21 @@ private fun LoadingView() {
     }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════════════════
-// REGISTER CONTENT
-// ═══════════════════════════════════════════════════════════════════════════════════════════
-
 @Composable
 private fun RegisterContent(
     state: RegisterUiState.Content,
-    onAction: (RegisterUiAction) -> Unit
+    onAction: (RegisterUiAction) -> Unit,
+    auth: AuthTexts,
+    accessibility: AccessibilityTexts
 ) {
     val isFormValid = state.fullName.isNotBlank() &&
             state.userName.isNotBlank() &&
             state.email.isNotBlank() &&
             state.password.isNotBlank() &&
             state.confirmPassword.isNotBlank() &&
-            state.password == state.confirmPassword &&  // Contraseñas deben coincidir
+            state.password == state.confirmPassword &&
             state.acceptedTerms &&
-            !state.isConfirmPasswordError  // Sin errores de validación
+            !state.isConfirmPasswordError
 
     val scrollState = rememberScrollState()
 
@@ -146,39 +120,21 @@ private fun RegisterContent(
     ) {
         Spacer(modifier = Modifier.height(32.dp))
 
-        // ═══════════════════════════════════════════════════════════════════════════════
-        // HEADER: Logo + Título + Subtítulo
-        // ═══════════════════════════════════════════════════════════════════════════════
-        RegisterHeader()
+        RegisterHeader(auth = auth)
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // ═══════════════════════════════════════════════════════════════════════════════
-        // FORMULARIO
-        // ═══════════════════════════════════════════════════════════════════════════════
-        RegisterForm(
-            state = state,
-            onAction = onAction
-        )
+        RegisterForm(state = state, onAction = onAction, auth = auth, accessibility = accessibility)
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // ═══════════════════════════════════════════════════════════════════════════════
-        // TÉRMINOS Y CONDICIONES
-        // ═══════════════════════════════════════════════════════════════════════════════
-        TermsCheckbox(
-            isChecked = state.acceptedTerms,
-            onAction = onAction
-        )
+        TermsCheckbox(isChecked = state.acceptedTerms, onAction = onAction, auth = auth)
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // ═══════════════════════════════════════════════════════════════════════════════
-        // BOTÓN REGISTRAR
-        // ═══════════════════════════════════════════════════════════════════════════════
         ButtonComponent(
             params = ButtonParams(
-                text = "Registrarme",
+                text = auth.register,
                 enabled = isFormValid,
                 isLoading = state.isLoading,
                 variant = ButtonVariant.PRIMARY,
@@ -189,19 +145,14 @@ private fun RegisterContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // ═══════════════════════════════════════════════════════════════════════════════
-        // LINK: ¿Ya tienes cuenta?
-        // ═══════════════════════════════════════════════════════════════════════════════
-        AlreadyHaveAccountLink(onAction = onAction)
+        AlreadyHaveAccountLink(onAction = onAction, auth = auth)
 
-        // ═══════════════════════════════════════════════════════════════════════════════
-        // SNACKBAR DE ERROR (si hay)
-        // ═══════════════════════════════════════════════════════════════════════════════
         state.errorMessage?.let { error ->
             Spacer(modifier = Modifier.height(16.dp))
             ErrorSnackbar(
                 message = error,
-                onDismiss = { onAction(RegisterUiAction.OnDismissError) }
+                onDismiss = { onAction(RegisterUiAction.OnDismissError) },
+                auth = auth
             )
         }
 
@@ -209,126 +160,113 @@ private fun RegisterContent(
     }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════════════════
-// HEADER
-// ═══════════════════════════════════════════════════════════════════════════════════════════
-
 @Composable
-private fun RegisterHeader() {
+private fun RegisterHeader(auth: AuthTexts) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
-        // Logo
         Image(
             painter = painterResource(R.drawable.good_life_logo),
             contentDescription = "Logo GoodLife",
             modifier = Modifier
                 .size(100.dp)
-                .clip(RoundedCornerShape(24.dp)),
+                .clip(MaterialTheme.shapes.large),
             contentScale = ContentScale.Fit
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Título con gradiente
-        TitleComponent(text = "Crear Cuenta")
+        TitleComponent(text = auth.createAccount)
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        // Subtítulo
         Text(
-            text = "Crea tu cuenta para empezar tu vida saludable",
-            style = GoodLifeTypography.bodyMedium,
+            text = auth.registerSubtitle,
+            style = MaterialTheme.typography.bodyMedium,
             color = TextSecondary,
             textAlign = TextAlign.Center
         )
     }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════════════════
-// FORM
-// ═══════════════════════════════════════════════════════════════════════════════════════════
-
 @Composable
 private fun RegisterForm(
     state: RegisterUiState.Content,
-    onAction: (RegisterUiAction) -> Unit
+    onAction: (RegisterUiAction) -> Unit,
+    auth: AuthTexts,
+    accessibility: AccessibilityTexts
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Nombre Completo (se guarda localmente, se enviará al backend cuando lo soporte)
         TextFieldComponent(
             params = TextFieldParams(
                 value = state.fullName,
-                placeholder = "Nombre completo",
+                placeholder = auth.fullName,
                 type = TextFieldType.USER,
                 isError = state.isFullNameError
             ),
             onValueChange = { onAction(RegisterUiAction.OnFullNameChange(it)) }
         )
 
-        // Nombre de Usuario
         TextFieldComponent(
             params = TextFieldParams(
                 value = state.userName,
-                placeholder = "Nombre de usuario",
+                placeholder = auth.username,
                 type = TextFieldType.USER,
                 isError = state.isUserNameError
             ),
             onValueChange = { onAction(RegisterUiAction.OnUserNameChange(it)) }
         )
 
-        // Email
         TextFieldComponent(
             params = TextFieldParams(
                 value = state.email,
-                placeholder = "Correo electrónico",
+                placeholder = auth.email,
                 type = TextFieldType.EMAIL,
                 isError = state.isEmailError
             ),
             onValueChange = { onAction(RegisterUiAction.OnEmailChange(it)) }
         )
 
-        // Contraseña
         TextFieldComponent(
             params = TextFieldParams(
                 value = state.password,
-                placeholder = "Contraseña",
+                placeholder = auth.password,
                 type = TextFieldType.PASSWORD,
-                isError = state.isPasswordError
+                isError = state.isPasswordError,
+                passwordToggleHide = accessibility.hide,
+                passwordToggleShow = accessibility.show
             ),
             onValueChange = { onAction(RegisterUiAction.OnPasswordChange(it)) }
         )
 
-        // Confirmar Contraseña
         TextFieldComponent(
             params = TextFieldParams(
                 value = state.confirmPassword,
-                placeholder = "Confirmar contraseña",
+                placeholder = auth.confirmPassword,
                 type = TextFieldType.PASSWORD,
-                isError = state.isConfirmPasswordError
+                isError = state.isConfirmPasswordError,
+                passwordToggleHide = accessibility.hide,
+                passwordToggleShow = accessibility.show
             ),
             onValueChange = { onAction(RegisterUiAction.OnConfirmPasswordChange(it)) }
         )
     }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════════════════
-// TERMS CHECKBOX
-// ═══════════════════════════════════════════════════════════════════════════════════════════
-
 @Composable
 private fun TermsCheckbox(
     isChecked: Boolean,
-    onAction: (RegisterUiAction) -> Unit
+    onAction: (RegisterUiAction) -> Unit,
+    auth: AuthTexts
 ) {
     CheckboxComponent(
         params = CheckboxParams(
-            text = "Acepto los ",
-            linkText = "Términos y Condiciones",
+            text = auth.termsPrefix,
+            linkText = auth.termsAndConditions,
             checked = isChecked,
             id = CheckboxParamsId.ACCEPT_TERMS_AND_CONDITIONS
         ),
@@ -339,29 +277,20 @@ private fun TermsCheckbox(
     )
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════════════════
-// ALREADY HAVE ACCOUNT
-// ═══════════════════════════════════════════════════════════════════════════════════════════
-
 @Composable
-private fun AlreadyHaveAccountLink(onAction: (RegisterUiAction) -> Unit) {
+private fun AlreadyHaveAccountLink(onAction: (RegisterUiAction) -> Unit, auth: AuthTexts) {
     val annotatedString = buildAnnotatedString {
         withStyle(SpanStyle(color = TextSecondary)) {
-            append("¿Ya tienes cuenta? ")
+            append(auth.alreadyHaveAccount)
         }
-        withStyle(
-            SpanStyle(
-                color = TextLink,
-                textDecoration = TextDecoration.Underline
-            )
-        ) {
-            append("Iniciar Sesión")
+        withStyle(SpanStyle(color = TextLink, textDecoration = TextDecoration.Underline)) {
+            append(auth.login)
         }
     }
 
     Text(
         text = annotatedString,
-        style = GoodLifeTypography.bodyMedium,
+        style = MaterialTheme.typography.bodyMedium,
         textAlign = TextAlign.Center,
         modifier = Modifier
             .fillMaxWidth()
@@ -369,19 +298,16 @@ private fun AlreadyHaveAccountLink(onAction: (RegisterUiAction) -> Unit) {
     )
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════════════════
-// ERROR SNACKBAR
-// ═══════════════════════════════════════════════════════════════════════════════════════════
-
 @Composable
 private fun ErrorSnackbar(
     message: String,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    auth: AuthTexts
 ) {
     Snackbar(
         action = {
             TextButton(onClick = onDismiss) {
-                Text("OK")
+                Text(auth.ok)
             }
         }
     ) {
@@ -399,7 +325,8 @@ private fun RegisterScreenLoadingPreview() {
     GoodLifeTheme {
         RegisterScreen(
             uiState = RegisterUiState.Loading,
-            onAction = {}
+            onAction = {},
+            texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)
         )
     }
 }
@@ -410,7 +337,8 @@ private fun RegisterScreenEmptyPreview() {
     GoodLifeTheme {
         RegisterScreen(
             uiState = RegisterUiState.Content(),
-            onAction = {}
+            onAction = {},
+            texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)
         )
     }
 }
@@ -428,72 +356,8 @@ private fun RegisterScreenFilledPreview() {
                 confirmPassword = "123456",
                 acceptedTerms = true
             ),
-            onAction = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Content - With Errors")
-@Composable
-private fun RegisterScreenWithErrorsPreview() {
-    GoodLifeTheme {
-        RegisterScreen(
-            uiState = RegisterUiState.Content(
-                fullName = "A",
-                userName = "ab",
-                email = "invalid",
-                password = "123",
-                confirmPassword = "456",
-                isFullNameError = true,
-                fullNameErrorMessage = "El nombre es muy corto",
-                isUserNameError = true,
-                userNameErrorMessage = "Mínimo 3 caracteres",
-                isEmailError = true,
-                emailErrorMessage = "Ingresa un email válido",
-                isPasswordError = true,
-                passwordErrorMessage = "Mínimo 6 caracteres",
-                isConfirmPasswordError = true,
-                confirmPasswordErrorMessage = "Las contraseñas no coinciden"
-            ),
-            onAction = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Content - Loading")
-@Composable
-private fun RegisterScreenButtonLoadingPreview() {
-    GoodLifeTheme {
-        RegisterScreen(
-            uiState = RegisterUiState.Content(
-                fullName = "Agustín García",
-                userName = "agustin123",
-                email = "agustin@email.com",
-                password = "123456",
-                confirmPassword = "123456",
-                acceptedTerms = true,
-                isLoading = true
-            ),
-            onAction = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Content - With Error Message")
-@Composable
-private fun RegisterScreenWithErrorMessagePreview() {
-    GoodLifeTheme {
-        RegisterScreen(
-            uiState = RegisterUiState.Content(
-                fullName = "Agustín García",
-                userName = "agustin123",
-                email = "agustin@email.com",
-                password = "123456",
-                confirmPassword = "123456",
-                acceptedTerms = true,
-                errorMessage = "El email ya está registrado"
-            ),
-            onAction = {}
+            onAction = {},
+            texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)
         )
     }
 }

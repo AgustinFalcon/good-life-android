@@ -1,5 +1,8 @@
 # Sistema de Navegación
 
+> **Host en código:** `GoodLifeNavHost` en `presentation/navigation/host/GoodLifeNavHost.kt`.  
+> Documentos o comentarios antiguos pueden decir «SmartNavHost»; el nombre y el archivo reales son **GoodLifeNavHost**.
+
 ## Introducción
 
 GoodLife implementa un sistema de navegación **reactivo** y **type-safe** que desacopla los ViewModels del NavController de Compose.
@@ -11,7 +14,7 @@ GoodLife implementa un sistema de navegación **reactivo** y **type-safe** que d
 | **Desacoplamiento** | ViewModels no conocen NavController |
 | **Testabilidad** | Navegación mockeable en tests |
 | **Type-safety** | Rutas con @Serializable, sin strings |
-| **Lifecycle-aware** | No navega cuando Activity está en background |
+| **Eventos one-shot** | El host usa `LaunchedEffect` + `collect` (ver comentario en `GoodLifeNavHost` vs `repeatOnLifecycle` para estado) |
 | **KMP-ready** | Interface abstracta para multiplataforma |
 
 ## Arquitectura
@@ -33,10 +36,10 @@ GoodLife implementa un sistema de navegación **reactivo** y **type-safe** que d
 │  └─────────────────────────────────────────────────────────────┘│
 └──────────────────────────────┬──────────────────────────────────┘
                                │
-                               │ collect() con repeatOnLifecycle
+                               │ LaunchedEffect + collect()
                                ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                        SmartNavHost                              │
+│                       GoodLifeNavHost                            │
 │  ┌─────────────────────────────────────────────────────────────┐│
 │  │  navController.navigate(route, navOptions)                  ││
 │  └─────────────────────────────────────────────────────────────┘│
@@ -82,32 +85,26 @@ interface ComposeNavigationController {
 }
 ```
 
-### SmartNavHost
+### GoodLifeNavHost
 
-NavHost wrapper que observa el SharedFlow.
+NavHost que observa el `SharedFlow` de acciones. **Implementación real:** `presentation/navigation/host/GoodLifeNavHost.kt` (incluye animaciones y KDoc sobre por qué se usa `collect` directo para eventos one-shot).
 
 ```kotlin
 @Composable
-fun SmartNavHost(
+fun GoodLifeNavHost(
     navController: NavHostController,
     navigationController: ComposeNavigationController,
     startDestination: Any,
     graphBuilder: NavGraphBuilder.() -> Unit
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    
-    LaunchedEffect(Unit) {
-        // Solo procesa cuando Activity está STARTED o superior
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            navigationController.navigationAction.collect { action ->
-                // Ejecuta la navegación
-            }
-        }
+    LaunchedEffect(navigationController) {
+        navigationController.navigationAction.collect { action -> /* manejar */ }
     }
-    
-    NavHost(...)
+    // NavHost( … graphBuilder … )
 }
 ```
+
+Patrón histórico opcional: `repeatOnLifecycle(STARTED)` es adecuado para **estado** reactivo; para **eventos one-shot** de navegación el proyecto usa `collect` directo en el root host (ver KDoc en el archivo anterior).
 
 ## Rutas Type-Safe
 
@@ -116,17 +113,14 @@ fun SmartNavHost(
 ```kotlin
 @Serializable
 sealed interface AppRoute {
-    @Serializable
-    data object Splash : AppRoute
-    
-    @Serializable
-    data object Login : AppRoute
-    
-    @Serializable
-    data object Register : AppRoute
-    
-    @Serializable
-    data object Main : AppRoute
+    @Serializable data object Splash : AppRoute
+    @Serializable data object Login : AppRoute
+    @Serializable data object Register : AppRoute
+    @Serializable data object Main : AppRoute
+    @Serializable data object CreateTask : AppRoute
+    @Serializable data object CreateHabit : AppRoute
+    @Serializable data object CreateRoutine : AppRoute
+    @Serializable data object CreateMealPlan : AppRoute
 }
 ```
 
@@ -135,15 +129,14 @@ sealed interface AppRoute {
 ```kotlin
 @Serializable
 sealed interface TabRoute {
-    @Serializable
-    data object Home : TabRoute
-    
-    @Serializable
-    data object Workouts : TabRoute
-    
-    // Con parámetros
-    @Serializable
-    data class WorkoutDetail(val workoutId: Long) : TabRoute
+    @Serializable data object Daily : TabRoute
+    @Serializable data class DailyDetail(val taskId: Long) : TabRoute
+    @Serializable data object Workouts : TabRoute
+    @Serializable data class WorkoutDetail(val workoutId: Long) : TabRoute
+    @Serializable data object Meals : TabRoute
+    @Serializable data class MealDetail(val mealId: Long) : TabRoute
+    @Serializable data object Settings : TabRoute
+    @Serializable data object Profile : TabRoute
 }
 ```
 

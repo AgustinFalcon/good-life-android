@@ -3,18 +3,8 @@ package com.agusstkd.goodlife.presentation.screen.splash
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
 
-
-
-/**
- * Owner del Splash - Solo conecta ViewModel con Screen.
- *
- * La navegación la maneja el ViewModel directamente con ComposeNavigationController.
- * El Owner solo observa el estado para la UI.
- */
 @Composable
 fun SplashScreenOwner(
     viewModel: SplashViewModel = koinViewModel(),
@@ -24,5 +14,7 @@ fun SplashScreenOwner(
     SplashScreen(
         uiState = uiState,
         onAction = viewModel::onAction,
+        tapToContinueText = viewModel.splashTexts.tapToContinue,
+        logoContentDescription = viewModel.accessibilityTexts.appLogo,
     )
 }

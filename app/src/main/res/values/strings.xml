@@ -18,4 +18,15 @@
     <string name="login_button">Iniciar Sesión</string>
     <string name="login_register_button">Crear Cuenta</string>
     <string name="login_success">✅ Login Exitoso!</string>
+
+
+    <!-- Tab Navigation -->
+    <string name="tab_title_daily">Diario</string>
+    <string name="tab_title_workout">Ejercicios</string>
+    <string name="tab_title_food">Comida</string>
+    <string name="tab_title_more">Más</string>
+    <string name="daily_item_type_task">Tarea</string>
+    <string name="daily_item_type_habit">Hábito</string>
+    <string name="daily_item_type_workout">Entrenamiento</string>
+    <string name="daily_item_type_meal">Comida</string>
 </resources>

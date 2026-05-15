@@ -27,6 +27,7 @@ fun RegisterScreenOwner(
 
     RegisterScreen(
         uiState = uiState,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
+        texts = viewModel.screenTexts
     )
 }

@@ -12,21 +12,24 @@ import kotlinx.coroutines.launch
 /**
  * Implementación de [ComposeNavigationController] basada en SharedFlow.
  *
- * Emite eventos de navegación que son observados por [SmartNavHost].
+ * Emite eventos de navegación que son observados por [GoodLifeNavHost].
  * Es thread-safe y puede ser llamada desde cualquier contexto.
  *
- * Características:
- * - **Thread-safe**: Usa coroutines para emisión asíncrona.
- * - **NonCancellable**: Las acciones de navegación siempre se completan.
- * - **Sin replay**: No reemite eventos al rotar (evita navegación duplicada).
+ * ## replay = 1
+ * Necesario para evitar la race condition inicial en el Splash:
+ * el SplashViewModel emite la navegación antes de que el GoodLifeNavHost
+ * empiece a colectar. Con replay=1, el último evento queda guardado y
+ * se entrega en cuanto el NavHost se suscribe.
  *
- * @param coroutineScope Scope para emitir eventos. Inyectable para testing.
+ * Seguro porque el [LaunchedEffect] del NavHost usa el navigationController
+ * (singleton) como key y nunca se reinicia, por lo que el replay no puede
+ * causar navegaciones duplicadas.
  */
 class ComposeNavigationControllerImpl(
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO + NonCancellable)
 ) : ComposeNavigationController {
 
-    private val _navigationAction = MutableSharedFlow<NavigationAction>()
+    private val _navigationAction = MutableSharedFlow<NavigationAction>(replay = 1)
 
     override val navigationAction: SharedFlow<NavigationAction>
         get() = _navigationAction.asSharedFlow()

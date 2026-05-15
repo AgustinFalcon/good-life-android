@@ -1,0 +1,99 @@
+---
+description: Arquitectura Clean + MVVM + KMP-Ready para GoodLife Android
+globs: "**/*.kt"
+alwaysApply: false
+---
+
+# Arquitectura GoodLife Android
+
+> Referencia completa: `docs/ARCHITECTURE_GUIDE.md`
+
+## Regla de Dependencia (Clean Architecture)
+
+```
+PRESENTATION → DOMAIN ← DATA
+```
+
+- ❌ Domain NO importa de Data ni Presentation
+- ❌ UseCase NO importa Retrofit, Room, Compose
+- ✅ Domain solo usa Kotlin puro + kotlinx
+
+## Estructura de Pantallas (Patrón Owner)
+
+```kotlin
+// 1. Owner: Inyecta ViewModel + maneja side-effects
+@Composable
+fun FeatureScreenOwner(viewModel: FeatureViewModel = koinViewModel()) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    FeatureContent(uiState = uiState, onAction = viewModel::onAction)
+}
+
+// 2. Content: UI pura sin dependencias
+@Composable
+private fun FeatureContent(uiState: FeatureUiState, onAction: (FeatureUiAction) -> Unit)
+
+// 3. UiState: @Stable sealed interface
+@Stable
+sealed interface FeatureUiState {
+    data object Loading : FeatureUiState
+    data class Content(...) : FeatureUiState
+}
+
+// 4. UiAction: @Stable sealed interface
+@Stable  
+sealed interface FeatureUiAction {
+    data class OnFieldChange(val value: String) : FeatureUiAction
+    data object OnButtonClick : FeatureUiAction
+}
+```
+
+## Reglas KMP-Ready
+
+```kotlin
+// ❌ INCORRECTO - Dispatcher hardcodeado
+viewModelScope.launch(Dispatchers.IO) { }
+
+// ✅ CORRECTO - DispatcherProvider inyectado
+class FeatureViewModel(
+    private val dispatcherProvider: DispatcherProvider
+) : ViewModel() {
+    fun doWork() = viewModelScope.launch(dispatcherProvider.io) { }
+}
+```
+
+- Interfaces en `domain/`, implementaciones en `platform/` o `data/`
+- Usar `Result<T>` para operaciones que pueden fallar
+- Modelos de Domain: Kotlin puro, sin Android imports
+
+## Nomenclatura
+
+| Elemento | Patrón | Ejemplo |
+|----------|--------|---------|
+| Screen Owner | `[Feature]ScreenOwner` | `LoginScreenOwner` |
+| Content | `[Feature]Content` | `LoginContent` |
+| ViewModel | `[Feature]ViewModel` | `LoginViewModel` |
+| UiState | `[Feature]UiState` | `LoginUiState` |
+| UiAction | `[Feature]UiAction` | `LoginUiAction` |
+| UseCase | `[Verbo][Sustantivo]UseCase` | `ValidateEmailUseCase` |
+| Repository | `[Domain]Repository` (interface) | `AuthRepository` |
+| RepositoryImpl | `[Domain]RepositoryImpl` | `AuthRepositoryImpl` |
+
+## Componentes Reutilizables
+
+```kotlin
+// Params + Component pattern
+data class ButtonParams(val text: String, val enabled: Boolean = true)
+
+@Composable
+fun ButtonComponent(
+    params: ButtonParams,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+)
+```
+
+## Navegación
+
+- **App-level** (Login→Main): `ComposeNavigationController` + SharedFlow
+- **Tab-level** (Home↔Settings): `NavHostController` directo
+- SharedFlow para eventos one-shot (evita re-navegación al rotar)

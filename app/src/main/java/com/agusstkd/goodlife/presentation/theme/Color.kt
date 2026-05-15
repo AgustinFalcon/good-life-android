@@ -44,8 +44,34 @@ val GreenSelected = Color(0xFF00D26B)
  */
 val EmeraldGreen = Color(0xFF50C878)
 
+
 // ═══════════════════════════════════════════════════════════════════════════════════════════════
-// 2. COLORES DE FONDO (DEGRADADO PRINCIPAL)
+// 2. COLORES POR FEATURE (Daily Items)
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+// Cada feature tiene: Background (fondo pastel), AccentLight (gradiente claro), Accent (acento principal).
+// Uso de AccentLight: inicio del gradiente en ButtonComponent.
+// Uso de Accent: fin del gradiente, chips, iconos, bordes activos.
+
+val HabitBackground  = Color(0xFFF1F8E9)
+val HabitAccentLight = Color(0xFF81C784)  // Verde claro — inicio de gradiente
+val HabitAccent      = Color(0xFF4CAF50)  // Verde medio — acento principal
+
+val WorkoutBackground  = Color(0xFFFCE4EC)
+val WorkoutAccentLight = Color(0xFFF06292)  // Rosa claro — inicio de gradiente
+val WorkoutAccent      = Color(0xFFE91E63)  // Rosa vibrante — acento principal
+
+val MealBackground  = Color(0xFFFFF9E6)
+val MealAccentLight = Color(0xFFFFCA28)  // Ámbar claro — inicio de gradiente
+val MealAccent      = Color(0xFFA67C00)  // Ámbar oscuro — acento principal
+
+val TaskBackground  = Color(0xFFE3F2FD)
+val TaskAccentLight = Color(0xFF64B5F6)  // Azul claro — inicio de gradiente
+val TaskAccent      = Color(0xFF1976D2)  // Azul medio — acento principal
+
+val CompletionGreen = Color(0xFF2ECC71)
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+// 3. COLORES DE FONDO (DEGRADADO PRINCIPAL)
 // ═══════════════════════════════════════════════════════════════════════════════════════════════
 
 /**
@@ -61,7 +87,7 @@ val DegradeBackground4 = Color(0xFF84E8F6)  // Aqua celeste
 val DegradeBackground5 = Color(0xFF6EDBFF)  // Celeste claro (bottom) - Usado en gradientes de botones/inputs
 
 // ═══════════════════════════════════════════════════════════════════════════════════════════════
-// 3. COLORES SEMÁNTICOS
+// 4. COLORES SEMÁNTICOS
 // ═══════════════════════════════════════════════════════════════════════════════════════════════
 
 /** Color de éxito - Para mensajes positivos y confirmaciones */
@@ -77,7 +103,7 @@ val WarningOrange = Color(0xFFFF9800)
 val InfoBlue = Color(0xFF2196F3)
 
 // ═══════════════════════════════════════════════════════════════════════════════════════════════
-// 4. COLORES DE UI - COMPONENTES
+// 5. COLORES DE UI - COMPONENTES
 // ═══════════════════════════════════════════════════════════════════════════════════════════════
 
 // --- Texto ---
@@ -105,7 +131,7 @@ val ButtonDisabledText = Color(0xFF9E9E9E) // Texto de botón deshabilitado
 val DividerColor = Color(0xFFE0E0E0)       // Color de líneas divisorias
 
 // ═══════════════════════════════════════════════════════════════════════════════════════════════
-// 5. COLORES MODO OSCURO
+// 6. COLORES MODO OSCURO
 // ═══════════════════════════════════════════════════════════════════════════════════════════════
 
 val DarkGreenDark = Color(0xFF00524F)      // Verde oscuro más brillante para dark mode
@@ -119,7 +145,7 @@ val SurfaceCardDark = Color(0xFF1E1E1E)    // Fondo de cards en dark mode
 val BorderDefaultDark = Color(0xFF3D3D3D)  // Borde en dark mode
 
 // ═══════════════════════════════════════════════════════════════════════════════════════════════
-// 6. BRUSHES - DEGRADADOS REUTILIZABLES
+// 7. BRUSHES - DEGRADADOS REUTILIZABLES
 // ═══════════════════════════════════════════════════════════════════════════════════════════════
 
 /**
@@ -214,7 +240,7 @@ val InputBorderErrorGradientBrush = Brush.horizontalGradient(
 )
 
 // ═══════════════════════════════════════════════════════════════════════════════════════════════
-// 7. LISTAS DE COLORES PARA ESTADOS DE COMPONENTES
+// 8. LISTAS DE COLORES PARA ESTADOS DE COMPONENTES
 // ═══════════════════════════════════════════════════════════════════════════════════════════════
 
 /**
@@ -245,10 +271,10 @@ val ButtonColorsEnabled = listOf(DarkGreen, LightGreen, DegradeBackground5)
  * Lista de colores para botón DISABLED.
  * Uso: Brush.horizontalGradient(colors = ButtonColorsDisabled)
  */
-val ButtonColorsDisabled = listOf(ButtonDisabledBg, Color(0xFF9E9E9E))
+val ButtonColorsDisabled = listOf(ButtonDisabledBg, ButtonDisabledText)
 
 // ═══════════════════════════════════════════════════════════════════════════════════════════════
-// 8. COLORES Y BRUSHES PARA LOGIN/REGISTER (Diseño limpio)
+// 9. COLORES Y BRUSHES PARA LOGIN/REGISTER (Diseño limpio)
 // ═══════════════════════════════════════════════════════════════════════════════════════════════
 
 /**
@@ -258,30 +284,75 @@ val ButtonColorsDisabled = listOf(ButtonDisabledBg, Color(0xFF9E9E9E))
 val BackgroundMint = Color(0xFFE8FFF8)
 
 /**
- * Gradiente de fondo para Login/Register.
- * Efecto: Verde menta suave arriba → Blanco abajo
- * Diseño minimalista y profesional.
- */
-val AuthBackgroundGradientBrush = Brush.verticalGradient(
-    colors = listOf(
-        BackgroundMint,      // #E8FFF8 - Verde menta arriba
-        Color.White          // #FFFFFF - Blanco abajo
-    )
-)
-
-/**
- * Gradiente para botón primario de Login/Register.
- * Efecto: Verde esmeralda → Verde brillante
- * Solo 2 colores para un look más limpio.
- */
-val AuthButtonGradientBrush = Brush.horizontalGradient(
-    colors = listOf(
-        LightGreen,          // #1EC691
-        GreenSelected        // #00D26B
-    )
-)
-
-/**
  * Lista de colores para botón de Auth (Login/Register).
  */
 val AuthButtonColors = listOf(LightGreen, GreenSelected)
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+// 10. COLORES DE NUTRICIÓN
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Naranja claro - Inicio de gradiente para botones del módulo de nutrición.
+ */
+val NutritionAccentLight = Color(0xFFFFB74D)
+
+/**
+ * Naranja oscuro - Acento principal del módulo de nutrición.
+ * Uso: Badge "COMIDA", chips de MealType seleccionados, barra de progreso del wizard.
+ */
+val NutritionAccent = Color(0xFFF57C00)
+
+/**
+ * Naranja muy suave - Fondo del badge "COMIDA".
+ * Uso: Fondo de chips de MealType no seleccionados, fondos de cards de nutrición.
+ */
+val NutritionBackground = Color(0xFFFFF3E0)
+
+/**
+ * Naranja rojizo - Color para calorías.
+ * Uso: MacrosSummaryCard (valor de kcal), indicadores de energía.
+ */
+val CaloriesColor = Color(0xFFFF7043)
+
+/**
+ * Azul claro - Color para proteínas.
+ * Uso: MacrosSummaryCard (valor de proteínas).
+ */
+val ProteinColor = Color(0xFF42A5F5)
+
+/**
+ * Amarillo dorado - Color para carbohidratos.
+ * Uso: MacrosSummaryCard (valor de carbohidratos).
+ */
+val CarbsColor = Color(0xFFFFCA28)
+
+/**
+ * Violeta - Color para grasas.
+ * Uso: MacrosSummaryCard (valor de grasas).
+ */
+val FatColor = Color(0xFFAB47BC)
+
+/**
+ * Azul oscuro - Label de proteína en la macro card del nuevo diseño.
+ * Uso: texto "PROTEÍNA" y valor en MacrosSummaryCard.
+ */
+val ProteinColorDark = Color(0xFF004A78)
+
+/**
+ * Ámbar oscuro - Label de carbohidratos en la macro card del nuevo diseño.
+ * Uso: texto "CARBOS" y valor en MacrosSummaryCard.
+ */
+val CarbsColorDark = Color(0xFF7B4F00)
+
+/**
+ * Violeta oscuro - Label de grasas en la macro card del nuevo diseño.
+ * Uso: texto "GRASAS" y valor en MacrosSummaryCard.
+ */
+val FatColorDark = Color(0xFF4A0072)
+
+/**
+ * Naranja primario oscuro - Usado para texto y elementos de acento sobre fondo claro.
+ * Mapea a `primary` (#964900) del design system de nutrición.
+ */
+val NutritionPrimary = Color(0xFF964900)

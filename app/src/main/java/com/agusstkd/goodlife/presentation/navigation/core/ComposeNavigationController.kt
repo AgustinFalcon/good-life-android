@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.SharedFlow
  * - Preparación para Kotlin Multiplatform
  *
  * Los ViewModels inyectan esta interface y llaman sus métodos.
- * [SmartNavHost] observa [navigationAction] y ejecuta la navegación real.
+ * [GoodLifeNavHost] observa [navigationAction] y ejecuta la navegación real.
  *
  * @see ComposeNavigationControllerImpl
  * @see NavigationAction
@@ -22,7 +22,7 @@ interface ComposeNavigationController {
     /**
      * Flow de acciones de navegación.
      *
-     * SmartNavHost observa este flow y ejecuta las navegaciones.
+     * GoodLifeNavHost observa este flow y ejecuta las navegaciones.
      * Es SharedFlow (no StateFlow) para evitar reemitir eventos al rotar.
      */
     val navigationAction: SharedFlow<NavigationAction>

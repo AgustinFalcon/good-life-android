@@ -1,7 +1,7 @@
 package com.agusstkd.goodlife.domain.repository
 
 import com.agusstkd.goodlife.core.result.Result
-import com.agusstkd.goodlife.domain.model.User
+import com.agusstkd.goodlife.domain.model.auth.User
 
 /**
  * Repositorio de autenticación.

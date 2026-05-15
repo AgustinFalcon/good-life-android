@@ -1,6 +1,6 @@
 package com.agusstkd.goodlife.data.remote.dto.response
 
-import com.agusstkd.goodlife.domain.model.AuthToken
+import com.agusstkd.goodlife.domain.model.auth.AuthToken
 import kotlinx.serialization.Serializable
 
 /**

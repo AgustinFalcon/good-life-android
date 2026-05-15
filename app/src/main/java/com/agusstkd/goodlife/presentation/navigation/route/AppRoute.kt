@@ -28,4 +28,20 @@ sealed interface AppRoute {
     /** Pantalla principal con tabs (Home, Workouts, Meals, Settings). */
     @Serializable
     data object Main : AppRoute
+
+    /** Formulario de creación de tarea (puntual o recurrente). */
+    @Serializable
+    data object CreateTask : AppRoute
+
+    /** Formulario de creación de hábito recurrente con meta numérica. */
+    @Serializable
+    data object CreateHabit : AppRoute
+
+    /** Wizard multi-paso para crear una rutina de entrenamiento. */
+    @Serializable
+    data object CreateRoutine : AppRoute
+
+    /** Wizard multi-paso para planificar comidas con ingredientes y macros. */
+    @Serializable
+    data object CreateMealPlan : AppRoute
 }

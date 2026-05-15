@@ -8,10 +8,16 @@ Aplicación Android para gestión de bienestar personal: tareas diarias, hábito
 - ✅ **Login/Logout** funcional
 - ✅ **Login Biométrico** (huella, Face ID, PIN, patrón)
 - ✅ **Registro de usuarios** con validación en tiempo real
-- ✅ **Persistencia local** con Room (usuario logueado)
+- ✅ **Persistencia local** con Room + SWR cache (fallback offline)
 - ✅ **Navegación type-safe** con Compose Navigation
-- ✅ **UI optimizada** con `@Stable` states
+- ✅ **Daily Tab** con `DailyItemCard`, refresh automático y SWR
+- ✅ **Create Task** (SPEC-010) — modos once/recurrente, DatePicker, TimePicker
+- ✅ **Create Habit** — categoría, meta numérica, días de la semana
+- ✅ **Create Routine** (SPEC-011) — wizard 4 pasos, catálogo paginado de ejercicios, sets
+- ✅ **Create Meal Plan** (SPEC-012) — wizard 3 pasos, ingredientes, macros, scheduling
+- ✅ **UI optimizada** con `@Stable` states, `ImmutableList`, `@Immutable`
 - ✅ **Arquitectura KMP-Ready** (domain layer en Kotlin puro)
+- ✅ **Unit tests** enfocados en dominio y ViewModels clave — ver `app/src/test` (~12 archivos; expandir según cobertura deseada)
 - 🚧 Auto-login con token guardado
 
 ## 🚀 Quick Start
@@ -38,11 +44,12 @@ git clone <repository-url>
 # Click en Run (▶) o Shift+F10
 ```
 
-### Credenciales de Prueba
+### Credenciales de Prueba (DEV, tras migración Flyway V23+)
 ```
 Usuario: agusstkd
 Password: 2209
 ```
+Rol JWT incluye `USER`, `ADMIN`, `PREMIUM` y `FULL_ADMIN` (este último solo en este usuario de seed).
 
 ## 📁 Estructura del Proyecto
 
@@ -67,16 +74,10 @@ app/src/main/java/com/agusstkd/goodlife/
 ├── presentation/            # UI Layer
 │   ├── components/          # Componentes reutilizables
 │   ├── navigation/          # Sistema de navegación reactivo
-│   ├── screen/              # Pantallas (MVVM)
-│   │   ├── splash/model/    # UiState, UiAction (@Stable)
-│   │   ├── login/model/     # UiState, UiAction (@Stable)
-│   │   └── home/model/      # UiState, UiAction (@Stable)
+│   ├── screen/              # pantallas: splash, login, register, main, tabs/daily, add/*
 │   └── theme/               # Material3 Theme
 │
-└── di/                      # Koin modules
-    ├── AppModule.kt
-    ├── NetworkModule.kt
-    └── DatabaseModule.kt
+├── di/                      # Koin: AppModule(core), Network, Database, Biometric, Auth, Daily, Task, Habit, Routine, Nutrition
 ```
 
 ## 🏗️ Arquitectura
@@ -88,7 +89,7 @@ app/src/main/java/com/agusstkd/goodlife/
 - **Type-safe Routes** con kotlinx-serialization
 - **KMP Ready** - Domain y Core son Kotlin puro
 
-Ver [ARCHITECTURE.md](docs/ARCHITECTURE.md) para detalles completos.
+Ver [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) y el inventario [docs/IMPLEMENTATION-STATUS.md](docs/IMPLEMENTATION-STATUS.md).
 
 ## 🔐 Autenticación
 
@@ -172,14 +173,21 @@ Seguimos [Conventional Commits](https://www.conventionalcommits.org/):
 
 ## 🗺️ Roadmap
 
-- [x] Pantalla de Registro ✅
-- [x] Login Biométrico ✅
+- [x] Pantalla de Registro
+- [x] Login Biométrico
+- [x] Daily Tab completo (DailyItemCard + SWR)
+- [x] Create Task (SPEC-010)
+- [x] Create Habit
+- [x] Create Routine (SPEC-011)
+- [x] Create Meal Plan (SPEC-012)
+- [x] 60+ Unit Tests
 - [ ] Auto-login con token guardado
-- [ ] Refresh token automático
-- [ ] Modo offline con caché
-- [ ] Pantallas principales (Tasks, Habits, Workouts, Meals)
+- [ ] Tabs restantes (Workouts, Meals, More/Settings)
+- [ ] Activate Routine + detalle de item en DailyScreen
+- [ ] SWR Fase 2 — cola de sincronización offline
+- [ ] Notificaciones push + Deep Links (SPEC-008)
+- [ ] Dark mode completo
 - [ ] Sistema de gamificación (XP, niveles)
-- [ ] Notificaciones push
 
 ## 📜 Licencia
 

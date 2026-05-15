@@ -5,7 +5,517 @@ Todos los cambios notables de este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
-## [Unreleased]
+---
+
+## [Unreleased] - 2026-04-14
+
+### Added
+
+#### ✅ Módulo Create Meal Plan — Wizard multi-paso de planificación de comidas (SPEC-012)
+
+- **Flujo wizard de 3 pasos** para crear planes de comida:
+  - **Paso 1 — Seleccionar Meal**: catálogo paginado de meals con búsqueda en tiempo real y filtros por tipo de comida; opción alternativa para crear una meal nueva directamente desde el wizard
+  - **Paso 2 — Ingredientes**: resumen de macros (calorías, proteínas, carbohidratos, grasas) con visualización en chip pills; catálogo paginado de ingredientes agrupados en "Mis ingredientes" y "Catálogo global"; modal para agregar cantidad con selector de unidad (g, ml, unidad)
+  - **Paso 3 — Scheduling**: selector de tipo de comida (Desayuno, Almuerzo, Cena, Snack), selector de días de la semana, DatePicker de fecha de inicio, TimePicker de hora
+
+- **Resultado final**: `POST /api/v1/meal-plans` crea el plan; el backend genera items `MEAL` en el Daily Log para los días configurados
+
+- **Result types semánticos** corregidos en toda la feature:
+  - `CreateCustomIngredientResult.ServerError(val message: String)` (era `data object`)
+  - `CreateCustomMealResult.ServerError(val message: String)` (era `data object`)
+  - `CreateMealPlanResult.ServerError(val message: String)` (era `data object`)
+  - Todos los UseCases pasan `ex.message` al construir `ServerError`
+
+- **Componente CreateIngredientDialog**: bottom sheet glassmorphic con:
+  - Campos Nombre y Marca con estilo filled (`NutritionBackground`, sin border en reposo, borde `NutritionAccent` al foco)
+  - Selector de unidad de porción con `FilterChip` (g / ml / unidad)
+  - Cards de macros con `BasicTextField` + placeholder overlay (sin `OutlinedTextField` para evitar borde visual)
+  - Botón Guardar habilitado solo si nombre no está vacío y porción > 0
+
+- **Componente QuantityBottomSheet**: selector de cantidad para agregar un ingrediente al plan, con cálculo de macros proporcional en tiempo real
+
+- **`CreateMealPlanViewModel`**: único ViewModel para todo el wizard:
+  - Paginación de ingredientes (scroll infinito) y catálogo de meals
+  - `OnCreateCustomIngredient` → llama `CreateCustomIngredientUseCase` y refleja el nuevo ingrediente en la lista
+  - `submitMealPlan()`: guarda completo con guards independientes (mealType, selectedDays), crea meal custom si `isCreatingNewMeal`, construye `ScheduledMealDraft` + `MealPlanDraft` y llama `CreateMealPlanUseCase`
+  - `viewModelScope.launch {}` sin `Dispatchers.IO` — ownership del dispatcher delegado al UseCase
+
+- **`CreateMealPlanScreen`**: bug fix crítico — el botón primario del `WizardBottomBarComponent` ahora despacha `OnSubmit` en el paso SCHEDULE y `OnNextStep` en los demás pasos; `isLoading` y `primaryEnabled` conectados al `uiState`
+
+- **`CreateMealPlanScreenOwner`**: orquesta todos los overlays:
+  - `DatePickerBottomSheetComponent` para `START_DATE` y `END_DATE`
+  - `TimePickerDialogComponent`
+  - `CreateIngredientDialog`
+  - `QuantityBottomSheet`
+  - `PopupResultComponent` (LOADING / ERROR)
+  - `SuccessDialog` con Lottie
+
+- **Navegación integrada**:
+  - `AppRoute.CreateMealPlan` registrado en `AppGraph`
+  - FAB "+" del MainScaffold con `QuickActionType.MEAL` navega a `CreateMealPlanScreenOwner`
+
+- **Localización completa** (`CreateMealPlanTexts`): título, badge, pasos, labels de campos, placeholders, botones, mensajes de error — en Español, English, Português
+
+#### 📁 Nuevos Archivos
+
+**Domain:**
+- `domain/model/nutrition/Ingredient.kt`
+- `domain/model/nutrition/IngredientEntry.kt`
+- `domain/model/nutrition/Meal.kt`
+- `domain/model/nutrition/MealSummary.kt`
+- `domain/model/nutrition/MealPlan.kt`
+- `domain/model/nutrition/MealPlanDraft.kt`
+- `domain/model/nutrition/ScheduledMealDraft.kt`
+- `domain/model/nutrition/PortionUnit.kt`
+- `domain/repository/IngredientRepository.kt`
+- `domain/repository/MealRepository.kt`
+- `domain/repository/MealPlanRepository.kt`
+- `domain/usecase/nutrition/GetIngredientCatalogUseCase.kt`
+- `domain/usecase/nutrition/GetMealCatalogUseCase.kt`
+- `domain/usecase/nutrition/CreateCustomIngredientUseCase.kt`
+- `domain/usecase/nutrition/CreateCustomMealUseCase.kt`
+- `domain/usecase/nutrition/CreateMealPlanUseCase.kt`
+- `domain/usecase/nutrition/result/GetIngredientCatalogResult.kt`
+- `domain/usecase/nutrition/result/GetMealCatalogResult.kt`
+- `domain/usecase/nutrition/result/CreateCustomIngredientResult.kt`
+- `domain/usecase/nutrition/result/CreateCustomMealResult.kt`
+- `domain/usecase/nutrition/result/CreateMealPlanResult.kt`
+
+**Data:**
+- `data/remote/api/nutrition/IngredientApiService.kt`
+- `data/remote/api/nutrition/MealApiService.kt`
+- `data/remote/api/nutrition/MealPlanApiService.kt`
+- `data/remote/datasource/IngredientRemoteDataSource.kt`
+- `data/remote/datasource/MealRemoteDataSource.kt`
+- `data/remote/datasource/MealPlanRemoteDataSource.kt`
+- `data/remote/dto/request/nutrition/CreateCustomIngredientRequest.kt`
+- `data/remote/dto/request/nutrition/CreateCustomMealRequest.kt`
+- `data/remote/dto/request/nutrition/CreateMealPlanRequest.kt`
+- `data/remote/dto/response/nutrition/` — DTOs defensivos con mappers
+- `data/repository/IngredientRepositoryImpl.kt`
+- `data/repository/MealRepositoryImpl.kt`
+- `data/repository/MealPlanRepositoryImpl.kt`
+
+**Presentation:**
+- `presentation/screen/add/mealplan/model/CreateMealPlanUiState.kt`
+- `presentation/screen/add/mealplan/model/CreateMealPlanUiAction.kt`
+- `presentation/screen/add/mealplan/model/MealPlanWizardStep.kt`
+- `presentation/screen/add/mealplan/model/MealDatePickerField.kt`
+- `presentation/screen/add/mealplan/CreateMealPlanViewModel.kt`
+- `presentation/screen/add/mealplan/CreateMealPlanScreen.kt`
+- `presentation/screen/add/mealplan/CreateMealPlanScreenOwner.kt`
+- `presentation/screen/add/mealplan/steps/SelectMealStep.kt`
+- `presentation/screen/add/mealplan/steps/MealIngredientsStep.kt`
+- `presentation/screen/add/mealplan/steps/ScheduleStep.kt`
+- `presentation/screen/add/mealplan/steps/PreviewHelpers.kt`
+- `presentation/components/nutrition/CreateIngredientDialog.kt`
+- `presentation/components/nutrition/QuantityBottomSheet.kt`
+- `presentation/components/nutrition/MealCatalogItem.kt`
+- `presentation/components/nutrition/IngredientCatalogSection.kt`
+- `presentation/components/nutrition/MyIngredientsSection.kt`
+- `presentation/components/nutrition/MacrosSummaryCard.kt`
+- `presentation/components/nutrition/MealHeaderCard.kt`
+
+**DI + Navigation:**
+- `di/NutritionModule.kt`
+
+### Fixed
+
+- **`CreateMealPlanScreen` — submit nunca se ejecutaba**: `WizardBottomBarComponent` siempre despachaba `OnNextStep` en todos los pasos; en el paso SCHEDULE `advanceWizardStep()` retorna inmediatamente sin efecto. Corregido para despachar `OnSubmit` cuando el paso actual es `SCHEDULE`
+- **`ServerError` sin mensaje**: los tres result types de nutrición tenían `data object ServerError` sin campo `message`; cambiados a `data class ServerError(val message: String)` y los UseCases actualizados para pasar `ex.message`
+- **`_uiState.update { state.copy(...) }` → `it.copy(...)`**: estado capturado antes de llamada async era stale; corregido en `submitMealPlan()`
+- **Guards de validación sobreescribiéndose**: user bug donde `var errorMessage` era asignado dos veces y la segunda sobreescribía la primera; corregido a guards independientes con `return`
+
+---
+
+## [Unreleased] - 2026-03-11
+
+### Added
+
+#### ✅ Módulo Create Routine — Wizard multi-paso de creación de rutinas (SPEC-011)
+
+- **Flujo wizard de 4 pasos**: Información de rutina → Agregar workouts → Agregar ejercicios con sets → Resumen y confirmación
+- **Catálogo paginado de ejercicios** con scroll infinito por grupo muscular
+- **`SetEditorBottomSheet`**: editor de sets con `mutableStateListOf` local antes de confirmar
+- **`PageResult<T>`** genérico movido a `core/pagination/` para reutilización
+- **Draft models** en domain: `WorkoutDraft`, `ExerciseDraft`, `SetDraft`
+- **4 UseCases** con result types semánticos + **4 archivos Result**
+- **Tests**: `CreateRoutineUseCaseTest` (11 tests) + `CreateRoutineViewModelTest` (25 tests)
+- `AppRoute.CreateRoutine` + registro en `AppGraph`; FAB `QuickActionType.WORKOUT` navega a `CreateRoutine`
+- `CreateRoutineTexts` en `UiTexts.kt` + traducciones ES/EN/PT
+
+---
+
+## [Unreleased] - 2026-03-09
+
+### Added
+
+#### ✅ Módulo Create Task — Pantalla completa de creación de tareas (SPEC-010)
+
+- **Flujo completo** de creación de tareas con dos modos de scheduling:
+  - **Una vez (ONCE)**: fecha puntual + hora opcional
+  - **Se repite (RECURRENT)**: días de la semana + rango de fechas + hora opcional
+
+- **Navegación integrada**:
+  - `AppRoute.CreateTask` registrado en `AppGraph` como ruta de nivel app (full-screen)
+  - FAB "+" del `MainScaffold` navega a `CreateTask` via `QuickActionType.TASK`
+  - `ComposeNavigationController` inyectado en `CreateTaskViewModel` para `navigateUp()`
+
+- **QuickActionType actualizado**:
+  - Reemplazados tipos genéricos (ROUTINE, NUTRITION, WEIGHT, SUPPLEMENTS, ACTIVITY)
+  - Nuevos tipos: `TASK`, `HABIT`, `WORKOUT`, `MEAL` + `OTHER`
+
+- **Componentes reutilizables creados**:
+  - `SwitchComponent` — Switch con label, thumb blanco fijo sobre track verde, soporte para icono opcional. Thumb en `Box` con tamaño fijo para evitar el bug de Material3 donde se achica al cambiar de estado
+  - `DayChipComponent` — Chip circular (42dp) para selección de días. Selected: fondo `LightGreen` con texto blanco bold. Unselected: borde gris con fondo transparente
+  - `DateSelectorComponent` — OutlinedCard para selección de fecha con icono de calendario
+  - `TimeSelectorComponent` — OutlinedCard para selección de hora con icono de reloj
+  - `TimePickerDialogComponent` — Material3 TimePicker en AlertDialog reutilizable
+  - `DatePickerBottomSheetComponent` — Renombrado de `DatePickerBottomSheet` + `skipPartiallyExpanded = true` para que se abra completo sin necesidad de arrastrar
+  - `SnackbarComponent` — Snackbar con 3 variantes (SUCCESS, ERROR, INFO), animación slide+fade, auto-dismiss configurable, botón de acción opcional
+  - `SuccessDialog` — Dialog con animación Lottie para feedback de éxito
+
+- **Integración backend**:
+  - `POST /api/v1/tasks` → 201 Created (probado en emulador)
+  - `CreateTaskUseCase` con result types semánticos (`Success`, `ValidationError`, `ServerError`, `NetworkError`)
+  - `TaskApiService`, `TaskRemoteDataSource`, `TaskRepositoryImpl`, `TaskModule`
+
+- **Localización**:
+  - `CreateTaskTexts` — strings de la pantalla (título, badge, botón guardar, éxito)
+  - `CreateItemSharedTexts` — strings compartidos entre formularios de creación (labels de campos, modos, fechas, toggles, confirm/cancel/retry)
+  - Traducciones en Español, English, Português
+
+- **Daily refresh al volver**:
+  - `LifecycleResumeEffect` en `DailyScreenOwner` llama `viewModel.refresh()` cuando la pantalla vuelve a ser visible
+  - `DailyTabViewModel.refresh()` expuesto como función pública
+
+- **Dependencia Lottie**:
+  - `lottie-compose` agregado en `libs.versions.toml` (reemplaza `lottie` para Views)
+
+#### 📁 Nuevos Archivos
+
+**Presentation — Componentes:**
+- `presentation/components/common/SwitchComponent.kt`
+- `presentation/components/common/DayChipComponent.kt`
+- `presentation/components/common/DateSelectorComponent.kt`
+- `presentation/components/common/TimeSelectorComponent.kt`
+- `presentation/components/common/SnackbarComponent.kt`
+- `presentation/components/dialog/SuccessDialog.kt`
+- `presentation/components/dialog/TimePickerDialogComponent.kt`
+
+**Presentation — Pantalla:**
+- `presentation/screen/add/task/CreateTaskScreen.kt`
+- `presentation/screen/add/task/CreateTaskScreenOwner.kt`
+- `presentation/screen/add/task/CreateTaskViewModel.kt`
+- `presentation/screen/add/task/model/CreateTaskUiState.kt`
+- `presentation/screen/add/task/model/CreateTaskUiAction.kt`
+
+**Domain:**
+- `domain/usecase/task/CreateTaskUseCase.kt`
+- `domain/usecase/task/result/CreateTaskResult.kt`
+- `domain/repository/TaskRepository.kt`
+
+**Data:**
+- `data/remote/api/task/TaskApiService.kt`
+- `data/remote/datasource/TaskRemoteDataSource.kt`
+- `data/remote/dto/request/CreateTaskRequest.kt`
+- `data/repository/TaskRepositoryImpl.kt`
+
+**DI:**
+- `di/TaskModule.kt`
+
+**Resources:**
+- `res/raw/success_animation.json` (Lottie)
+
+### Changed
+
+- **MainScaffoldViewModel**: Inyecta `ComposeNavigationController`, navega a `CreateTask` via quick actions
+- **MainScaffoldUiState**: Quick actions actualizados con nuevos `QuickActionType`
+- **DailyScreenOwner**: Agrega `LifecycleResumeEffect` para refresh automático al volver
+- **DailyTabViewModel**: Expone `refresh()` público
+- **DatePickerBottomSheetComponent**: Renombrado + `skipPartiallyExpanded = true`
+- **AppRoute.kt**: Agregado `CreateTask`
+- **AppGraph.kt**: Registrado `CreateTaskScreenOwner`
+- **AuthModule.kt**: Limpieza de referencias a `HomeViewModel` inexistente
+- **libs.versions.toml**: `lottie` → `lottie-compose`
+
+### Fixed
+
+- **DatePicker cortado**: Bottom sheet se abría parcialmente y requería arrastrar manualmente. Solucionado con `skipPartiallyExpanded = true`
+- **Referencias rotas**: Eliminadas imports de `HomeViewModel` y `HomeScreenOwner` que ya no existían en `AuthModule.kt` y `AppGraph.kt`
+
+---
+
+## [Unreleased] - 2026-02-03
+
+### Added
+
+#### 🔒 Autenticación automática — Refresh de token con sincronización segura
+
+- **`GoodLifeAuthenticator`** — Implementación de `okhttp3.Authenticator` para renovar el
+  access token de forma transparente cuando cualquier endpoint responde `401 Unauthorized`:
+  - `Mutex` para serializar el refresh: solo una corrutina ejecuta el request de renovación;
+    las restantes esperan suspendidas y reutilizan el token ya obtenido sin volver a llamar al
+    backend.
+  - **Guard de recursión** en el endpoint de token (`/api/v1/token`): si el propio refresh
+    devuelve 401, se limpian los tokens y se emite `SessionEventBus.SessionExpired`
+    inmediatamente, evitando un bucle infinito.
+  - **Guard de reintento** (`X-Retry-After-Refresh`): si la solicitud ya fue reintentada con el
+    nuevo token y vuelve a fallar, fuerza logout sin otro ciclo.
+  - Re-uso del token ya renovado: si al adquirir el Mutex el token del request original ya
+    difiere del token actual, se construye la solicitud con el token nuevo sin hacer otra llamada
+    de refresh.
+  - `try/catch` global en el `runBlocking` para evitar crashes ante fallos de red o de parseo.
+  - Constantes para todos los literales (`TAG`, `HEADER_AUTH`, `BEARER_PREFIX`,
+    `HEADER_RETRY`, `GRANT_TYPE_REFRESH`, `ACCESS_TOKEN_DURATION_MS`, `TOKEN_ENDPOINT`).
+
+#### 🌐 Sistema de Localización KMP-Ready (SPEC-007)
+
+- **AppLanguage sealed interface** - Sistema completo de internacionalización
+  - 107+ strings organizados en 9 grupos de textos
+  - 3 idiomas: Español, English, Português
+  - Detección automática de locale del dispositivo
+  - 100% Kotlin puro — sin Android Context, sin `stringResource()`, sin `R.string`
+  - Exhaustividad garantizada por compilador (sealed interface)
+
+- **Grupos de textos (UiTexts.kt)**:
+  - `AuthTexts` (24 strings) — Login, Register, biometric prompt
+  - `ValidationTexts` (20 strings) — UseCases de validación
+  - `ErrorTexts` (12 strings) — Mensajes de error genéricos
+  - `DailyTexts` (11 strings) — Daily tab (progreso, errores)
+  - `MainScaffoldTexts` (16 strings) — BottomNav, modal, tabs
+  - `HomeTexts` (5 strings) — Home screen
+  - `AccessibilityTexts` (12 strings) — Content descriptions
+  - `DailyItemLabels` (4 strings) — Etiquetas de tipo de item
+  - `RelativeDateTexts` (3 strings) — Hoy/Ayer/Mañana
+
+- **Screen Wrappers**:
+  - `AuthScreenTexts` — Agrupa `AuthTexts` + `AccessibilityTexts` para Login/Register
+
+- **Params con textos integrados**:
+  - `TextFieldParams` — `passwordToggleHide`, `passwordToggleShow`
+  - `BottomNavigationParams` — `fabContentDescription`
+  - `DateHeaderParams` (nuevo) — `openCalendarLabel`, `previousDayLabel`, `nextDayLabel`, `notificationsLabel`
+  - `WorkoutTabHeaderParams` (nuevo) — `filterContentDescription`
+
+#### 📁 Nuevos Archivos
+
+**Core Layer:**
+- `core/datetime/language/UiTexts.kt` - Todos los data class de textos + screen wrappers
+
+**Documentación:**
+- `docs/specs/SPEC-007-app-language.md` - Especificación completa
+
+#### 🌐 Offline-First Architecture + SWR (SPEC-006)
+
+- **Stale-While-Revalidate Pattern** - Patrón profesional para cache + sincronización
+  - Cache-first: UI renderiza en 0ms
+  - Background revalidation: Backend siempre consulta
+  - Fallback offline: App funciona sin internet
+  - Optimistic UI: Updates instantáneos
+
+- **Documentación completa**:
+  - `docs/specs/SPEC-006-offline-first-swr.md` - Especificación completa (800+ líneas)
+  - Comparación TTL vs SWR
+  - Implementación de Repository con SWR
+  - Optimistic UI en ViewModels
+  - Flujos de usuario (online/offline)
+  - Optimizaciones avanzadas
+  - Aplicación en todos los módulos (Daily, Tasks, Habits, Workouts, Meals)
+
+- **Plan actualizado**:
+  - `docs/plans/DAILY-IMPLEMENTATION-PLAN.md` - Actualizado con SWR
+  - Eliminado `cachedAt` y `isFresh()` de entities
+  - Repository con `fetchDailyLogWithSWR()`
+  - Optimistic UI en `DailyTabViewModel`
+
+#### 📅 DateProvider Pattern (SPEC-004)
+
+- **DateProvider interface** - Abstracción para manejo de fechas (KMP-ready)
+  - `today()`: Fecha actual en timezone local
+  - `yesterday()`, `tomorrow()`: Métodos de conveniencia
+  - `now()`: Timestamp UTC actual
+
+- **RealDateProvider** - Implementación para producción
+  - Usa `Clock.System` + `TimeZone.currentSystemDefault()`
+  - Cachea TimeZone para optimizar performance
+  - Encapsula `@OptIn(ExperimentalTime)` en un solo lugar
+
+- **FakeDateProvider** - Implementación para tests
+  - Fecha fija inyectada en constructor
+  - Habilita tests deterministas sin depender del reloj del sistema
+
+#### 📁 Nuevos Archivos
+
+**Core Layer:**
+- `core/datetime/DateProvider.kt` - Interface
+- `core/datetime/RealDateProvider.kt` - Implementación Android
+- `core/datetime/FakeDateProvider.kt` - Implementación para tests
+
+**Documentación:**
+- `docs/specs/SPEC-004-date-provider.md` - Especificación completa (1000+ líneas)
+- `docs/archive/` - Documentación de proceso preservada
+- `docs/README.md` - Índice actualizado
+
+### Changed
+
+#### 🏗️ Refactoring de Localización (SPEC-007)
+
+- **LoginViewModel**: Recibe `language: AppLanguage` por constructor
+  - Expone `screenTexts: AuthScreenTexts`
+  - Biometric prompt texts desde `AuthTexts` (ya no desde `R.string`)
+
+- **RegisterViewModel**: Recibe `language: AppLanguage` por constructor
+  - Expone `screenTexts: AuthScreenTexts`
+
+- **HomeViewModel**: Recibe `language: AppLanguage` por constructor
+  - Expone `homeTexts: HomeTexts`
+
+- **DailyTabViewModel**: Expone `dailyTexts` y `accessibilityTexts`
+
+- **MainScaffoldViewModel**: `fabContentDescription` ahora es parte de `MainScaffoldUiState`
+  - Inicializado desde `language.accessibilityTexts.add`
+
+- **MainScaffoldUiState**: Agregado `fabContentDescription: String`
+
+- **LoginScreen / RegisterScreen**: Reciben `texts: AuthScreenTexts` como parámetro
+  - Eliminado `koinInject<AppLanguage>()`
+
+- **HomeScreen**: Recibe `homeTexts: HomeTexts` como parámetro
+
+- **DailyScreen**: Recibe `dateHeaderParams: DateHeaderParams` en lugar de `accessibilityTexts` directo
+
+- **LoginScreenOwner**: Usa `viewModel.screenTexts` para biometric prompt strings
+  - Eliminado `stringResource()` y `R.string` para biometric prompt
+
+- **DailyScreenOwner**: Construye `DateHeaderParams` desde `viewModel.accessibilityTexts`
+
+- **TextFieldComponent**: `passwordToggleHide/Show` movidos dentro de `TextFieldParams`
+
+- **BottomNavigationComponent**: `fabContentDescription` movido dentro de `BottomNavigationParams`
+
+- **DateHeaderComponent**: Refactorizado a recibir `DateHeaderParams`
+
+- **TabRowHeaderComponent**: Refactorizado a recibir `WorkoutTabHeaderParams`
+
+- **TitleComponent**: Ahora solo acepta `text: String` (eliminado `textId: Int?` y `stringResource`)
+
+- **SplashScreenOwner**: Eliminado import de `koinInject` no utilizado
+
+- **AppModule.kt**:
+  - `single<AppLanguage>` con detección automática de locale (`Locale.getDefault().language`)
+  - Todos los ViewModels reciben `language = get()`
+  - Registrado `DateProvider` como singleton
+
+#### 📅 DateProvider (SPEC-004)
+
+- **DailyTabViewModel**: Ahora usa `DateProvider` en lugar de `Clock` directamente
+  - Formatea fechas en el ViewModel (no en UI)
+  - Compara fechas con `dateProvider.today()`, `yesterday()`, `tomorrow()`
+
+- **MainScaffoldViewModel**: Integrado con DateProvider
+
+- **LocalDateExtensions.kt**: Migradas funciones a ViewModels
+
+### Removed
+
+- ❌ `stringResource()` de toda la capa de presentación compartida
+- ❌ `R.string` de toda la capa de presentación compartida
+- ❌ `koinInject()` de todos los Screens y Components
+- ❌ Textos hardcodeados de Screens y Components
+- ❌ Parámetros de texto sueltos fuera de Params en Components
+- ❌ `textId: Int?` en `TitleComponent` (ahora solo `text: String`)
+
+### Refactored
+
+#### 🗂️ Split de `AppLanguage.kt` — Un archivo por idioma
+
+- `AppLanguage.kt` ahora solo contiene la `sealed interface`: contrato puro, sin implementaciones.
+- Cada idioma vive en su propio archivo en el mismo package
+  `core/datetime/language/`:
+  - `Spanish.kt` — `data object Spanish : AppLanguage`
+  - `English.kt` — `data object English : AppLanguage`
+  - `Portuguese.kt` — `data object Portuguese : AppLanguage`
+- **Motivación**: el archivo original tenía ~580 líneas; con el split cada archivo tiene ~150 líneas
+  y es responsable de un solo idioma → Single Responsibility, más fácil de revisar en PRs,
+  y más fácil de agregar un nuevo idioma sin tocar los existentes.
+- Sin cambios de comportamiento: mismos textos, misma lógica de detección de locale en `AppModule`.
+
+### Fixed
+
+#### 🐛 Bug de Timezone Resuelto (SPEC-004)
+- **Problema**: App mostraba fecha +1 día en emuladores
+  - `TimeZone.currentSystemDefault()` devolvía UTC en lugar de timezone local
+  - Emuladores con hora 23:00 mostraban el día siguiente
+
+- **Solución**: DateProvider encapsula correctamente Clock + TimeZone
+  - Cachea `TimeZone.currentSystemDefault()` al inicializar
+  - Usa `clock.now().toLocalDateTime(timeZone).date` para fecha local correcta
+  - ✅ Validado: Si son las 23:00 del 3 de febrero → muestra "3" (no "4")
+
+#### 🏗️ Violaciones arquitectónicas corregidas (SPEC-007)
+- **Antes**: `koinInject<AppLanguage>()` en Screens y Components — violaba KMP-readiness
+- **Ahora**: Textos fluyen del ViewModel al Screen como parámetro, Components via Params
+- **Antes**: `stringResource(R.string.xxx)` en Components — bloqueaba KMP
+- **Ahora**: Todos los textos vienen de `AppLanguage` (pure Kotlin)
+- **Antes**: Textos de accessibility como parámetros sueltos
+- **Ahora**: Encapsulados dentro de Params (`DateHeaderParams`, `TextFieldParams`, etc.)
+
+#### 🔄 Race condition en Splash — SharedFlow replay=1
+
+- **Problema**: después del auto-login, `SplashViewModel` emitía el evento de navegación antes de
+  que `GoodLifeNavHost` comenzara a colectar el `SharedFlow`, perdiendo el evento y dejando la
+  app en loop infinito sobre el Splash.
+- **Solución**: `ComposeNavigationControllerImpl` usa `MutableSharedFlow<NavigationAction>(replay = 1)`,
+  almacenando el último evento para entregarlo a suscriptores tardíos.
+- `GoodLifeNavHost` colecta directamente con `LaunchedEffect` (sin `repeatOnLifecycle`) para
+  garantizar que el collector esté activo desde la primera composición.
+
+#### 🔄 Flickering en `DateHeaderComponent` al cambiar de fecha
+
+- Las lambdas `onPreviousDay` / `onNextDay` se envuelven con `remember(onAction)` en `DailyScreen`
+  para garantizar referencias estables entre recomposiciones.
+- `enabledColors` y `disabledColors` fueron elevados a `private val` de nivel top del archivo,
+  evitando su recreación en cada recomposición.
+
+#### ✅ Beneficios acumulados (SPEC-004 + SPEC-007)
+- ✅ Timezone local correcto
+- ✅ UI 100% pura (sin lógica de fechas, sin inyección directa, sin stringResource)
+- ✅ Testeable con FakeDateProvider y textos mock
+- ✅ KMP-compatible (solo `kotlinx.datetime`, textos en pure Kotlin)
+- ✅ Encapsula `@OptIn(ExperimentalTime)` en `RealDateProvider.kt`
+- ✅ Performance optimizada (cachea TimeZone)
+- ✅ 3 idiomas con ~321 traducciones (107 strings × 3)
+- ✅ Detección automática de locale
+- ✅ Token refresh concurrente serializado con `Mutex` (sin deadlocks, sin duplicados)
+- ✅ Auto-login sin race conditions en navegación
+- ✅ Codebase de localización split por responsabilidad (un archivo por idioma)
+
+### Documentation
+
+- **SPEC-007**: Especificación completa del sistema de localización
+  - Problemas resueltos (koinInject, stringResource, textos sueltos)
+  - Arquitectura y flujo de datos
+  - Reglas estrictas con ejemplos
+  - Cómo agregar nueva vista / nuevo idioma
+
+- **SPEC-004**: Especificación completa del DateProvider pattern
+  - Bug de timezone + solución
+  - Before/After comparisons
+  - Tests deterministas
+
+- **ARCHITECTURE.md**: Actualizado con localización, DateProvider, Params
+- **ARCHITECTURE_GUIDE.md**: v2.0 — sección 9 de localización, 6 reglas nuevas, checklist actualizado
+- **specs/README.md**: Índice completo SPEC-001 a SPEC-007, diagrama de relaciones
+- **PROGRESS.md**: Estado actualizado al 2026-02-03
+- **SPEC-003**: Actualizado a 85% — fases 7 y 8a completadas
+
+- **archive/**: Documentación de proceso preservada
+  - `ANALISIS-CLOCK-Y-MEJORAS.md` - Análisis del problema
+  - `DATEPROVIDER-IMPLEMENTACION-COMPLETA.md` - Tracking de implementación
+  - `INSTRUCCIONES-VALIDACION.md` - Checklist de validación
+
+---
 
 ## [0.5.0] - 2026-01-20
 

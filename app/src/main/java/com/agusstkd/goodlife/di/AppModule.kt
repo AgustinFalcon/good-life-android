@@ -1,52 +1,45 @@
 package com.agusstkd.goodlife.di
 
+import com.agusstkd.goodlife.core.datetime.DateProvider
+import com.agusstkd.goodlife.core.datetime.RealDateProvider
 import com.agusstkd.goodlife.core.dispatcher.AndroidDispatcherProvider
 import com.agusstkd.goodlife.core.dispatcher.DispatcherProvider
-import com.agusstkd.goodlife.data.remote.datasource.AuthRemoteDataSource
-import com.agusstkd.goodlife.data.repository.AuthRepositoryImpl
-import com.agusstkd.goodlife.domain.repository.AuthRepository
-import com.agusstkd.goodlife.domain.usecase.home.GetCurrentUserUseCase
-import com.agusstkd.goodlife.domain.usecase.home.LogoutUseCase
-import com.agusstkd.goodlife.domain.usecase.login.LoginUseCase
-import com.agusstkd.goodlife.domain.usecase.register.RegisterUseCase
-import com.agusstkd.goodlife.domain.usecase.validation.ValidateEmailUseCase
-import com.agusstkd.goodlife.domain.usecase.validation.ValidateFullNameUseCase
-import com.agusstkd.goodlife.domain.usecase.validation.ValidatePasswordMatchUseCase
-import com.agusstkd.goodlife.domain.usecase.validation.ValidatePasswordUseCase
-import com.agusstkd.goodlife.domain.usecase.validation.ValidateUserNameUseCase
+import com.agusstkd.goodlife.core.datetime.language.AppLanguage
+import com.agusstkd.goodlife.core.datetime.language.English
+import com.agusstkd.goodlife.core.datetime.language.Portuguese
+import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationControllerImpl
-import com.agusstkd.goodlife.presentation.screen.home.HomeViewModel
-import com.agusstkd.goodlife.presentation.screen.login.LoginViewModel
-import com.agusstkd.goodlife.presentation.screen.register.RegisterViewModel
-import com.agusstkd.goodlife.presentation.screen.splash.SplashViewModel
-import org.koin.core.module.dsl.viewModel
+import java.util.Locale
 import org.koin.dsl.module
 
 /**
- * Módulo principal de Koin.
+ * Módulo Core de Koin.
  *
- * Define dependencias de la aplicación:
- * - Core: Dispatchers
- * - Navigation: Controller
- * - DataSources: Remote y Local
- * - Repositories: Implementaciones
- * - UseCases: Lógica de negocio
- * - ViewModels: Presentación
+ * Provee las dependencias transversales a toda la app:
+ * - [DispatcherProvider]: Dispatchers de coroutines
+ * - [ComposeNavigationController]: Navegación reactiva
+ * - [DateProvider]: Fechas locales con timezone correcto
+ * - [AppLanguage]: Sistema de internacionalización KMP-ready
  *
- * ## Otros módulos:
- * - [networkModule]: Retrofit, OkHttp, ApiService
+ * Todos los demás módulos (authModule, dailyModule, etc.) dependen de este.
+ *
+ * ## Otros módulos
+ * - [networkModule]: Retrofit, OkHttp, ApiServices, TokenManager
  * - [databaseModule]: Room, DAOs
+ * - [biometricModule]: BiometricAuthenticator, SecureCredentialsStorage
+ * - [authModule]: Auth DataSource, Repository, UseCases, ViewModels
+ * - [dailyModule]: Daily DataSource, Repository, UseCases, ViewModel
  */
-val appModule = module {
+val coreModule = module {
 
     // ═══════════════════════════════════════════════════════════════════════════════════════════
-    // CORE
+    // DISPATCHERS
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
     /**
-     * DispatcherProvider como singleton.
-     * Provee los dispatchers de coroutines para toda la app.
+     * Singleton: provee dispatchers de coroutines para toda la app.
+     * En tests se reemplaza por TestDispatcherProvider con dispatchers síncronos.
      */
     single<DispatcherProvider> {
         AndroidDispatcherProvider()
@@ -57,161 +50,40 @@ val appModule = module {
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
     /**
-     * ComposeNavigationController como singleton.
-     * Debe ser singleton para mantener el estado de navegación global.
+     * Singleton: mantiene el estado de navegación global.
      */
     single<ComposeNavigationController> {
         ComposeNavigationControllerImpl()
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════════════
-    // DATA SOURCES
+    // DATE PROVIDER
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
     /**
-     * AuthRemoteDataSource - Llamadas HTTP de autenticación.
-     * Factory porque no tiene estado interno.
+     * Provee fecha/hora con timezone local correcto del dispositivo.
+     * En tests inyectar FakeDateProvider con fecha fija para determinismo.
      */
-    factory {
-        AuthRemoteDataSource(apiService = get())
-    }
+    single<DateProvider> { RealDateProvider() }
 
     // ═══════════════════════════════════════════════════════════════════════════════════════════
-    // REPOSITORIES
+    // APP LANGUAGE
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
     /**
-     * AuthRepository - Repositorio de autenticación.
-     * Singleton porque maneja el estado del usuario actual.
+     * Selecciona la implementación de [AppLanguage] según el locale del dispositivo.
+     *
+     * | Código BCP-47 | Implementación  |
+     * |---------------|-----------------|
+     * | `es`          | [Spanish]       |
+     * | `pt`          | [Portuguese]    |
+     * | cualquier otro| [English]       |
      */
-    single<AuthRepository> {
-        AuthRepositoryImpl(
-            remoteDataSource = get(),
-            tokenManager = get(),
-            userDao = get()
-        )
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════════════════════════
-    // USE CASES
-    // ═══════════════════════════════════════════════════════════════════════════════════════════
-
-    /**
-     * ValidateEmailUseCase - Validación de email/usuario.
-     * Factory porque no tiene estado interno.
-     */
-    factory { ValidateEmailUseCase() }
-
-    /**
-     * ValidatePasswordUseCase - Validación de contraseña.
-     * Factory porque no tiene estado interno.
-     */
-    factory { ValidatePasswordUseCase() }
-
-    /**
-     * ValidateFullNameUseCase - Validación de nombre completo.
-     * Factory porque no tiene estado interno.
-     */
-    factory { ValidateFullNameUseCase() }
-
-    /**
-     * ValidateUserNameUseCase - Validación de nombre de usuario.
-     * Factory porque no tiene estado interno.
-     */
-    factory { ValidateUserNameUseCase() }
-
-    /**
-     * ValidatePasswordMatchUseCase - Validación de coincidencia de contraseñas.
-     * Factory porque no tiene estado interno.
-     */
-    factory { ValidatePasswordMatchUseCase() }
-
-    /**
-     * LoginUseCase - Ejecutar login con validaciones.
-     * Factory porque no tiene estado interno.
-     */
-    factory {
-        LoginUseCase(
-            validateEmail = get(),
-            validatePassword = get(),
-            authRepository = get()
-        )
-    }
-
-    /**
-     * GetCurrentUserUseCase - Obtener usuario logueado.
-     * Factory porque no tiene estado interno.
-     */
-    factory {
-        GetCurrentUserUseCase(authRepository = get())
-    }
-
-    /**
-     * LogoutUseCase - Cerrar sesión.
-     * Factory porque no tiene estado interno.
-     */
-    factory {
-        LogoutUseCase(authRepository = get())
-    }
-
-    /**
-     * RegisterUseCase - Ejecutar registro con validaciones.
-     * Factory porque no tiene estado interno.
-     */
-    factory {
-        RegisterUseCase(
-            authRepository = get(),
-            validateUserName = get(),
-            validateFullName = get(),
-            validateEmail = get(),
-            validatePassword = get(),
-            validatePasswordMatch = get()
-        )
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════════════════════════
-    // VIEWMODELS
-    // ═══════════════════════════════════════════════════════════════════════════════════════════
-
-    /**
-     * SplashViewModel - Pantalla de carga inicial.
-     */
-    viewModel {
-        SplashViewModel(navigationController = get())
-    }
-
-    /**
-     * LoginViewModel - Pantalla de login.
-     */
-    viewModel {
-        LoginViewModel(
-            loginUseCase = get(),
-            navigationController = get(),
-            biometricAuthenticator = get(),
-            credentialsStorage = get(),
-            dispatcherProvider = get()
-        )
-    }
-
-    /**
-     * HomeViewModel - Pantalla principal.
-     */
-    viewModel {
-        HomeViewModel(
-            getCurrentUserUseCase = get(),
-            logoutUseCase = get(),
-            navigationController = get()
-        )
-    }
-
-    /**
-     * RegisterViewModel - Pantalla de registro.
-     */
-    viewModel {
-        RegisterViewModel(
-            registerUseCase = get(),
-            navigationController = get(),
-            dispatcherProvider = get()
-        )
+    single<AppLanguage> {
+        when (Locale.getDefault().language) {
+            "es" -> Spanish
+            "pt" -> Portuguese
+            else -> English
+        }
     }
 }
