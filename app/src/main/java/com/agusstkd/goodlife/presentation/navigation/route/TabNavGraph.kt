@@ -7,6 +7,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.DailyScreenOwner
+import com.agusstkd.goodlife.presentation.screen.tabs.profile.ProfileScreenOwner
 
 /**
  * Define los grafos de navegación de cada tab.
@@ -66,8 +67,7 @@ fun NavGraphBuilder.addTabNavGraph() {
             PlaceholderScreen("Settings")
         }
         composable<TabRoute.Profile> {
-            // TODO: ProfileScreen
-            PlaceholderScreen("Profile")
+            ProfileScreenOwner()
         }
     }
 }

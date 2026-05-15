@@ -7,6 +7,7 @@ import com.agusstkd.goodlife.di.coreModule
 import com.agusstkd.goodlife.di.dailyModule
 import com.agusstkd.goodlife.di.databaseModule
 import com.agusstkd.goodlife.di.habitModule
+import com.agusstkd.goodlife.di.mediaModule
 import com.agusstkd.goodlife.di.networkModule
 import com.agusstkd.goodlife.di.nutritionModule
 import com.agusstkd.goodlife.di.routineModule
@@ -63,6 +64,7 @@ class GoodLifeApp : Application() {
                 habitModule,
                 routineModule,
                 nutritionModule,
+                mediaModule,
             )
         }
     }

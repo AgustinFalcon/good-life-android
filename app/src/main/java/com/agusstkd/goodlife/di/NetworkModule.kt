@@ -9,6 +9,7 @@ import com.agusstkd.goodlife.core.storage.TokenManager
 import com.agusstkd.goodlife.data.remote.api.auth.AuthApiService
 import com.agusstkd.goodlife.data.remote.api.daily.DailyApiService
 import com.agusstkd.goodlife.data.remote.api.habit.HabitApiService
+import com.agusstkd.goodlife.data.remote.api.media.MediaApiService
 import com.agusstkd.goodlife.data.remote.api.task.TaskApiService
 import com.agusstkd.goodlife.data.remote.api.training.RoutineApiService
 import com.agusstkd.goodlife.data.remote.api.training.TrainingCatalogApiService
@@ -166,5 +167,9 @@ val networkModule = module {
 
     single<RoutineApiService> {
         get<Retrofit>().create(RoutineApiService::class.java)
+    }
+
+    single<MediaApiService> {
+        get<Retrofit>().create(MediaApiService::class.java)
     }
 }
