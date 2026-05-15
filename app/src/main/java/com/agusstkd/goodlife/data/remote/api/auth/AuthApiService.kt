@@ -4,9 +4,11 @@ import com.agusstkd.goodlife.data.remote.dto.request.auth.RegisterRequest
 import com.agusstkd.goodlife.data.remote.dto.response.AuthResponse
 import com.agusstkd.goodlife.data.remote.dto.response.BaseResponse
 import com.agusstkd.goodlife.data.remote.dto.response.RegisterResponse
+import com.agusstkd.goodlife.data.remote.dto.response.UserMeResponse
 import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 /**
@@ -69,4 +71,15 @@ interface AuthApiService {
     suspend fun register(
         @Body request: RegisterRequest
     ): BaseResponse<RegisterResponse>
+
+    /**
+     * Datos del usuario autenticado.
+     *
+     * Endpoint: GET /api/v1/me
+     * Requiere: Authorization Bearer (JWT)
+     *
+     * @return [BaseResponse] con [UserMeResponse] (id, username, email, foto, roles)
+     */
+    @GET("api/v1/me")
+    suspend fun getMe(): BaseResponse<UserMeResponse>
 }
