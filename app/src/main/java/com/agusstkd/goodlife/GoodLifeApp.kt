@@ -11,6 +11,7 @@ import com.agusstkd.goodlife.di.mediaModule
 import com.agusstkd.goodlife.di.networkModule
 import com.agusstkd.goodlife.di.nutritionModule
 import com.agusstkd.goodlife.di.routineModule
+import com.agusstkd.goodlife.di.settingsModule
 import com.agusstkd.goodlife.di.taskModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -65,6 +66,7 @@ class GoodLifeApp : Application() {
                 routineModule,
                 nutritionModule,
                 mediaModule,
+                settingsModule,
             )
         }
     }

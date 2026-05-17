@@ -4,18 +4,25 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.DailyScreenOwner
+import com.agusstkd.goodlife.presentation.screen.tabs.meals.MealsScreenOwner
 import com.agusstkd.goodlife.presentation.screen.tabs.profile.ProfileScreenOwner
+import com.agusstkd.goodlife.presentation.screen.tabs.settings.SettingsScreenOwner
+import com.agusstkd.goodlife.presentation.screen.tabs.workout.WorkoutsScreenOwner
 
 /**
  * Define los grafos de navegación de cada tab.
  *
  * Cada tab tiene su propio grafo anidado con navigation().
  * Esto permite mantener el estado de navegación independiente por tab.
+ *
+ * @param navController Controlador de navegación del tab NavHost.
+ *   Se usa para navegar entre pantallas dentro de un mismo tab graph.
  */
-fun NavGraphBuilder.addTabNavGraph() {
+fun NavGraphBuilder.addTabNavGraph(navController: NavHostController) {
 
     // ═══════════════════════════════════════════════════════════════════
     // HOME TAB (Daily)
@@ -35,8 +42,7 @@ fun NavGraphBuilder.addTabNavGraph() {
     // ═══════════════════════════════════════════════════════════════════
     navigation<TabGraphRoute.WorkoutsGraph>(startDestination = TabRoute.Workouts) {
         composable<TabRoute.Workouts> {
-            // TODO: WorkoutsScreenOwner
-            PlaceholderScreen("Workouts")
+            WorkoutsScreenOwner()
         }
         composable<TabRoute.WorkoutDetail> {
             // TODO: WorkoutDetailScreen
@@ -49,8 +55,7 @@ fun NavGraphBuilder.addTabNavGraph() {
     // ═══════════════════════════════════════════════════════════════════
     navigation<TabGraphRoute.MealsGraph>(startDestination = TabRoute.Meals) {
         composable<TabRoute.Meals> {
-            // TODO: MealsScreenOwner
-            PlaceholderScreen("Meals")
+            MealsScreenOwner()
         }
         composable<TabRoute.MealDetail> {
             // TODO: MealDetailScreen
@@ -63,8 +68,9 @@ fun NavGraphBuilder.addTabNavGraph() {
     // ═══════════════════════════════════════════════════════════════════
     navigation<TabGraphRoute.SettingsGraph>(startDestination = TabRoute.Settings) {
         composable<TabRoute.Settings> {
-            // TODO: SettingsScreenOwner
-            PlaceholderScreen("Settings")
+            SettingsScreenOwner(
+                onNavigateToProfile = { navController.navigate(TabRoute.Profile) }
+            )
         }
         composable<TabRoute.Profile> {
             ProfileScreenOwner()

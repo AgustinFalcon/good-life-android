@@ -88,7 +88,7 @@ private fun TabNavHost(
         startDestination = TabGraphRoute.DailyGraph,
         modifier = modifier
     ) {
-        addTabNavGraph()
+        addTabNavGraph(navController)
     }
 }
 
