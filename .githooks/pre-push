@@ -1,0 +1,21 @@
+#!/bin/bash
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+echo "Pre-push check para branch '$BRANCH'..."
+if [ "$BRANCH" != "master" ] && [ "$BRANCH" != "main" ]; then
+    echo "Branch '$BRANCH' — skip"
+    exit 0
+fi
+echo ""
+echo "Compilando GoodLife Android (Gradle compileDebugKotlin)..."
+./gradlew compileDebugKotlin compileDebugUnitTestKotlin
+if [ $? -ne 0 ]; then
+    echo ""
+    echo "ERROR: Compilacion fallo."
+    echo "   Causas comunes en GoodLife Android:"
+    echo "   - Nuevo UseCase no registrado en el modulo Koin"
+    echo "   - ViewModel sin viewModel{} en el modulo Koin"
+    echo "   - Composable con tipos incorrectos (sealed class incompleto)"
+    exit 1
+fi
+echo "OK — push permitido"
+exit 0
