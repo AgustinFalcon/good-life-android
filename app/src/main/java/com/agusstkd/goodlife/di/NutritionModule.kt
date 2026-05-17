@@ -11,9 +11,11 @@ import com.agusstkd.goodlife.domain.repository.NutritionCatalogRepository
 import com.agusstkd.goodlife.domain.usecase.nutrition.CreateCustomIngredientUseCase
 import com.agusstkd.goodlife.domain.usecase.nutrition.CreateCustomMealUseCase
 import com.agusstkd.goodlife.domain.usecase.nutrition.CreateMealPlanUseCase
+import com.agusstkd.goodlife.domain.usecase.nutrition.GetMealPlansUseCase
 import com.agusstkd.goodlife.domain.usecase.nutrition.SearchIngredientsUseCase
 import com.agusstkd.goodlife.domain.usecase.nutrition.SearchMealsUseCase
 import com.agusstkd.goodlife.presentation.screen.add.mealplan.CreateMealPlanViewModel
+import com.agusstkd.goodlife.presentation.screen.tabs.meals.MealsTabViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -46,8 +48,17 @@ val nutritionModule = module {
     factory { CreateCustomIngredientUseCase(repository = get(), dispatcher = get()) }
     factory { CreateCustomMealUseCase(repository = get(), dispatcher = get()) }
     factory { CreateMealPlanUseCase(repository = get(), dispatcher = get()) }
+    factory { GetMealPlansUseCase(repository = get(), dispatcher = get()) }
 
     // ── ViewModel ─────────────────────────────────────────────────────────────
+    viewModel {
+        MealsTabViewModel(
+            dateProvider = get(),
+            language = get(),
+            getMealPlansUseCase = get(),
+            navigationController = get(),
+        )
+    }
     viewModel {
         CreateMealPlanViewModel(
             navigationController = get(),
