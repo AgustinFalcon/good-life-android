@@ -8,9 +8,11 @@ import com.agusstkd.goodlife.domain.repository.RoutineRepository
 import com.agusstkd.goodlife.domain.repository.TrainingCatalogRepository
 import com.agusstkd.goodlife.domain.usecase.routine.ActivateRoutineUseCase
 import com.agusstkd.goodlife.domain.usecase.routine.CreateRoutineUseCase
+import com.agusstkd.goodlife.domain.usecase.routine.GetActiveRoutineUseCase
 import com.agusstkd.goodlife.domain.usecase.routine.GetMuscleGroupsUseCase
 import com.agusstkd.goodlife.domain.usecase.routine.SearchExercisesUseCase
 import com.agusstkd.goodlife.presentation.screen.add.routine.CreateRoutineViewModel
+import com.agusstkd.goodlife.presentation.screen.tabs.workout.WorkoutsTabViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -29,8 +31,9 @@ val routineModule = module {
     factory { SearchExercisesUseCase(repository = get(), dispatcher = get()) }
     factory { CreateRoutineUseCase(repository = get(), dispatcher = get()) }
     factory { ActivateRoutineUseCase(repository = get(), dispatcher = get()) }
+    factory { GetActiveRoutineUseCase(repository = get(), dispatcher = get()) }
 
-    // ── ViewModel ──
+    // ── ViewModels ──
     viewModel {
         CreateRoutineViewModel(
             navigationController = get(),
@@ -39,6 +42,13 @@ val routineModule = module {
             activateRoutineUseCase = get(),
             getMuscleGroupsUseCase = get(),
             searchExercisesUseCase = get(),
+        )
+    }
+
+    viewModel {
+        WorkoutsTabViewModel(
+            language = get(),
+            getActiveRoutineUseCase = get(),
         )
     }
 }

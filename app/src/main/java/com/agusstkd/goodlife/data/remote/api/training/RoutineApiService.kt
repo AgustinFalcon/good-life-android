@@ -4,6 +4,7 @@ import com.agusstkd.goodlife.data.remote.dto.request.routine.CreateRoutineReques
 import com.agusstkd.goodlife.data.remote.dto.response.BaseResponse
 import com.agusstkd.goodlife.data.remote.dto.response.training.RoutineResponse
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -19,4 +20,7 @@ interface RoutineApiService {
     suspend fun activateRoutine(
         @Path("id") routineId: Long,
     ): BaseResponse<RoutineResponse>
+
+    @GET("api/v1/routines/active")
+    suspend fun getActiveRoutine(): BaseResponse<RoutineResponse>
 }

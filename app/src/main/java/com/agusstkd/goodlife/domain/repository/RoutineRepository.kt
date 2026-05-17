@@ -24,4 +24,12 @@ interface RoutineRepository {
     ): Result<Routine>
 
     suspend fun activateRoutine(routineId: Long): Result<Unit>
+
+    /**
+     * Obtiene la rutina activa del usuario autenticado.
+     *
+     * @return [Result.Success] con la [Routine] activa,
+     *         o [Result.Error] con [ApiException.NotFoundException] si no hay ninguna activa.
+     */
+    suspend fun getActiveRoutine(): Result<Routine>
 }

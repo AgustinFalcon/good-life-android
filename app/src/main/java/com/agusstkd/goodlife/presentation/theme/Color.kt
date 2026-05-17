@@ -356,3 +356,17 @@ val FatColorDark = Color(0xFF4A0072)
  * Mapea a `primary` (#964900) del design system de nutrición.
  */
 val NutritionPrimary = Color(0xFF964900)
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+// 11. COLORES DEL TAB WORKOUTS
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Verde esmeralda vibrante — Acento del tab Workouts.
+ *
+ * Distinto de [WorkoutAccent] (rosa, usado en daily items de tipo workout).
+ * Este color representa el módulo de rutinas/entrenamientos del tab dedicado.
+ *
+ * Uso: badges, labels de dificultad, bordes de cards en WorkoutsScreen.
+ */
+val WorkoutsTabAccent = Color(0xFF2ECC71)

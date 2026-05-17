@@ -15,4 +15,8 @@ class RoutineRemoteDataSource(private val routineApiService: RoutineApiService) 
     suspend fun activateRoutine(id: Long): Result<RoutineResponse> {
         return executeApiCall { routineApiService.activateRoutine(id) }
     }
+
+    suspend fun getActiveRoutine(): Result<RoutineResponse> {
+        return executeApiCall { routineApiService.getActiveRoutine() }
+    }
 }
