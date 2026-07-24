@@ -6,6 +6,16 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 
 ---
 
+## [Unreleased] - 2026-07-24 — P0 Quality Baseline
+
+### Fixed
+- Implementado `getActiveRoutine()` en `FakeRoutineRepository` para mantener compatible el contrato de tests con `RoutineRepository`.
+- Inicializacion eager del `StateFlow` de `DailyTabViewModel` para que la carga inicial sea deterministica en tests unitarios.
+
+### CI
+- Agregado workflow `Android CI` para ejecutar `:app:testDebugUnitTest` en push y PR contra `master`.
+
+---
 ## [Unreleased] - 2026-05-15 — MEJORAs aplicadas
 
 ### ✨ Features

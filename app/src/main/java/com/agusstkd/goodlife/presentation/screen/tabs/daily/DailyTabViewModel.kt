@@ -79,7 +79,7 @@ class DailyTabViewModel(
     private val _uiState = MutableStateFlow<DailyUiState>(DailyUiState.Loading)
     val uiState: StateFlow<DailyUiState> = _uiState
         .onSubscription { loadItems() }
-        .stateIn(viewModelScope, SharingStarted.Lazily, DailyUiState.Loading)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, DailyUiState.Loading)
 
     fun refresh() {
         loadItems()

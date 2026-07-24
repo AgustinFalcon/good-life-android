@@ -14,10 +14,13 @@ class FakeRoutineRepository : RoutineRepository {
 
     var createRoutineResult: Result<Routine> = Result.Success(DEFAULT_ROUTINE)
     var activateRoutineResult: Result<Unit> = Result.Success(Unit)
+    var getActiveRoutineResult: Result<Routine> = Result.Success(DEFAULT_ROUTINE)
 
     var createRoutineCallCount = 0
         private set
     var activateRoutineCallCount = 0
+        private set
+    var getActiveRoutineCallCount = 0
         private set
     var lastName: String? = null
         private set
@@ -41,6 +44,11 @@ class FakeRoutineRepository : RoutineRepository {
     override suspend fun activateRoutine(routineId: Long): Result<Unit> {
         activateRoutineCallCount++
         return activateRoutineResult
+    }
+
+    override suspend fun getActiveRoutine(): Result<Routine> {
+        getActiveRoutineCallCount++
+        return getActiveRoutineResult
     }
 
     companion object {
