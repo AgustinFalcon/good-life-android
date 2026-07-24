@@ -12,7 +12,7 @@ scope:
 
 ## Comandos
 
-- `.\gradlew.bat test`
+- `.\gradlew.bat :app:testDebugUnitTest`
 - `.\gradlew.bat assembleDebug`
 - `.\gradlew.bat connectedAndroidTest`
 
@@ -22,7 +22,7 @@ Abrir en Android Studio o instalar `app/build/outputs/apk/debug`; requiere JDK c
 
 ## CI / release
 
-No se detectó `.github/workflows`; instrumented tests requieren emulator/device.
+`.github/workflows/android-ci.yml` ejecuta `./gradlew :app:testDebugUnitTest` en push y PR contra `master`. Instrumented tests requieren emulator/device y no forman parte del gate CI actual.
 
 Release tiene minify deshabilitado y versionCode 1/versionName 1.0; no hay firma/pipeline documentado.
 
@@ -31,5 +31,6 @@ Release tiene minify deshabilitado y versionCode 1/versionName 1.0; no hay firma
 - Gates existentes pasan; ausencias se declaran.
 - Contratos y persistencia afectados tienen pruebas.
 - No se agregan secretos/artefactos locales.
+- Cobertura Android no tiene gate configurado; declarar ausencia hasta definir clases logicas elegibles y herramienta de reporte.
 - Docs/agent y SSD quedan alineados.
 
