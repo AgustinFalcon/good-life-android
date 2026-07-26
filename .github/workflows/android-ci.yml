@@ -11,8 +11,8 @@ permissions:
   contents: read
 
 jobs:
-  unit-tests:
-    name: Unit tests
+  logic-quality:
+    name: Logic tests and 80% coverage
     runs-on: ubuntu-latest
 
     steps:
@@ -29,5 +29,5 @@ jobs:
       - name: Grant Gradle wrapper permissions
         run: chmod +x gradlew
 
-      - name: Run debug unit tests
-        run: ./gradlew :app:testDebugUnitTest
+      - name: Verify debug logic coverage
+        run: ./gradlew :app:logicDebugUnitTestCoverageVerification --no-daemon
