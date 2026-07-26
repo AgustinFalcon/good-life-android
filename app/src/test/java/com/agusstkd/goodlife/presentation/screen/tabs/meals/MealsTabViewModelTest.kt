@@ -95,4 +95,3 @@ class MealsTabViewModelTest {
         totalCalories = calories, totalProtein = 10.0, totalCarbs = 20.0, totalFat = 5.0, isActive = true
     )
 }
-

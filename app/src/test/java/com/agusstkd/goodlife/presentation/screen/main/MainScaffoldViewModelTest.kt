@@ -50,4 +50,3 @@ class MainScaffoldViewModelTest {
         assertFalse(vm.uiState.value.isModalOpen)
     }
 }
-

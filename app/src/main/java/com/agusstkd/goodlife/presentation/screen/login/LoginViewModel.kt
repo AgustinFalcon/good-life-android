@@ -274,4 +274,3 @@ class LoginViewModel(
         // TODO: Navegar a política de privacidad
     }
 }
-
