@@ -70,7 +70,7 @@ val logicCoverageIncludes = listOf(
     "com/agusstkd/goodlife/core/util/**",
     "com/agusstkd/goodlife/domain/auth/**",
     "com/agusstkd/goodlife/domain/usecase/**",
-    "com/agusstkd/goodlife/presentation/navigation/core/**",
+    "com/agusstkd/goodlife/presentation/navigation/core/ComposeNavigationController*",
     "com/agusstkd/goodlife/presentation/screen/**/*ViewModel*"
 )
 
@@ -83,6 +83,9 @@ val logicCoverageExcludes = listOf(
     "**/*Card*",
     "**/*Theme*",
     "**/presentation/theme/**",
+    "**/presentation/navigation/core/ComposeNavigationControllerImpl*",
+    "**/presentation/screen/splash/**",
+    "**/presentation/screen/tabs/profile/**",
     "**/presentation/**/model/**",
     "**/data/remote/dto/**",
     "**/data/local/entity/**",

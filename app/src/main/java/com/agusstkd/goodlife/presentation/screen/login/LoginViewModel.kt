@@ -52,7 +52,7 @@ class LoginViewModel(
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Loading)
     val uiState: StateFlow<LoginUiState> = _uiState
         .onSubscription { initializeBiometricState() }
-        .stateIn(viewModelScope, SharingStarted.Lazily, LoginUiState.Loading)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, LoginUiState.Loading)
 
     init {
         // collectBiometricEvents permanece en init: es un Channel collector que debe
@@ -274,3 +274,4 @@ class LoginViewModel(
         // TODO: Navegar a política de privacidad
     }
 }
+
