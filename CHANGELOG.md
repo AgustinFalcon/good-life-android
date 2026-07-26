@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Agregado gate JaCoCo Android `:app:logicDebugUnitTestCoverageVerification` para clases logicas elegibles, con reporte HTML/XML y artifact CI `jacoco-android-logic-report`. Objetivo configurado: 80% lineas; estado real medido 39.17%, gate falla honestamente hasta agregar cobertura de ViewModels/use cases pendientes.
+- El scope de cobertura excluye UI Compose, themes, DTOs, config/DI, generated, Activity/App, Room entities/DAO/database y modelos UI.
+
+
 Todos los cambios notables de este proyecto serán documentados en este archivo.
 
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
