@@ -31,3 +31,9 @@ jobs:
 
       - name: Verify debug logic coverage
         run: ./gradlew :app:logicDebugUnitTestCoverageVerification --no-daemon
+
+      - name: Verify agent, documentation, changelog, and secret governance
+        shell: bash
+        env:
+          DOCS_BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: bash .github/scripts/verify-governance.sh

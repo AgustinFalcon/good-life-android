@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- CI ahora valida el contrato de AGENTS, la documentación canónica, la evidencia de changelog y secretos de alta confianza en cambios nuevos.
+
+## Unreleased
+
 - Agregado gate JaCoCo Android `:app:logicDebugUnitTestCoverageVerification` para clases logicas elegibles, con reporte HTML/XML y artifact CI `jacoco-android-logic-report`. Objetivo configurado: 80% lineas; estado real final medido 80.07% lineas y gate aprobado.
 - El scope de cobertura excluye UI Compose, themes, DTOs, config/DI, generated, Activity/App, Room entities/DAO/database y modelos UI.
 
