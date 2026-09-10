@@ -49,11 +49,11 @@ object OkHttpClientFactory {
     /**
      * Crea un interceptor de logging configurado.
      *
-     * @param level Nivel de logging (default: BODY para ver request/response completos).
+     * @param level Nivel de logging. BODY queda prohibido porque puede exponer credenciales.
      * @return Instancia de HttpLoggingInterceptor.
      */
     fun createLoggingInterceptor(
-        level: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BODY
+        level: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.NONE
     ): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
             this.level = level

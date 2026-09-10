@@ -1,7 +1,7 @@
 ---
 type: Contracts
-version: a841b13
-validated: 2026-07-13
+version: recovery-audit-2026-09
+validated: 2026-09-10
 update_when: "Cambien endpoints, DTOs, auth, estados o integraciones."
 scope:
   - README.md
@@ -29,5 +29,5 @@ scope:
 - Mantener DTOs Retrofit alineados al backend.
 - Owners manejan DI/side effects; screens son puros.
 - Textos via AppLanguage y fecha via DateProvider.
-- No exponer JWT/credenciales en logs; 401/refresh sigue siendo área crítica.
+- No exponer JWT/credenciales en logs; refresh 401 está implementado y requiere validación en dispositivo.
 

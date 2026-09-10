@@ -17,8 +17,9 @@ Aplicación Android para gestión de bienestar personal: tareas diarias, hábito
 - ✅ **Create Meal Plan** (SPEC-012) — wizard 3 pasos, ingredientes, macros, scheduling
 - ✅ **UI optimizada** con `@Stable` states, `ImmutableList`, `@Immutable`
 - ✅ **Arquitectura KMP-Ready** (domain layer en Kotlin puro)
-- ✅ **Unit tests** enfocados en dominio y ViewModels clave — ver `app/src/test` (~12 archivos; expandir según cobertura deseada)
-- 🚧 Auto-login con token guardado
+- ✅ **163 tests unitarios** y gate JaCoCo de lógica aprobado (80,07% líneas)
+- ✅ **Auto-login / chequeo de sesión** con token cifrado
+- 🚧 **Detalles y acciones de tabs**: ver [readiness de reingreso](docs/REVIVAL-READINESS-2026-09.md)
 
 ## 🚀 Quick Start
 
@@ -46,8 +47,8 @@ git clone <repository-url>
 
 ### Credenciales de Prueba (DEV, tras migración Flyway V23+)
 ```
-Usuario: agusstkd
-Password: 2209
+Usuario: [configurar cuenta de smoke fuera del repositorio]
+Password: [configurar cuenta de smoke fuera del repositorio]
 ```
 Rol JWT incluye `USER`, `ADMIN`, `PREMIUM` y `FULL_ADMIN` (este último solo en este usuario de seed).
 
@@ -107,8 +108,9 @@ LoginScreen → LoginViewModel → LoginUseCase → AuthRepository
 ```
 
 ### Backend
-- URL: `https://devtukychloe.ddns.net/`
-- Swagger: [API Documentation](https://devtukychloe.ddns.net/swagger-ui/index.html)
+- URL: `https://good-life.ddns.net/`
+- Swagger: [API Documentation](https://good-life.ddns.net/swagger-ui/index.html)
+- Estado de recuperación y validación Android: [REVIVAL-READINESS-2026-09.md](docs/REVIVAL-READINESS-2026-09.md)
 
 ## 🧭 Navegación
 
@@ -180,10 +182,11 @@ Seguimos [Conventional Commits](https://www.conventionalcommits.org/):
 - [x] Create Habit
 - [x] Create Routine (SPEC-011)
 - [x] Create Meal Plan (SPEC-012)
-- [x] 60+ Unit Tests
-- [ ] Auto-login con token guardado
-- [ ] Tabs restantes (Workouts, Meals, More/Settings)
-- [ ] Activate Routine + detalle de item en DailyScreen
+- [x] 163 tests unitarios + gate JaCoCo de líneas >=80%
+- [x] Auto-login con token guardado
+- [x] Tabs Workouts, Meals y Settings con Owner/Screen/ViewModel
+- [ ] Navegación y detalles reales para Daily, Workout y Meal (hoy hay placeholders)
+- [ ] Sincronizar perfil con `GET /api/v1/me` en vez de derivarlo del JWT
 - [ ] SWR Fase 2 — cola de sincronización offline
 - [ ] Notificaciones push + Deep Links (SPEC-008)
 - [ ] Dark mode completo

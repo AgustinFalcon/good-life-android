@@ -4,6 +4,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.agusstkd.goodlife.domain.usecase.home.GetCurrentUserUseCase
 import com.agusstkd.goodlife.domain.usecase.home.LogoutUseCase
 import com.agusstkd.goodlife.fake.FakeAuthRepository
+import com.agusstkd.goodlife.fake.FakeNavigationController
+import com.agusstkd.goodlife.presentation.navigation.core.NavigationAction
+import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
 import com.agusstkd.goodlife.presentation.screen.tabs.settings.model.SettingsUiAction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,7 +32,12 @@ class SettingsTabViewModelTest {
     @After fun tearDown() { Dispatchers.resetMain() }
 
     @Test fun `loads current user and logs out`() = runTest(dispatcher) {
-        val vm = SettingsTabViewModel(LogoutUseCase(repo), GetCurrentUserUseCase(repo))
+        val navigation = FakeNavigationController()
+        val vm = SettingsTabViewModel(
+            logoutUseCase = LogoutUseCase(repo),
+            getCurrentUserUseCase = GetCurrentUserUseCase(repo),
+            navigationController = navigation
+        )
         advanceUntilIdle()
         assertEquals("Test User", vm.uiState.value.username)
 
@@ -38,5 +46,9 @@ class SettingsTabViewModelTest {
 
         assertEquals(1, repo.logoutCallCount)
         assertFalse(vm.uiState.value.isLoading)
+        assertEquals(
+            AppRoute.Login,
+            (navigation.navigatedActions.single() as NavigationAction.NavigateTo<*>).route
+        )
     }
 }

@@ -60,7 +60,9 @@ val authModule = module {
         AuthRepositoryImpl(
             remoteDataSource = get(),
             tokenManager = get(),
-            userDao = get()
+            userDao = get(),
+            dailyDao = get(),
+            secureCredentialsStorage = get()
         )
     }
 

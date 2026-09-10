@@ -6,6 +6,7 @@ import com.agusstkd.goodlife.data.remote.api.executeApiCall
 import com.agusstkd.goodlife.data.remote.dto.request.auth.RegisterRequest
 import com.agusstkd.goodlife.data.remote.dto.response.AuthResponse
 import com.agusstkd.goodlife.data.remote.dto.response.RegisterResponse
+import com.agusstkd.goodlife.data.remote.dto.response.UserMeResponse
 
 /**
  * DataSource remoto para operaciones de autenticación.
@@ -77,6 +78,8 @@ class AuthRemoteDataSource(
         }
     }
 
+    /** Obtiene el perfil autenticado después de guardar el access token. */
+    suspend fun getMe(): Result<UserMeResponse> = executeApiCall { apiService.getMe() }
     /** Notifica al backend que revoque los refresh tokens del usuario. */
     suspend fun logout(): Result<Unit> = executeApiCall { apiService.logout() }
 }

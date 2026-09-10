@@ -1,5 +1,7 @@
 # Progreso de Implementación - GoodLife Android
 
+> **Estado documental — 2026-09-10:** este registro es histórico. La fuente canónica de estado es [REVIVAL-READINESS-2026-09.md](REVIVAL-READINESS-2026-09.md); no usar los porcentajes ni pendientes de este archivo para planificar trabajo nuevo.
+
 > Última actualización: 2026-05-14
 
 **Inventario técnico:** [IMPLEMENTATION-STATUS.md](IMPLEMENTATION-STATUS.md)

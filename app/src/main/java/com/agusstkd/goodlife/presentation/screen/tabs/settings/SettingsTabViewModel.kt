@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.domain.usecase.home.GetCurrentUserUseCase
 import com.agusstkd.goodlife.domain.usecase.home.LogoutUseCase
+import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
+import com.agusstkd.goodlife.presentation.navigation.route.navigateToLoginFromMain
 import com.agusstkd.goodlife.presentation.screen.tabs.settings.model.SettingsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.settings.model.SettingsUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +24,7 @@ import kotlinx.coroutines.launch
 class SettingsTabViewModel(
     private val logoutUseCase: LogoutUseCase,
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val navigationController: ComposeNavigationController,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -52,6 +55,7 @@ class SettingsTabViewModel(
             _uiState.update { it.copy(isLoading = true) }
             logoutUseCase()
             _uiState.update { it.copy(isLoading = false) }
+            navigationController.navigateToLoginFromMain()
         }
     }
 }

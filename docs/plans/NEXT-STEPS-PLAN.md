@@ -1,5 +1,7 @@
 # Plan de Siguientes Pasos — GoodLife Android
 
+> **Estado documental — 2026-09-10:** este registro es histórico. La fuente canónica de estado es [REVIVAL-READINESS-2026-09.md](REVIVAL-READINESS-2026-09.md); no usar los porcentajes ni pendientes de este archivo para planificar trabajo nuevo.
+
 > Generado: 2026-03-04
 > Contexto: Se completó Create Task (SPEC-010), mejoras biométricas, SWR Fase 1, tests unitarios (60+), ImmutableList, @Stable/@Immutable, extension functions, y reducción de strings hardcodeados.
 

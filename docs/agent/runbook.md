@@ -1,7 +1,7 @@
 ---
 type: Runbook
-version: a841b13
-validated: 2026-07-13
+version: recovery-audit-2026-09
+validated: 2026-09-10
 update_when: "Cambien build, tests, ejecución, CI o release."
 scope:
   - README.md
@@ -19,7 +19,7 @@ scope:
 
 ## Local
 
-Abrir en Android Studio o instalar `app/build/outputs/apk/debug`; requiere JDK compatible con AGP, Android SDK 35 y backend configurado.
+Abrir en Android Studio o instalar `app/build/outputs/apk/debug`; requiere JDK compatible con AGP, Android SDK 35 y backend configurado; URL canónica: https://good-life.ddns.net/.
 
 ## CI / release
 

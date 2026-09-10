@@ -10,13 +10,13 @@ Este directorio contiene las especificaciones técnicas detalladas para las feat
 |----|---------|------|--------|
 | [SPEC-001](./SPEC-001-register-screen.md) | Pantalla de Registro | Feature | ✅ Completado |
 | [SPEC-002](./SPEC-002-biometric-login.md) | Login con Huella Digital | Feature | ✅ Completado |
-| [SPEC-003](./SPEC-003-main-scaffold.md) | Main Scaffold + Bottom Nav | Feature | 🚧 En Progreso (90%) |
+| [SPEC-003](./SPEC-003-main-scaffold.md) | Main Scaffold + Bottom Nav | Feature | Base implementada; detalles por tab pendientes |
 | [SPEC-004](./SPEC-004-date-provider.md) | DateProvider Pattern (Core de Fechas) | Core Architecture | ✅ Completado |
 | [SPEC-005](./SPEC-005-network-service.md) | Network Service | Core Architecture | ✅ Completado |
 | [SPEC-006](./SPEC-006-offline-first-swr.md) | Offline-First SWR | Architecture Pattern | 📝 Planificado |
 | [SPEC-007](./SPEC-007-app-language.md) | Sistema de Localización KMP-Ready (AppLanguage) | Core Architecture | ✅ Completado |
 | [SPEC-008](./SPEC-008-notifications-deeplinks.md) | Notificaciones en Tiempo Real + Deep Links | Feature | 📝 Planificado |
-| [SPEC-009](./SPEC-009-add-to-daily.md) | Add to Daily (Task + Habit desde FAB) | Feature | 🚧 En Progreso |
+| [SPEC-009](./SPEC-009-add-to-daily.md) | Add to Daily (Task + Habit desde FAB) | Feature | Implementado; queda OTHER y decisión de acciones de meal |
 | [SPEC-010](./SPEC-010-create-task-screen.md) | Pantalla Create Task | Feature | ✅ Completado |
 | [SPEC-011](./SPEC-011-create-routine-screen.md) | Pantalla Create Routine | Feature | ✅ Completado |
 | [SPEC-012](./SPEC-012-create-meal-plan-screen.md) | Pantalla Create Meal Plan | Feature | ✅ Completado |
@@ -114,10 +114,10 @@ SPEC-012 (Create Meal Plan)
 | Create Habit | ✅ Completado |
 | Create Routine (SPEC-011) | ✅ Completado |
 | Create Meal Plan (SPEC-012) | ✅ Completado |
-| Workouts Tab | ⏸️ Pendiente |
-| Meals Tab | ⏸️ Pendiente |
-| Settings/More Tab | ⏸️ Pendiente |
-| EncryptedSharedPreferences (TokenManager) | ⏸️ Pendiente (crítico) |
+| Workouts Tab | Owner/Screen/ViewModel; navegación/detalle pendientes |
+| Meals Tab | Owner/Screen/ViewModel; detalle pendiente |
+| Settings/More Tab | Settings, Profile y logout implementados |
+| EncryptedSharedPreferences (TokenManager) | Implementado |
 | Offline-First SWR | 📝 Planificado |
 | Notificaciones + Deep Links | 📝 Planificado |
 
@@ -131,4 +131,4 @@ SPEC-012 (Create Meal Plan)
 
 ---
 
-**Última actualización:** 2026-04-14
+**Última actualización:** 2026-09-10

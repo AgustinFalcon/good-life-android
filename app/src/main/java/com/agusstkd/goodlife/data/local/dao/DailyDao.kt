@@ -45,6 +45,18 @@ interface DailyDao {
         insertDailyItems(items)
     }
 
+    /** Elimina todo el cache diario al cerrar sesión para evitar datos entre cuentas. */
+    @Transaction
+    suspend fun clearCache() {
+        deleteAllItems()
+        deleteAllLogs()
+    }
+
+    @Query("DELETE FROM daily_item")
+    suspend fun deleteAllItems()
+
+    @Query("DELETE FROM daily_log")
+    suspend fun deleteAllLogs()
     /**
      * Limpia cache viejo (entries con más de [maxAgeMillis] desde [now]).
      */

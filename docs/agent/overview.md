@@ -1,7 +1,7 @@
 ---
 type: Overview
-version: a841b13
-validated: 2026-07-13
+version: recovery-audit-2026-09
+validated: 2026-09-10
 update_when: "Cambien propósito, capacidades, actores o módulos."
 scope:
   - ../../sdd/PROJECT.md
@@ -21,7 +21,7 @@ scope:
 ## Capacidades/alcance
 
 - Auth/login/register/biometría y session check.
-- Daily cache SWR y creación de task/habit/routine/meal plan.
+- Daily cache SWR y creación de task/habit/routine/meal plan; tabs Daily, Workouts, Meals, Settings y Profile tienen base Owner/Screen/ViewModel. Los detalles Daily/Workout/Meal no son producto final.
 - Room local, Retrofit backend y upload de perfil.
 - Navegación AppRoute/TabRoute y UI Compose multilenguaje.
 

@@ -1,7 +1,7 @@
 ---
 type: Architecture
-version: a841b13
-validated: 2026-07-13
+version: recovery-audit-2026-09
+validated: 2026-09-10
 update_when: "Cambien capas, wiring, persistencia o entrypoints."
 scope:
   - README.md
@@ -24,7 +24,7 @@ scope:
 
 ## Entrypoints
 
-- `GoodLifeApplication` inicializa Koin.
+- `GoodLifeApp` inicializa Koin.
 - `MainActivity` arranca `GoodLifeNavHost` en `AppRoute.Splash`.
 - `TabNavGraph` contiene Daily/Workouts/Meals/Settings.
 

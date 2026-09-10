@@ -22,7 +22,8 @@ val settingsModule = module {
     viewModel {
         SettingsTabViewModel(
             logoutUseCase = get(),
-            getCurrentUserUseCase = get()
+            getCurrentUserUseCase = get(),
+            navigationController = get()
         )
     }
 }

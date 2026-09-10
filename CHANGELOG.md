@@ -1,21 +1,28 @@
 # Changelog
 
-## Unreleased
+Todos los cambios notables de este proyecto se documentan en este archivo. El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y el proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
-- CI ahora valida el contrato de AGENTS, la documentación canónica, la evidencia de changelog y secretos de alta confianza en cambios nuevos.
+## [Unreleased]
 
-## Unreleased
+### Security
+- El interceptor de autenticación ya no registra URL, headers, tokens ni cuerpos de request. El logging HTTP es `BASIC` solo en debug y `NONE` en release.
+- Se deshabilitó el backup de aplicación para impedir que datos de sesión o credenciales entren en backups del sistema.
+- Logout solicita revocación remota y siempre borra tokens, credenciales biométricas, usuario y cache Daily locales.
 
-- Agregado gate JaCoCo Android `:app:logicDebugUnitTestCoverageVerification` para clases logicas elegibles, con reporte HTML/XML y artifact CI `jacoco-android-logic-report`. Objetivo configurado: 80% lineas; estado real final medido 80.07% lineas y gate aprobado.
-- El scope de cobertura excluye UI Compose, themes, DTOs, config/DI, generated, Activity/App, Room entities/DAO/database y modelos UI.
+### Fixed
+- Login obtiene el perfil canónico con `GET /api/v1/me`; ya no deriva el usuario del JWT ni de la entrada de login.
+- Settings redirige a Login y limpia el back stack después de cerrar sesión.
+- Profile combina el usuario Room y el estado de carga/error para recomponer correctamente.
+- La cache Daily se limpia al cerrar sesión, evitando exposición offline entre cuentas del mismo dispositivo.
 
-
-Todos los cambios notables de este proyecto serán documentados en este archivo.
-
-El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
+### Quality and documentation
+- `:app:testDebugUnitTest`, `:app:logicDebugUnitTestCoverageVerification` y `:app:lintDebug` pasan el 2026-09-10: 163 tests, 0 fallos/errores; cobertura JaCoCo de líneas en lógica elegible 80,09% (1.476/1.843).
+- El gate excluye Compose/UI, manifest, Room/DAO, DI y pruebas instrumentadas; no se los declara cubiertos. El smoke en dispositivo contra la API canónica sigue pendiente.
+- Se reconciliaron los documentos de revival y se marcaron los planes históricos como no canónicos.
 
 ---
 
+## Histórico
 ## [Unreleased] - 2026-07-24 — P0 Quality Baseline
 
 ### Fixed

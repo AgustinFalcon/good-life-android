@@ -1,5 +1,7 @@
 package com.agusstkd.goodlife.di
 
+import com.agusstkd.goodlife.BuildConfig
+
 import com.agusstkd.goodlife.core.network.GoodLifeAuthenticator
 import com.agusstkd.goodlife.core.network.GoodLifeInterceptor
 import com.agusstkd.goodlife.core.network.JsonSerializerFactory
@@ -85,7 +87,9 @@ val networkModule = module {
      * Interceptor de logging (solo para debug).
      */
     single<HttpLoggingInterceptor> {
-        OkHttpClientFactory.createLoggingInterceptor()
+        OkHttpClientFactory.createLoggingInterceptor(
+            if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BASIC else HttpLoggingInterceptor.Level.NONE
+        )
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════════════
