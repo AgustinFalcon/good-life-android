@@ -15,6 +15,7 @@ import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -22,6 +23,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import org.junit.After
@@ -74,6 +76,35 @@ class MealsTabViewModelTest {
 
         vm.onAction(MealsUiAction.OnNextDay); advanceUntilIdle()
         assertEquals(LocalDate(2026, 7, 26), repository.requestedDates.last())
+    }
+
+    @Test fun `late meals response does not replace the selected date`() = runTest(dispatcher) {
+        val initialDate = LocalDate(2026, 7, 26)
+        val nextDate = LocalDate(2026, 7, 27)
+        val delayedResult = CompletableDeferred<Result<List<DailyMealPlanSummary>>>()
+        val firstRequestStarted = CompletableDeferred<Unit>()
+        repository.getHandler = { requestedDate ->
+            if (requestedDate == initialDate) {
+                firstRequestStarted.complete(Unit)
+                delayedResult.await()
+            } else {
+                Result.Success(listOf(plan(2, MealType.LUNCH, 600.0)))
+            }
+        }
+
+        val vm = viewModel()
+        backgroundScope.launch { vm.uiState.collect {} }
+        runCurrent()
+        vm.onAction(MealsUiAction.OnNextDay)
+        assertTrue(firstRequestStarted.isCompleted)
+        runCurrent()
+
+        delayedResult.complete(Result.Success(listOf(plan(1, MealType.BREAKFAST, 300.0))))
+        advanceUntilIdle()
+
+        val state = vm.uiState.value as MealsUiState.Success
+        assertEquals(nextDate, state.date)
+        assertEquals(600.0, state.totalCalories, 0.01)
     }
 
     @Test fun `repository error maps to error state`() = runTest(dispatcher) {

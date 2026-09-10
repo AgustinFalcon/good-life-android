@@ -15,12 +15,14 @@ import com.agusstkd.goodlife.fake.FakeDailyRepository
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.datetime.LocalDate
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -165,6 +167,31 @@ class DailyTabViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.uiState.value as DailyUiState.Success
+        assertEquals(1.0, state.completionRate, 0.001)
+    }
+
+    @Test
+    fun `late daily response does not replace the selected date`() = runTest(testDispatcher) {
+        val nextDate = LocalDate(2026, 3, 10)
+        val delayedResult = CompletableDeferred<Result<DailyLog>>()
+        repository.getDailyLogHandler = { requestedDate ->
+            if (requestedDate == fixedDate) {
+                delayedResult.await()
+            } else {
+                Result.Success(DailyLog(2, nextDate, 1.0, emptyList()))
+            }
+        }
+
+        viewModel = createViewModel()
+        runCurrent()
+        viewModel.onAction(DailyUiAction.OnNextDay)
+        advanceUntilIdle()
+
+        delayedResult.complete(Result.Success(DailyLog(1, fixedDate, 0.0, emptyList())))
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value as DailyUiState.Success
+        assertEquals(nextDate, state.date)
         assertEquals(1.0, state.completionRate, 0.001)
     }
 

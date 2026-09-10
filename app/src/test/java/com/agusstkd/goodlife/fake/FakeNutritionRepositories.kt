@@ -16,12 +16,13 @@ import kotlinx.datetime.LocalDate
 class FakeMealPlanRepository : MealPlanRepository {
     var getResult: Result<List<DailyMealPlanSummary>> = Result.Success(emptyList())
     var createResult: Result<MealPlanResponseDto> = Result.Success(MealPlanResponseDto(id = 1L, name = "Meal", totalCalories = 0.0, totalProtein = 0.0, totalCarbs = 0.0, totalFat = 0.0, isActive = true))
+    var getHandler: (suspend (LocalDate) -> Result<List<DailyMealPlanSummary>>)? = null
     val requestedDates = mutableListOf<LocalDate>()
     var createCallCount = 0
 
     override suspend fun getMealPlansByDate(date: LocalDate): Result<List<DailyMealPlanSummary>> {
         requestedDates.add(date)
-        return getResult
+        return getHandler?.invoke(date) ?: getResult
     }
 
     override suspend fun createMealPlan(request: CreateMealPlanRequestDto): Result<MealPlanResponseDto> {
