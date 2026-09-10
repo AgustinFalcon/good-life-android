@@ -71,6 +71,23 @@ class LoginViewModelTest {
         assertEquals(0, repo.loginCallCount)
     }
 
+    @Test fun `remote login error keeps credentials and exposes a general message`() = runTest(dispatcher) {
+        repo.loginResult = Result.Error(Exception("Error de conexión"))
+        val vm = vm(); backgroundScope.launch { vm.uiState.collect {} }; advanceUntilIdle()
+        vm.onAction(LoginUiAction.OnEmailChange("usuario"))
+        vm.onAction(LoginUiAction.OnPasswordChange("password"))
+        vm.onAction(LoginUiAction.OnLoginClick)
+        advanceUntilIdle()
+
+        val state = vm.uiState.value as LoginUiState.Content
+        assertEquals("usuario", state.email)
+        assertEquals("password", state.password)
+        assertFalse(state.isEmailError)
+        assertFalse(state.isPasswordError)
+        assertEquals("Error de conexión", state.errorMessage)
+        assertEquals(1, repo.loginCallCount)
+    }
+
     @Test fun `successful login navigates to main and saves credentials when biometric enabled`() = runTest(dispatcher) {
         val vm = vm(); backgroundScope.launch { vm.uiState.collect {} }; advanceUntilIdle()
         vm.onAction(LoginUiAction.OnEmailChange("ok@test.com"))

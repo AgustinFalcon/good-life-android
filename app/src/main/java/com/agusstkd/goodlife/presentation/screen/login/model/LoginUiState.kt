@@ -40,6 +40,7 @@ sealed interface LoginUiState {
         val isEmailError: Boolean = false,
         val isPasswordError: Boolean = false,
         val isLoading: Boolean = false,
+        val errorMessage: String? = null,
         val isBiometricAvailable: Boolean = false,
         val isBiometricEnabled: Boolean = false,
         val shouldShowBiometricPrompt: Boolean = false

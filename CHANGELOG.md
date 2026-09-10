@@ -17,6 +17,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Settings redirige a Login y limpia el back stack después de cerrar sesión.
 - Profile combina el usuario Room y el estado de carga/error para recomponer correctamente.
 - La cache Daily se limpia al cerrar sesión, evitando exposición offline entre cuentas del mismo dispositivo.
+- Login conserva usuario y contraseña ante un error remoto y muestra el mensaje general, en lugar de marcar ambos campos como inválidos.
 
 ### Documentation
 - Android revival SDD ownership now lives under `sdd/` with a versioned ledger; the external Desktop SDD is historical input and no longer a delivery source of truth.

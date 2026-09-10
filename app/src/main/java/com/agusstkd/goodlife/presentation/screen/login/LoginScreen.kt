@@ -86,6 +86,7 @@ fun LoginScreen(
                 isPasswordError = uiState.isPasswordError,
                 isLoading = uiState.isLoading,
                 isBiometricAvailable = uiState.isBiometricAvailable,
+                errorMessage = uiState.errorMessage,
                 isBiometricEnabled = uiState.isBiometricEnabled,
                 onAction = onAction,
                 auth = auth,
@@ -99,6 +100,7 @@ fun LoginScreen(
                 isPasswordError = true,
                 isLoading = false,
                 isBiometricAvailable = false,
+                errorMessage = null,
                 isBiometricEnabled = false,
                 onAction = onAction,
                 auth = auth,
@@ -131,6 +133,7 @@ private fun LoginContent(
     isPasswordError: Boolean,
     isLoading: Boolean,
     isBiometricAvailable: Boolean,
+    errorMessage: String?,
     isBiometricEnabled: Boolean,
     onAction: (LoginUiAction) -> Unit,
     auth: AuthTexts,
@@ -159,6 +162,7 @@ private fun LoginContent(
             isEmailError = isEmailError,
             isPasswordError = isPasswordError,
             onAction = onAction,
+            errorMessage = errorMessage,
             auth = auth,
             accessibility = accessibility
         )
@@ -239,6 +243,7 @@ private fun LoginForm(
     isEmailError: Boolean,
     isPasswordError: Boolean,
     onAction: (LoginUiAction) -> Unit,
+    errorMessage: String?,
     auth: AuthTexts,
     accessibility: AccessibilityTexts
 ) {
@@ -267,6 +272,15 @@ private fun LoginForm(
             ),
             onValueChange = { onAction(LoginUiAction.OnPasswordChange(it)) }
         )
+
+        errorMessage?.let { message ->
+            Text(
+                text = message,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
 
@@ -463,3 +477,4 @@ fun LoginScreenFilledPreview() {
         )
     }
 }
+@Preview(showBackground = true, name = "Content - Remote error") @Composable fun LoginScreenRemoteErrorPreview() = GoodLifeTheme { LoginScreen(uiState = LoginUiState.Content(email = "usuario", password = "password", errorMessage = "Sin conexión con GoodLife. Revisá la red e intentá nuevamente."), onAction = {}, texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)) }
