@@ -25,6 +25,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
@@ -77,7 +79,7 @@ class DailyTabViewModel(
 
     private var currentDate: LocalDate = dateProvider.today()
     private var loadJob: Job? = null
-    private var latestStatusUpdateId: Long = 0L
+    private val statusUpdateMutex = Mutex()
 
     private val _uiState = MutableStateFlow<DailyUiState>(DailyUiState.Loading)
     val uiState: StateFlow<DailyUiState> = _uiState
@@ -140,21 +142,22 @@ class DailyTabViewModel(
      */
     private fun updateItemStatus(itemId: Long, newStatus: DailyItemStatus) {
         val requestedDate = currentDate
-        val requestId = ++latestStatusUpdateId
         viewModelScope.launch {
-            val currentState = _uiState.value
-            if (currentState is DailyUiState.Success) {
-                _uiState.value = currentState.copy(isRefreshing = true)
-            }
-
-            when (val result = updateItemStatusUseCase(itemId, newStatus)) {
-                is UpdateItemStatusResult.Success -> if (requestId == latestStatusUpdateId && requestedDate == currentDate) {
-                    _uiState.value = buildSuccessState(result.dailyLog, requestedDate)
+            statusUpdateMutex.withLock {
+                if (requestedDate != currentDate) return@withLock
+                val currentState = _uiState.value
+                if (currentState is DailyUiState.Success) {
+                    _uiState.value = currentState.copy(isRefreshing = true)
                 }
 
-                is UpdateItemStatusResult.NotFound -> if (requestId == latestStatusUpdateId && requestedDate == currentDate) loadItems()
-                is UpdateItemStatusResult.ServerError -> if (requestId == latestStatusUpdateId && requestedDate == currentDate) showServerError(result.message)
-                is UpdateItemStatusResult.NetworkError -> if (requestId == latestStatusUpdateId && requestedDate == currentDate) showNetworkError()
+                when (val result = updateItemStatusUseCase(itemId, newStatus)) {
+                    is UpdateItemStatusResult.Success -> if (requestedDate == currentDate) {
+                        _uiState.value = buildSuccessState(result.dailyLog, requestedDate)
+                    }
+                    is UpdateItemStatusResult.NotFound -> if (requestedDate == currentDate) loadItems()
+                    is UpdateItemStatusResult.ServerError -> if (requestedDate == currentDate) showServerError(result.message)
+                    is UpdateItemStatusResult.NetworkError -> if (requestedDate == currentDate) showNetworkError()
+                }
             }
         }
     }

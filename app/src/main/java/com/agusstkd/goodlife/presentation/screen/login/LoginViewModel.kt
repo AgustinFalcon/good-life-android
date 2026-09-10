@@ -136,13 +136,17 @@ class LoginViewModel(
     // LOGIN
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
+    private var latestLoginRequestId: Long = 0L
+
     private fun updateLoginFailure(
+        requestId: Long,
         submittedEmail: String,
         submittedPassword: String,
         validationError: LoginResult.ValidationError? = null,
     ) {
         _uiState.update { state ->
             val latest = state as? LoginUiState.Content ?: return@update state
+            if (requestId != latestLoginRequestId) return@update latest
             val credentialsAreUnchanged =
                 latest.email == submittedEmail && latest.password == submittedPassword
 
@@ -150,47 +154,41 @@ class LoginViewModel(
                 isLoading = false,
                 isEmailError = credentialsAreUnchanged && validationError?.emailError != null,
                 isPasswordError = credentialsAreUnchanged && validationError?.passwordError != null,
-                errorMessage = if (credentialsAreUnchanged && validationError == null) {
-                    language.errorTexts.loginError
-                } else {
-                    null
-                },
+                errorMessage = if (validationError == null) language.errorTexts.loginError else null,
             )
         }
     }
+
     private fun performLogin() {
         val current = _uiState.value as? LoginUiState.Content ?: return
         if (current.isLoading) return
 
         viewModelScope.launch {
+            val requestId = ++latestLoginRequestId
             _uiState.update { state ->
                 (state as? LoginUiState.Content)?.copy(isLoading = true, errorMessage = null) ?: state
             }
 
-            val result = loginUseCase(
-                email = current.email,
-                password = current.password
-            )
-
-            when (result) {
+            when (val result = loginUseCase(email = current.email, password = current.password)) {
                 is LoginResult.Success -> {
                     biometricLoginHandler.saveCredentialsIfEnabled(
                         email = current.email,
                         password = current.password,
-                        isEnabled = current.isBiometricEnabled
+                        isEnabled = current.isBiometricEnabled,
                     )
                     _uiState.value = LoginUiState.Success
                     navigationController.navigateToMain()
                 }
-                is LoginResult.ValidationError -> updateLoginFailure(current.email, current.password, result)
-                is LoginResult.Error -> updateLoginFailure(current.email, current.password)
+                is LoginResult.ValidationError -> updateLoginFailure(requestId, current.email, current.password, result)
+                is LoginResult.Error -> updateLoginFailure(requestId, current.email, current.password)
             }
         }
     }
 
     private fun performLoginWithCredentials(email: String, password: String) {
         viewModelScope.launch {
-            val current = _uiState.value as? LoginUiState.Content ?: return@launch
+            if (_uiState.value !is LoginUiState.Content) return@launch
+            val requestId = ++latestLoginRequestId
             _uiState.update { state ->
                 (state as? LoginUiState.Content)?.copy(isLoading = true, errorMessage = null) ?: state
             }
@@ -200,12 +198,11 @@ class LoginViewModel(
                     _uiState.value = LoginUiState.Success
                     navigationController.navigateToMain()
                 }
-                is LoginResult.ValidationError -> updateLoginFailure(email, password, result)
-                is LoginResult.Error -> updateLoginFailure(email, password)
+                is LoginResult.ValidationError -> updateLoginFailure(requestId, email, password, result)
+                is LoginResult.Error -> updateLoginFailure(requestId, email, password)
             }
         }
     }
-
     // ═══════════════════════════════════════════════════════════════════════════════════════════
     // BIOMETRIC — delegado a BiometricLoginHandler
     // ═══════════════════════════════════════════════════════════════════════════════════════════
