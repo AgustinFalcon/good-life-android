@@ -33,6 +33,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -278,7 +281,11 @@ private fun LoginForm(
                 text = message,
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .semantics {
+                        liveRegion = LiveRegionMode.Polite
+                    }
             )
         }
     }
@@ -477,4 +484,18 @@ fun LoginScreenFilledPreview() {
         )
     }
 }
-@Preview(showBackground = true, name = "Content - Remote error") @Composable fun LoginScreenRemoteErrorPreview() = GoodLifeTheme { LoginScreen(uiState = LoginUiState.Content(email = "usuario", password = "password", errorMessage = "Sin conexión con GoodLife. Revisá la red e intentá nuevamente."), onAction = {}, texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)) }
+@Preview(showBackground = true, name = "Content - Remote error")
+@Composable
+fun LoginScreenRemoteErrorPreview() {
+    GoodLifeTheme {
+        LoginScreen(
+            uiState = LoginUiState.Content(
+                email = "usuario",
+                password = "password",
+                errorMessage = "No se pudo iniciar sesión. Intentá nuevamente."
+            ),
+            onAction = {},
+            texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)
+        )
+    }
+}

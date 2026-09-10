@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
@@ -135,12 +136,36 @@ class LoginViewModel(
     // LOGIN
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
+    private fun updateLoginFailure(
+        submittedEmail: String,
+        submittedPassword: String,
+        validationError: LoginResult.ValidationError? = null,
+    ) {
+        _uiState.update { state ->
+            val latest = state as? LoginUiState.Content ?: return@update state
+            val credentialsAreUnchanged =
+                latest.email == submittedEmail && latest.password == submittedPassword
+
+            latest.copy(
+                isLoading = false,
+                isEmailError = credentialsAreUnchanged && validationError?.emailError != null,
+                isPasswordError = credentialsAreUnchanged && validationError?.passwordError != null,
+                errorMessage = if (credentialsAreUnchanged && validationError == null) {
+                    language.errorTexts.loginError
+                } else {
+                    null
+                },
+            )
+        }
+    }
     private fun performLogin() {
         val current = _uiState.value as? LoginUiState.Content ?: return
         if (current.isLoading) return
 
         viewModelScope.launch {
-            _uiState.value = current.copy(isLoading = true)
+            _uiState.update { state ->
+                (state as? LoginUiState.Content)?.copy(isLoading = true, errorMessage = null) ?: state
+            }
 
             val result = loginUseCase(
                 email = current.email,
@@ -157,21 +182,8 @@ class LoginViewModel(
                     _uiState.value = LoginUiState.Success
                     navigationController.navigateToMain()
                 }
-                is LoginResult.ValidationError -> {
-                    _uiState.value = current.copy(
-                        isLoading = false,
-                        isEmailError = result.emailError != null,
-                        isPasswordError = result.passwordError != null
-                    )
-                }
-                is LoginResult.Error -> {
-                    _uiState.value = current.copy(
-                        isLoading = false,
-                        isEmailError = false,
-                        isPasswordError = false,
-                        errorMessage = result.message
-                    )
-                }
+                is LoginResult.ValidationError -> updateLoginFailure(current.email, current.password, result)
+                is LoginResult.Error -> updateLoginFailure(current.email, current.password)
             }
         }
     }
@@ -179,28 +191,17 @@ class LoginViewModel(
     private fun performLoginWithCredentials(email: String, password: String) {
         viewModelScope.launch {
             val current = _uiState.value as? LoginUiState.Content ?: return@launch
-            _uiState.value = current.copy(isLoading = true)
+            _uiState.update { state ->
+                (state as? LoginUiState.Content)?.copy(isLoading = true, errorMessage = null) ?: state
+            }
 
             when (val result = loginUseCase(email, password)) {
                 is LoginResult.Success -> {
                     _uiState.value = LoginUiState.Success
                     navigationController.navigateToMain()
                 }
-                is LoginResult.ValidationError -> {
-                    _uiState.value = current.copy(
-                        isLoading = false,
-                        isEmailError = result.emailError != null,
-                        isPasswordError = result.passwordError != null
-                    )
-                }
-                is LoginResult.Error -> {
-                    _uiState.value = current.copy(
-                        isLoading = false,
-                        isEmailError = false,
-                        isPasswordError = false,
-                        errorMessage = result.message
-                    )
-                }
+                is LoginResult.ValidationError -> updateLoginFailure(email, password, result)
+                is LoginResult.Error -> updateLoginFailure(email, password)
             }
         }
     }

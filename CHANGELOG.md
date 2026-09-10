@@ -26,8 +26,11 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 ### CI
 - Android CI pins `actions/checkout` and `actions/setup-java` to their official v5 immutable commits, removing the Node 20 deprecation path.
 
+- Login usa un mensaje localizado y seguro ante fallos remotos, conserva las ediciones hechas durante la request y limpia el error al reintentar.
+- El error remoto de Login se anuncia a lectores de pantalla; las mutaciones Daily tardías ya no reemplazan la última actualización del usuario.
 ### Quality and documentation
-- `:app:testDebugUnitTest`, `:app:logicDebugUnitTestCoverageVerification` y `:app:lintDebug` pasan el 2026-09-11: 164 tests, 0 fallos/errores; cobertura JaCoCo de líneas en lógica elegible 80,38% (1.483/1.845).`n- Daily y Meals descartan respuestas tardías al navegar fechas mediante cargas cancelables y un identificador de request actual.
+- `:app:testDebugUnitTest`, `:app:logicDebugUnitTestCoverageVerification` y `:app:lintDebug` pasan el 2026-09-11: 164 tests, 0 fallos/errores; cobertura JaCoCo de líneas en lógica elegible 80,38% (1.483/1.845).
+- Daily y Meals descartan respuestas tardías al navegar fechas mediante cargas cancelables y un identificador de request actual.
 - El gate excluye Compose/UI, manifest, Room/DAO, DI y pruebas instrumentadas; no se los declara cubiertos. El smoke en dispositivo contra la API canónica sigue pendiente.
 - Se reconciliaron los documentos de revival y se marcaron los planes históricos como no canónicos.
 

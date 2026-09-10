@@ -171,6 +171,44 @@ class DailyTabViewModelTest {
     }
 
     @Test
+    fun `late status update does not replace the latest update`() = runTest(testDispatcher) {
+        val log = DailyLog(
+            id = 1,
+            date = fixedDate,
+            completionRate = 0.0,
+            items = listOf(
+                DailyItem(1, DailyItemType.TASK, 10, null, DailyItemStatus.PENDING, "Task", null)
+            )
+        )
+        repository.getDailyLogResult = Result.Success(log)
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val firstResult = CompletableDeferred<Result<DailyLog>>()
+        val secondResult = CompletableDeferred<Result<DailyLog>>()
+        repository.updateItemStatusHandler = { itemId, _ ->
+            if (itemId == 1L) {
+                firstResult.await()
+            } else {
+                secondResult.await()
+            }
+        }
+
+        viewModel.onAction(DailyUiAction.OnItemStatusChange(1, DailyItemStatus.COMPLETED))
+        runCurrent()
+        viewModel.onAction(DailyUiAction.OnItemStatusChange(2, DailyItemStatus.SKIPPED))
+        runCurrent()
+
+        secondResult.complete(Result.Success(log.copy(completionRate = 0.8)))
+        advanceUntilIdle()
+        firstResult.complete(Result.Success(log.copy(completionRate = 0.2)))
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value as DailyUiState.Success
+        assertEquals(0.8, state.completionRate, 0.001)
+    }
+
+    @Test
     fun `late daily response does not replace the selected date`() = runTest(testDispatcher) {
         val nextDate = LocalDate(2026, 3, 10)
         val delayedResult = CompletableDeferred<Result<DailyLog>>()
