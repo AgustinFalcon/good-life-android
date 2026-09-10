@@ -49,6 +49,7 @@ val routineModule = module {
         WorkoutsTabViewModel(
             language = get(),
             getActiveRoutineUseCase = get(),
+            navigationController = get(),
         )
     }
 }

@@ -12,7 +12,11 @@ import com.agusstkd.goodlife.domain.model.training.WorkoutExercise
 import com.agusstkd.goodlife.domain.model.training.WorkoutSet
 import com.agusstkd.goodlife.domain.usecase.routine.GetActiveRoutineUseCase
 import com.agusstkd.goodlife.domain.usecase.routine.result.GetActiveRoutineResult
+import com.agusstkd.goodlife.fake.FakeNavigationController
 import com.agusstkd.goodlife.fake.FakeRoutineRepository
+import com.agusstkd.goodlife.presentation.navigation.core.NavigationAction
+import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
+import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -39,7 +43,11 @@ class WorkoutsTabViewModelTest {
     @Before fun setUp() { Dispatchers.setMain(dispatcher); repo = FakeRoutineRepository() }
     @After fun tearDown() { Dispatchers.resetMain() }
 
-    private fun vm() = WorkoutsTabViewModel(Spanish, GetActiveRoutineUseCase(repo, TestDispatcherProvider(dispatcher)))
+    private fun vm(navigation: FakeNavigationController = FakeNavigationController()) = WorkoutsTabViewModel(
+        language = Spanish,
+        getActiveRoutineUseCase = GetActiveRoutineUseCase(repo, TestDispatcherProvider(dispatcher)),
+        navigationController = navigation
+    )
 
     @Test fun `refresh maps active routine to success labels and workout totals`() = runTest(dispatcher) {
         repo.getActiveRoutineResult = Result.Success(routine())
@@ -64,6 +72,17 @@ class WorkoutsTabViewModelTest {
         assertTrue(vm.uiState.value is WorkoutsUiState.Error)
     }
 
+    @Test fun `create routine action navigates to the app creation route`() = runTest(dispatcher) {
+        val navigation = FakeNavigationController()
+        val vm = vm(navigation)
+
+        vm.onAction(WorkoutsUiAction.OnCreateRoutine)
+
+        assertEquals(
+            AppRoute.CreateRoutine,
+            (navigation.navigatedActions.single() as NavigationAction.NavigateTo<*>).route
+        )
+    }
     private fun routine() = Routine(
         id = 5L, name = "Strength Plan", description = "desc", difficultyLevel = DifficultyLevel.ADVANCED,
         goalType = GoalType.STRENGTH, isActive = true, scheduledTime = null,

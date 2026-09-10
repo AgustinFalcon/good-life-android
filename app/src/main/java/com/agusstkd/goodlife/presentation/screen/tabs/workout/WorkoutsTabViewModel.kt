@@ -8,6 +8,8 @@ import com.agusstkd.goodlife.domain.model.training.GoalType
 import com.agusstkd.goodlife.domain.model.training.Routine
 import com.agusstkd.goodlife.domain.usecase.routine.GetActiveRoutineUseCase
 import com.agusstkd.goodlife.domain.usecase.routine.result.GetActiveRoutineResult
+import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
+import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutUiModel
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiState
@@ -48,6 +50,7 @@ import kotlinx.coroutines.launch
 class WorkoutsTabViewModel(
     private val language: AppLanguage,
     private val getActiveRoutineUseCase: GetActiveRoutineUseCase,
+    private val navigationController: ComposeNavigationController,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<WorkoutsUiState>(WorkoutsUiState.Loading)
@@ -138,7 +141,7 @@ class WorkoutsTabViewModel(
     }
 
     private fun navigateToCreateRoutine() {
-        // TODO: Navegar a CreateRoutineViewModel usando navigationController
+        navigationController.navigateTo(AppRoute.CreateRoutine)
     }
 
     private fun navigateToWorkoutDetail(workoutId: Long) {
