@@ -77,6 +77,7 @@ class DailyTabViewModel(
 
     private var currentDate: LocalDate = dateProvider.today()
     private var loadJob: Job? = null
+    private var latestStatusUpdateId: Long = 0L
 
     private val _uiState = MutableStateFlow<DailyUiState>(DailyUiState.Loading)
     val uiState: StateFlow<DailyUiState> = _uiState
@@ -139,6 +140,7 @@ class DailyTabViewModel(
      */
     private fun updateItemStatus(itemId: Long, newStatus: DailyItemStatus) {
         val requestedDate = currentDate
+        val requestId = ++latestStatusUpdateId
         viewModelScope.launch {
             val currentState = _uiState.value
             if (currentState is DailyUiState.Success) {
@@ -146,13 +148,13 @@ class DailyTabViewModel(
             }
 
             when (val result = updateItemStatusUseCase(itemId, newStatus)) {
-                is UpdateItemStatusResult.Success -> if (requestedDate == currentDate) {
+                is UpdateItemStatusResult.Success -> if (requestId == latestStatusUpdateId && requestedDate == currentDate) {
                     _uiState.value = buildSuccessState(result.dailyLog, requestedDate)
                 }
 
-                is UpdateItemStatusResult.NotFound -> if (requestedDate == currentDate) loadItems()
-                is UpdateItemStatusResult.ServerError -> if (requestedDate == currentDate) showServerError(result.message)
-                is UpdateItemStatusResult.NetworkError -> if (requestedDate == currentDate) showNetworkError()
+                is UpdateItemStatusResult.NotFound -> if (requestId == latestStatusUpdateId && requestedDate == currentDate) loadItems()
+                is UpdateItemStatusResult.ServerError -> if (requestId == latestStatusUpdateId && requestedDate == currentDate) showServerError(result.message)
+                is UpdateItemStatusResult.NetworkError -> if (requestId == latestStatusUpdateId && requestedDate == currentDate) showNetworkError()
             }
         }
     }

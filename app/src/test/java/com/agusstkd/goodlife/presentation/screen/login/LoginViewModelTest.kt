@@ -6,6 +6,7 @@ import com.agusstkd.goodlife.core.dispatcher.TestDispatcherProvider
 import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.domain.auth.BiometricLoginHandler
 import com.agusstkd.goodlife.domain.usecase.login.LoginUseCase
+import com.agusstkd.goodlife.domain.model.auth.User
 import com.agusstkd.goodlife.domain.usecase.validation.ValidateEmailUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidatePasswordUseCase
 import com.agusstkd.goodlife.fake.FakeAuthRepository
@@ -17,6 +18,7 @@ import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
 import com.agusstkd.goodlife.presentation.screen.login.model.LoginUiAction
 import com.agusstkd.goodlife.presentation.screen.login.model.LoginUiState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -24,6 +26,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.test.runCurrent
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -84,8 +87,38 @@ class LoginViewModelTest {
         assertEquals("password", state.password)
         assertFalse(state.isEmailError)
         assertFalse(state.isPasswordError)
-        assertEquals("Error de conexión", state.errorMessage)
+        assertEquals(Spanish.errorTexts.loginError, state.errorMessage)
         assertEquals(1, repo.loginCallCount)
+    }
+
+    @Test fun `retry clears old error and preserves edits made while loading`() = runTest(dispatcher) {
+        repo.loginResult = Result.Error(Exception("internal backend detail"))
+        val delayedResult = CompletableDeferred<Result<User>>()
+        val vm = vm(); backgroundScope.launch { vm.uiState.collect {} }; advanceUntilIdle()
+        vm.onAction(LoginUiAction.OnEmailChange("usuario"))
+        vm.onAction(LoginUiAction.OnPasswordChange("password"))
+        vm.onAction(LoginUiAction.OnLoginClick)
+        advanceUntilIdle()
+        assertEquals(Spanish.errorTexts.loginError, (vm.uiState.value as LoginUiState.Content).errorMessage)
+
+        repo.loginHandler = { _, _ -> delayedResult.await() }
+        vm.onAction(LoginUiAction.OnLoginClick)
+        runCurrent()
+        vm.onAction(LoginUiAction.OnEmailChange("usuario-nuevo"))
+        vm.onAction(LoginUiAction.OnPasswordChange("password-nuevo"))
+
+        val whileLoading = vm.uiState.value as LoginUiState.Content
+        assertTrue(whileLoading.isLoading)
+        assertEquals(null, whileLoading.errorMessage)
+
+        delayedResult.complete(Result.Error(Exception("internal backend detail")))
+        advanceUntilIdle()
+
+        val state = vm.uiState.value as LoginUiState.Content
+        assertEquals("usuario-nuevo", state.email)
+        assertEquals("password-nuevo", state.password)
+        assertFalse(state.isLoading)
+        assertEquals(null, state.errorMessage)
     }
 
     @Test fun `successful login navigates to main and saves credentials when biometric enabled`() = runTest(dispatcher) {

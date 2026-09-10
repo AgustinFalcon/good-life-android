@@ -7,6 +7,7 @@ import com.agusstkd.goodlife.domain.repository.AuthRepository
 class FakeAuthRepository : AuthRepository {
 
     var loginResult: Result<User> = Result.Success(DEFAULT_USER)
+    var loginHandler: (suspend (String, String) -> Result<User>)? = null
     var registerResult: Result<User> = Result.Success(DEFAULT_USER)
     var logoutResult: Result<Unit> = Result.Success(Unit)
     var loggedIn = false
@@ -21,7 +22,7 @@ class FakeAuthRepository : AuthRepository {
 
     override suspend fun login(email: String, password: String): Result<User> {
         loginCallCount++
-        return loginResult
+        return loginHandler?.invoke(email, password) ?: loginResult
     }
 
     override suspend fun register(username: String, email: String, password: String): Result<User> {
