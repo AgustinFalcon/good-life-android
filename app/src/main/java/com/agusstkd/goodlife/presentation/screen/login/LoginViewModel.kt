@@ -118,12 +118,12 @@ class LoginViewModel(
 
     private fun updateEmail(value: String) {
         val current = _uiState.value as? LoginUiState.Content ?: return
-        _uiState.value = current.copy(email = value, isEmailError = false)
+        _uiState.value = current.copy(email = value, isEmailError = false, errorMessage = null)
     }
 
     private fun updatePassword(value: String) {
         val current = _uiState.value as? LoginUiState.Content ?: return
-        _uiState.value = current.copy(password = value, isPasswordError = false)
+        _uiState.value = current.copy(password = value, isPasswordError = false, errorMessage = null)
     }
 
     private fun toggleRememberUser() {
@@ -167,8 +167,9 @@ class LoginViewModel(
                 is LoginResult.Error -> {
                     _uiState.value = current.copy(
                         isLoading = false,
-                        isEmailError = true,
-                        isPasswordError = true
+                        isEmailError = false,
+                        isPasswordError = false,
+                        errorMessage = result.message
                     )
                 }
             }
@@ -195,8 +196,9 @@ class LoginViewModel(
                 is LoginResult.Error -> {
                     _uiState.value = current.copy(
                         isLoading = false,
-                        isEmailError = true,
-                        isPasswordError = true
+                        isEmailError = false,
+                        isPasswordError = false,
+                        errorMessage = result.message
                     )
                 }
             }
