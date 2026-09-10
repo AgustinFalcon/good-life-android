@@ -15,6 +15,7 @@ import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealPlanUiMode
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiState
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.toUiModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -67,6 +68,7 @@ class MealsTabViewModel(
     val accessibilityTexts: AccessibilityTexts get() = language.accessibilityTexts
 
     private var currentDate: LocalDate = dateProvider.today()
+    private var loadJob: Job? = null
 
     private val _uiState = MutableStateFlow<MealsUiState>(MealsUiState.Loading)
     val uiState: StateFlow<MealsUiState> = _uiState
@@ -93,16 +95,22 @@ class MealsTabViewModel(
      * Muestra [MealsUiState.Loading] mientras se hace la request.
      */
     private fun loadMealPlans() {
-        viewModelScope.launch {
+        val requestedDate = currentDate
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             _uiState.value = MealsUiState.Loading
 
-            when (val result = getMealPlansUseCase(currentDate)) {
-                is GetMealPlansResult.Success -> _uiState.value = buildSuccessState(result.plans)
-                is GetMealPlansResult.NotFound -> _uiState.value = MealsUiState.Empty
-                is GetMealPlansResult.ServerError -> _uiState.value =
-                    MealsUiState.Error(result.message)
-                is GetMealPlansResult.NetworkError -> _uiState.value =
-                    MealsUiState.Error(language.errorTexts.connectionError)
+            when (val result = getMealPlansUseCase(requestedDate)) {
+                is GetMealPlansResult.Success -> if (requestedDate == currentDate) {
+                    _uiState.value = buildSuccessState(result.plans, requestedDate)
+                }
+                is GetMealPlansResult.NotFound -> if (requestedDate == currentDate) _uiState.value = MealsUiState.Empty
+                is GetMealPlansResult.ServerError -> if (requestedDate == currentDate) {
+                    _uiState.value = MealsUiState.Error(result.message)
+                }
+                is GetMealPlansResult.NetworkError -> if (requestedDate == currentDate) {
+                    _uiState.value = MealsUiState.Error(language.errorTexts.connectionError)
+                }
             }
         }
     }
@@ -130,14 +138,14 @@ class MealsTabViewModel(
      *
      * Mapea lista de [DailyMealPlanSummary] (Domain) → [MealsUiState.Success] (UI).
      */
-    private fun buildSuccessState(plans: List<DailyMealPlanSummary>): MealsUiState.Success {
+    private fun buildSuccessState(plans: List<DailyMealPlanSummary>, date: LocalDate): MealsUiState.Success {
         val uiModels = plans.map { it.toUiModel(resolveMealTypeLabel(it.mealType)) }
         return MealsUiState.Success(
-            date = currentDate,
-            dayNumber = currentDate.day,
-            headerText = formatHeaderText(currentDate),
-            monthYear = formatMonthYear(currentDate),
-            showFullDate = !isRelativeDate(currentDate),
+            date = date,
+            dayNumber = date.day,
+            headerText = formatHeaderText(date),
+            monthYear = formatMonthYear(date),
+            showFullDate = !isRelativeDate(date),
             mealPlans = uiModels,
             totalCalories = plans.sumOf { it.totalCalories },
             totalProtein = plans.sumOf { it.totalProtein },

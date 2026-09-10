@@ -18,6 +18,7 @@ import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.toUiModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -75,6 +76,7 @@ class DailyTabViewModel(
     val accessibilityTexts: AccessibilityTexts get() = language.accessibilityTexts
 
     private var currentDate: LocalDate = dateProvider.today()
+    private var loadJob: Job? = null
 
     private val _uiState = MutableStateFlow<DailyUiState>(DailyUiState.Loading)
     val uiState: StateFlow<DailyUiState> = _uiState
@@ -109,16 +111,19 @@ class DailyTabViewModel(
      * Muestra [DailyUiState.Loading] (skeleton) mientras se hace la request.
      */
     private fun loadItems() {
-        viewModelScope.launch {
+        val requestedDate = currentDate
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             _uiState.value = DailyUiState.Loading
 
-            when (val result = getDailyItemsUseCase(currentDate)) {
-                is GetDailyItemsResult.Success -> _uiState.value =
-                    buildSuccessState(result.dailyLog)
+            when (val result = getDailyItemsUseCase(requestedDate)) {
+                is GetDailyItemsResult.Success -> if (requestedDate == currentDate) {
+                    _uiState.value = buildSuccessState(result.dailyLog, requestedDate)
+                }
 
-                is GetDailyItemsResult.NotFound -> showEmptyState()
-                is GetDailyItemsResult.ServerError -> showServerError(result.message)
-                is GetDailyItemsResult.NetworkError -> showNetworkError()
+                is GetDailyItemsResult.NotFound -> if (requestedDate == currentDate) showEmptyState()
+                is GetDailyItemsResult.ServerError -> if (requestedDate == currentDate) showServerError(result.message)
+                is GetDailyItemsResult.NetworkError -> if (requestedDate == currentDate) showNetworkError()
             }
         }
     }
@@ -133,6 +138,7 @@ class DailyTabViewModel(
      * @param newStatus Nuevo status (COMPLETED, SKIPPED, PENDING)
      */
     private fun updateItemStatus(itemId: Long, newStatus: DailyItemStatus) {
+        val requestedDate = currentDate
         viewModelScope.launch {
             val currentState = _uiState.value
             if (currentState is DailyUiState.Success) {
@@ -140,12 +146,13 @@ class DailyTabViewModel(
             }
 
             when (val result = updateItemStatusUseCase(itemId, newStatus)) {
-                is UpdateItemStatusResult.Success -> _uiState.value =
-                    buildSuccessState(result.dailyLog)
+                is UpdateItemStatusResult.Success -> if (requestedDate == currentDate) {
+                    _uiState.value = buildSuccessState(result.dailyLog, requestedDate)
+                }
 
-                is UpdateItemStatusResult.NotFound -> loadItems()
-                is UpdateItemStatusResult.ServerError -> showServerError(result.message)
-                is UpdateItemStatusResult.NetworkError -> showNetworkError()
+                is UpdateItemStatusResult.NotFound -> if (requestedDate == currentDate) loadItems()
+                is UpdateItemStatusResult.ServerError -> if (requestedDate == currentDate) showServerError(result.message)
+                is UpdateItemStatusResult.NetworkError -> if (requestedDate == currentDate) showNetworkError()
             }
         }
     }
@@ -172,15 +179,15 @@ class DailyTabViewModel(
      * @param dailyLog Domain Model del daily log
      * @return [DailyUiState.Success] con datos listos para renderizar
      */
-    private fun buildSuccessState(dailyLog: DailyLog): DailyUiState.Success {
+    private fun buildSuccessState(dailyLog: DailyLog, date: LocalDate): DailyUiState.Success {
         val nextUpId: Long? =
             dailyLog.items.firstOrNull { it.status == DailyItemStatus.PENDING }?.id
         return DailyUiState.Success(
-            date = currentDate,
-            dayNumber = currentDate.day,
-            headerText = formatHeaderText(currentDate),
-            monthYear = formatMonthYear(currentDate),
-            showFullDate = !isRelativeDate(currentDate),
+            date = date,
+            dayNumber = date.day,
+            headerText = formatHeaderText(date),
+            monthYear = formatMonthYear(date),
+            showFullDate = !isRelativeDate(date),
             completionRate = dailyLog.completionRate,
             items = dailyLog.items.map { domainItem ->
                 domainItem.toUiModel(
