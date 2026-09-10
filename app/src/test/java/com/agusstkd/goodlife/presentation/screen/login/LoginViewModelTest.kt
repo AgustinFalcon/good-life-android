@@ -118,7 +118,20 @@ class LoginViewModelTest {
         assertEquals("usuario-nuevo", state.email)
         assertEquals("password-nuevo", state.password)
         assertFalse(state.isLoading)
-        assertEquals(null, state.errorMessage)
+        assertEquals(Spanish.errorTexts.loginError, state.errorMessage)
+    }
+
+    @Test fun `biometric remote login error shows a general message`() = runTest(dispatcher) {
+        storage.saveCredentials("bio@test.com", "secret")
+        storage.setBiometricEnabled(true)
+        repo.loginResult = Result.Error(Exception("internal backend detail"))
+        val vm = vm(); backgroundScope.launch { vm.uiState.collect {} }; advanceUntilIdle()
+        vm.onAction(LoginUiAction.OnBiometricAuthenticate(Any()))
+        advanceUntilIdle()
+
+        val state = vm.uiState.value as LoginUiState.Content
+        assertFalse(state.isLoading)
+        assertEquals(Spanish.errorTexts.loginError, state.errorMessage)
     }
 
     @Test fun `successful login navigates to main and saves credentials when biometric enabled`() = runTest(dispatcher) {
