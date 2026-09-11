@@ -23,3 +23,11 @@ No se presupone SDK de analytics o crash reporting. Durante readiness, los resul
 ## Validación
 
 La PR de implementación futura debe probar el build release en un entorno autorizado, adjuntar sólo metadatos redacted y comprobar instalabilidad/arranque antes de distribuir. La documentación se actualiza con resultado, riesgos residuales y rollback real utilizado si aplica.
+
+## Addendum aprobado — candidato exacto y gates
+
+La entrega interna exige dos evidencias distintas: R-01 debug como precondición y un smoke UI-only redacted ejecutado sobre el **artefacto release firmado exacto** antes de distribuir. El registro externo autorizado es la fuente de verdad para commit, versión, hash, estado de firma, distribución, resultado del smoke y último candidato conocido bueno. Un `BLOCKED` o `FAIL` detiene distribución.
+
+El candidato ejecuta `lintRelease` (o la tarea release equivalente validada) y build release desde el mismo SHA antes de firma/distribución; `lintDebug` sólo cubre deuda de PR. El registro conserva tarea, SHA y resultado redacted.
+
+Rollback registra compatibilidad requerida. Tras retirar/reactivar, el operador verifica estado del canal y arranque/login redacted del candidato restaurado; si resulta incompatible, queda `blocked incompatible` y se escala, no se declara rollback exitoso.
