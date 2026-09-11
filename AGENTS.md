@@ -2,7 +2,7 @@
 
 Aplicación Android Kotlin/Jetpack Compose, módulo único `:app`. Cliente móvil de GoodLife con Clean Architecture/MVVM, Room, Retrofit, Koin y navegación type-safe.
 
-Leer primero `../../sdd/PROJECT.md` y `../../sdd/PATTERNS.md`; contrastar con `README.md`, `app/build.gradle.kts`, `app/src/main/java/com/agusstkd/goodlife`, `docs`. Cada hecho debe rastrearse a una ruta.
+Leer primero `sdd/PROJECT.md` y `sdd/PATTERNS.md`; contrastar con `README.md`, `app/build.gradle.kts`, `app/src/main/java/com/agusstkd/goodlife`, `docs`. El SDD Desktop externo es histórico y no sustituye evidencia versionada. Cada hecho debe rastrearse a una ruta.
 
 Actualizar `docs/agent/` en el mismo PR cuando cambien arquitectura, contratos, runbook o traps.
 

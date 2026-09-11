@@ -17,7 +17,7 @@ Aplicación Android para gestión de bienestar personal: tareas diarias, hábito
 - ✅ **Create Meal Plan** (SPEC-012) — wizard 3 pasos, ingredientes, macros, scheduling
 - ✅ **UI optimizada** con `@Stable` states, `ImmutableList`, `@Immutable`
 - ✅ **Arquitectura KMP-Ready** (domain layer en Kotlin puro)
-- ✅ **163 tests unitarios** y gate JaCoCo de lógica aprobado (80,07% líneas)
+- ✅ **164 tests unitarios** y gate JaCoCo de lógica aprobado (80,38% líneas)
 - ✅ **Auto-login / chequeo de sesión** con token cifrado
 - 🚧 **Detalles y acciones de tabs**: ver [readiness de reingreso](docs/REVIVAL-READINESS-2026-09.md)
 
@@ -182,7 +182,7 @@ Seguimos [Conventional Commits](https://www.conventionalcommits.org/):
 - [x] Create Habit
 - [x] Create Routine (SPEC-011)
 - [x] Create Meal Plan (SPEC-012)
-- [x] 163 tests unitarios + gate JaCoCo de líneas >=80%
+- [x] 164 tests unitarios + gate JaCoCo de líneas >=80%
 - [x] Auto-login con token guardado
 - [x] Tabs Workouts, Meals y Settings con Owner/Screen/ViewModel
 - [ ] Navegación y detalles reales para Daily, Workout y Meal (hoy hay placeholders)
