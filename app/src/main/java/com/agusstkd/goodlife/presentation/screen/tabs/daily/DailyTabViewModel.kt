@@ -18,7 +18,6 @@ import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.toUiModel
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -78,7 +77,7 @@ class DailyTabViewModel(
     val accessibilityTexts: AccessibilityTexts get() = language.accessibilityTexts
 
     private var currentDate: LocalDate = dateProvider.today()
-    private var loadJob: Job? = null
+    private var latestLoadRequestId: Long = 0L
     private val statusUpdateMutex = Mutex()
 
     private val _uiState = MutableStateFlow<DailyUiState>(DailyUiState.Loading)
@@ -115,20 +114,27 @@ class DailyTabViewModel(
      */
     private fun loadItems() {
         val requestedDate = currentDate
-        loadJob?.cancel()
-        loadJob = viewModelScope.launch {
-            _uiState.value = DailyUiState.Loading
+        val requestId = ++latestLoadRequestId
+        viewModelScope.launch {
+            statusUpdateMutex.withLock {
+                if (!isCurrentLoadRequest(requestId, requestedDate)) return@withLock
+                _uiState.value = DailyUiState.Loading
 
-            when (val result = getDailyItemsUseCase(requestedDate)) {
-                is GetDailyItemsResult.Success -> if (requestedDate == currentDate) {
-                    _uiState.value = buildSuccessState(result.dailyLog, requestedDate)
+                val result = getDailyItemsUseCase(requestedDate)
+                if (!isCurrentLoadRequest(requestId, requestedDate)) return@withLock
+
+                when (result) {
+                    is GetDailyItemsResult.Success -> _uiState.value = buildSuccessState(result.dailyLog, requestedDate)
+                    is GetDailyItemsResult.NotFound -> showEmptyState()
+                    is GetDailyItemsResult.ServerError -> showServerError(result.message)
+                    is GetDailyItemsResult.NetworkError -> showNetworkError()
                 }
-
-                is GetDailyItemsResult.NotFound -> if (requestedDate == currentDate) showEmptyState()
-                is GetDailyItemsResult.ServerError -> if (requestedDate == currentDate) showServerError(result.message)
-                is GetDailyItemsResult.NetworkError -> if (requestedDate == currentDate) showNetworkError()
             }
         }
+    }
+
+    private fun isCurrentLoadRequest(requestId: Long, requestedDate: LocalDate): Boolean {
+        return requestId == latestLoadRequestId && requestedDate == currentDate
     }
 
     /**
