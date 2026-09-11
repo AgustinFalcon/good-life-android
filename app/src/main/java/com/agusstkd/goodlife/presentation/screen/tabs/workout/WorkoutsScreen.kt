@@ -17,6 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.agusstkd.goodlife.core.datetime.language.Spanish
+import com.agusstkd.goodlife.core.datetime.language.WorkoutTexts
+import com.agusstkd.goodlife.core.extensions.formatArgs
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutUiModel
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiState
@@ -36,6 +39,7 @@ import com.agusstkd.goodlife.presentation.theme.WorkoutsTabAccent
 @Composable
 fun WorkoutsScreen(
     uiState: WorkoutsUiState.Success,
+    texts: WorkoutTexts,
     onAction: (WorkoutsUiAction) -> Unit
 ) {
     LazyColumn(
@@ -52,6 +56,7 @@ fun WorkoutsScreen(
         ) { workout ->
             WorkoutCard(
                 workout = workout,
+                texts = texts,
                 onClick = { onAction(WorkoutsUiAction.OnWorkoutClick(workout.id)) },
                 modifier = Modifier.padding(horizontal = 12.dp)
             )
@@ -60,7 +65,7 @@ fun WorkoutsScreen(
         if (uiState.workouts.isEmpty()) {
             item {
                 Text(
-                    text = "Sin workouts en esta rutina",
+                    text = texts.emptyWorkouts,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(16.dp)
@@ -134,6 +139,7 @@ private fun ActiveRoutineCard(
 @Composable
 private fun WorkoutCard(
     workout: WorkoutUiModel,
+    texts: WorkoutTexts,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -160,7 +166,7 @@ private fun WorkoutCard(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "${workout.exerciseCount} ejercicios • ${workout.totalSets} series",
+                    text = texts.workoutSummaryFormat.formatArgs(workout.exerciseCount, workout.totalSets),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -168,7 +174,7 @@ private fun WorkoutCard(
 
             workout.dayOfWeek?.let { day ->
                 Text(
-                    text = "Día $day",
+                    text = texts.dayFormat.formatArgs(day),
                     style = MaterialTheme.typography.labelSmall,
                     color = WorkoutsTabAccent,
                     fontWeight = FontWeight.Bold
@@ -187,6 +193,7 @@ private fun WorkoutCard(
 private fun WorkoutsScreenPreview() {
     GoodLifeTheme {
         WorkoutsScreen(
+            texts = Spanish.workoutTexts,
             uiState = WorkoutsUiState.Success(
                 routineName = "Rutina Fuerza 4x",
                 routineDescription = "Programa de fuerza para ganar masa muscular",
@@ -227,6 +234,7 @@ private fun WorkoutsScreenPreview() {
 private fun WorkoutsScreenEmptyPreview() {
     GoodLifeTheme {
         WorkoutsScreen(
+            texts = Spanish.workoutTexts,
             uiState = WorkoutsUiState.Success(
                 routineName = "Mi primera rutina",
                 routineDescription = null,

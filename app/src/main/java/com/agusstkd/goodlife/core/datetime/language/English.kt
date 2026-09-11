@@ -320,6 +320,25 @@ data object English : AppLanguage {
         loadingTitle = "Saving routine...",
     )
 
+    override val workoutTexts = WorkoutTexts(
+        noRoutineTitle = "No active routine",
+        noRoutineDescription = "Create your first training routine to start tracking workouts.",
+        createRoutine = "Create routine",
+        retry = "Retry",
+        emptyWorkouts = "No workouts in this routine",
+        workoutSummaryFormat = "{0} exercises · {1} sets",
+        dayFormat = "Day {0}",
+        loading = "Loading workout...",
+        back = "Back",
+        exercisesTitle = "Exercises",
+        noExercises = "This workout has no configured exercises.",
+        notesLabel = "Notes",
+        noSets = "No configured sets.",
+        setFormat = "Set {0}",
+        repsFormat = "{0} reps",
+        repsAndWeightFormat = "{0} reps · {1} kg",
+        workoutNotFound = "We could not find this workout in your active routine.",
+    )
     override val mealTypeTexts = MealTypeTexts(
         breakfast = "Breakfast",
         lunch = "Lunch",

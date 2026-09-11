@@ -36,6 +36,10 @@ network success -> cache; offline read -> Room
 
 Koin modules registran APIs, datasources, repositories, use cases y ViewModels. Solo ScreenOwner obtiene ViewModel.
 
+## Workout detail
+
+`TabRoute.WorkoutDetail` carries only `workoutId`. Its Owner resolves the current active routine through the existing use case, so it has no duplicate API contract, repository mutation or deep-link dependency. The ViewModel exposes loading, content, missing and error states; composables remain pure.
+
 ## SDD ownership
 
 `sdd/PROJECT.md` y `sdd/wip/20260911-goodlife-android-revival/` son el contrato de recovery Android versionado. Repo-minology feature 008 conserva la intención de producto transversal; el SDD externo del Desktop es solo insumo histórico.

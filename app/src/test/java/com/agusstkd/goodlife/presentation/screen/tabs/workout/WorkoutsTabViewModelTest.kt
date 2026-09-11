@@ -16,6 +16,7 @@ import com.agusstkd.goodlife.fake.FakeNavigationController
 import com.agusstkd.goodlife.fake.FakeRoutineRepository
 import com.agusstkd.goodlife.presentation.navigation.core.NavigationAction
 import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
+import com.agusstkd.goodlife.presentation.navigation.route.TabRoute
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiState
 import kotlinx.coroutines.Dispatchers
@@ -72,6 +73,15 @@ class WorkoutsTabViewModelTest {
         assertTrue(vm.uiState.value is WorkoutsUiState.Error)
     }
 
+    @Test fun `workout click navigates to the typed workout detail route`() = runTest(dispatcher) {
+        val navigation = FakeNavigationController()
+        vm(navigation).onAction(WorkoutsUiAction.OnWorkoutClick(42L))
+
+        assertEquals(
+            TabRoute.WorkoutDetail(42L),
+            (navigation.navigatedActions.single() as NavigationAction.NavigateTo<*>).route,
+        )
+    }
     @Test fun `create routine action navigates to the app creation route`() = runTest(dispatcher) {
         val navigation = FakeNavigationController()
         val vm = vm(navigation)

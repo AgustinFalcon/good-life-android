@@ -319,6 +319,25 @@ data object Portuguese : AppLanguage {
         loadingTitle = "Salvando rotina...",
     )
 
+    override val workoutTexts = WorkoutTexts(
+        noRoutineTitle = "Sem rotina ativa",
+        noRoutineDescription = "Crie sua primeira rotina de treino para começar a registrar treinos.",
+        createRoutine = "Criar rotina",
+        retry = "Tentar novamente",
+        emptyWorkouts = "Sem treinos nesta rotina",
+        workoutSummaryFormat = "{0} exercícios · {1} séries",
+        dayFormat = "Dia {0}",
+        loading = "Carregando treino...",
+        back = "Voltar",
+        exercisesTitle = "Exercícios",
+        noExercises = "Este treino não tem exercícios configurados.",
+        notesLabel = "Notas",
+        noSets = "Sem séries configuradas.",
+        setFormat = "Série {0}",
+        repsFormat = "{0} reps",
+        repsAndWeightFormat = "{0} reps · {1} kg",
+        workoutNotFound = "Não encontramos este treino na sua rotina ativa.",
+    )
     override val mealTypeTexts = MealTypeTexts(
         breakfast = "Café da manhã",
         lunch = "Almoço",
