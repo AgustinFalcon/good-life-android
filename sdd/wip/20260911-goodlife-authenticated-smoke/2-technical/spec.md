@@ -24,3 +24,11 @@ Previa: gates locales del repositorio y verificación de que el emulador/disposi
 ## Riesgos
 
 Un dispositivo en una red aislada puede impedir la ejecución sin indicar un defecto Android. La cobertura unitaria no sustituye este smoke. El smoke tampoco valida firma de release, distribución o rollback de una APK interna; esos temas pertenecen a R-05.
+
+## Addendum aprobado — resultado, refresh y evidencia
+
+Este addendum tiene precedencia para la ejecución. Cada paso obligatorio declara `PASS`, `BLOCKED` o `FAIL`. El smoke sólo es `PASS` si todos los pasos obligatorios pasan; `BLOCKED` deja el smoke incompleto y no satisface un gate de release; `FAIL` identifica un defecto observado. Un refresh sin mecanismo seguro/determinista es `BLOCKED`, no éxito implícito.
+
+La observación de refresh es sólo por UI: (a) éxito = la misma sesión continúa y la lectura se renderiza; (b) expiración terminal = Login visible por el flujo de sesión existente; (c) mecanismo ausente = `BLOCKED`. Un simple error de lectura no prueba expiración terminal. Si se necesita esa cobertura determinista, se abre una feature Auth separada; no se inspeccionan headers, tokens ni storage.
+
+Antes de reintentar una mutación se relee el item mediante UI. Si no se puede restaurar su categoría original, se detiene el run, se registra `cleanup required` sin identificadores y el owner de datos de prueba lo resuelve antes de repetir. Logout se prueba al reiniciar: flujo no autenticado visible y sin contenido Daily autenticado renderizado; no se hacen probes directos de API.
