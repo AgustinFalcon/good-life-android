@@ -36,5 +36,5 @@ Release tiene minify deshabilitado y versionCode 1/versionName 1.0; no hay firma
 - Contratos y persistencia afectados tienen pruebas.
 - No se agregan secretos/artefactos locales.
 - Cobertura Android tiene gate JaCoCo sobre logica elegible: core/domain/data logic, navigation core y ViewModels. Excluye Compose UI, theme, DTO/request/response, Room entities/DAO/database, DI, Activity/App, modelos UI y adaptadores no ejecutables en JVM documentados en Gradle. Objetivo configurado: linea >= 80%. Estado verificado el 2026-09-10: 172 tests unitarios, 0 fallos/errores/omitidos y cobertura de líneas 82,83% (1.544/1.864); gate aprobado con `.\\gradlew.bat :app:logicDebugUnitTestCoverageVerification`.
-- Docs/agent y SDD versionado quedan alineados.
+- Docs/agent quedan alineados; la migración del SDD canónico se rastrea en #9.
 
