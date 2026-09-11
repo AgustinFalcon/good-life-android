@@ -23,7 +23,7 @@ Abrir en Android Studio o instalar `app/build/outputs/apk/debug`; requiere JDK c
 
 ## CI / release
 
-`.github/workflows/android-ci.yml` ejecuta `./gradlew :app:logicDebugUnitTestCoverageVerification` en push y PR contra `master`. Instrumented tests requieren emulator/device y no forman parte del gate CI actual.
+`.github/workflows/android-ci.yml` ejecuta `./gradlew :app:logicDebugUnitTestCoverageVerification` en push y PR contra `master`; sus Actions oficiales se fijan por SHA inmutable y se actualizan por PR cuando el proveedor las depreca. Instrumented tests requieren emulator/device y no forman parte del gate CI actual.
 
 Release tiene minify deshabilitado y versionCode 1/versionName 1.0; no hay firma/pipeline documentado.
 
