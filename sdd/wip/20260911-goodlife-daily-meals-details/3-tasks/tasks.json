@@ -2,10 +2,10 @@
   "feature": "goodlife-daily-meals-details",
   "status": "spec_review",
   "tasks": [
-    {"id":"DMD-01","title":"Renombrar rutas y emitir ID + dateIso desde tabs","acceptance":"No queda ruta o extensión con semántica taskId/mealId incorrecta; se prueba fecha histórica.","status":"todo"},
-    {"id":"DMD-02","title":"Agregar textos localizados y migrar copy Meals tocado","acceptance":"ES/EN/PT cubren detalles y los textos de Meals modificados no quedan hardcodeados.","status":"todo"},
+    {"id":"DMD-01","title":"Renombrar rutas y emitir efecto local ID + dateIso desde tabs","acceptance":"No queda ruta o extensión con semántica taskId/mealId incorrecta; el controlador global no recibe TabRoute detail y se prueba fecha histórica.","status":"todo"},
+    {"id":"DMD-02","title":"Agregar contrato localizado y migrar copy Meals tocado","acceptance":"ES/EN/PT cubren detalle, tipo/estado Daily, errores y acciones; los textos de Meals modificados no quedan hardcodeados.","status":"todo"},
     {"id":"DMD-03","title":"Implementar Daily item detail read-only","acceptance":"Carga la fecha de ruta, selecciona DailyItem.id y cubre estados observables.","status":"todo"},
     {"id":"DMD-04","title":"Implementar Meal Plan detail read-only","acceptance":"Carga la fecha de ruta, selecciona DailyMealPlanSummary.id y no promete datos fuera del resumen.","status":"todo"},
-    {"id":"DMD-05","title":"Validar navegación, estados, frescura y gates","acceptance":"Pruebas y gate Android pasan; no hay respuesta obsoleta ni copy remoto expuesto.","status":"todo"}
+    {"id":"DMD-05","title":"Validar navegación local, estados, frescura y gates","acceptance":"Pruebas del grafo interno, ID/fecha inválidos, sesión separada y gate Android pasan; no hay respuesta obsoleta ni copy remoto expuesto.","status":"todo"}
   ]
 }

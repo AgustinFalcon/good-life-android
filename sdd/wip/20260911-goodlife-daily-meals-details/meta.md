@@ -20,5 +20,5 @@ La decisión propuesta evita inferir endpoints, datos de recetas, credenciales, 
 ## Relación
 
 - Extiende R-04 del revival Android.
-- Depende conceptualmente de las rutas y reglas SDD de los PR abiertos #11 y #14, pero no modifica su implementación.
+- Depende de las rutas y reglas SDD de #11 y #14. La implementación sólo comienza cuando ambas se hayan fusionado o esta rama se haya rebasado sobre su `master` fusionado; después se reejecutan gates y pruebas de navegación.
 - No depende de enlaces públicos ni deep links.

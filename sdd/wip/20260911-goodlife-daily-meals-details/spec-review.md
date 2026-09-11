@@ -130,3 +130,9 @@ The feature has all minimum SDD artifacts, a bounded client-only scope, clear do
 
 - Residual risk: master has changed independently only after the documented baseline; implementation must re-check it after stacked PRs land.
 - Next action: approve, reject or modify P-01 through P-06. No implementation begins from this report alone.
+
+## Addendum — decisiones aprobadas
+
+El usuario aprobó aplicar las propuestas P-01…P-06. P-01 se reemplaza por evidencia posterior de revisión adversarial: `ComposeNavigationController` gobierna el grafo raíz y no puede resolver `TabRoute.*Detail`, que existe dentro del `TabNavGraph` interno. Por lo tanto, la corrección aprobada es un efecto tipado del ViewModel hacia un callback local del Owner, con navegación y back en el `NavHostController` del tab.
+
+Se aplicaron al contrato los seis cambios: límite de navegación local, validación de ID/fecha, contrato completo de idioma, sesión separada de `NotFound`, fallback seguro de imagen y checkpoint de rebase/gates para #11/#14. La decisión se mantiene en **REVISAR** hasta implementar/corregir el patrón de Workout y ejecutar una nueva revisión independiente.

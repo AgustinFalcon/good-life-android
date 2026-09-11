@@ -43,6 +43,8 @@ El botón volver regresa al tab de origen. Reintentar vuelve a usar exactamente 
 - Daily selecciona por `DailyItem.id`; Meals por `DailyMealPlanSummary.id`.
 - Los nombres de ruta y parámetros reflejan esas identidades; no quedan `taskId` ni `mealId` engañosos.
 - La app puede recrear los detalles desde la ruta sin depender de un objeto pasado entre composables.
+- Un ID menor o igual que cero, o una fecha que no cumpla exactamente `YYYY-MM-DD`, produce un error localizado sin consulta de repositorio.
+- Ningún `TabRoute.*Detail` se envía al controlador global de rutas de aplicación; el detalle se abre y vuelve dentro del stack del tab de origen.
 - Todo copy nuevo y el copy de Meals tocado por esta vertical usa `AppLanguage` en español, inglés y portugués.
 - No se muestra texto crudo del backend en estados de error nuevos o corregidos.
 - La cobertura incluye navegación, fecha de origen, content, not-found, error, ruta inválida y reintento sin respuesta obsoleta.
