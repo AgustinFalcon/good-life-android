@@ -17,6 +17,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.agusstkd.goodlife.core.datetime.language.WorkoutTexts
+import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsNavigationEffect
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiState
 import com.agusstkd.goodlife.presentation.theme.WorkoutsTabAccent
@@ -42,9 +44,19 @@ import org.koin.androidx.compose.koinViewModel
  */
 @Composable
 fun WorkoutsScreenOwner(
+    onNavigateToWorkoutDetail: (Long) -> Unit,
     viewModel: WorkoutsTabViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel, onNavigateToWorkoutDetail) {
+        viewModel.navigationEffects.collect { effect ->
+            when (effect) {
+                is WorkoutsNavigationEffect.NavigateToWorkoutDetail ->
+                    onNavigateToWorkoutDetail(effect.workoutId)
+            }
+        }
+    }
 
     LifecycleResumeEffect(Unit) {
         viewModel.refresh()

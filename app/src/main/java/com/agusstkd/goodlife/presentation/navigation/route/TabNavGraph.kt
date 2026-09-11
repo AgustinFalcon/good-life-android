@@ -44,7 +44,11 @@ fun NavGraphBuilder.addTabNavGraph(navController: NavHostController) {
     // ═══════════════════════════════════════════════════════════════════
     navigation<TabGraphRoute.WorkoutsGraph>(startDestination = TabRoute.Workouts) {
         composable<TabRoute.Workouts> {
-            WorkoutsScreenOwner()
+            WorkoutsScreenOwner(
+                onNavigateToWorkoutDetail = { workoutId ->
+                    navController.navigate(TabRoute.WorkoutDetail(workoutId))
+                },
+            )
         }
         composable<TabRoute.WorkoutDetail> { backStackEntry ->
             val route = backStackEntry.toRoute<TabRoute.WorkoutDetail>()

@@ -10,14 +10,16 @@ import com.agusstkd.goodlife.domain.usecase.routine.GetActiveRoutineUseCase
 import com.agusstkd.goodlife.domain.usecase.routine.result.GetActiveRoutineResult
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
 import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
-import com.agusstkd.goodlife.presentation.navigation.route.navigateToWorkoutDetail
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutUiModel
+import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsNavigationEffect
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiState
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -60,6 +62,9 @@ class WorkoutsTabViewModel(
         .stateIn(viewModelScope, SharingStarted.Lazily, WorkoutsUiState.Loading)
 
     val workoutTexts get() = language.workoutTexts
+
+    private val navigationEffectsChannel = Channel<WorkoutsNavigationEffect>(Channel.BUFFERED)
+    val navigationEffects = navigationEffectsChannel.receiveAsFlow()
 
     fun refresh() {
         loadData()
@@ -148,6 +153,6 @@ class WorkoutsTabViewModel(
     }
 
     private fun navigateToWorkoutDetail(workoutId: Long) {
-        navigationController.navigateToWorkoutDetail(workoutId)
+        navigationEffectsChannel.trySend(WorkoutsNavigationEffect.NavigateToWorkoutDetail(workoutId))
     }
 }

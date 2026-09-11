@@ -16,14 +16,17 @@ import com.agusstkd.goodlife.fake.FakeNavigationController
 import com.agusstkd.goodlife.fake.FakeRoutineRepository
 import com.agusstkd.goodlife.presentation.navigation.core.NavigationAction
 import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
-import com.agusstkd.goodlife.presentation.navigation.route.TabRoute
+import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsNavigationEffect
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -73,14 +76,16 @@ class WorkoutsTabViewModelTest {
         assertTrue(vm.uiState.value is WorkoutsUiState.Error)
     }
 
-    @Test fun `workout click navigates to the typed workout detail route`() = runTest(dispatcher) {
+    @Test fun `workout click emits a tab-local typed detail effect`() = runTest(dispatcher) {
         val navigation = FakeNavigationController()
-        vm(navigation).onAction(WorkoutsUiAction.OnWorkoutClick(42L))
+        val viewModel = vm(navigation)
+        val effect = async { viewModel.navigationEffects.first() }
+        runCurrent()
 
-        assertEquals(
-            TabRoute.WorkoutDetail(42L),
-            (navigation.navigatedActions.single() as NavigationAction.NavigateTo<*>).route,
-        )
+        viewModel.onAction(WorkoutsUiAction.OnWorkoutClick(42L))
+
+        assertEquals(WorkoutsNavigationEffect.NavigateToWorkoutDetail(42L), effect.await())
+        assertTrue(navigation.navigatedActions.isEmpty())
     }
     @Test fun `create routine action navigates to the app creation route`() = runTest(dispatcher) {
         val navigation = FakeNavigationController()

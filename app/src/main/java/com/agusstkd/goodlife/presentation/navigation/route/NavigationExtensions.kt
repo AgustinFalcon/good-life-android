@@ -113,15 +113,6 @@ fun ComposeNavigationController.navigateToDaily() {
 
 
 /**
- * Navega al detalle de un workout.
- *
- * @param workoutId Identificador del workout.
- */
-fun ComposeNavigationController.navigateToWorkoutDetail(workoutId: Long) {
-    navigateTo(TabRoute.WorkoutDetail(workoutId = workoutId))
-}
-
-/**
  * Navega al detalle de una tarea.
  *
  * @param taskId Identificador de la tarea.
