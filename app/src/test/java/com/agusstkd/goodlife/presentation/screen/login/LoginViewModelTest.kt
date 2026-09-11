@@ -118,7 +118,45 @@ class LoginViewModelTest {
         assertEquals("usuario-nuevo", state.email)
         assertEquals("password-nuevo", state.password)
         assertFalse(state.isLoading)
-        assertEquals(Spanish.errorTexts.loginError, state.errorMessage)
+        assertEquals(null, state.errorMessage)
+    }
+
+    @Test fun `manual login is not duplicated by biometric credentials`() = runTest(dispatcher) {
+        val delayedResult = CompletableDeferred<Result<User>>()
+        storage.saveCredentials("bio@test.com", "secret")
+        storage.setBiometricEnabled(true)
+        repo.loginHandler = { _, _ -> delayedResult.await() }
+        val vm = vm(); backgroundScope.launch { vm.uiState.collect {} }; advanceUntilIdle()
+        vm.onAction(LoginUiAction.OnEmailChange("manual@test.com"))
+        vm.onAction(LoginUiAction.OnPasswordChange("password"))
+
+        vm.onAction(LoginUiAction.OnLoginClick)
+        runCurrent()
+        vm.onAction(LoginUiAction.OnBiometricAuthenticate(Any()))
+        runCurrent()
+
+        assertEquals(1, repo.loginCallCount)
+        delayedResult.complete(repo.loginResult)
+        advanceUntilIdle()
+    }
+
+    @Test fun `biometric login is not duplicated by manual credentials`() = runTest(dispatcher) {
+        val delayedResult = CompletableDeferred<Result<User>>()
+        storage.saveCredentials("bio@test.com", "secret")
+        storage.setBiometricEnabled(true)
+        repo.loginHandler = { _, _ -> delayedResult.await() }
+        val vm = vm(); backgroundScope.launch { vm.uiState.collect {} }; advanceUntilIdle()
+
+        vm.onAction(LoginUiAction.OnBiometricAuthenticate(Any()))
+        runCurrent()
+        vm.onAction(LoginUiAction.OnEmailChange("manual@test.com"))
+        vm.onAction(LoginUiAction.OnPasswordChange("password"))
+        vm.onAction(LoginUiAction.OnLoginClick)
+        runCurrent()
+
+        assertEquals(1, repo.loginCallCount)
+        delayedResult.complete(repo.loginResult)
+        advanceUntilIdle()
     }
 
     @Test fun `biometric remote login error shows a general message`() = runTest(dispatcher) {

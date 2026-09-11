@@ -17,6 +17,8 @@ import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -81,12 +83,14 @@ class MealsTabViewModelTest {
     @Test fun `late meals response does not replace the selected date`() = runTest(dispatcher) {
         val initialDate = LocalDate(2026, 7, 26)
         val nextDate = LocalDate(2026, 7, 27)
-        val delayedResult = CompletableDeferred<Result<List<DailyMealPlanSummary>>>()
+        var completeInitialRequest: ((Result<List<DailyMealPlanSummary>>) -> Unit)? = null
         val firstRequestStarted = CompletableDeferred<Unit>()
         repository.getHandler = { requestedDate ->
             if (requestedDate == initialDate) {
                 firstRequestStarted.complete(Unit)
-                delayedResult.await()
+                suspendCoroutine<Result<List<DailyMealPlanSummary>>> { continuation ->
+                    completeInitialRequest = { result -> continuation.resume(result) }
+                }
             } else {
                 Result.Success(listOf(plan(2, MealType.LUNCH, 600.0)))
             }
@@ -99,7 +103,7 @@ class MealsTabViewModelTest {
         assertTrue(firstRequestStarted.isCompleted)
         runCurrent()
 
-        delayedResult.complete(Result.Success(listOf(plan(1, MealType.BREAKFAST, 300.0))))
+        completeInitialRequest?.invoke(Result.Success(listOf(plan(1, MealType.BREAKFAST, 300.0))))
         advanceUntilIdle()
 
         val state = vm.uiState.value as MealsUiState.Success

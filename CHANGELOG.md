@@ -16,12 +16,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - La cache Daily se limpia al cerrar sesión, evitando exposición offline entre cuentas del mismo dispositivo.
 - Login conserva usuario y contraseña ante un error remoto y muestra el mensaje general, en lugar de marcar ambos campos como inválidos.
 
-- Daily y Meals descartan respuestas tardías al navegar fechas: cada carga captura su fecha y cancela la carga anterior.
+- Daily y Meals versionan sus cargas; una solicitud obsoleta no inicia lectura y una respuesta antigua no puede publicar estado.
 
-- Login usa un mensaje localizado y seguro ante fallos remotos, conserva las ediciones hechas durante la request y limpia el error al reintentar.
+- Login usa un mensaje localizado y seguro ante fallos remotos, conserva las ediciones hechas durante la request y limpia el error al reintentar. Un único job rechaza intentos manuales y biométricos concurrentes antes del caso de uso.
 - El error remoto de Login se anuncia a lectores de pantalla; las mutaciones Daily tardías ya no reemplazan la última actualización del usuario.
 ### Quality and documentation
-- `:app:testDebugUnitTest`, `:app:logicDebugUnitTestCoverageVerification` y `:app:lintDebug` pasan el 2026-09-10: 170 tests, 0 fallos/errores; cobertura JaCoCo de líneas en lógica elegible 82,58% (1.531/1.854).
+- `:app:testDebugUnitTest`, `:app:logicDebugUnitTestCoverageVerification` y `:app:lintDebug` pasan el 2026-09-10: 172 tests, 0 fallos/errores/omitidos; cobertura JaCoCo de líneas en lógica elegible 82,83% (1.544/1.864).
 - El gate excluye Compose/UI, manifest, Room/DAO, DI y pruebas instrumentadas; no se los declara cubiertos. El smoke en dispositivo contra la API canónica sigue pendiente.
 - Se reconciliaron los documentos de revival y se marcaron los planes históricos como no canónicos.
 

@@ -16,6 +16,8 @@ import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -24,6 +26,8 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.datetime.LocalDate
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -171,7 +175,7 @@ class DailyTabViewModelTest {
     }
 
     @Test
-    fun `late status update does not replace the latest update`() = runTest(testDispatcher) {
+    fun `status updates are serialized and preserve the latest accepted action`() = runTest(testDispatcher) {
         val log = DailyLog(
             id = 1,
             date = fixedDate,
@@ -199,9 +203,11 @@ class DailyTabViewModelTest {
         viewModel.onAction(DailyUiAction.OnItemStatusChange(2, DailyItemStatus.SKIPPED))
         runCurrent()
 
-        secondResult.complete(Result.Success(log.copy(completionRate = 0.8)))
-        advanceUntilIdle()
+        assertEquals(1, repository.updateItemStatusCallCount)
         firstResult.complete(Result.Success(log.copy(completionRate = 0.2)))
+        runCurrent()
+        assertEquals(2, repository.updateItemStatusCallCount)
+        secondResult.complete(Result.Success(log.copy(completionRate = 0.8)))
         advanceUntilIdle()
 
         val state = viewModel.uiState.value as DailyUiState.Success
@@ -211,26 +217,38 @@ class DailyTabViewModelTest {
     @Test
     fun `late daily response does not replace the selected date`() = runTest(testDispatcher) {
         val nextDate = LocalDate(2026, 3, 10)
-        val delayedResult = CompletableDeferred<Result<DailyLog>>()
+        var completeInitialRequest: ((Result<DailyLog>) -> Unit)? = null
+        val initialRequestStarted = CompletableDeferred<Unit>()
         repository.getDailyLogHandler = { requestedDate ->
             if (requestedDate == fixedDate) {
-                delayedResult.await()
+                initialRequestStarted.complete(Unit)
+                suspendCoroutine<Result<DailyLog>> { continuation ->
+                    completeInitialRequest = { result -> continuation.resume(result) }
+                }
             } else {
                 Result.Success(DailyLog(2, nextDate, 1.0, emptyList()))
             }
         }
 
         viewModel = createViewModel()
+        val emittedDates = mutableListOf<LocalDate>()
+        backgroundScope.launch {
+            viewModel.uiState.collect { state ->
+                if (state is DailyUiState.Success) emittedDates += state.date
+            }
+        }
         runCurrent()
+        assertTrue(initialRequestStarted.isCompleted)
         viewModel.onAction(DailyUiAction.OnNextDay)
-        advanceUntilIdle()
+        runCurrent()
 
-        delayedResult.complete(Result.Success(DailyLog(1, fixedDate, 0.0, emptyList())))
+        completeInitialRequest?.invoke(Result.Success(DailyLog(1, fixedDate, 0.0, emptyList())))
         advanceUntilIdle()
 
         val state = viewModel.uiState.value as DailyUiState.Success
         assertEquals(nextDate, state.date)
         assertEquals(1.0, state.completionRate, 0.001)
+        assertTrue(emittedDates.none { it == fixedDate })
     }
 
     @Test

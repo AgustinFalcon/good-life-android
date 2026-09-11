@@ -14,6 +14,7 @@ import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
 import com.agusstkd.goodlife.presentation.navigation.route.navigateToMain
 import com.agusstkd.goodlife.presentation.screen.login.model.LoginUiAction
 import com.agusstkd.goodlife.presentation.screen.login.model.LoginUiState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -137,12 +138,14 @@ class LoginViewModel(
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
     private var latestLoginRequestId: Long = 0L
+    private var loginJob: Job? = null
 
     private fun updateLoginFailure(
         requestId: Long,
         submittedEmail: String,
         submittedPassword: String,
         validationError: LoginResult.ValidationError? = null,
+        showGeneralErrorWhenEdited: Boolean = false,
     ) {
         _uiState.update { state ->
             val latest = state as? LoginUiState.Content ?: return@update state
@@ -154,16 +157,20 @@ class LoginViewModel(
                 isLoading = false,
                 isEmailError = credentialsAreUnchanged && validationError?.emailError != null,
                 isPasswordError = credentialsAreUnchanged && validationError?.passwordError != null,
-                errorMessage = if (validationError == null) language.errorTexts.loginError else null,
+                errorMessage = if (validationError == null && (credentialsAreUnchanged || showGeneralErrorWhenEdited)) {
+                    language.errorTexts.loginError
+                } else {
+                    null
+                },
             )
         }
     }
 
     private fun performLogin() {
         val current = _uiState.value as? LoginUiState.Content ?: return
-        if (current.isLoading) return
+        if (current.isLoading || loginJob?.isActive == true) return
 
-        viewModelScope.launch {
+        loginJob = viewModelScope.launch {
             val requestId = ++latestLoginRequestId
             _uiState.update { state ->
                 (state as? LoginUiState.Content)?.copy(isLoading = true, errorMessage = null) ?: state
@@ -186,8 +193,10 @@ class LoginViewModel(
     }
 
     private fun performLoginWithCredentials(email: String, password: String) {
-        viewModelScope.launch {
-            if (_uiState.value !is LoginUiState.Content) return@launch
+        val current = _uiState.value as? LoginUiState.Content ?: return
+        if (current.isLoading || loginJob?.isActive == true) return
+
+        loginJob = viewModelScope.launch {
             val requestId = ++latestLoginRequestId
             _uiState.update { state ->
                 (state as? LoginUiState.Content)?.copy(isLoading = true, errorMessage = null) ?: state
@@ -198,8 +207,8 @@ class LoginViewModel(
                     _uiState.value = LoginUiState.Success
                     navigationController.navigateToMain()
                 }
-                is LoginResult.ValidationError -> updateLoginFailure(requestId, email, password, result)
-                is LoginResult.Error -> updateLoginFailure(requestId, email, password)
+                is LoginResult.ValidationError -> updateLoginFailure(requestId, email, password, result, showGeneralErrorWhenEdited = true)
+                is LoginResult.Error -> updateLoginFailure(requestId, email, password, showGeneralErrorWhenEdited = true)
             }
         }
     }

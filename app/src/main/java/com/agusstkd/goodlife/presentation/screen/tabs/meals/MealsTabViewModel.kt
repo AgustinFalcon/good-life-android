@@ -15,7 +15,6 @@ import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealPlanUiMode
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiState
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.toUiModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -68,7 +67,7 @@ class MealsTabViewModel(
     val accessibilityTexts: AccessibilityTexts get() = language.accessibilityTexts
 
     private var currentDate: LocalDate = dateProvider.today()
-    private var loadJob: Job? = null
+    private var latestLoadRequestId: Long = 0L
 
     private val _uiState = MutableStateFlow<MealsUiState>(MealsUiState.Loading)
     val uiState: StateFlow<MealsUiState> = _uiState
@@ -96,23 +95,25 @@ class MealsTabViewModel(
      */
     private fun loadMealPlans() {
         val requestedDate = currentDate
-        loadJob?.cancel()
-        loadJob = viewModelScope.launch {
+        val requestId = ++latestLoadRequestId
+        viewModelScope.launch {
+            if (!isCurrentLoadRequest(requestId, requestedDate)) return@launch
             _uiState.value = MealsUiState.Loading
 
-            when (val result = getMealPlansUseCase(requestedDate)) {
-                is GetMealPlansResult.Success -> if (requestedDate == currentDate) {
-                    _uiState.value = buildSuccessState(result.plans, requestedDate)
-                }
-                is GetMealPlansResult.NotFound -> if (requestedDate == currentDate) _uiState.value = MealsUiState.Empty
-                is GetMealPlansResult.ServerError -> if (requestedDate == currentDate) {
-                    _uiState.value = MealsUiState.Error(result.message)
-                }
-                is GetMealPlansResult.NetworkError -> if (requestedDate == currentDate) {
-                    _uiState.value = MealsUiState.Error(language.errorTexts.connectionError)
-                }
+            val result = getMealPlansUseCase(requestedDate)
+            if (!isCurrentLoadRequest(requestId, requestedDate)) return@launch
+
+            when (result) {
+                is GetMealPlansResult.Success -> _uiState.value = buildSuccessState(result.plans, requestedDate)
+                is GetMealPlansResult.NotFound -> _uiState.value = MealsUiState.Empty
+                is GetMealPlansResult.ServerError -> _uiState.value = MealsUiState.Error(result.message)
+                is GetMealPlansResult.NetworkError -> _uiState.value = MealsUiState.Error(language.errorTexts.connectionError)
             }
         }
+    }
+
+    private fun isCurrentLoadRequest(requestId: Long, requestedDate: LocalDate): Boolean {
+        return requestId == latestLoadRequestId && requestedDate == currentDate
     }
 
     private fun navigateToPreviousDay() {
