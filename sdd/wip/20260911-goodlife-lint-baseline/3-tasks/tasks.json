@@ -1,0 +1,10 @@
+{
+  "feature": "goodlife-lint-baseline",
+  "status": "spec_review",
+  "tasks": [
+    {"id":"LB-01","title":"Crear inventario relativo y validador de lint","status":"todo","acceptance":"Detecta errores, aumento de warnings y excepciones vencidas sin rutas absolutas."},
+    {"id":"LB-02","title":"Resolver warnings de manifest/iconos/Compose de bajo riesgo","status":"todo","acceptance":"Cada PR incluye lint y validación visual o de manifest proporcional."},
+    {"id":"LB-03","title":"Clasificar y reducir recursos no usados","status":"todo","acceptance":"Sólo se eliminan recursos con ownership confirmado; compatibilidad queda investigada."},
+    {"id":"LB-04","title":"Planificar upgrades de toolchain y dependencias","status":"todo","acceptance":"Cada familia tiene PR aislada, matriz de compatibilidad y gates completos."}
+  ]
+}
