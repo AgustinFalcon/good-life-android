@@ -33,3 +33,11 @@ El workflow ejecuta lint y la verificación de baseline después de compilar. El
 ## Riesgos
 
 Los upgrades de dependency/AGP pueden cambiar APIs y toolchain; no se aprueban sólo porque lint los sugiera. Los recursos de compatibilidad pueden provenir de bibliotecas o packaging. Los cambios de backup requieren revisión de seguridad porque la app maneja sesión local.
+
+## Addendum aprobado — CI y baseline determinista
+
+El workflow Android ejecuta sobre todo `pull_request` sin filtro de rama base (para PRs apiladas) y conserva `push` a `master`. Cada check se asocia al SHA de la PR; si hay rebase o dispatch manual, se registra SHA/ref y se reejecuta antes de merge a `master`.
+
+Para PRs ordinarias, CI ejecuta `:app:lintDebug` y luego el verificador. El verificador falla cerrado si el XML esperado no existe/no se lee, si hay errores, si aparece un fingerprint nuevo o si vence una excepción. El candidato interno además ejecuta lint de variante release según R-05.
+
+El fingerprint es `ruleId + ruta repo-relativa con / + mensaje/categoría normalizados UTF-8 NFC`, ordenado de forma determinista; no usa ruta absoluta ni línea/columna salvo regla documentada. CI Linux es autoridad. El inventario define owner, justificación, fecha de creación, vencimiento o condición medible de retiro y issue/PR. Fixtures Windows/Unix equivalentes deben producir el mismo inventario.
