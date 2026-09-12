@@ -7,7 +7,7 @@
 - Base: `origin/master` `3dcedfc`, as declared in feature metadata.
 - Sources reviewed: project SDD contracts; feature metadata, functional/technical specs and task plan; the documented authenticated-session and Daily boundaries.
 - Redaction: no account, credential, token, address, device identifier, payload or test-record detail is included.
-- Review status: user-approved proposals applied; awaiting the independent final re-review recorded below.
+- Review status: independent final re-review approved; no open finding in scope.
 
 ## Coverage matrix
 
@@ -88,11 +88,11 @@ Recommendation: retain one manual smoke feature. The dependencies are coupled an
 
 ## Decision
 
-**REVISAR — re-review final pendiente**
+**LISTO PARA BUILD**
 
-Las propuestas P-01 a P-03 fueron aprobadas por el usuario y aplicadas. La variante `release-candidate` también exige referencia opaca al registro externo exacto. El veredicto final queda reservado a la re-revisión independiente posterior a este cambio.
+Las propuestas P-01 a P-03 fueron aprobadas por el usuario y aplicadas. La variante `release-candidate` también exige referencia opaca al registro externo exacto. La re-revisión independiente final aprobó el cambio sin hallazgos nuevos.
 
 ## Residual risks and next action
 
 - Residual risk: dispositivo o red pueden bloquear la ejecución sin probar un defecto Android.
-- Next action: re-ejecutar las lentes afectadas y cambiar a `LISTO PARA BUILD` sólo si no aparece un hallazgo nuevo.
+- Next action: implementar en PRs aisladas, conservar los gates definidos y revisar cualquier cambio de contrato.
