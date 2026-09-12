@@ -30,3 +30,14 @@ Artefactos revisados: `meta.md`, `1-functional/spec.md`, `2-technical/spec.md`, 
 ## Decisión
 
 🟢 **LISTO PARA BUILD / PR**. El build ya se validó contra estos criterios; el PR requiere CI verde y dos revisiones independientes antes del merge.
+## Remediación tras revisión Sol
+
+Las dos revisiones independientes solicitaron cambios. Se aplicaron antes de continuar:
+
+- Una mutación Daily ya encolada no se descarta al cambiar de fecha; solo se restringe la publicación del resultado a la fecha vigente.
+- Daily y Meals conservan y cancelan el job de lectura anterior, manteniendo el request-id como defensa adicional.
+- Un `ValidationError` de credenciales biométricas muestra feedback genérico localizado.
+- `TextFieldComponent` muestra un estado visual deshabilitado y una preview verificable.
+- Los KDoc de resultados Daily aclaran que el mensaje remoto es técnico y debe sanitizarse.
+
+La revalidación final requiere tests, gates y una segunda pasada de ambos reviewers Sol.

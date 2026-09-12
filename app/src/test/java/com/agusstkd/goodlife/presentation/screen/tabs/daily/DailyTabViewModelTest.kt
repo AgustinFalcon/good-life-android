@@ -227,6 +227,31 @@ class DailyTabViewModelTest {
     }
 
     @Test
+    fun `queued status update still reaches backend after date navigation`() = runTest(testDispatcher) {
+        val log = DailyLog(1, fixedDate, 0.0, emptyList())
+        repository.getDailyLogResult = Result.Success(log)
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val firstResult = CompletableDeferred<Result<DailyLog>>()
+        val secondResult = CompletableDeferred<Result<DailyLog>>()
+        repository.updateItemStatusHandler = { itemId, _ ->
+            if (itemId == 1L) firstResult.await() else secondResult.await()
+        }
+        viewModel.onAction(DailyUiAction.OnItemStatusChange(1, DailyItemStatus.COMPLETED))
+        runCurrent()
+        viewModel.onAction(DailyUiAction.OnItemStatusChange(2, DailyItemStatus.SKIPPED))
+        runCurrent()
+        viewModel.onAction(DailyUiAction.OnNextDay)
+        runCurrent()
+
+        firstResult.complete(Result.Success(log))
+        runCurrent()
+        assertEquals(2, repository.updateItemStatusCallCount)
+        secondResult.complete(Result.Success(log))
+        advanceUntilIdle()
+    }
+    @Test
     fun `date navigation is not blocked by a pending status update`() = runTest(testDispatcher) {
         repository.getDailyLogResult = Result.Success(DailyLog(1, fixedDate, 0.0, emptyList()))
         viewModel = createViewModel()

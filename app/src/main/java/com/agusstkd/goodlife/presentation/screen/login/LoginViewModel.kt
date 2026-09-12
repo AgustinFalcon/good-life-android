@@ -158,7 +158,7 @@ class LoginViewModel(
                 isLoading = false,
                 isEmailError = credentialsAreUnchanged && validationError?.emailError != null,
                 isPasswordError = credentialsAreUnchanged && validationError?.passwordError != null,
-                errorMessage = if (validationError == null && (credentialsAreUnchanged || showGeneralErrorWhenEdited)) {
+                errorMessage = if (showGeneralErrorWhenEdited || (validationError == null && credentialsAreUnchanged)) {
                     language.errorTexts.loginError
                 } else {
                     null

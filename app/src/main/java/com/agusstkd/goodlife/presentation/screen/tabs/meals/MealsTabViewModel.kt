@@ -15,6 +15,7 @@ import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealPlanUiMode
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiState
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.toUiModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -68,6 +69,7 @@ class MealsTabViewModel(
 
     private var currentDate: LocalDate = dateProvider.today()
     private var latestLoadRequestId: Long = 0L
+    private var loadJob: Job? = null
 
     private val _uiState = MutableStateFlow<MealsUiState>(MealsUiState.Loading)
     val uiState: StateFlow<MealsUiState> = _uiState
@@ -96,7 +98,8 @@ class MealsTabViewModel(
     private fun loadMealPlans() {
         val requestedDate = currentDate
         val requestId = ++latestLoadRequestId
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             if (!isCurrentLoadRequest(requestId, requestedDate)) return@launch
             _uiState.value = MealsUiState.Loading
 

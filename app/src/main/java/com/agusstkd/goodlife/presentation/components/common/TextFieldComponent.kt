@@ -104,6 +104,13 @@ data class TextFieldVisualState(
             placeholderColor = LightGreen.copy(alpha = 0.7f),
             cursorColor = LightGreen
         )
+        val Disabled = TextFieldVisualState(
+            borderColors = listOf(Color.Gray.copy(alpha = 0.45f), Color.Gray.copy(alpha = 0.35f)),
+            iconColor = TextTertiary,
+            textColor = TextTertiary,
+            placeholderColor = TextTertiary,
+            cursorColor = Color.Transparent
+        )
         val Error = TextFieldVisualState(
             borderColors = listOf(ErrorRed, ErrorRed.copy(alpha = 0.9f), ErrorRed.copy(alpha = 0.7f)),
             iconColor = ErrorRed,
@@ -158,6 +165,7 @@ fun TextFieldComponent(
     var isPasswordVisible by remember { mutableStateOf(false) }
 
     val visualState = when {
+        !params.enabled -> TextFieldVisualState.Disabled
         params.isError -> TextFieldVisualState.Error
         isFocused -> TextFieldVisualState.Focused
         else -> TextFieldVisualState.Normal
@@ -264,6 +272,15 @@ private fun TextFieldComponentPreview() {
                     placeholder = "Contraseña",
                     type = TextFieldType.PASSWORD,
                     isError = true
+                ),
+                onValueChange = {}
+            )
+            TextFieldComponent(
+                params = TextFieldParams(
+                    value = "agustin@email.com",
+                    placeholder = "Correo electrónico",
+                    type = TextFieldType.EMAIL,
+                    enabled = false
                 ),
                 onValueChange = {}
             )

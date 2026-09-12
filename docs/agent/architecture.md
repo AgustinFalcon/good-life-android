@@ -49,8 +49,8 @@ Room para user/daily cache; TokenManager usa Android storage/crypto según imple
 ## Coordinación de solicitudes
 
 - Login mantiene una única autenticación activa entre el formulario y biometría. Un segundo intento se rechaza antes de invocar el caso de uso, para evitar efectos de sesión/tokens en paralelo.
-- Daily serializa únicamente las mutaciones con un `Mutex`; las lecturas usan un id monotónico y validan que sigan siendo la solicitud y fecha vigentes antes y después de consultar el caso de uso.
-- Meals usa el mismo versionado de carga. Las solicitudes ya obsoletas no inician lectura y una respuesta vieja no puede publicar `UiState`.
+- Daily serializa únicamente las mutaciones con un `Mutex`; las lecturas cancelan el job previo, usan un id monotónico y validan que sigan siendo la solicitud y fecha vigentes antes y después de consultar el caso de uso.
+- Meals cancela el job de carga previo y usa el mismo versionado. Una respuesta vieja no puede publicar `UiState`, incluso si la fuente no coopera con la cancelación.
 ## Evitar
 
 No llamar `stringResource` en screens ni inyectar ViewModel en components. No afirmar KMP: es app Android con capas KMP-ready.

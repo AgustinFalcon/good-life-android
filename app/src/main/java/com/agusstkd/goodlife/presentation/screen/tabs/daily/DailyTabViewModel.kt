@@ -18,6 +18,7 @@ import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.toUiModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -78,6 +79,7 @@ class DailyTabViewModel(
 
     private var currentDate: LocalDate = dateProvider.today()
     private var latestLoadRequestId: Long = 0L
+    private var loadJob: Job? = null
     private val statusUpdateMutex = Mutex()
 
     private val _uiState = MutableStateFlow<DailyUiState>(DailyUiState.Loading)
@@ -115,7 +117,8 @@ class DailyTabViewModel(
     private fun loadItems() {
         val requestedDate = currentDate
         val requestId = ++latestLoadRequestId
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             if (!isCurrentLoadRequest(requestId, requestedDate)) return@launch
             _uiState.value = DailyUiState.Loading
 
@@ -148,7 +151,6 @@ class DailyTabViewModel(
         val requestedDate = currentDate
         viewModelScope.launch {
             statusUpdateMutex.withLock {
-                if (requestedDate != currentDate) return@withLock
                 val currentState = _uiState.value
                 if (currentState is DailyUiState.Success) {
                     _uiState.value = currentState.copy(isRefreshing = true)

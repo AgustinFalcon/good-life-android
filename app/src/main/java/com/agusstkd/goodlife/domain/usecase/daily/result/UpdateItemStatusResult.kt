@@ -45,7 +45,7 @@ sealed interface UpdateItemStatusResult {
     /**
      * El servidor respondió con un error 5xx.
      *
-     * @param message Mensaje del servidor para mostrar al usuario.
+     * @param message Detalle técnico del servidor; no debe cruzar sin sanitizar a `UiState`.
      */
     data class ServerError(val message: String) : UpdateItemStatusResult
 
