@@ -15,8 +15,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Profile combina el usuario Room y el estado de carga/error para recomponer correctamente.
 - La cache Daily se limpia al cerrar sesión, evitando exposición offline entre cuentas del mismo dispositivo.
 
+### Documentation
+- Android revival SDD ownership now lives under `sdd/` with a versioned ledger; the external Desktop SDD is historical input and no longer a delivery source of truth.
+- The ledger separates master quality evidence from the newer values still under review in PR #4.
+
 ### Quality and documentation
-- `:app:testDebugUnitTest`, `:app:logicDebugUnitTestCoverageVerification` y `:app:lintDebug` pasan el 2026-09-10: 163 tests, 0 fallos/errores; cobertura JaCoCo de líneas en lógica elegible 80,09% (1.476/1.843).
+- `:app:testDebugUnitTest`, `:app:logicDebugUnitTestCoverageVerification` y `:app:lintDebug` pasan el 2026-09-11: 164 tests, 0 fallos/errores; cobertura JaCoCo de líneas en lógica elegible 80,38% (1.483/1.845).
 - El gate excluye Compose/UI, manifest, Room/DAO, DI y pruebas instrumentadas; no se los declara cubiertos. El smoke en dispositivo contra la API canónica sigue pendiente.
 - Se reconciliaron los documentos de revival y se marcaron los planes históricos como no canónicos.
 

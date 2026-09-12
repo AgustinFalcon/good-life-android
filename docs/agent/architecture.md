@@ -36,6 +36,10 @@ network success -> cache; offline read -> Room
 
 Koin modules registran APIs, datasources, repositories, use cases y ViewModels. Solo ScreenOwner obtiene ViewModel.
 
+## SDD ownership
+
+`sdd/PROJECT.md` y `sdd/wip/20260911-goodlife-android-revival/` son el contrato de recovery Android versionado. Repo-minology feature 008 conserva la intención de producto transversal; el SDD externo del Desktop es solo insumo histórico.
+
 Room para user/daily cache; TokenManager usa Android storage/crypto según implementación. DateProvider evita reloj directo.
 
 ## Evitar

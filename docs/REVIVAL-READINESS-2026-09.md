@@ -2,7 +2,7 @@
 
 **Fecha de auditoría:** 2026-09-09  
 **Estado:** base recuperada; lista para desarrollo controlado, no para release público.  
-**Fuente de verdad:** código actual, build Gradle, tests y API pública. Si un documento histórico discrepa, este documento y el código prevalecen.
+**Fuente de verdad:** código actual, build Gradle, tests, API pública y el SDD versionado bajo `sdd/`. Este documento conserva una fotografía de recovery; si discrepa del SDD o del código, prevalecen estos últimos.
 
 ## Evidencia comprobada
 
@@ -11,8 +11,8 @@
 | API pública | Operativa | `GET https://good-life.ddns.net/api/v1/health` devuelve `200 {"status":"UP"}`; Swagger y OpenAPI responden `200`. |
 | Ruta Android | Configurada contra la API recuperada | `NetworkConstants.BASE_URL = https://good-life.ddns.net/`. No usar el hostname histórico `devtukychloe.ddns.net`. |
 | Backend y datos | Recuperados en DEV | Docker API y PostgreSQL saludables; existen 3 usuarios, 42 ingredientes, 2 comidas, 2 rutinas, 3 workouts, 110 ejercicios y 36 daily logs. |
-| Calidad Android | Gate vigente aprobado | `:app:logicDebugUnitTestCoverageVerification` pasó. JaCoCo: 1.474/1.841 líneas cubiertas = **80,07%** para la lógica incluida. |
-| Pruebas Android | Suite unitaria aprobada | 163 tests, 0 failures/errors en el reporte actual. |
+| Calidad Android | Gate vigente aprobado | `:app:logicDebugUnitTestCoverageVerification` pasó. JaCoCo: 1.483/1.845 líneas cubiertas = **80,38%** para la lógica incluida. |
+| Pruebas Android | Suite unitaria aprobada | 164 tests, 0 failures/errors en el reporte actual. |
 | Seguridad de sesión | Implementada en código | `EncryptedSharedPreferences`, sesión al arrancar y `GoodLifeAuthenticator` con refresh serializado por `Mutex`. |
 
 ## Qué está implementado de verdad
