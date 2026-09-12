@@ -26,3 +26,11 @@
 - LSE-03: `GetActiveRoutineResult.ServerError` documenta que su mensaje es técnico; las pruebas inyectan detalles distintivos y verifican que no se renderizan. NetworkError conserva `connectionError`.
 - Pruebas focalizadas: Workouts 7/7 y Workout Detail 4/4, sin fallos.
 - Pendiente: gates completos y revisión de PR.
+## Validación final
+
+- Gates completos: `:app:testDebugUnitTest`, `:app:logicDebugUnitTestCoverageVerification` y `:app:lintDebug` aprobados.
+- GitHub Android CI aprobado para el PR #22.
+- Sol Kotlin/contracts: aprobado, sin P0/P1/P2.
+- Sol Compose/Android: aprobado, sin P0/P1/P2.
+
+🟢 **LISTO PARA MERGE**.
