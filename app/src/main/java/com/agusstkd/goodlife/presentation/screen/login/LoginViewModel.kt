@@ -96,6 +96,7 @@ class LoginViewModel(
     }
 
     fun onAction(action: LoginUiAction) {
+        if ((_uiState.value as? LoginUiState.Content)?.isLoading == true) return
         when (action) {
             is LoginUiAction.OnEmailChange            -> updateEmail(action.value)
             is LoginUiAction.OnPasswordChange         -> updatePassword(action.value)

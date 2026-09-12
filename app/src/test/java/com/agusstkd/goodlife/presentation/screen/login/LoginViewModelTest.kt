@@ -91,7 +91,7 @@ class LoginViewModelTest {
         assertEquals(1, repo.loginCallCount)
     }
 
-    @Test fun `retry clears old error and preserves edits made while loading`() = runTest(dispatcher) {
+    @Test fun `retry clears old error and ignores edits made while loading`() = runTest(dispatcher) {
         repo.loginResult = Result.Error(Exception("internal backend detail"))
         val delayedResult = CompletableDeferred<Result<User>>()
         val vm = vm(); backgroundScope.launch { vm.uiState.collect {} }; advanceUntilIdle()
@@ -115,10 +115,10 @@ class LoginViewModelTest {
         advanceUntilIdle()
 
         val state = vm.uiState.value as LoginUiState.Content
-        assertEquals("usuario-nuevo", state.email)
-        assertEquals("password-nuevo", state.password)
+        assertEquals("usuario", state.email)
+        assertEquals("password", state.password)
         assertFalse(state.isLoading)
-        assertEquals(null, state.errorMessage)
+        assertEquals(Spanish.errorTexts.loginError, state.errorMessage)
     }
 
     @Test fun `manual login is not duplicated by biometric credentials`() = runTest(dispatcher) {

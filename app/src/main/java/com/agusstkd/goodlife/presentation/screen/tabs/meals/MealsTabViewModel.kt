@@ -106,7 +106,7 @@ class MealsTabViewModel(
             when (result) {
                 is GetMealPlansResult.Success -> _uiState.value = buildSuccessState(result.plans, requestedDate)
                 is GetMealPlansResult.NotFound -> _uiState.value = MealsUiState.Empty
-                is GetMealPlansResult.ServerError -> _uiState.value = MealsUiState.Error(result.message)
+                is GetMealPlansResult.ServerError -> _uiState.value = MealsUiState.Error(language.errorTexts.dataLoadError)
                 is GetMealPlansResult.NetworkError -> _uiState.value = MealsUiState.Error(language.errorTexts.connectionError)
             }
         }

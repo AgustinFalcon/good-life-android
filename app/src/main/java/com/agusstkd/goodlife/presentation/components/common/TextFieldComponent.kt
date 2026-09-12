@@ -121,6 +121,7 @@ data class TextFieldVisualState(
  * @property placeholder Texto placeholder.
  * @property type Tipo de campo [TextFieldType].
  * @property isError Indica si hay error de validación.
+ * @property enabled Define si el campo acepta interacción.
  * @property minLines Número mínimo de líneas visibles. Solo aplica cuando [type] es [TextFieldType.MULTILINE].
  * @property maxLines Número máximo de líneas antes de hacer scroll. Solo aplica cuando [type] es [TextFieldType.MULTILINE].
  */
@@ -129,6 +130,7 @@ data class TextFieldParams(
     val placeholder: String,
     val type: TextFieldType,
     val isError: Boolean = false,
+    val enabled: Boolean = true,
     val minLines: Int = 1,
     val maxLines: Int = Int.MAX_VALUE,
     val passwordToggleHide: String = "",
@@ -173,6 +175,7 @@ fun TextFieldComponent(
     BasicTextField(
         value = params.value,
         onValueChange = onValueChange,
+        enabled = params.enabled,
         modifier = modifier
             .fillMaxWidth()
             .border(
@@ -219,7 +222,9 @@ fun TextFieldComponent(
                         imageVector = if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                         contentDescription = if (isPasswordVisible) params.passwordToggleHide else params.passwordToggleShow,
                         tint = visualState.iconColor,
-                        modifier = Modifier.clickable { isPasswordVisible = !isPasswordVisible }
+                        modifier = Modifier.clickable(enabled = params.enabled) {
+                            isPasswordVisible = !isPasswordVisible
+                        }
                     )
                 }
             }

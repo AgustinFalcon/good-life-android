@@ -5,6 +5,7 @@ import com.agusstkd.goodlife.core.datetime.FakeDateProvider
 import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.core.dispatcher.TestDispatcherProvider
 import com.agusstkd.goodlife.core.result.Result
+import com.agusstkd.goodlife.core.network.ApiException
 import com.agusstkd.goodlife.domain.model.nutrition.DailyMealPlanSummary
 import com.agusstkd.goodlife.domain.model.nutrition.MealType
 import com.agusstkd.goodlife.domain.usecase.nutrition.GetMealPlansUseCase
@@ -111,6 +112,13 @@ class MealsTabViewModelTest {
         assertEquals(600.0, state.totalCalories, 0.01)
     }
 
+    @Test fun `server error does not expose backend detail`() = runTest(dispatcher) {
+        repository.getResult = Result.Error(ApiException.ServerException("SQL trace should stay private"))
+        val vm = viewModel(); backgroundScope.launch { vm.uiState.collect {} }; vm.refresh(); advanceUntilIdle()
+
+        val state = vm.uiState.value as MealsUiState.Error
+        assertEquals(Spanish.errorTexts.dataLoadError, state.message)
+    }
     @Test fun `repository error maps to error state`() = runTest(dispatcher) {
         repository.getResult = Result.Error(Exception("offline"))
         val vm = viewModel(); backgroundScope.launch { vm.uiState.collect {} }; vm.refresh(); advanceUntilIdle()

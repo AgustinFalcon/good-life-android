@@ -49,7 +49,7 @@ Room para user/daily cache; TokenManager usa Android storage/crypto según imple
 ## Coordinación de solicitudes
 
 - Login mantiene una única autenticación activa entre el formulario y biometría. Un segundo intento se rechaza antes de invocar el caso de uso, para evitar efectos de sesión/tokens en paralelo.
-- Daily serializa cargas y mutaciones con un `Mutex`; cada carga tiene un id monotónico y valida que siga siendo la solicitud y fecha vigentes antes y después de consultar el caso de uso.
+- Daily serializa únicamente las mutaciones con un `Mutex`; las lecturas usan un id monotónico y validan que sigan siendo la solicitud y fecha vigentes antes y después de consultar el caso de uso.
 - Meals usa el mismo versionado de carga. Las solicitudes ya obsoletas no inician lectura y una respuesta vieja no puede publicar `UiState`.
 ## Evitar
 

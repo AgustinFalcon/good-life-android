@@ -164,6 +164,7 @@ private fun LoginContent(
             password = password,
             isEmailError = isEmailError,
             isPasswordError = isPasswordError,
+            isLoading = isLoading,
             onAction = onAction,
             errorMessage = errorMessage,
             auth = auth,
@@ -178,7 +179,8 @@ private fun LoginContent(
                     text = auth.enableBiometricLogin,
                     checked = isBiometricEnabled,
                     id = CheckboxParamsId.ENABLE_FINGER_PRINT,
-                    endIcon = Icons.Default.Fingerprint
+                    endIcon = Icons.Default.Fingerprint,
+                    enabled = !isLoading,
                 ),
                 onClick = { onAction(LoginUiAction.OnBiometricToggle) },
                 onEndIconClick = { onAction(LoginUiAction.OnBiometricIconClick) },
@@ -196,14 +198,6 @@ private fun LoginContent(
             onAction = onAction,
             auth = auth
         )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        SocialLoginSection(onAction = onAction, auth = auth)
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        LoginFooter(onAction = onAction, auth = auth)
 
         Spacer(modifier = Modifier.height(24.dp))
     }
@@ -245,6 +239,7 @@ private fun LoginForm(
     password: String,
     isEmailError: Boolean,
     isPasswordError: Boolean,
+    isLoading: Boolean,
     onAction: (LoginUiAction) -> Unit,
     errorMessage: String?,
     auth: AuthTexts,
@@ -259,7 +254,8 @@ private fun LoginForm(
                 value = email,
                 placeholder = auth.emailOrUsername,
                 type = TextFieldType.USER,
-                isError = isEmailError
+                isError = isEmailError,
+                enabled = !isLoading,
             ),
             onValueChange = { onAction(LoginUiAction.OnEmailChange(it)) }
         )
@@ -270,6 +266,7 @@ private fun LoginForm(
                 placeholder = auth.password,
                 type = TextFieldType.PASSWORD,
                 isError = isPasswordError,
+                enabled = !isLoading,
                 passwordToggleHide = accessibility.hide,
                 passwordToggleShow = accessibility.show
             ),

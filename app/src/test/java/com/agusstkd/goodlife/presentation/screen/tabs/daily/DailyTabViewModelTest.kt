@@ -107,6 +107,18 @@ class DailyTabViewModelTest {
     }
 
     @Test
+    fun `server error does not expose backend detail`() = runTest(testDispatcher) {
+        repository.getDailyLogResult = Result.Error(
+            ApiException.ServerException("database trace should stay private")
+        )
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value as DailyUiState.Error
+        assertEquals(Spanish.errorTexts.dataLoadError, state.message)
+    }
+    @Test
     fun `OnNextDay increments date and reloads`() = runTest(testDispatcher) {
         val todayLog = DailyLog(1, fixedDate, 0.5, emptyList())
         val tomorrowLog = DailyLog(2, fixedDate, 1.0, emptyList())
@@ -214,6 +226,24 @@ class DailyTabViewModelTest {
         assertEquals(0.8, state.completionRate, 0.001)
     }
 
+    @Test
+    fun `date navigation is not blocked by a pending status update`() = runTest(testDispatcher) {
+        repository.getDailyLogResult = Result.Success(DailyLog(1, fixedDate, 0.0, emptyList()))
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val pendingUpdate = CompletableDeferred<Result<DailyLog>>()
+        repository.updateItemStatusHandler = { _, _ -> pendingUpdate.await() }
+        viewModel.onAction(DailyUiAction.OnItemStatusChange(1, DailyItemStatus.COMPLETED))
+        runCurrent()
+
+        viewModel.onAction(DailyUiAction.OnNextDay)
+        runCurrent()
+
+        assertEquals(2, repository.getDailyLogCallCount)
+        pendingUpdate.complete(Result.Success(DailyLog(2, fixedDate, 1.0, emptyList())))
+        advanceUntilIdle()
+    }
     @Test
     fun `late daily response does not replace the selected date`() = runTest(testDispatcher) {
         val nextDate = LocalDate(2026, 3, 10)

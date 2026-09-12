@@ -26,7 +26,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 ### CI
 - Android CI pins `actions/checkout` and `actions/setup-java` to their official v5 immutable commits, removing the Node 20 deprecation path.
 
-- Login usa un mensaje localizado y seguro ante fallos remotos, conserva las ediciones hechas durante la request y limpia el error al reintentar. Un único job rechaza intentos manuales y biométricos concurrentes antes del caso de uso.
+- Login usa un mensaje localizado y seguro ante fallos remotos, bloquea los controles mientras autentica y rechaza intentos manuales y biométricos concurrentes antes del caso de uso.
 - El error remoto de Login se anuncia a lectores de pantalla; las mutaciones Daily tardías ya no reemplazan la última actualización del usuario.
 ### Quality and documentation
 - `:app:testDebugUnitTest`, `:app:logicDebugUnitTestCoverageVerification` y `:app:lintDebug` pasan el 2026-09-11: 164 tests, 0 fallos/errores; cobertura JaCoCo de líneas en lógica elegible 80,38% (1.483/1.845).

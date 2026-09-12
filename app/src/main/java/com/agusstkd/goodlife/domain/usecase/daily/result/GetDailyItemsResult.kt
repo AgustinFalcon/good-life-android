@@ -21,7 +21,7 @@ import com.agusstkd.goodlife.domain.model.daily.DailyLog
  * when (val result = getDailyItemsUseCase(date)) {
  *     is GetDailyItemsResult.Success      -> buildSuccessState(result.dailyLog)
  *     is GetDailyItemsResult.NotFound     -> showEmptyState()
- *     is GetDailyItemsResult.ServerError  -> showServerError(result.message)
+ *     is GetDailyItemsResult.ServerError  -> showServerError()
  *     is GetDailyItemsResult.NetworkError -> showNetworkError()
  * }
  * ```
