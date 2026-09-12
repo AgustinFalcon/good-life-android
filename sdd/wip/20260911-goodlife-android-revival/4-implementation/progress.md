@@ -8,11 +8,11 @@
 
 ## Open sequence
 
-1. R-01 authenticated smoke (#5) — specification review in `sdd/wip/20260911-goodlife-authenticated-smoke/`; execution remains pending controlled credentials/device.
-2. R-03 Workouts vertical (#6) — in progress: typed detail is being implemented and verified.
-3. R-04 Daily/Meals details (#7) — specification review in sdd/wip/20260911-goodlife-daily-meals-details/; implementation has not started.
-4. R-05 internal-release readiness (#8).
-5. R-07 lint baseline triage (#10).
+1. R-01 authenticated smoke (#5) — specification review is ready; execution remains pending controlled credentials/device.
+2. R-03 Workouts vertical (#6) — navigation hardening is integrated; the separate raw-error correction remains tracked in #19.
+3. R-04 Daily/Meals details (#7) — specification review is ready; implementation has not started.
+4. R-05 internal-release readiness (#8) — specification review is ready; no release is authorized.
+5. R-07 lint baseline triage (#10) — specification review is ready; implementation remains pending.
 
 ## Exit gate
 
