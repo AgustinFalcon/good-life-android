@@ -9,7 +9,8 @@
 
 ## Navigation and state
 
-- Navigation is emitted through `ComposeNavigationController` and handled by the navigation host.
+- `AppRoute` navigation is emitted through `ComposeNavigationController` and handled by the root navigation host.
+- `TabRoute` navigation stays inside the nested tab graph: the ViewModel emits a typed one-shot effect, its ScreenOwner collects it, and the local `TabNavGraph` callback invokes its own `NavHostController`. A ViewModel never receives a `NavController`, and `TabRoute` must not be sent through `ComposeNavigationController`.
 - Routes carry only typed identifiers or primitives; screens load their own data through the normal use-case path.
 - UI state uses stable sealed interfaces. Loading, empty, error and content states are observable and tested.
 - A user-facing CTA must produce real behavior or remain hidden; placeholders are not valid feature completion.
