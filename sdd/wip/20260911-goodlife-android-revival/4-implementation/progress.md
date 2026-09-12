@@ -12,7 +12,7 @@
 2. R-03 Workouts vertical (#6) — navigation hardening is integrated; the separate raw-error correction remains tracked in #19.
 3. R-04 Daily/Meals details (#7) — specification review is ready; implementation has not started.
 4. R-05 internal-release readiness (#8) — specification review is ready; no release is authorized.
-5. R-07 lint baseline triage (#10) — specification review is ready; implementation remains pending.
+5. R-07 lint baseline triage (#10) — specification review is ready; implementation is pending and no warning may be silently baselined.
 
 ## Exit gate
 
