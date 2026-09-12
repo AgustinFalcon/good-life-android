@@ -152,7 +152,7 @@ class DailyTabViewModel(
         viewModelScope.launch {
             statusUpdateMutex.withLock {
                 val currentState = _uiState.value
-                if (currentState is DailyUiState.Success) {
+                if (requestedDate == currentDate && currentState is DailyUiState.Success) {
                     _uiState.value = currentState.copy(isRefreshing = true)
                 }
 

@@ -41,3 +41,4 @@ Las dos revisiones independientes solicitaron cambios. Se aplicaron antes de con
 - Los KDoc de resultados Daily aclaran que el mensaje remoto es técnico y debe sanitizarse.
 
 La revalidación final requiere tests, gates y una segunda pasada de ambos reviewers Sol.
+- Segunda pasada Kotlin: se detectó y corrigió que una mutación de la fecha anterior no puede marcar como refrescando la fecha visible. La regresión confirma `isRefreshing == false` para la fecha B.

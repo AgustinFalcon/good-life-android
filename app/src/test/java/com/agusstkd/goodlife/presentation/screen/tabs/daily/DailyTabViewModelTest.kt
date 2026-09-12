@@ -248,6 +248,8 @@ class DailyTabViewModelTest {
         firstResult.complete(Result.Success(log))
         runCurrent()
         assertEquals(2, repository.updateItemStatusCallCount)
+        val currentState = viewModel.uiState.value as DailyUiState.Success
+        assertTrue(!currentState.isRefreshing)
         secondResult.complete(Result.Success(log))
         advanceUntilIdle()
     }
