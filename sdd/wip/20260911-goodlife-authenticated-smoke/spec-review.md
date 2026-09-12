@@ -7,7 +7,7 @@
 - Base: `origin/master` `3dcedfc`, as declared in feature metadata.
 - Sources reviewed: project SDD contracts; feature metadata, functional/technical specs and task plan; the documented authenticated-session and Daily boundaries.
 - Redaction: no account, credential, token, address, device identifier, payload or test-record detail is included.
-- Review status: draft; proposals require explicit human approval before a spec changes.
+- Review status: user-approved proposals applied; awaiting the independent final re-review recorded below.
 
 ## Coverage matrix
 
@@ -82,17 +82,17 @@ Recommendation: retain one manual smoke feature. The dependencies are coupled an
 
 | Proposal | Related finding | Proposed change | User decision | Applied evidence |
 |---|---|---|---|---|
-| P-01 | F-01 | Make PASS/BLOCKED/FAIL and R-05 gate semantics explicit. | pending approval | — |
-| P-02 | F-02 | Add safe stop/cleanup behavior for an interrupted mutation. | pending approval | — |
-| P-03 | F-03 | Restrict logout proof to observable app UI. | pending approval | — |
+| P-01 | F-01 | Make PASS/BLOCKED/FAIL and R-05 gate semantics explicit. | approved / applied | `2-technical/spec.md#Addendum aprobado` (`12c52dd`) |
+| P-02 | F-02 | Add safe stop/cleanup behavior for an interrupted mutation. | approved / applied | `2-technical/spec.md#Addendum aprobado` (`12c52dd`) |
+| P-03 | F-03 | Restrict logout proof to observable app UI. | approved / applied | `2-technical/spec.md#Addendum aprobado` (`12c52dd`) |
 
 ## Decision
 
-**REVISAR**
+**REVISAR — re-review final pendiente**
 
-The scope is safe and practical, but the mandatory refresh outcome must be resolved before this smoke can be a release input.
+Las propuestas P-01 a P-03 fueron aprobadas por el usuario y aplicadas. La variante `release-candidate` también exige referencia opaca al registro externo exacto. El veredicto final queda reservado a la re-revisión independiente posterior a este cambio.
 
 ## Residual risks and next action
 
-- Residual risk: device and network conditions can still block the run without proving a product defect.
-- Next action: approve, reject or modify P-01 through P-03. Do not run this as release evidence until P-01 is decided.
+- Residual risk: dispositivo o red pueden bloquear la ejecución sin probar un defecto Android.
+- Next action: re-ejecutar las lentes afectadas y cambiar a `LISTO PARA BUILD` sólo si no aparece un hallazgo nuevo.
