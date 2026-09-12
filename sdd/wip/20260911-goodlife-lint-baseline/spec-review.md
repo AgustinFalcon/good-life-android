@@ -7,7 +7,7 @@
 - Base: lint evidence recorded on 2026-09-11; implementation baseline remains `origin/master` `3dcedfc` unless re-measured during build.
 - Sources reviewed: project SDD contracts; feature metadata, functional/technical specs and task plan; recorded warning taxonomy.
 - Redaction: no absolute paths, machine data, secrets or runtime data are included.
-- Review status: draft; proposals require explicit human approval before a spec changes.
+- Review status: user-approved proposals applied; awaiting the independent final re-review recorded below.
 
 ## Coverage matrix
 
@@ -91,18 +91,18 @@ Recommendation: keep the feature but implement it in small PRs: inventory/valida
 
 | Proposal | Related finding | Proposed change | User decision | Applied evidence |
 |---|---|---|---|---|
-| P-01 | F-01 | Use fingerprint-set plus count comparison. | pending approval | — |
-| P-02 | F-02 | Define exception lifecycle schema. | pending approval | — |
-| P-03 | F-03 | Re-measure from declared implementation baseline. | pending approval | — |
-| P-04 | F-04 | Split LB-02 by warning family. | pending approval | — |
+| P-01 | F-01 | Use fingerprint-set plus count comparison. | approved / applied | `2-technical/spec.md#Addendum aprobado` (`dc769c2`) |
+| P-02 | F-02 | Define exception lifecycle schema. | approved / applied | `2-technical/spec.md#Addendum aprobado` (`dc769c2`) |
+| P-03 | F-03 | Re-measure from declared implementation baseline. | approved / applied | `meta.md#Evidencia observada` and `LB-01` (current branch) |
+| P-04 | F-04 | Split LB-02 by warning family. | approved / applied | `tasks.json#LB-02a..LB-02c` and `2-technical/spec.md#Plan` (current branch) |
 
 ## Decision
 
-**REVISAR**
+**REVISAR — re-review final pendiente**
 
-The policy correctly rejects a blanket lint baseline, but the verifier's identity and exception lifecycle must be specified before it becomes a CI gate.
+Las propuestas P-01 a P-04 fueron aprobadas por el usuario y aplicadas. El baseline se medirá desde el SHA de implementación en CI Linux y las familias de warning se entregan por PR aislada. El veredicto final queda reservado a la re-revisión independiente posterior a este cambio.
 
 ## Residual risks and next action
 
-- Residual risk: dependency/AGP/SDK upgrades remain intentionally separate and require compatibility evidence.
-- Next action: approve, reject or modify P-01 through P-04. Do not create a blocking CI gate from this review alone.
+- Residual risk: upgrades de dependency/AGP/SDK siguen separados y requieren evidencia de compatibilidad.
+- Next action: re-ejecutar las lentes afectadas y cambiar a `LISTO PARA BUILD` sólo si no aparece un hallazgo nuevo.

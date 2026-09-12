@@ -8,7 +8,7 @@ La verificación falla si aparece un error, si aumenta la cantidad de una regla 
 
 ## Inventario inicial
 
-El inventario inicial parte de las 60 advertencias observadas y clasifica cada una como:
+El inventario inicial se genera desde el SHA de la primera PR de implementación en CI Linux; registra comando, versión del wrapper, AGP y SDK/JDK relevantes, conteos y fingerprints. Las 60 advertencias observadas son sólo triage y no se congelan hasta esa medición revisada. El inventario clasifica cada una como:
 
 - **fix now:** cambio pequeño y verificable;
 - **split upgrade:** requiere PR aislada y pruebas de compatibilidad;
@@ -24,11 +24,12 @@ El workflow ejecuta lint y la verificación de baseline después de compilar. El
 ## Plan de cambios
 
 1. Crear inventario/validador y test del validador.
-2. Resolver manifest/backup e iconos en PR pequeña con revisión Android.
-3. Resolver firmas Compose y dependencias TOML en PRs separadas.
-4. Reducir recursos sólo tras identificar su ownership.
-5. Planificar upgrades de AGP/SDK/dependencias con matriz de compatibilidad y gates completos.
-6. Reducir el baseline hasta que warnings puedan convertirse en gate bloqueante.
+2. Resolver manifest/backup en una PR pequeña con revisión Android y privacidad.
+3. Resolver launcher/iconos en otra PR pequeña con validación visual.
+4. Resolver firmas Compose y dependencias TOML en PRs separados por familia.
+5. Reducir recursos sólo tras identificar su ownership.
+6. Planificar upgrades de AGP/SDK/dependencias con matriz de compatibilidad y gates completos.
+7. Reducir el baseline hasta que warnings puedan convertirse en gate bloqueante.
 
 ## Riesgos
 

@@ -8,7 +8,7 @@
 
 ## Evidencia observada
 
-El reporte local `lintDebug` del 2026-09-11 sobre el código equivalente al baseline de trabajo registró 60 advertencias y 0 errores. Clasificación por regla:
+El reporte local `lintDebug` del 2026-09-11 sobre el código equivalente al baseline de trabajo registró 60 advertencias y 0 errores. Es evidencia de triage, no un baseline reproducible: LB-01 debe regenerar desde el SHA de implementación, en CI Linux, y versionar el inventario derivado junto con SHA base, Gradle wrapper, AGP, SDK/JDK relevantes, comando, conteos por regla y fingerprints relativos. Clasificación por regla:
 
 | Regla | Cantidad | Tratamiento propuesto |
 |---|---:|---|
@@ -24,4 +24,4 @@ El reporte local `lintDebug` del 2026-09-11 sobre el código equivalente al base
 | `RedundantLabel` | 1 | Fix mecánico de manifest. |
 | `UseTomlInstead` | 1 | Migración acotada de dependencia a version catalog. |
 
-La evidencia no contiene rutas locales, usuarios ni datos de runtime.
+La evidencia no contiene rutas locales, usuarios ni datos de runtime. Hasta que LB-01 produzca esa medición revisada, el número 60 no se usa como gate ni como afirmación del inventario definitivo.
