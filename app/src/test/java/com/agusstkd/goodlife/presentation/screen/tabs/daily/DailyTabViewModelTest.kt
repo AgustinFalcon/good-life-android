@@ -15,13 +15,19 @@ import com.agusstkd.goodlife.fake.FakeDailyRepository
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.datetime.LocalDate
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -101,6 +107,18 @@ class DailyTabViewModelTest {
     }
 
     @Test
+    fun `server error does not expose backend detail`() = runTest(testDispatcher) {
+        repository.getDailyLogResult = Result.Error(
+            ApiException.ServerException("database trace should stay private")
+        )
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value as DailyUiState.Error
+        assertEquals(Spanish.errorTexts.dataLoadError, state.message)
+    }
+    @Test
     fun `OnNextDay increments date and reloads`() = runTest(testDispatcher) {
         val todayLog = DailyLog(1, fixedDate, 0.5, emptyList())
         val tomorrowLog = DailyLog(2, fixedDate, 1.0, emptyList())
@@ -166,6 +184,128 @@ class DailyTabViewModelTest {
 
         val state = viewModel.uiState.value as DailyUiState.Success
         assertEquals(1.0, state.completionRate, 0.001)
+    }
+
+    @Test
+    fun `status updates are serialized and preserve the latest accepted action`() = runTest(testDispatcher) {
+        val log = DailyLog(
+            id = 1,
+            date = fixedDate,
+            completionRate = 0.0,
+            items = listOf(
+                DailyItem(1, DailyItemType.TASK, 10, null, DailyItemStatus.PENDING, "Task", null)
+            )
+        )
+        repository.getDailyLogResult = Result.Success(log)
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val firstResult = CompletableDeferred<Result<DailyLog>>()
+        val secondResult = CompletableDeferred<Result<DailyLog>>()
+        repository.updateItemStatusHandler = { itemId, _ ->
+            if (itemId == 1L) {
+                firstResult.await()
+            } else {
+                secondResult.await()
+            }
+        }
+
+        viewModel.onAction(DailyUiAction.OnItemStatusChange(1, DailyItemStatus.COMPLETED))
+        runCurrent()
+        viewModel.onAction(DailyUiAction.OnItemStatusChange(2, DailyItemStatus.SKIPPED))
+        runCurrent()
+
+        assertEquals(1, repository.updateItemStatusCallCount)
+        firstResult.complete(Result.Success(log.copy(completionRate = 0.2)))
+        runCurrent()
+        assertEquals(2, repository.updateItemStatusCallCount)
+        secondResult.complete(Result.Success(log.copy(completionRate = 0.8)))
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value as DailyUiState.Success
+        assertEquals(0.8, state.completionRate, 0.001)
+    }
+
+    @Test
+    fun `queued status update still reaches backend after date navigation`() = runTest(testDispatcher) {
+        val log = DailyLog(1, fixedDate, 0.0, emptyList())
+        repository.getDailyLogResult = Result.Success(log)
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val firstResult = CompletableDeferred<Result<DailyLog>>()
+        val secondResult = CompletableDeferred<Result<DailyLog>>()
+        repository.updateItemStatusHandler = { itemId, _ ->
+            if (itemId == 1L) firstResult.await() else secondResult.await()
+        }
+        viewModel.onAction(DailyUiAction.OnItemStatusChange(1, DailyItemStatus.COMPLETED))
+        runCurrent()
+        viewModel.onAction(DailyUiAction.OnItemStatusChange(2, DailyItemStatus.SKIPPED))
+        runCurrent()
+        viewModel.onAction(DailyUiAction.OnNextDay)
+        runCurrent()
+
+        firstResult.complete(Result.Success(log))
+        runCurrent()
+        assertEquals(2, repository.updateItemStatusCallCount)
+        val currentState = viewModel.uiState.value as DailyUiState.Success
+        assertTrue(!currentState.isRefreshing)
+        secondResult.complete(Result.Success(log))
+        advanceUntilIdle()
+    }
+    @Test
+    fun `date navigation is not blocked by a pending status update`() = runTest(testDispatcher) {
+        repository.getDailyLogResult = Result.Success(DailyLog(1, fixedDate, 0.0, emptyList()))
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val pendingUpdate = CompletableDeferred<Result<DailyLog>>()
+        repository.updateItemStatusHandler = { _, _ -> pendingUpdate.await() }
+        viewModel.onAction(DailyUiAction.OnItemStatusChange(1, DailyItemStatus.COMPLETED))
+        runCurrent()
+
+        viewModel.onAction(DailyUiAction.OnNextDay)
+        runCurrent()
+
+        assertEquals(2, repository.getDailyLogCallCount)
+        pendingUpdate.complete(Result.Success(DailyLog(2, fixedDate, 1.0, emptyList())))
+        advanceUntilIdle()
+    }
+    @Test
+    fun `late daily response does not replace the selected date`() = runTest(testDispatcher) {
+        val nextDate = LocalDate(2026, 3, 10)
+        var completeInitialRequest: ((Result<DailyLog>) -> Unit)? = null
+        val initialRequestStarted = CompletableDeferred<Unit>()
+        repository.getDailyLogHandler = { requestedDate ->
+            if (requestedDate == fixedDate) {
+                initialRequestStarted.complete(Unit)
+                suspendCoroutine<Result<DailyLog>> { continuation ->
+                    completeInitialRequest = { result -> continuation.resume(result) }
+                }
+            } else {
+                Result.Success(DailyLog(2, nextDate, 1.0, emptyList()))
+            }
+        }
+
+        viewModel = createViewModel()
+        val emittedDates = mutableListOf<LocalDate>()
+        backgroundScope.launch {
+            viewModel.uiState.collect { state ->
+                if (state is DailyUiState.Success) emittedDates += state.date
+            }
+        }
+        runCurrent()
+        assertTrue(initialRequestStarted.isCompleted)
+        viewModel.onAction(DailyUiAction.OnNextDay)
+        runCurrent()
+
+        completeInitialRequest?.invoke(Result.Success(DailyLog(1, fixedDate, 0.0, emptyList())))
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value as DailyUiState.Success
+        assertEquals(nextDate, state.date)
+        assertEquals(1.0, state.completionRate, 0.001)
+        assertTrue(emittedDates.none { it == fixedDate })
     }
 
     @Test

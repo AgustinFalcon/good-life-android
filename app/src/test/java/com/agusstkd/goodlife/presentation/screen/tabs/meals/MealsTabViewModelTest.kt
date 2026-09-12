@@ -5,6 +5,7 @@ import com.agusstkd.goodlife.core.datetime.FakeDateProvider
 import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.core.dispatcher.TestDispatcherProvider
 import com.agusstkd.goodlife.core.result.Result
+import com.agusstkd.goodlife.core.network.ApiException
 import com.agusstkd.goodlife.domain.model.nutrition.DailyMealPlanSummary
 import com.agusstkd.goodlife.domain.model.nutrition.MealType
 import com.agusstkd.goodlife.domain.usecase.nutrition.GetMealPlansUseCase
@@ -15,13 +16,17 @@ import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import org.junit.After
@@ -76,6 +81,44 @@ class MealsTabViewModelTest {
         assertEquals(LocalDate(2026, 7, 26), repository.requestedDates.last())
     }
 
+    @Test fun `late meals response does not replace the selected date`() = runTest(dispatcher) {
+        val initialDate = LocalDate(2026, 7, 26)
+        val nextDate = LocalDate(2026, 7, 27)
+        var completeInitialRequest: ((Result<List<DailyMealPlanSummary>>) -> Unit)? = null
+        val firstRequestStarted = CompletableDeferred<Unit>()
+        repository.getHandler = { requestedDate ->
+            if (requestedDate == initialDate) {
+                firstRequestStarted.complete(Unit)
+                suspendCoroutine<Result<List<DailyMealPlanSummary>>> { continuation ->
+                    completeInitialRequest = { result -> continuation.resume(result) }
+                }
+            } else {
+                Result.Success(listOf(plan(2, MealType.LUNCH, 600.0)))
+            }
+        }
+
+        val vm = viewModel()
+        backgroundScope.launch { vm.uiState.collect {} }
+        runCurrent()
+        vm.onAction(MealsUiAction.OnNextDay)
+        assertTrue(firstRequestStarted.isCompleted)
+        runCurrent()
+
+        completeInitialRequest?.invoke(Result.Success(listOf(plan(1, MealType.BREAKFAST, 300.0))))
+        advanceUntilIdle()
+
+        val state = vm.uiState.value as MealsUiState.Success
+        assertEquals(nextDate, state.date)
+        assertEquals(600.0, state.totalCalories, 0.01)
+    }
+
+    @Test fun `server error does not expose backend detail`() = runTest(dispatcher) {
+        repository.getResult = Result.Error(ApiException.ServerException("SQL trace should stay private"))
+        val vm = viewModel(); backgroundScope.launch { vm.uiState.collect {} }; vm.refresh(); advanceUntilIdle()
+
+        val state = vm.uiState.value as MealsUiState.Error
+        assertEquals(Spanish.errorTexts.dataLoadError, state.message)
+    }
     @Test fun `repository error maps to error state`() = runTest(dispatcher) {
         repository.getResult = Result.Error(Exception("offline"))
         val vm = viewModel(); backgroundScope.launch { vm.uiState.collect {} }; vm.refresh(); advanceUntilIdle()

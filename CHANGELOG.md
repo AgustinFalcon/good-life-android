@@ -17,6 +17,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Settings redirige a Login y limpia el back stack después de cerrar sesión.
 - Profile combina el usuario Room y el estado de carga/error para recomponer correctamente.
 - La cache Daily se limpia al cerrar sesión, evitando exposición offline entre cuentas del mismo dispositivo.
+- Login conserva usuario y contraseña ante un error remoto y muestra el mensaje general, en lugar de marcar ambos campos como inválidos.
 
 ### Documentation
 - Android revival SDD ownership now lives under `sdd/` with a versioned ledger; the external Desktop SDD is historical input and no longer a delivery source of truth.
@@ -25,8 +26,11 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 ### CI
 - Android CI pins `actions/checkout` and `actions/setup-java` to their official v5 immutable commits, removing the Node 20 deprecation path.
 
+- Login usa un mensaje localizado y seguro ante fallos remotos, bloquea los controles mientras autentica y rechaza intentos manuales y biométricos concurrentes antes del caso de uso.
+- El error remoto de Login se anuncia a lectores de pantalla; las mutaciones Daily tardías ya no reemplazan la última actualización del usuario.
 ### Quality and documentation
 - `:app:testDebugUnitTest`, `:app:logicDebugUnitTestCoverageVerification` y `:app:lintDebug` pasan el 2026-09-11: 164 tests, 0 fallos/errores; cobertura JaCoCo de líneas en lógica elegible 80,38% (1.483/1.845).
+- Daily y Meals descartan respuestas tardías al navegar fechas mediante cargas cancelables y un identificador de request actual.
 - El gate excluye Compose/UI, manifest, Room/DAO, DI y pruebas instrumentadas; no se los declara cubiertos. El smoke en dispositivo contra la API canónica sigue pendiente.
 - Se reconciliaron los documentos de revival y se marcaron los planes históricos como no canónicos.
 

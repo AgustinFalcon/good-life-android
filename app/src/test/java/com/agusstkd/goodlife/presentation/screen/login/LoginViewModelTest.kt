@@ -6,6 +6,7 @@ import com.agusstkd.goodlife.core.dispatcher.TestDispatcherProvider
 import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.domain.auth.BiometricLoginHandler
 import com.agusstkd.goodlife.domain.usecase.login.LoginUseCase
+import com.agusstkd.goodlife.domain.model.auth.User
 import com.agusstkd.goodlife.domain.usecase.validation.ValidateEmailUseCase
 import com.agusstkd.goodlife.domain.usecase.validation.ValidatePasswordUseCase
 import com.agusstkd.goodlife.fake.FakeAuthRepository
@@ -17,6 +18,7 @@ import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
 import com.agusstkd.goodlife.presentation.screen.login.model.LoginUiAction
 import com.agusstkd.goodlife.presentation.screen.login.model.LoginUiState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -24,6 +26,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.test.runCurrent
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -69,6 +72,118 @@ class LoginViewModelTest {
         val state = vm.uiState.value as LoginUiState.Content
         assertTrue(state.isEmailError)
         assertEquals(0, repo.loginCallCount)
+    }
+
+    @Test fun `remote login error keeps credentials and exposes a general message`() = runTest(dispatcher) {
+        repo.loginResult = Result.Error(Exception("Error de conexión"))
+        val vm = vm(); backgroundScope.launch { vm.uiState.collect {} }; advanceUntilIdle()
+        vm.onAction(LoginUiAction.OnEmailChange("usuario"))
+        vm.onAction(LoginUiAction.OnPasswordChange("password"))
+        vm.onAction(LoginUiAction.OnLoginClick)
+        advanceUntilIdle()
+
+        val state = vm.uiState.value as LoginUiState.Content
+        assertEquals("usuario", state.email)
+        assertEquals("password", state.password)
+        assertFalse(state.isEmailError)
+        assertFalse(state.isPasswordError)
+        assertEquals(Spanish.errorTexts.loginError, state.errorMessage)
+        assertEquals(1, repo.loginCallCount)
+    }
+
+    @Test fun `retry clears old error and ignores edits made while loading`() = runTest(dispatcher) {
+        repo.loginResult = Result.Error(Exception("internal backend detail"))
+        val delayedResult = CompletableDeferred<Result<User>>()
+        val vm = vm(); backgroundScope.launch { vm.uiState.collect {} }; advanceUntilIdle()
+        vm.onAction(LoginUiAction.OnEmailChange("usuario"))
+        vm.onAction(LoginUiAction.OnPasswordChange("password"))
+        vm.onAction(LoginUiAction.OnLoginClick)
+        advanceUntilIdle()
+        assertEquals(Spanish.errorTexts.loginError, (vm.uiState.value as LoginUiState.Content).errorMessage)
+
+        repo.loginHandler = { _, _ -> delayedResult.await() }
+        vm.onAction(LoginUiAction.OnLoginClick)
+        runCurrent()
+        vm.onAction(LoginUiAction.OnEmailChange("usuario-nuevo"))
+        vm.onAction(LoginUiAction.OnPasswordChange("password-nuevo"))
+
+        val whileLoading = vm.uiState.value as LoginUiState.Content
+        assertTrue(whileLoading.isLoading)
+        assertEquals(null, whileLoading.errorMessage)
+
+        delayedResult.complete(Result.Error(Exception("internal backend detail")))
+        advanceUntilIdle()
+
+        val state = vm.uiState.value as LoginUiState.Content
+        assertEquals("usuario", state.email)
+        assertEquals("password", state.password)
+        assertFalse(state.isLoading)
+        assertEquals(Spanish.errorTexts.loginError, state.errorMessage)
+    }
+
+    @Test fun `manual login is not duplicated by biometric credentials`() = runTest(dispatcher) {
+        val delayedResult = CompletableDeferred<Result<User>>()
+        storage.saveCredentials("bio@test.com", "secret")
+        storage.setBiometricEnabled(true)
+        repo.loginHandler = { _, _ -> delayedResult.await() }
+        val vm = vm(); backgroundScope.launch { vm.uiState.collect {} }; advanceUntilIdle()
+        vm.onAction(LoginUiAction.OnEmailChange("manual@test.com"))
+        vm.onAction(LoginUiAction.OnPasswordChange("password"))
+
+        vm.onAction(LoginUiAction.OnLoginClick)
+        runCurrent()
+        vm.onAction(LoginUiAction.OnBiometricAuthenticate(Any()))
+        runCurrent()
+
+        assertEquals(1, repo.loginCallCount)
+        delayedResult.complete(repo.loginResult)
+        advanceUntilIdle()
+    }
+
+    @Test fun `biometric login is not duplicated by manual credentials`() = runTest(dispatcher) {
+        val delayedResult = CompletableDeferred<Result<User>>()
+        storage.saveCredentials("bio@test.com", "secret")
+        storage.setBiometricEnabled(true)
+        repo.loginHandler = { _, _ -> delayedResult.await() }
+        val vm = vm(); backgroundScope.launch { vm.uiState.collect {} }; advanceUntilIdle()
+
+        vm.onAction(LoginUiAction.OnBiometricAuthenticate(Any()))
+        runCurrent()
+        vm.onAction(LoginUiAction.OnEmailChange("manual@test.com"))
+        vm.onAction(LoginUiAction.OnPasswordChange("password"))
+        vm.onAction(LoginUiAction.OnLoginClick)
+        runCurrent()
+
+        assertEquals(1, repo.loginCallCount)
+        delayedResult.complete(repo.loginResult)
+        advanceUntilIdle()
+    }
+
+    @Test fun `biometric validation error shows a general message`() = runTest(dispatcher) {
+        storage.saveCredentials("bio@test.com", "x")
+        storage.setBiometricEnabled(true)
+        val vm = vm(); backgroundScope.launch { vm.uiState.collect {} }; advanceUntilIdle()
+
+        vm.onAction(LoginUiAction.OnBiometricAuthenticate(Any()))
+        advanceUntilIdle()
+
+        val state = vm.uiState.value as LoginUiState.Content
+        assertFalse(state.isLoading)
+        assertFalse(state.isEmailError)
+        assertFalse(state.isPasswordError)
+        assertEquals(Spanish.errorTexts.loginError, state.errorMessage)
+    }
+    @Test fun `biometric remote login error shows a general message`() = runTest(dispatcher) {
+        storage.saveCredentials("bio@test.com", "secret")
+        storage.setBiometricEnabled(true)
+        repo.loginResult = Result.Error(Exception("internal backend detail"))
+        val vm = vm(); backgroundScope.launch { vm.uiState.collect {} }; advanceUntilIdle()
+        vm.onAction(LoginUiAction.OnBiometricAuthenticate(Any()))
+        advanceUntilIdle()
+
+        val state = vm.uiState.value as LoginUiState.Content
+        assertFalse(state.isLoading)
+        assertEquals(Spanish.errorTexts.loginError, state.errorMessage)
     }
 
     @Test fun `successful login navigates to main and saves credentials when biometric enabled`() = runTest(dispatcher) {

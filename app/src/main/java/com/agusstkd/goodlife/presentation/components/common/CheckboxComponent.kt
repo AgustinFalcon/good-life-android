@@ -75,6 +75,7 @@ enum class CheckboxParamsId {
  * @property id Identificador del checkbox
  * @property linkText Texto clickeable adicional (ej: "términos y condiciones")
  * @property endIcon Icono al final (ej: huella digital)
+ * @property enabled Define si el checkbox acepta interacción.
  */
 data class CheckboxParams(
     val text: String,
@@ -82,6 +83,7 @@ data class CheckboxParams(
     val id: CheckboxParamsId = CheckboxParamsId.OTHER,
     val linkText: String? = null,
     val endIcon: ImageVector? = null,
+    val enabled: Boolean = true,
     val enabledState: CheckboxVisualState = CheckboxVisualState.Enabled,
     val disabledState: CheckboxVisualState = CheckboxVisualState.Disabled
 )
@@ -104,12 +106,15 @@ fun CheckboxComponent(
     onEndIconClick: (() -> Unit)? = null
 ) {
     val isChecked = params.checked
-    val colors = if (isChecked) params.enabledState else params.disabledState
+    val colors = if (params.enabled && isChecked) params.enabledState else params.disabledState
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .then(if (params.linkText == null) Modifier.clickable { onClick() } else Modifier)
+            .then(
+                if (params.linkText == null) Modifier.clickable(enabled = params.enabled) { onClick() }
+                else Modifier
+            )
             .padding(4.dp)
     ) {
         // Custom checkbox con gradiente
@@ -131,6 +136,7 @@ fun CheckboxComponent(
             Checkbox(
                 checked = isChecked,
                 onCheckedChange = { onClick() },
+                enabled = params.enabled,
                 colors = CheckboxDefaults.colors(
                     checkedColor = Color.Transparent,
                     uncheckedColor = Color.Transparent,
@@ -154,7 +160,7 @@ fun CheckboxComponent(
                     color = DarkGreen,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.clickable { onLinkClick?.invoke() }
+                    modifier = Modifier.clickable(enabled = params.enabled) { onLinkClick?.invoke() }
                 )
             }
         } else {
@@ -176,7 +182,7 @@ fun CheckboxComponent(
                     .size(26.dp)
                     .then(
                         if (onEndIconClick != null && isChecked) {
-                            Modifier.clickable { onEndIconClick() }
+                            Modifier.clickable(enabled = params.enabled) { onEndIconClick() }
                         } else Modifier
                     ),
                 contentDescription = "Activar con huella"

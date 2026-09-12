@@ -1,6 +1,6 @@
 ---
 type: Architecture
-version: recovery-audit-2026-09
+version: recovery-audit-2026-09.1
 validated: 2026-09-10
 update_when: "Cambien capas, wiring, persistencia o entrypoints."
 scope:
@@ -46,6 +46,11 @@ Koin modules registran APIs, datasources, repositories, use cases y ViewModels. 
 
 Room para user/daily cache; TokenManager usa Android storage/crypto según implementación. DateProvider evita reloj directo.
 
+## Coordinación de solicitudes
+
+- Login mantiene una única autenticación activa entre el formulario y biometría. Un segundo intento se rechaza antes de invocar el caso de uso, para evitar efectos de sesión/tokens en paralelo.
+- Daily serializa únicamente las mutaciones con un `Mutex`; las lecturas cancelan el job previo, usan un id monotónico y validan que sigan siendo la solicitud y fecha vigentes antes y después de consultar el caso de uso.
+- Meals cancela el job de carga previo y usa el mismo versionado. Una respuesta vieja no puede publicar `UiState`, incluso si la fuente no coopera con la cancelación.
 ## Evitar
 
 No llamar `stringResource` en screens ni inyectar ViewModel en components. No afirmar KMP: es app Android con capas KMP-ready.

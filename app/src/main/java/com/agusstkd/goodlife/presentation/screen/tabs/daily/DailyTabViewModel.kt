@@ -18,12 +18,15 @@ import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.toUiModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
@@ -75,6 +78,9 @@ class DailyTabViewModel(
     val accessibilityTexts: AccessibilityTexts get() = language.accessibilityTexts
 
     private var currentDate: LocalDate = dateProvider.today()
+    private var latestLoadRequestId: Long = 0L
+    private var loadJob: Job? = null
+    private val statusUpdateMutex = Mutex()
 
     private val _uiState = MutableStateFlow<DailyUiState>(DailyUiState.Loading)
     val uiState: StateFlow<DailyUiState> = _uiState
@@ -109,18 +115,27 @@ class DailyTabViewModel(
      * Muestra [DailyUiState.Loading] (skeleton) mientras se hace la request.
      */
     private fun loadItems() {
-        viewModelScope.launch {
+        val requestedDate = currentDate
+        val requestId = ++latestLoadRequestId
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
+            if (!isCurrentLoadRequest(requestId, requestedDate)) return@launch
             _uiState.value = DailyUiState.Loading
 
-            when (val result = getDailyItemsUseCase(currentDate)) {
-                is GetDailyItemsResult.Success -> _uiState.value =
-                    buildSuccessState(result.dailyLog)
+            val result = getDailyItemsUseCase(requestedDate)
+            if (!isCurrentLoadRequest(requestId, requestedDate)) return@launch
 
-                is GetDailyItemsResult.NotFound -> showEmptyState()
-                is GetDailyItemsResult.ServerError -> showServerError(result.message)
-                is GetDailyItemsResult.NetworkError -> showNetworkError()
+            when (result) {
+                    is GetDailyItemsResult.Success -> _uiState.value = buildSuccessState(result.dailyLog, requestedDate)
+                    is GetDailyItemsResult.NotFound -> showEmptyState()
+                    is GetDailyItemsResult.ServerError -> showServerError()
+                    is GetDailyItemsResult.NetworkError -> showNetworkError()
             }
         }
+    }
+
+    private fun isCurrentLoadRequest(requestId: Long, requestedDate: LocalDate): Boolean {
+        return requestId == latestLoadRequestId && requestedDate == currentDate
     }
 
     /**
@@ -133,19 +148,22 @@ class DailyTabViewModel(
      * @param newStatus Nuevo status (COMPLETED, SKIPPED, PENDING)
      */
     private fun updateItemStatus(itemId: Long, newStatus: DailyItemStatus) {
+        val requestedDate = currentDate
         viewModelScope.launch {
-            val currentState = _uiState.value
-            if (currentState is DailyUiState.Success) {
-                _uiState.value = currentState.copy(isRefreshing = true)
-            }
+            statusUpdateMutex.withLock {
+                val currentState = _uiState.value
+                if (requestedDate == currentDate && currentState is DailyUiState.Success) {
+                    _uiState.value = currentState.copy(isRefreshing = true)
+                }
 
-            when (val result = updateItemStatusUseCase(itemId, newStatus)) {
-                is UpdateItemStatusResult.Success -> _uiState.value =
-                    buildSuccessState(result.dailyLog)
-
-                is UpdateItemStatusResult.NotFound -> loadItems()
-                is UpdateItemStatusResult.ServerError -> showServerError(result.message)
-                is UpdateItemStatusResult.NetworkError -> showNetworkError()
+                when (val result = updateItemStatusUseCase(itemId, newStatus)) {
+                    is UpdateItemStatusResult.Success -> if (requestedDate == currentDate) {
+                        _uiState.value = buildSuccessState(result.dailyLog, requestedDate)
+                    }
+                    is UpdateItemStatusResult.NotFound -> if (requestedDate == currentDate) loadItems()
+                    is UpdateItemStatusResult.ServerError -> if (requestedDate == currentDate) showServerError()
+                    is UpdateItemStatusResult.NetworkError -> if (requestedDate == currentDate) showNetworkError()
+                }
             }
         }
     }
@@ -172,15 +190,15 @@ class DailyTabViewModel(
      * @param dailyLog Domain Model del daily log
      * @return [DailyUiState.Success] con datos listos para renderizar
      */
-    private fun buildSuccessState(dailyLog: DailyLog): DailyUiState.Success {
+    private fun buildSuccessState(dailyLog: DailyLog, date: LocalDate): DailyUiState.Success {
         val nextUpId: Long? =
             dailyLog.items.firstOrNull { it.status == DailyItemStatus.PENDING }?.id
         return DailyUiState.Success(
-            date = currentDate,
-            dayNumber = currentDate.day,
-            headerText = formatHeaderText(currentDate),
-            monthYear = formatMonthYear(currentDate),
-            showFullDate = !isRelativeDate(currentDate),
+            date = date,
+            dayNumber = date.day,
+            headerText = formatHeaderText(date),
+            monthYear = formatMonthYear(date),
+            showFullDate = !isRelativeDate(date),
             completionRate = dailyLog.completionRate,
             items = dailyLog.items.map { domainItem ->
                 domainItem.toUiModel(
@@ -200,8 +218,8 @@ class DailyTabViewModel(
         _uiState.value = DailyUiState.Empty
     }
 
-    private fun showServerError(message: String) {
-        _uiState.value = DailyUiState.Error(message = message)
+    private fun showServerError() {
+        _uiState.value = DailyUiState.Error(message = language.errorTexts.dataLoadError)
     }
 
     private fun showNetworkError() {

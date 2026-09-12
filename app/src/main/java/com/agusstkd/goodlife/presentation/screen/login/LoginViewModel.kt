@@ -14,11 +14,13 @@ import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
 import com.agusstkd.goodlife.presentation.navigation.route.navigateToMain
 import com.agusstkd.goodlife.presentation.screen.login.model.LoginUiAction
 import com.agusstkd.goodlife.presentation.screen.login.model.LoginUiState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
@@ -94,6 +96,7 @@ class LoginViewModel(
     }
 
     fun onAction(action: LoginUiAction) {
+        if ((_uiState.value as? LoginUiState.Content)?.isLoading == true) return
         when (action) {
             is LoginUiAction.OnEmailChange            -> updateEmail(action.value)
             is LoginUiAction.OnPasswordChange         -> updatePassword(action.value)
@@ -118,12 +121,12 @@ class LoginViewModel(
 
     private fun updateEmail(value: String) {
         val current = _uiState.value as? LoginUiState.Content ?: return
-        _uiState.value = current.copy(email = value, isEmailError = false)
+        _uiState.value = current.copy(email = value, isEmailError = false, errorMessage = null)
     }
 
     private fun updatePassword(value: String) {
         val current = _uiState.value as? LoginUiState.Content ?: return
-        _uiState.value = current.copy(password = value, isPasswordError = false)
+        _uiState.value = current.copy(password = value, isPasswordError = false, errorMessage = null)
     }
 
     private fun toggleRememberUser() {
@@ -135,74 +138,81 @@ class LoginViewModel(
     // LOGIN
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
+    private var latestLoginRequestId: Long = 0L
+    private var loginJob: Job? = null
+
+    private fun updateLoginFailure(
+        requestId: Long,
+        submittedEmail: String,
+        submittedPassword: String,
+        validationError: LoginResult.ValidationError? = null,
+        showGeneralErrorWhenEdited: Boolean = false,
+    ) {
+        _uiState.update { state ->
+            val latest = state as? LoginUiState.Content ?: return@update state
+            if (requestId != latestLoginRequestId) return@update latest
+            val credentialsAreUnchanged =
+                latest.email == submittedEmail && latest.password == submittedPassword
+
+            latest.copy(
+                isLoading = false,
+                isEmailError = credentialsAreUnchanged && validationError?.emailError != null,
+                isPasswordError = credentialsAreUnchanged && validationError?.passwordError != null,
+                errorMessage = if (showGeneralErrorWhenEdited || (validationError == null && credentialsAreUnchanged)) {
+                    language.errorTexts.loginError
+                } else {
+                    null
+                },
+            )
+        }
+    }
+
     private fun performLogin() {
         val current = _uiState.value as? LoginUiState.Content ?: return
-        if (current.isLoading) return
+        if (current.isLoading || loginJob?.isActive == true) return
 
-        viewModelScope.launch {
-            _uiState.value = current.copy(isLoading = true)
+        loginJob = viewModelScope.launch {
+            val requestId = ++latestLoginRequestId
+            _uiState.update { state ->
+                (state as? LoginUiState.Content)?.copy(isLoading = true, errorMessage = null) ?: state
+            }
 
-            val result = loginUseCase(
-                email = current.email,
-                password = current.password
-            )
-
-            when (result) {
+            when (val result = loginUseCase(email = current.email, password = current.password)) {
                 is LoginResult.Success -> {
                     biometricLoginHandler.saveCredentialsIfEnabled(
                         email = current.email,
                         password = current.password,
-                        isEnabled = current.isBiometricEnabled
+                        isEnabled = current.isBiometricEnabled,
                     )
                     _uiState.value = LoginUiState.Success
                     navigationController.navigateToMain()
                 }
-                is LoginResult.ValidationError -> {
-                    _uiState.value = current.copy(
-                        isLoading = false,
-                        isEmailError = result.emailError != null,
-                        isPasswordError = result.passwordError != null
-                    )
-                }
-                is LoginResult.Error -> {
-                    _uiState.value = current.copy(
-                        isLoading = false,
-                        isEmailError = true,
-                        isPasswordError = true
-                    )
-                }
+                is LoginResult.ValidationError -> updateLoginFailure(requestId, current.email, current.password, result)
+                is LoginResult.Error -> updateLoginFailure(requestId, current.email, current.password)
             }
         }
     }
 
     private fun performLoginWithCredentials(email: String, password: String) {
-        viewModelScope.launch {
-            val current = _uiState.value as? LoginUiState.Content ?: return@launch
-            _uiState.value = current.copy(isLoading = true)
+        val current = _uiState.value as? LoginUiState.Content ?: return
+        if (current.isLoading || loginJob?.isActive == true) return
+
+        loginJob = viewModelScope.launch {
+            val requestId = ++latestLoginRequestId
+            _uiState.update { state ->
+                (state as? LoginUiState.Content)?.copy(isLoading = true, errorMessage = null) ?: state
+            }
 
             when (val result = loginUseCase(email, password)) {
                 is LoginResult.Success -> {
                     _uiState.value = LoginUiState.Success
                     navigationController.navigateToMain()
                 }
-                is LoginResult.ValidationError -> {
-                    _uiState.value = current.copy(
-                        isLoading = false,
-                        isEmailError = result.emailError != null,
-                        isPasswordError = result.passwordError != null
-                    )
-                }
-                is LoginResult.Error -> {
-                    _uiState.value = current.copy(
-                        isLoading = false,
-                        isEmailError = true,
-                        isPasswordError = true
-                    )
-                }
+                is LoginResult.ValidationError -> updateLoginFailure(requestId, email, password, result, showGeneralErrorWhenEdited = true)
+                is LoginResult.Error -> updateLoginFailure(requestId, email, password, showGeneralErrorWhenEdited = true)
             }
         }
     }
-
     // ═══════════════════════════════════════════════════════════════════════════════════════════
     // BIOMETRIC — delegado a BiometricLoginHandler
     // ═══════════════════════════════════════════════════════════════════════════════════════════

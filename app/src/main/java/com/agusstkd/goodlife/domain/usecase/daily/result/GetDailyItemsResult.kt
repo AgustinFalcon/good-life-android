@@ -21,7 +21,7 @@ import com.agusstkd.goodlife.domain.model.daily.DailyLog
  * when (val result = getDailyItemsUseCase(date)) {
  *     is GetDailyItemsResult.Success      -> buildSuccessState(result.dailyLog)
  *     is GetDailyItemsResult.NotFound     -> showEmptyState()
- *     is GetDailyItemsResult.ServerError  -> showServerError(result.message)
+ *     is GetDailyItemsResult.ServerError  -> showServerError()
  *     is GetDailyItemsResult.NetworkError -> showNetworkError()
  * }
  * ```
@@ -50,7 +50,7 @@ sealed interface GetDailyItemsResult {
     /**
      * El servidor respondió con un error 5xx.
      *
-     * @param message Mensaje del servidor para mostrar al usuario.
+     * @param message Detalle técnico del servidor; no debe cruzar sin sanitizar a `UiState`.
      */
     data class ServerError(val message: String) : GetDailyItemsResult
 

@@ -33,6 +33,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -86,6 +89,7 @@ fun LoginScreen(
                 isPasswordError = uiState.isPasswordError,
                 isLoading = uiState.isLoading,
                 isBiometricAvailable = uiState.isBiometricAvailable,
+                errorMessage = uiState.errorMessage,
                 isBiometricEnabled = uiState.isBiometricEnabled,
                 onAction = onAction,
                 auth = auth,
@@ -99,6 +103,7 @@ fun LoginScreen(
                 isPasswordError = true,
                 isLoading = false,
                 isBiometricAvailable = false,
+                errorMessage = null,
                 isBiometricEnabled = false,
                 onAction = onAction,
                 auth = auth,
@@ -131,6 +136,7 @@ private fun LoginContent(
     isPasswordError: Boolean,
     isLoading: Boolean,
     isBiometricAvailable: Boolean,
+    errorMessage: String?,
     isBiometricEnabled: Boolean,
     onAction: (LoginUiAction) -> Unit,
     auth: AuthTexts,
@@ -158,7 +164,9 @@ private fun LoginContent(
             password = password,
             isEmailError = isEmailError,
             isPasswordError = isPasswordError,
+            isLoading = isLoading,
             onAction = onAction,
+            errorMessage = errorMessage,
             auth = auth,
             accessibility = accessibility
         )
@@ -171,7 +179,8 @@ private fun LoginContent(
                     text = auth.enableBiometricLogin,
                     checked = isBiometricEnabled,
                     id = CheckboxParamsId.ENABLE_FINGER_PRINT,
-                    endIcon = Icons.Default.Fingerprint
+                    endIcon = Icons.Default.Fingerprint,
+                    enabled = !isLoading,
                 ),
                 onClick = { onAction(LoginUiAction.OnBiometricToggle) },
                 onEndIconClick = { onAction(LoginUiAction.OnBiometricIconClick) },
@@ -189,14 +198,6 @@ private fun LoginContent(
             onAction = onAction,
             auth = auth
         )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        SocialLoginSection(onAction = onAction, auth = auth)
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        LoginFooter(onAction = onAction, auth = auth)
 
         Spacer(modifier = Modifier.height(24.dp))
     }
@@ -238,7 +239,9 @@ private fun LoginForm(
     password: String,
     isEmailError: Boolean,
     isPasswordError: Boolean,
+    isLoading: Boolean,
     onAction: (LoginUiAction) -> Unit,
+    errorMessage: String?,
     auth: AuthTexts,
     accessibility: AccessibilityTexts
 ) {
@@ -251,7 +254,8 @@ private fun LoginForm(
                 value = email,
                 placeholder = auth.emailOrUsername,
                 type = TextFieldType.USER,
-                isError = isEmailError
+                isError = isEmailError,
+                enabled = !isLoading,
             ),
             onValueChange = { onAction(LoginUiAction.OnEmailChange(it)) }
         )
@@ -262,11 +266,25 @@ private fun LoginForm(
                 placeholder = auth.password,
                 type = TextFieldType.PASSWORD,
                 isError = isPasswordError,
+                enabled = !isLoading,
                 passwordToggleHide = accessibility.hide,
                 passwordToggleShow = accessibility.show
             ),
             onValueChange = { onAction(LoginUiAction.OnPasswordChange(it)) }
         )
+
+        errorMessage?.let { message ->
+            Text(
+                text = message,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .semantics {
+                        liveRegion = LiveRegionMode.Polite
+                    }
+            )
+        }
     }
 }
 
@@ -457,6 +475,21 @@ fun LoginScreenFilledPreview() {
                 email = "agustin@gmail.com",
                 password = "1234",
                 rememberUser = true
+            ),
+            onAction = {},
+            texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)
+        )
+    }
+}
+@Preview(showBackground = true, name = "Content - Remote error")
+@Composable
+fun LoginScreenRemoteErrorPreview() {
+    GoodLifeTheme {
+        LoginScreen(
+            uiState = LoginUiState.Content(
+                email = "usuario",
+                password = "password",
+                errorMessage = "No se pudo iniciar sesión. Intentá nuevamente."
             ),
             onAction = {},
             texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)

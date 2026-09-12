@@ -1,6 +1,6 @@
 ---
 type: Runbook
-version: recovery-audit-2026-09
+version: recovery-audit-2026-09.1
 validated: 2026-09-10
 update_when: "Cambien build, tests, ejecución, CI o release."
 scope:
@@ -21,6 +21,9 @@ scope:
 
 Abrir en Android Studio o instalar `app/build/outputs/apk/debug`; requiere JDK compatible con AGP, Android SDK 35 y backend configurado; URL canónica: https://good-life.ddns.net/.
 
+## Regresiones de concurrencia
+
+Las pruebas de Login cubren el rechazo de intentos manual y biométrico superpuestos. Daily y Meals simulan una fuente que entrega una respuesta antigua aun después de cambiar de fecha y verifican que no publique estado obsoleto. No sustituir esos escenarios por `CompletableDeferred.await()` cancelable: no ejercita el guard de publicación.
 ## CI / release
 
 `.github/workflows/android-ci.yml` ejecuta `./gradlew :app:logicDebugUnitTestCoverageVerification` en push y PR contra `master`; sus Actions oficiales se fijan por SHA inmutable y se actualizan por PR cuando el proveedor las depreca. Instrumented tests requieren emulator/device y no forman parte del gate CI actual.

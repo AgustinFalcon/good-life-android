@@ -1,0 +1,10 @@
+{
+  "feature": "login-tabs-hardening",
+  "status": "done",
+  "tasks": [
+    {"id":"HT-01","title":"Lecturas Daily cancelables","status":"done"},
+    {"id":"HT-02","title":"Sanitizar errores Daily y Meals","status":"done"},
+    {"id":"HT-03","title":"Bloquear CTAs login incompatibles","status":"done"},
+    {"id":"HT-04","title":"Pruebas y gates","status":"done"}
+  ]
+}
