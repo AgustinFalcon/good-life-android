@@ -40,7 +40,7 @@ class WorkoutDetailViewModel(
                 is GetActiveRoutineResult.Success -> result.routine.workouts.firstOrNull { it.id == workoutId }
                     ?.let(::content) ?: WorkoutDetailUiState.NotFound
                 GetActiveRoutineResult.NotFound -> WorkoutDetailUiState.NotFound
-                is GetActiveRoutineResult.ServerError -> WorkoutDetailUiState.Error(result.message)
+                is GetActiveRoutineResult.ServerError -> WorkoutDetailUiState.Error(language.errorTexts.dataLoadError)
                 GetActiveRoutineResult.NetworkError -> WorkoutDetailUiState.Error(language.errorTexts.connectionError)
             }
             if (request == latestRequest) _uiState.value = state

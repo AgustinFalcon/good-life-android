@@ -105,7 +105,7 @@ class WorkoutsTabViewModel(
                     _uiState.value = WorkoutsUiState.NoRoutine
 
                 is GetActiveRoutineResult.ServerError ->
-                    _uiState.value = WorkoutsUiState.Error(result.message)
+                    _uiState.value = WorkoutsUiState.Error(language.errorTexts.dataLoadError)
 
                 GetActiveRoutineResult.NetworkError ->
                     _uiState.value = WorkoutsUiState.Error(language.errorTexts.connectionError)

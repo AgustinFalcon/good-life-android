@@ -68,9 +68,18 @@ class WorkoutDetailViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.uiState.value as WorkoutDetailUiState.Error
-        assertEquals("backend unavailable", state.message)
+        assertEquals(Spanish.errorTexts.dataLoadError, state.message)
+        assertTrue(state.message != "backend unavailable")
     }
 
+    @Test fun `network error preserves localized connection copy`() = runTest(dispatcher) {
+        repository.getActiveRoutineResult = Result.Error(Exception("offline"))
+        val viewModel = viewModel(workoutId = 40L)
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value as WorkoutDetailUiState.Error
+        assertEquals(Spanish.errorTexts.connectionError, state.message)
+    }
     private fun routine() = Routine(
         id = 5L, name = "Strength", description = null, difficultyLevel = DifficultyLevel.ADVANCED,
         goalType = GoalType.STRENGTH, isActive = true, scheduledTime = null,

@@ -1,0 +1,11 @@
+{
+  "feature": "localize-workout-server-errors",
+  "issue": 19,
+  "status": "built_pending_final_review",
+  "tasks": [
+    {"id":"LSE-01","title":"Mapear ServerError de Workouts a copy localizado","status":"done"},
+    {"id":"LSE-02","title":"Mapear ServerError de Workout Detail a copy localizado","status":"done"},
+    {"id":"LSE-03","title":"Añadir regresiones y documentar el contrato","status":"done"},
+    {"id":"LSE-04","title":"Ejecutar gates y revisión final","status":"in_progress"}
+  ]
+}

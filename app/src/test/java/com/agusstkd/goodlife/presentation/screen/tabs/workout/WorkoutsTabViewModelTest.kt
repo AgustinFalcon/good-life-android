@@ -71,10 +71,20 @@ class WorkoutsTabViewModelTest {
         assertTrue(vm.uiState.value is WorkoutsUiState.NoRoutine)
     }
 
-    @Test fun `repository error maps to error`() = runTest(dispatcher) {
+    @Test fun `network error preserves localized connection copy`() = runTest(dispatcher) {
         repo.getActiveRoutineResult = Result.Error(Exception("offline"))
         val vm = vm(); backgroundScope.launch { vm.uiState.collect {} }; vm.refresh(); advanceUntilIdle()
-        assertTrue(vm.uiState.value is WorkoutsUiState.Error)
+        assertEquals(Spanish.errorTexts.connectionError, (vm.uiState.value as WorkoutsUiState.Error).message)
+    }
+
+    @Test fun `server error does not expose backend detail`() = runTest(dispatcher) {
+        val backendDetail = "routine SQL trace"
+        repo.getActiveRoutineResult = Result.Error(com.agusstkd.goodlife.core.network.ApiException.ServerException(backendDetail))
+        val vm = vm(); backgroundScope.launch { vm.uiState.collect {} }; vm.refresh(); advanceUntilIdle()
+
+        val state = vm.uiState.value as WorkoutsUiState.Error
+        assertEquals(Spanish.errorTexts.dataLoadError, state.message)
+        assertTrue(state.message != backendDetail)
     }
 
     @Test fun `workout click emits a tab-local typed detail effect`() = runTest(dispatcher) {
