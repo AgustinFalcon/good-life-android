@@ -122,14 +122,14 @@ Recommendation: keep one feature, delivered in the existing task order: route/te
 
 ## Decision
 
-**REVISAR**
+**LISTO PARA BUILD**
 
-The feature has all minimum SDD artifacts, a bounded client-only scope, clear domain identities and testable core behavior. It has no blocker, but the six material proposals above are pending; therefore it is not ready to authorize a build yet.
+The six proposals were approved and applied. Independent architecture review approved the local-navigation contract, and the branch was rebased over the merged #11/#14 chain at `6bdc7c0`.
 
 ## Residual risks and next action
 
 - Residual risk: master has changed independently only after the documented baseline; implementation must re-check it after stacked PRs land.
-- Next action: approve, reject or modify P-01 through P-06. No implementation begins from this report alone.
+- Next action: implement in an isolated feature PR after this specification, preserving local navigation, validation and the defined gates.
 
 ## Addendum — decisiones aprobadas
 
