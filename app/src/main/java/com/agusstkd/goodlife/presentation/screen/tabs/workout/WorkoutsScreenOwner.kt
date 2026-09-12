@@ -17,6 +17,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +26,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.agusstkd.goodlife.core.datetime.language.WorkoutTexts
+import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsNavigationEffect
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiState
 import com.agusstkd.goodlife.presentation.theme.WorkoutsTabAccent
@@ -41,11 +44,22 @@ import org.koin.androidx.compose.koinViewModel
  */
 @Composable
 fun WorkoutsScreenOwner(
+    onNavigateToWorkoutDetail: (Long) -> Unit,
     viewModel: WorkoutsTabViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(viewModel, onNavigateToWorkoutDetail) {
+        viewModel.navigationEffects.collect { effect ->
+            when (effect) {
+                is WorkoutsNavigationEffect.NavigateToWorkoutDetail ->
+                    onNavigateToWorkoutDetail(effect.workoutId)
+            }
+        }
+    }
+
     LifecycleResumeEffect(Unit) {
+        viewModel.onWorkoutListResumed()
         viewModel.refresh()
         onPauseOrDispose { }
     }
@@ -57,6 +71,7 @@ fun WorkoutsScreenOwner(
 
         WorkoutsUiState.NoRoutine -> {
             WorkoutsNoRoutineState(
+                texts = viewModel.workoutTexts,
                 onCreateRoutine = { viewModel.onAction(WorkoutsUiAction.OnCreateRoutine) }
             )
         }
@@ -64,6 +79,7 @@ fun WorkoutsScreenOwner(
         is WorkoutsUiState.Success -> {
             WorkoutsScreen(
                 uiState = state,
+                texts = viewModel.workoutTexts,
                 onAction = viewModel::onAction
             )
         }
@@ -71,6 +87,7 @@ fun WorkoutsScreenOwner(
         is WorkoutsUiState.Error -> {
             WorkoutsErrorState(
                 message = state.message,
+                retryText = viewModel.workoutTexts.retry,
                 onRetry = { viewModel.onAction(WorkoutsUiAction.OnRefresh) }
             )
         }
@@ -94,6 +111,7 @@ private fun WorkoutsLoadingState() {
 
 @Composable
 private fun WorkoutsNoRoutineState(
+    texts: WorkoutTexts,
     onCreateRoutine: () -> Unit
 ) {
     Box(
@@ -106,13 +124,13 @@ private fun WorkoutsNoRoutineState(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "Sin rutina activa",
+                text = texts.noRoutineTitle,
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "Creá tu primera rutina de entrenamiento para empezar a registrar tus workouts.",
+                text = texts.noRoutineDescription,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -124,7 +142,7 @@ private fun WorkoutsNoRoutineState(
                     containerColor = WorkoutsTabAccent
                 )
             ) {
-                Text(text = "Crear rutina")
+                Text(text = texts.createRoutine)
             }
         }
     }
@@ -133,6 +151,7 @@ private fun WorkoutsNoRoutineState(
 @Composable
 private fun WorkoutsErrorState(
     message: String,
+    retryText: String,
     onRetry: () -> Unit
 ) {
     Box(
@@ -140,7 +159,7 @@ private fun WorkoutsErrorState(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "$message\nTap para reintentar",
+            text = "$message\n$retryText",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,

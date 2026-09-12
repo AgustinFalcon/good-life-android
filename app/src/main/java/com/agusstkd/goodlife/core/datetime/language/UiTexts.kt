@@ -392,6 +392,28 @@ data class CreateMealPlanTexts(
 )
 
 /**
+ * Textos del tab Workouts y su detalle de solo lectura.
+ */
+data class WorkoutTexts(
+    val noRoutineTitle: String,
+    val noRoutineDescription: String,
+    val createRoutine: String,
+    val retry: String,
+    val emptyWorkouts: String,
+    val workoutSummaryFormat: String,
+    val dayFormat: String,
+    val loading: String,
+    val back: String,
+    val exercisesTitle: String,
+    val noExercises: String,
+    val notesLabel: String,
+    val noSets: String,
+    val setFormat: String,
+    val repsFormat: String,
+    val repsAndWeightFormat: String,
+    val workoutNotFound: String,
+)
+/**
  * Textos para el wizard de creación de Rutina (SPEC-011).
  */
 data class CreateRoutineTexts(
