@@ -1,0 +1,10 @@
+{
+  "feature": "goodlife-authenticated-smoke",
+  "status": "spec_review",
+  "tasks": [
+    {"id":"ASM-01","title":"Preparar build y cuenta de prueba controlada","status":"todo","acceptance":"No se versionan secretos ni datos personales; el entorno puede clasificarse."},
+    {"id":"ASM-02","title":"Ejecutar login, Daily reversible y restauración","status":"todo","acceptance":"Los pasos funcionales se completan o quedan bloqueados con evidencia redacted."},
+    {"id":"ASM-03","title":"Comprobar refresh y logout sin inspeccionar secretos","status":"todo","acceptance":"La continuidad/limpieza de sesión se observa de forma segura."},
+    {"id":"ASM-04","title":"Registrar evidencia y rollback de datos de prueba","status":"todo","acceptance":"El item se restaura y el resumen seguro queda en una PR; para release-candidate registra una referencia opaca obligatoria al candidato externo exacto."}
+  ]
+}
