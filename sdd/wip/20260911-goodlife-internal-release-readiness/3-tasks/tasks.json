@@ -5,6 +5,6 @@
     {"id":"IRR-01","title":"Definir versionado y metadatos de artefacto","status":"todo","acceptance":"Commit, versión y hash son trazables sin almacenar binarios o secretos en Git."},
     {"id":"IRR-02","title":"Acordar inyección segura de firma","status":"todo","acceptance":"No se versiona material de firma y un bloqueo queda visible."},
     {"id":"IRR-03","title":"Documentar canal interno y rollback","status":"todo","acceptance":"Audiencia, suspensión y versión anterior se gestionan fuera del repo con responsables claros."},
-    {"id":"IRR-04","title":"Ejecutar gates y smoke redacted","status":"todo","acceptance":"Calidad, R-01 y privacidad se comprueban antes de distribución."}
+    {"id":"IRR-04","title":"Ejecutar gates y smoke redacted","status":"todo","acceptance":"Calidad, R-01 y privacidad se comprueban antes de distribución; el smoke release-candidate referencia obligatoriamente el registro externo exacto del binario firmado."}
   ]
 }

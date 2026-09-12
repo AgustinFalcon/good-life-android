@@ -7,7 +7,7 @@
 - Base: `origin/master` `3dcedfc`, as declared in feature metadata.
 - Sources reviewed: project SDD contracts; feature metadata, functional/technical specs and task plan; R-01 smoke specification as release dependency.
 - Redaction: no signing material, tester identity, distribution location or private artifact metadata is included.
-- Review status: draft; proposals require explicit human approval before a spec changes.
+- Review status: user-approved proposals applied; awaiting the independent final re-review recorded below.
 
 ## Coverage matrix
 
@@ -82,17 +82,17 @@ Recommendation: retain a single readiness spec but deliver its future work in tw
 
 | Proposal | Related finding | Proposed change | User decision | Applied evidence |
 |---|---|---|---|---|
-| P-01 | F-01 | Add exact signed-candidate smoke gate. | pending approval | — |
-| P-02 | F-02 | Define external provenance authority and operator role. | pending approval | — |
-| P-03 | F-03 | Define rollback compatibility and verification. | pending approval | — |
+| P-01 | F-01 | Add exact signed-candidate smoke gate. | approved / applied | `2-technical/spec.md#Addendum aprobado` (`f40ccfd`) |
+| P-02 | F-02 | Define external provenance authority and operator role. | approved / applied | `2-technical/spec.md#Addendum aprobado` (`f40ccfd`) |
+| P-03 | F-03 | Define rollback compatibility and verification. | approved / applied | `2-technical/spec.md#Addendum aprobado` (`f40ccfd`) |
 
 ## Decision
 
-**REVISAR**
+**REVISAR — re-review final pendiente**
 
-The readiness boundary correctly avoids secrets and public release. It needs the exact-candidate smoke and operational provenance rules before it can authorize internal distribution work.
+Las propuestas P-01 a P-03 fueron aprobadas por el usuario y aplicadas. El candidato release debe vincular su smoke con el identificador opaco del registro externo exacto. El veredicto final queda reservado a la re-revisión independiente posterior a este cambio.
 
 ## Residual risks and next action
 
-- Residual risk: signing and distribution mechanisms are intentionally external and still need a separately approved provider/runbook decision.
-- Next action: approve, reject or modify P-01 through P-03. No signing or distribution automation starts from this review.
+- Residual risk: firma y distribución siguen externas y requieren un proveedor/runbook aprobado para implementar.
+- Next action: re-ejecutar las lentes afectadas y cambiar a `LISTO PARA BUILD` sólo si no aparece un hallazgo nuevo.
