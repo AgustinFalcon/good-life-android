@@ -63,11 +63,21 @@ class WorkoutsTabViewModel(
 
     val workoutTexts get() = language.workoutTexts
 
-    private val navigationEffectsChannel = Channel<WorkoutsNavigationEffect>(Channel.BUFFERED)
+    /**
+     * Tab-local effects are rendezvous events: they are not replayed or buffered for a later
+     * composition. A second tap is ignored until the list resumes after the current detail flow.
+     */
+    private val navigationEffectsChannel = Channel<WorkoutsNavigationEffect>(Channel.RENDEZVOUS)
     val navigationEffects = navigationEffectsChannel.receiveAsFlow()
+    private var workoutDetailNavigationInProgress = false
 
     fun refresh() {
         loadData()
+    }
+
+    /** Clears the one-shot detail-navigation guard when this list becomes visible again. */
+    fun onWorkoutListResumed() {
+        workoutDetailNavigationInProgress = false
     }
 
     fun onAction(action: WorkoutsUiAction) {
@@ -153,6 +163,14 @@ class WorkoutsTabViewModel(
     }
 
     private fun navigateToWorkoutDetail(workoutId: Long) {
-        navigationEffectsChannel.trySend(WorkoutsNavigationEffect.NavigateToWorkoutDetail(workoutId))
+        if (workoutDetailNavigationInProgress) return
+
+        workoutDetailNavigationInProgress = true
+        val dispatch = navigationEffectsChannel.trySend(
+            WorkoutsNavigationEffect.NavigateToWorkoutDetail(workoutId)
+        )
+        if (dispatch.isFailure) {
+            workoutDetailNavigationInProgress = false
+        }
     }
 }

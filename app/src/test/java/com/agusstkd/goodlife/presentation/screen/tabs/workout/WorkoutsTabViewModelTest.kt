@@ -29,6 +29,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.DayOfWeek
 import org.junit.After
@@ -86,6 +87,21 @@ class WorkoutsTabViewModelTest {
 
         assertEquals(WorkoutsNavigationEffect.NavigateToWorkoutDetail(42L), effect.await())
         assertTrue(navigation.navigatedActions.isEmpty())
+    }
+
+    @Test fun `double workout click cannot leave a stale detail navigation`() = runTest(dispatcher) {
+        val viewModel = vm()
+        val firstEffect = async { viewModel.navigationEffects.first() }
+        runCurrent()
+
+        viewModel.onAction(WorkoutsUiAction.OnWorkoutClick(42L))
+        viewModel.onAction(WorkoutsUiAction.OnWorkoutClick(42L))
+
+        assertEquals(WorkoutsNavigationEffect.NavigateToWorkoutDetail(42L), firstEffect.await())
+        viewModel.onWorkoutListResumed()
+        val staleEffect = async { withTimeoutOrNull(1) { viewModel.navigationEffects.first() } }
+        advanceUntilIdle()
+        assertEquals(null, staleEffect.await())
     }
     @Test fun `create routine action navigates to the app creation route`() = runTest(dispatcher) {
         val navigation = FakeNavigationController()

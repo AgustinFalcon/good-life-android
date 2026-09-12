@@ -59,6 +59,7 @@ fun WorkoutsScreenOwner(
     }
 
     LifecycleResumeEffect(Unit) {
+        viewModel.onWorkoutListResumed()
         viewModel.refresh()
         onPauseOrDispose { }
     }
