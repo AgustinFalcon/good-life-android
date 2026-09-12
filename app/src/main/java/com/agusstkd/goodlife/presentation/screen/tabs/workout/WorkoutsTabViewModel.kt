@@ -11,12 +11,15 @@ import com.agusstkd.goodlife.domain.usecase.routine.result.GetActiveRoutineResul
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
 import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutUiModel
+import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsNavigationEffect
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiState
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -58,8 +61,23 @@ class WorkoutsTabViewModel(
         .onSubscription { loadData() }
         .stateIn(viewModelScope, SharingStarted.Lazily, WorkoutsUiState.Loading)
 
+    val workoutTexts get() = language.workoutTexts
+
+    /**
+     * Tab-local effects are rendezvous events: they are not replayed or buffered for a later
+     * composition. A second tap is ignored until the list resumes after the current detail flow.
+     */
+    private val navigationEffectsChannel = Channel<WorkoutsNavigationEffect>(Channel.RENDEZVOUS)
+    val navigationEffects = navigationEffectsChannel.receiveAsFlow()
+    private var workoutDetailNavigationInProgress = false
+
     fun refresh() {
         loadData()
+    }
+
+    /** Clears the one-shot detail-navigation guard when this list becomes visible again. */
+    fun onWorkoutListResumed() {
+        workoutDetailNavigationInProgress = false
     }
 
     fun onAction(action: WorkoutsUiAction) {
@@ -145,6 +163,14 @@ class WorkoutsTabViewModel(
     }
 
     private fun navigateToWorkoutDetail(workoutId: Long) {
-        // TODO: Navegar a detalle de workout
+        if (workoutDetailNavigationInProgress) return
+
+        workoutDetailNavigationInProgress = true
+        val dispatch = navigationEffectsChannel.trySend(
+            WorkoutsNavigationEffect.NavigateToWorkoutDetail(workoutId)
+        )
+        if (dispatch.isFailure) {
+            workoutDetailNavigationInProgress = false
+        }
     }
 }

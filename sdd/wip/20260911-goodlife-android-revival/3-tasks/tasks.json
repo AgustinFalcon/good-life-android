@@ -5,7 +5,7 @@
   "tasks": [
     {"id":"R-01","issue":"#5","title":"Authenticated smoke against canonical API","status":"todo","acceptance":"Redacted emulator/device evidence covers login, restart, refresh, logout and Daily read/update."},
     {"id":"R-02","issue":"#3","title":"Canonical remote profile","status":"in_review","acceptance":"Login and refresh persist GET /api/v1/me data rather than deriving profile data from a token."},
-    {"id":"R-03","issue":"#6","title":"Complete Workouts vertical","status":"todo","acceptance":"No visible Workouts CTA ends in a no-op or placeholder; routes are typed and tested."},
+    {"id":"R-03","issue":"#6","title":"Complete Workouts vertical","status":"in_progress","acceptance":"No visible Workouts CTA ends in a no-op or placeholder; routes are typed and tested."},
     {"id":"R-04","issue":"#7","title":"Complete Daily and Meals detail flows","status":"todo","acceptance":"Every exposed detail action has a documented route and real loading, not-found and error behavior."},
     {"id":"R-05","issue":"#8","title":"Internal release readiness","status":"todo","acceptance":"Redacted signing, distribution, rollback and instrumentation expectations are versioned."},
     {"id":"R-06","issue":"#3","title":"Harden session and local data","status":"in_review","acceptance":"Session concurrency, stale tab requests and local cleanup remain covered by tests and review."},

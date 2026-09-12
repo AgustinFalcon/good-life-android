@@ -13,6 +13,7 @@ import com.agusstkd.goodlife.domain.usecase.routine.GetMuscleGroupsUseCase
 import com.agusstkd.goodlife.domain.usecase.routine.SearchExercisesUseCase
 import com.agusstkd.goodlife.presentation.screen.add.routine.CreateRoutineViewModel
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.WorkoutsTabViewModel
+import com.agusstkd.goodlife.presentation.screen.tabs.workout.detail.WorkoutDetailViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -50,6 +51,14 @@ val routineModule = module {
             language = get(),
             getActiveRoutineUseCase = get(),
             navigationController = get(),
+        )
+    }
+
+    viewModel { (workoutId: Long) ->
+        WorkoutDetailViewModel(
+            workoutId = workoutId,
+            language = get(),
+            getActiveRoutineUseCase = get(),
         )
     }
 }

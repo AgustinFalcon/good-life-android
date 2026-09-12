@@ -7,11 +7,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import androidx.navigation.toRoute
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.DailyScreenOwner
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.MealsScreenOwner
 import com.agusstkd.goodlife.presentation.screen.tabs.profile.ProfileScreenOwner
 import com.agusstkd.goodlife.presentation.screen.tabs.settings.SettingsScreenOwner
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.WorkoutsScreenOwner
+import com.agusstkd.goodlife.presentation.screen.tabs.workout.detail.WorkoutDetailScreenOwner
 
 /**
  * Define los grafos de navegación de cada tab.
@@ -42,11 +44,18 @@ fun NavGraphBuilder.addTabNavGraph(navController: NavHostController) {
     // ═══════════════════════════════════════════════════════════════════
     navigation<TabGraphRoute.WorkoutsGraph>(startDestination = TabRoute.Workouts) {
         composable<TabRoute.Workouts> {
-            WorkoutsScreenOwner()
+            WorkoutsScreenOwner(
+                onNavigateToWorkoutDetail = { workoutId ->
+                    navController.navigate(TabRoute.WorkoutDetail(workoutId))
+                },
+            )
         }
-        composable<TabRoute.WorkoutDetail> {
-            // TODO: WorkoutDetailScreen
-            PlaceholderScreen("Detalle workout")
+        composable<TabRoute.WorkoutDetail> { backStackEntry ->
+            val route = backStackEntry.toRoute<TabRoute.WorkoutDetail>()
+            WorkoutDetailScreenOwner(
+                workoutId = route.workoutId,
+                onNavigateUp = navController::navigateUp,
+            )
         }
     }
 

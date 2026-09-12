@@ -16,15 +16,20 @@ import com.agusstkd.goodlife.fake.FakeNavigationController
 import com.agusstkd.goodlife.fake.FakeRoutineRepository
 import com.agusstkd.goodlife.presentation.navigation.core.NavigationAction
 import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
+import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsNavigationEffect
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.DayOfWeek
 import org.junit.After
@@ -72,6 +77,32 @@ class WorkoutsTabViewModelTest {
         assertTrue(vm.uiState.value is WorkoutsUiState.Error)
     }
 
+    @Test fun `workout click emits a tab-local typed detail effect`() = runTest(dispatcher) {
+        val navigation = FakeNavigationController()
+        val viewModel = vm(navigation)
+        val effect = async { viewModel.navigationEffects.first() }
+        runCurrent()
+
+        viewModel.onAction(WorkoutsUiAction.OnWorkoutClick(42L))
+
+        assertEquals(WorkoutsNavigationEffect.NavigateToWorkoutDetail(42L), effect.await())
+        assertTrue(navigation.navigatedActions.isEmpty())
+    }
+
+    @Test fun `double workout click cannot leave a stale detail navigation`() = runTest(dispatcher) {
+        val viewModel = vm()
+        val firstEffect = async { viewModel.navigationEffects.first() }
+        runCurrent()
+
+        viewModel.onAction(WorkoutsUiAction.OnWorkoutClick(42L))
+        viewModel.onAction(WorkoutsUiAction.OnWorkoutClick(42L))
+
+        assertEquals(WorkoutsNavigationEffect.NavigateToWorkoutDetail(42L), firstEffect.await())
+        viewModel.onWorkoutListResumed()
+        val staleEffect = async { withTimeoutOrNull(1) { viewModel.navigationEffects.first() } }
+        advanceUntilIdle()
+        assertEquals(null, staleEffect.await())
+    }
     @Test fun `create routine action navigates to the app creation route`() = runTest(dispatcher) {
         val navigation = FakeNavigationController()
         val vm = vm(navigation)
