@@ -17,6 +17,7 @@ kotlinSerialization = "1.7.3"
 # UI extras
 materialIconsExtended = "1.7.8"
 lottie = "6.6.10"
+coil = "2.7.0"
 
 # Ksp (Debe coincidir con Kotlin)
 ksp = "2.1.0-1.0.29"
@@ -70,6 +71,9 @@ androidx-material-icons-extended = { group = "androidx.compose.material", name =
 
 # Lottie (Compose)
 lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
+
+# Coil (Compose)
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
 # Navigation
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
