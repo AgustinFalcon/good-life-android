@@ -112,8 +112,8 @@ fun SnackbarComponent(
     params: SnackbarParams,
     isVisible: Boolean,
     onDismiss: () -> Unit,
-    onActionClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
+    onActionClick: (() -> Unit)? = null,
 ) {
     if (isVisible && params.autoDismissMs != null) {
         LaunchedEffect(params.message) {

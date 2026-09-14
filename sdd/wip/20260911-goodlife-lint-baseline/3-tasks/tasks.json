@@ -5,7 +5,7 @@
     {"id":"LB-01","title":"Crear inventario relativo y validador de lint","status":"todo","acceptance":"Desde el SHA de implementación, CI Linux regenera y versiona comando, wrapper/AGP/SDK-JDK, conteos y fingerprints relativos; CI para PRs apiladas ejecuta lintDebug y verificador fail-closed; detecta errores, fingerprints nuevos, excepciones vencidas y rutas Windows/Unix equivalentes sin rutas absolutas."},
     {"id":"LB-02a","title":"Resolver warnings de manifest y privacidad de bajo riesgo","status":"todo","acceptance":"PR aislada: lintDebug, revisión de manifest/backup y verificación proporcional."},
     {"id":"LB-02b","title":"Resolver warnings de launcher e iconos de bajo riesgo","status":"todo","acceptance":"PR aislada: lintDebug y verificación visual de launcher/iconos."},
-    {"id":"LB-02c","title":"Resolver warnings Compose y TOML de bajo riesgo","status":"todo","acceptance":"PR aislada por familia: lintDebug, tests y revisión Compose/Gradle proporcional."},
+    {"id":"LB-02c","title":"Resolver warnings Compose y TOML de bajo riesgo","status":"in_progress","acceptance":"PR aislada por familia: lintDebug, tests y revisión Compose/Gradle proporcional."},
     {"id":"LB-03","title":"Clasificar y reducir recursos no usados","status":"todo","acceptance":"Sólo se eliminan recursos con ownership confirmado; compatibilidad queda investigada."},
     {"id":"LB-04","title":"Planificar upgrades de toolchain y dependencias","status":"todo","acceptance":"Cada familia tiene PR aislada, matriz de compatibilidad y gates completos."}
   ]

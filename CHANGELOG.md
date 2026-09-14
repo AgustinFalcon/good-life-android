@@ -13,6 +13,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Logout solicita revocación remota y siempre borra tokens, credenciales biométricas, usuario y cache Daily locales.
 
 ### Fixed
+- Se normalizó el orden de `Modifier` frente a callbacks opcionales en componentes Compose reutilizables, reduciendo deuda lint sin cambiar la UI.
 - Login obtiene el perfil canónico con `GET /api/v1/me`; ya no deriva el usuario del JWT ni de la entrada de login.
 - Settings redirige a Login y limpia el back stack después de cerrar sesión.
 - Profile combina el usuario Room y el estado de carga/error para recomponer correctamente.

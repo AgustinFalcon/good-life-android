@@ -83,8 +83,8 @@ data class WorkoutTabHeaderParams(
 fun WorkoutTabHeaderComponent(
     params: WorkoutTabHeaderParams,
     onTabSelected: (WorkoutTabOption) -> Unit,
+    modifier: Modifier = Modifier,
     onFilterClick: () -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.background(MaterialTheme.colorScheme.surface)) {
         Row(
