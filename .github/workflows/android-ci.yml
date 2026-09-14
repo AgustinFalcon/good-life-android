@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          ref: ${{ github.sha }}
 
       - name: Set up Java 17
         uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961
@@ -37,3 +39,25 @@ jobs:
         env:
           DOCS_BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: bash .github/scripts/verify-governance.sh
+  release-static:
+    name: Unsigned release lint and build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Set up Java 17
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Grant Gradle wrapper permissions
+        run: chmod +x gradlew
+
+      - name: Verify unsigned release lint and assembly
+        run: ./gradlew :app:lintRelease :app:assembleRelease --no-daemon
