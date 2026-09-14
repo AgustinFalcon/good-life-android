@@ -21,5 +21,6 @@ Preservar cambios locales y no desplegar/usar secretos por defecto.
 - [Architecture](docs/agent/architecture.md)
 - [Contracts](docs/agent/contracts.md)
 - [Runbook](docs/agent/runbook.md)
+- [Release readiness](docs/agent/release-readiness.md)
 - [Traps](docs/agent/traps.md)
 

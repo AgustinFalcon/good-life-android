@@ -5,6 +5,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 ## [Unreleased]
 
 ### Added
+- Se incorporó el contrato redacted de readiness para releases internas; firma y distribución permanecen explícitamente bloqueadas hasta su aprobación.
 - Workouts now opens a typed, read-only detail with exercises, notes and target sets loaded from the active routine; missing and failed loads are observable states.
 
 ### Security

@@ -28,8 +28,13 @@ Las pruebas de Login cubren el rechazo de intentos manual y biométrico superpue
 
 `.github/workflows/android-ci.yml` ejecuta `./gradlew :app:logicDebugUnitTestCoverageVerification` en push y PR contra `master`; sus Actions oficiales se fijan por SHA inmutable y se actualizan por PR cuando el proveedor las depreca. Instrumented tests requieren emulator/device y no forman parte del gate CI actual.
 
-Release tiene minify deshabilitado y versionCode 1/versionName 1.0; no hay firma/pipeline documentado.
+### Internal release readiness (contract only)
 
+El contrato operativo está en [release-readiness.md](release-readiness.md). Esta etapa no genera firma ni distribuye: si falta una decisión aprobada, mecanismo externo o evidencia, el resultado correcto es `BLOCKED`.
+
+Un candidato exacto se identifica fuera de Git por `commit_sha`, `versionCode`, `versionName`, tipo de artefacto, `artifact_sha256` y una referencia opaca al registro externo. Antes de distribución se exige: PR revisada, tests unitarios, cobertura elegible, `lintRelease` o tarea release equivalente, gobierno/diff sin secretos, R-01 debug explícito y smoke UI redacted del artefacto release firmado exacto. Cada gate usa `PASS`, `BLOCKED` o `FAIL`; `BLOCKED`/`FAIL` detiene la distribución.
+
+El rollback sólo puede terminar como `withdrawn`, `restored_verified` o `blocked_incompatible`. `restored_verified` requiere verificar el canal y un arranque/login redacted del candidato restaurado. La firma, proveedor, canal, audiencia y rutas externas siguen bloqueados hasta aprobación explícita. El baseline actual mantiene `versionCode` 1, `versionName` 1.0 y minify deshabilitado; esos valores no constituyen una release distribuible.
 ## Definition of done
 
 - Gates existentes pasan; ausencias se declaran.
