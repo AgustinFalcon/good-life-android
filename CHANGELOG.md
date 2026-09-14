@@ -9,6 +9,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Workouts now opens a typed, read-only detail with exercises, notes and target sets loaded from the active routine; missing and failed loads are observable states.
 
 ### Security
+- Se eliminan plantillas de backup inactivas y se mantiene explícita la política `android:allowBackup=false`.
 - El interceptor de autenticación ya no registra URL, headers, tokens ni cuerpos de request. El logging HTTP es `BASIC` solo en debug y `NONE` en release.
 - Se deshabilitó el backup de aplicación para impedir que datos de sesión o credenciales entren en backups del sistema.
 - Logout solicita revocación remota y siempre borra tokens, credenciales biométricas, usuario y cache Daily locales.
