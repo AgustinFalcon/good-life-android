@@ -3,7 +3,8 @@
 - Feature id: `20260911-goodlife-lint-baseline`
 - Estado: `spec_review`.
 - Issue: #10.
-- Rama: `chore/android-lint-baseline-spec`.
+- Rama de spec: `chore/android-lint-baseline-spec`.
+- Implementación activa LB-02c: `fix/android-compose-modifier-contracts` (issue #24).
 - Idioma: español (es-AR).
 
 ## Evidencia observada

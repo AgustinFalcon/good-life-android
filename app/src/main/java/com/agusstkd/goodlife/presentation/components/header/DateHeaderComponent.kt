@@ -71,11 +71,11 @@ private val DISABLED_GRADIENT_COLORS = listOf(Color(0xFFBDBDBD), Color(0xFF9E9E9
 @Composable
 fun DateHeaderComponent(
     params: DateHeaderParams,
-    onCalendarClick: () -> Unit = {},
     onPreviousDay: () -> Unit,
     onNextDay: () -> Unit,
+    modifier: Modifier = Modifier,
+    onCalendarClick: () -> Unit = {},
     onNotificationsClick: () -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
     val previousArrowColors = if (params.canNavigatePrevious) ENABLED_GRADIENT_COLORS else DISABLED_GRADIENT_COLORS
 
