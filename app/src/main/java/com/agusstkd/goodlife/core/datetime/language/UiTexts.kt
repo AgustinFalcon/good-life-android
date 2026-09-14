@@ -467,3 +467,16 @@ data class CreateRoutineTexts(
     val errorNetwork: String,
     val loadingTitle: String,
 )
+
+/** Copy shared by the read-only Daily and Meals details. */
+data class TabDetailTexts(
+    val dailyTitle: String, val mealTitle: String, val back: String, val loading: String,
+    val dailyNotFound: String, val mealNotFound: String, val invalidRoute: String, val retry: String,
+    val typeLabel: String, val statusLabel: String, val scheduleLabel: String, val descriptionLabel: String,
+    val pending: String, val inProgress: String, val completed: String, val skipped: String,
+    val mealLabel: String, val proteinLabel: String, val carbsLabel: String, val fatLabel: String,
+    val active: String, val inactive: String,
+    val mealImageUnavailable: String, val emptyMealsTitle: String, val emptyMealsDescription: String,
+    val createMealPlan: String, val tapToRetry: String, val mealPlanSingular: String, val mealPlanPlural: String,
+    val calorieUnit: String, val gramUnit: String,
+)

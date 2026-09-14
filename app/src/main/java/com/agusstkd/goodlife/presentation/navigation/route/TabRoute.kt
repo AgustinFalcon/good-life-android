@@ -23,7 +23,7 @@ sealed interface TabRoute {
      * @param taskId Identificador de la tarea.
      */
     @Serializable
-    data class DailyDetail(val taskId: Long) : TabRoute
+    data class DailyDetail(val itemId: Long, val dateIso: String) : TabRoute
 
 
     // ===== WORKOUTS TAB =====
@@ -52,7 +52,7 @@ sealed interface TabRoute {
      * @param mealId Identificador de la comida.
      */
     @Serializable
-    data class MealDetail(val mealId: Long) : TabRoute
+    data class MealDetail(val planId: Long, val dateIso: String) : TabRoute
 
     // ===== SETTINGS TAB =====
 

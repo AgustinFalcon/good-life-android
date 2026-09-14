@@ -1,11 +1,52 @@
 {
-  "feature": "goodlife-daily-meals-details",
-  "status": "spec_review",
+  "featureId": "20260911-goodlife-daily-meals-details",
+  "issue": 7,
+  "branch": "feature/android-daily-meals-details",
+  "status": "in_review",
   "tasks": [
-    {"id":"DMD-01","title":"Renombrar rutas y emitir efecto local ID + dateIso desde tabs","acceptance":"No queda ruta o extensión con semántica taskId/mealId incorrecta; el controlador global no recibe TabRoute detail y se prueba fecha histórica.","status":"todo"},
-    {"id":"DMD-02","title":"Agregar contrato localizado y migrar copy Meals tocado","acceptance":"ES/EN/PT cubren detalle, tipo/estado Daily, errores y acciones; los textos de Meals modificados no quedan hardcodeados.","status":"todo"},
-    {"id":"DMD-03","title":"Implementar Daily item detail read-only","acceptance":"Carga la fecha de ruta, selecciona DailyItem.id y cubre estados observables.","status":"todo"},
-    {"id":"DMD-04","title":"Implementar Meal Plan detail read-only","acceptance":"Carga la fecha de ruta, selecciona DailyMealPlanSummary.id y no promete datos fuera del resumen.","status":"todo"},
-    {"id":"DMD-05","title":"Validar navegación local, estados, frescura y gates","acceptance":"Pruebas del grafo interno, ID/fecha inválidos, sesión separada y gate Android pasan; no hay respuesta obsoleta ni copy remoto expuesto.","status":"todo"}
+    {
+      "id": "DM-01",
+      "title": "Corregir rutas, efectos locales y Koin",
+      "dependsOn": [],
+      "acceptance": "IDs/fecha tipados; guardia anti doble toque; graph, Owner y back stack verificados.",
+      "status": "done"
+    },
+    {
+      "id": "DM-02",
+      "title": "Implementar detalle Daily read-only",
+      "dependsOn": [
+        "DM-01"
+      ],
+      "acceptance": "Campos explícitos, estados, validación, mapping y pruebas cubiertos.",
+      "status": "done"
+    },
+    {
+      "id": "DM-03",
+      "title": "Implementar detalle Meals read-only",
+      "dependsOn": [
+        "DM-01"
+      ],
+      "acceptance": "Campos explícitos, fallback determinista, mapping y pruebas cubiertos.",
+      "status": "done"
+    },
+    {
+      "id": "DM-04",
+      "title": "Completar copy localizado y accesibilidad",
+      "dependsOn": [
+        "DM-02",
+        "DM-03"
+      ],
+      "acceptance": "ES/EN/PT exhaustivos; copy tocado sin hardcodear; semantics y estado salvable verificadas.",
+      "status": "done"
+    },
+    {
+      "id": "DM-05",
+      "title": "Ejecutar gates y revisión de PR",
+      "dependsOn": [
+        "DM-04"
+      ],
+      "acceptance": "Unit, cobertura, lint y connectedDebugAndroidTest en emulador; CI y dos revisiones sin hallazgos bloqueantes.",
+      "status": "in_progress"
+    }
   ]
 }

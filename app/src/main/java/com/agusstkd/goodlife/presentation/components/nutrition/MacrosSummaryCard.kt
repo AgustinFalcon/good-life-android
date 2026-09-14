@@ -1,6 +1,7 @@
 package com.agusstkd.goodlife.presentation.components.nutrition
 
 import androidx.compose.foundation.layout.Arrangement
+import java.math.BigDecimal
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -64,6 +65,8 @@ fun MacrosSummaryCard(
     proteinLabel: String,
     carbsLabel: String,
     fatLabel: String,
+    calorieUnit: String = "kcal",
+    gramUnit: String = "g",
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -88,7 +91,7 @@ fun MacrosSummaryCard(
                     modifier = Modifier.size(28.dp),
                 )
                 Text(
-                    text = "${calories.toInt()} kcal",
+                    text = "${formatNutritionValue(calories)} $calorieUnit",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.ExtraBold,
                     color = CaloriesColor,
@@ -104,6 +107,7 @@ fun MacrosSummaryCard(
                     value = protein,
                     labelColor = ProteinColor,
                     valueColor = ProteinColorDark,
+                    gramUnit = gramUnit,
                     modifier = Modifier.weight(1f),
                 )
                 MacroCard(
@@ -111,6 +115,7 @@ fun MacrosSummaryCard(
                     value = carbs,
                     labelColor = CarbsColor,
                     valueColor = CarbsColorDark,
+                    gramUnit = gramUnit,
                     modifier = Modifier.weight(1f),
                 )
                 MacroCard(
@@ -118,6 +123,7 @@ fun MacrosSummaryCard(
                     value = fat,
                     labelColor = FatColor,
                     valueColor = FatColorDark,
+                    gramUnit = gramUnit,
                     modifier = Modifier.weight(1f),
                 )
             }
@@ -135,6 +141,7 @@ private fun MacroCard(
     value: Double,
     labelColor: Color,
     valueColor: Color,
+    gramUnit: String,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -157,7 +164,7 @@ private fun MacroCard(
                 color = labelColor,
             )
             Text(
-                text = "${value.toInt()}g",
+                text = "${formatNutritionValue(value)}$gramUnit",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = valueColor,
@@ -165,6 +172,8 @@ private fun MacroCard(
         }
     }
 }
+
+internal fun formatNutritionValue(value: Double): String = BigDecimal.valueOf(value).stripTrailingZeros().toPlainString()
 
 // ════════════════════════════════════════════════════════════
 // PREVIEW

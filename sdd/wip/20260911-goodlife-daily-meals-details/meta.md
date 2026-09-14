@@ -1,24 +1,20 @@
 # GoodLife Android — Daily y Meal Plan details
 
 - Feature id: `20260911-goodlife-daily-meals-details`
-- Estado: `spec_review` — no habilita implementación hasta revisión de #7.
+- Estado: `in_review` — implementación y gates locales en curso; se requiere aprobación final y CI del PR antes de build-ready.
 - Issue: #7 `feature(android): complete Daily and Meals detail flows`.
-- Rama: `feature/android-daily-meals-detail`.
+- Rama: `feature/android-daily-meals-details`.
 - Idioma de specs: español (es-AR).
+- Baseline de implementación: `origin/master` `7c67804` (2026-09-12).
 
 ## Evidencia y precedencia
 
-La evidencia de comportamiento se tomó de `origin/master` en `3dcedfc` el 2026-09-11:
+El backend expone las lecturas autenticadas por fecha ya usadas por ambos tabs; no se inventan lecturas por ID. El detalle filtra el resultado date-backed por ID y preserva la navegación interna del tab. `WorkoutDetail` fusionado es sólo patrón UI/Owner de comparación, no una dependencia contractual.
 
-- `TabRoute.kt` define `DailyDetail(taskId)` y `MealDetail(mealId)`, aunque sus nombres no coinciden con los IDs que originan las tarjetas.
-- `DailyTabViewModel.kt` conserva la fecha seleccionada y sólo puede leer el log por fecha; el click diario sigue siendo un no-op.
-- `MealsTabViewModel.kt` conserva la fecha seleccionada y sólo puede leer planes por fecha; el click de un plan sigue siendo un no-op.
-- `DailyApiService.kt` y `MealPlanApiService.kt` ofrecen lecturas por fecha, no por ID.
+Los artefactos aquí son la fuente versionable del contrato de #7. No contienen datos de usuario, credenciales, hosts privados ni secretos.
 
-La decisión propuesta evita inferir endpoints, datos de recetas, credenciales, registros personales, hosts o rutas locales. Los artefactos SDD del Escritorio no se copian: este repositorio conserva el contrato versionable.
+## Evidencia de implementación
 
-## Relación
-
-- Extiende R-04 del revival Android.
-- Depende de las rutas y reglas SDD de #11 y #14. La implementación sólo comienza cuando ambas se hayan fusionado o esta rama se haya rebasado sobre su `master` fusionado; después se reejecutan gates y pruebas de navegación.
-- No depende de enlaces públicos ni deep links.
+- Compilación Kotlin, unit tests, cobertura y lint locales ejecutados en esta rama.
+- Gate conectado Gradle en emulador Android API 36: 8/8 tests OK; Daily y Meals (scroll → detalle → back), estados NotFound/InvalidRoute/Retry, Back y fallback accesible.
+- El gate CI ejecuta connectedDebugAndroidTest sobre API 35; su resultado se acreditará desde el PR.

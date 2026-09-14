@@ -1,6 +1,7 @@
 package com.agusstkd.goodlife.presentation.screen.tabs.daily
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.compose.ui.Modifier
@@ -24,6 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.agusstkd.goodlife.core.datetime.language.DailyTexts
 import com.agusstkd.goodlife.presentation.components.header.DateHeaderParams
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiAction
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyNavigationEffect
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
 import org.koin.androidx.compose.koinViewModel
 
@@ -38,12 +41,22 @@ import org.koin.androidx.compose.koinViewModel
  */
 @Composable
 fun DailyScreenOwner(
+    onNavigateToDailyDetail: (Long, kotlinx.datetime.LocalDate) -> Unit,
     viewModel: DailyTabViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(viewModel, onNavigateToDailyDetail) {
+        viewModel.navigationEffects.collect { effect ->
+            when (effect) {
+                is DailyNavigationEffect.NavigateToDailyDetail -> onNavigateToDailyDetail(effect.itemId, effect.date)
+            }
+        }
+    }
 
     LifecycleResumeEffect(Unit) {
-        viewModel.refresh()
+        viewModel.onDailyListResumed()
         onPauseOrDispose { }
     }
 
@@ -64,6 +77,7 @@ fun DailyScreenOwner(
             DailyScreen(
                 uiState = state,
                 dailyTexts = viewModel.dailyTexts,
+                listState = listState,
                 dateHeaderParams = DateHeaderParams(
                     dayNumber = state.dayNumber,
                     headerText = state.headerText,

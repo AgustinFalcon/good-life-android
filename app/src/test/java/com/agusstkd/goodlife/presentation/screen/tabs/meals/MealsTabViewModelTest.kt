@@ -13,6 +13,7 @@ import com.agusstkd.goodlife.fake.FakeMealPlanRepository
 import com.agusstkd.goodlife.fake.FakeNavigationController
 import com.agusstkd.goodlife.presentation.navigation.core.NavigationAction
 import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
+import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsNavigationEffect
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiState
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +22,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -125,6 +129,31 @@ class MealsTabViewModelTest {
         assertTrue(vm.uiState.value is MealsUiState.Error)
     }
 
+    @Test fun `meal plan click emits one typed detail effect and ignores duplicate taps`() = runTest(dispatcher) {
+        val vm = viewModel()
+        val effect = async { vm.navigationEffects.first() }
+        runCurrent()
+
+        vm.onAction(MealsUiAction.OnMealPlanClick(42L))
+        vm.onAction(MealsUiAction.OnMealPlanClick(42L))
+
+        assertEquals(MealsNavigationEffect.NavigateToMealDetail(42L, "2026-07-26"), effect.await())
+        vm.onMealListResumed()
+        val staleEffect = async { withTimeoutOrNull(1) { vm.navigationEffects.first() } }
+        advanceUntilIdle()
+        assertEquals(null, staleEffect.await())
+    }
+
+    @Test fun `non positive meal plan id never emits navigation`() = runTest(dispatcher) {
+        val vm = viewModel()
+        val effect = async { withTimeoutOrNull(1) { vm.navigationEffects.first() } }
+        runCurrent()
+
+        vm.onAction(MealsUiAction.OnMealPlanClick(0L))
+        advanceUntilIdle()
+
+        assertEquals(null, effect.await())
+    }
     @Test fun `create meal plan action navigates to route`() = runTest(dispatcher) {
         val vm = viewModel()
         vm.onAction(MealsUiAction.OnCreateMealPlan)

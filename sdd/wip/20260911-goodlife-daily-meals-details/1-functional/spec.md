@@ -1,57 +1,34 @@
-# Especificación funcional — Daily y Meal Plan details
+# Daily y Meals: detalles internos
 
 ## Objetivo
 
-Eliminar las acciones expuestas sin comportamiento de los tabs Daily y Meals mediante detalles internos, read-only y reconstruibles después de reiniciar la app.
+Completar las dos CTAs de detalle actualmente visibles: un ítem de Daily y un plan de Meals deben abrir un detalle interno útil y poder volver al mismo tab. No se agregan deep links, endpoints, edición ni eliminación.
 
-## Decisión propuesta
+## Alcance funcional
 
-Los detalles se construyen con las lecturas existentes por fecha. Cada ruta transporta un identificador semántico y la fecha ISO del tab de origen; el Owner vuelve a leer esa fecha y selecciona el elemento por ID. No transporta objetos de UI ni usa la fecha actual como sustituto.
-
-| Superficie | Ruta propuesta | Origen del ID | Lectura |
-|---|---|---|---|
-| Daily | `DailyItemDetail(dailyItemId, dateIso)` | `DailyItem.id` | daily log de `dateIso` |
-| Meals | `MealPlanDetail(mealPlanId, dateIso)` | `DailyMealPlanSummary.id` | meal plans de `dateIso` |
-
-`dateIso` usa `YYYY-MM-DD`. Es un primitive estable para Navigation; no hay serialización de objetos ni dependencia de memoria de la pantalla anterior.
-
-## Comportamiento
-
-### Daily item
-
-Al tocar una tarjeta Daily, se abre su detalle para la fecha que el usuario está visualizando. El detalle muestra tipo, título, descripción si existe, hora programada si existe y estado. Es una vista de contexto del item diario; no promete editar la entidad subyacente ni cambiar su estado desde esta pantalla.
-
-### Meal plan
-
-Al tocar una tarjeta Meals, se abre el resumen del plan de esa fecha: nombre del plan, nombre de la comida si existe, tipo, hora si existe, imagen si existe y macros agregados. No promete ingredientes, instrucciones ni edición porque no están presentes en el contrato de resumen vigente.
-
-### Estados observables
-
-Ambos detalles deben renderizar:
-
-1. `Loading` mientras se consulta la fecha de la ruta.
-2. `Content` cuando la respuesta contiene el ID pedido.
-3. `NotFound` si no existe log/plan para la fecha o si el ID no pertenece a la respuesta.
-4. `Error` con mensaje localizado y reintento para red, servidor o una fecha de ruta inválida.
-
-El botón volver regresa al tab de origen. Reintentar vuelve a usar exactamente el mismo `dateIso` e ID.
-
-## Criterios de aceptación
-
-- Ninguna tarjeta Daily o Meals visible termina en no-op o placeholder.
-- Una fecha histórica conserva su contexto: abrir y reabrir el detalle consulta esa misma fecha, no `today()`.
-- Daily selecciona por `DailyItem.id`; Meals por `DailyMealPlanSummary.id`.
-- Los nombres de ruta y parámetros reflejan esas identidades; no quedan `taskId` ni `mealId` engañosos.
-- La app puede recrear los detalles desde la ruta sin depender de un objeto pasado entre composables.
-- Un ID menor o igual que cero, o una fecha que no cumpla exactamente `YYYY-MM-DD`, produce un error localizado sin consulta de repositorio.
-- Ningún `TabRoute.*Detail` se envía al controlador global de rutas de aplicación; el detalle se abre y vuelve dentro del stack del tab de origen.
-- Todo copy nuevo y el copy de Meals tocado por esta vertical usa `AppLanguage` en español, inglés y portugués.
-- No se muestra texto crudo del backend en estados de error nuevos o corregidos.
-- La cobertura incluye navegación, fecha de origen, content, not-found, error, ruta inválida y reintento sin respuesta obsoleta.
+1. Un click con identificador positivo abre el detalle interno para la fecha seleccionada. Un identificador no positivo en el listado no emite efecto ni navega.
+2. El detalle Daily muestra título, tipo, estado, horario opcional y descripción opcional. El detalle Meals muestra nombre del plan, tipo, horario opcional, nombre de comida opcional, calorías, proteínas, carbohidratos, grasas y estado activo/inactivo.
+3. Cada detalle lee sólo con las consultas autenticadas existentes por fecha; filtra por el identificador de la ruta y no infiere receta, ingredientes ni acciones no disponibles.
+4. Cada detalle tiene `Loading`, `Content`, `NotFound`, `Error` e `InvalidRoute`. Para una ruta puntual no existe un estado `Empty` separado: ausencia de fecha o de ID es `NotFound`.
+5. En todos los estados hay una acción Volver, con etiqueta y descripción accesible localizadas; vuelve al stack local del tab y conserva la fecha, filtro y scroll que gestione el listado.
+6. Una ruta restaurada con ID no positivo o fecha ISO `YYYY-MM-DD` inválida muestra `InvalidRoute` y no invoca datos. Reintentar mantiene parámetros válidos originales.
+7. La imagen de comida es opcional; `null` o fallo controlado muestra fallback local sin registrar ni mostrar URL/error remoto.
+8. La sesión es responsabilidad del flujo autenticado global existente. #7 no intercepta, remapea ni prueba una expiración de sesión como `NotFound`; esa integración se evidencia en el smoke #5.
 
 ## Fuera de alcance
 
-- Endpoints nuevos por ID.
-- Ingredientes, instrucciones, historial, edición o borrado de meal plans.
-- Edición de task/habit/workout desde Daily detail.
-- Deep links públicos, notificaciones y sincronización offline de mutaciones.
+- Navegación pública, App Links o deep links.
+- Crear, editar o eliminar items/planes desde detalle.
+- Nuevos contratos HTTP, modelos de receta/ingredientes o persistencia.
+- Cambiar la semántica global de expiración de sesión.
+
+## Criterios de aceptación
+
+- Ninguna CTA de detalle de Daily/Meals queda en placeholder o no-op.
+- Las rutas son serializables y contienen sólo IDs positivos más `dateIso` (`YYYY-MM-DD`).
+- Hay pruebas de guardia de origen, restauración inválida, un único efecto por entrada, retorno, encontrado/no encontrado, red/servidor/retry, contenido localizado y fallback determinista de imagen.
+- ES/EN/PT proveen todo copy nuevo. Los strings hardcodeados de `MealsScreenOwner` tocados por este vertical se migran a ese contrato; copy no tocado queda fuera.
+- Las verificaciones unitarias, cobertura, lint, documentación y revisión de PR pasan.
+## Preservación al volver
+
+El detalle es sólo lectura: al volver no dispara una recarga automática. Daily conserva `currentDate` y el filtro activo; Meals conserva `currentDate`. Ambos listados conservan su `LazyListState` salvable del entry de navegación. La prueba de navegación verifica fecha/filtro; la prueba Compose instrumentada verifica que volver mantiene la posición visible. No se promete conservar datos ante muerte de proceso fuera de los mecanismos normales de Navigation saved state.

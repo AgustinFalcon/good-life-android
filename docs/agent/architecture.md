@@ -1,7 +1,7 @@
 ---
 type: Architecture
-version: recovery-audit-2026-09.1
-validated: 2026-09-10
+version: recovery-audit-2026-09.2
+validated: 2026-09-14
 update_when: "Cambien capas, wiring, persistencia o entrypoints."
 scope:
   - README.md
@@ -35,6 +35,12 @@ network success -> cache; offline read -> Room
 ```
 
 Koin modules registran APIs, datasources, repositories, use cases y ViewModels. Solo ScreenOwner obtiene ViewModel.
+
+## Tab details
+
+`TabRoute.DailyDetail` carries `itemId` plus an exact ISO date and `TabRoute.MealDetail` carries `planId` plus an exact ISO date. The tab graph resolves the existing date-backed collection, filters it by ID and never invents an endpoint by ID. Their Owners obtain parameterized Koin ViewModels; pure screens render Content, missing, invalid-route and retryable error states. Navigation effects are tab-local rendezvous events with an anti-double-tap guard, and list Owners retain `LazyListState` across detail/back.
+
+`addDailyTabGraph` and `addMealsTabGraph` are internal typed graph boundaries included by `addTabNavGraph`; instrumentation exercises the same routes with deterministic content and no backend.
 
 ## Workout detail
 

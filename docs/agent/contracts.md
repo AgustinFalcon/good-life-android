@@ -17,7 +17,7 @@ scope:
 - Android applicationId `com.agusstkd.goodlife`, minSdk 26, target/compile 35.
 - El icono primario instalable ic_logo_install es un adaptive icon base anydpi con capa monochrome; requiere una comprobación visual de launcher.
 - Android mantiene `android:allowBackup=false`; no hay contrato de backup o device transfer para datos locales.
-- Routes AppRoute Splash/Login/Register/Main/Create* y TabRoute Daily/Workouts/Meals/Settings/Profile.
+- Routes AppRoute Splash/Login/Register/Main/Create* y TabRoute Daily/DailyDetail/Workouts/WorkoutDetail/Meals/MealDetail/Settings/Profile. DailyDetail carries itemId + ISO date; MealDetail carries planId + ISO date.
 
 ## Consumidos
 
@@ -32,4 +32,3 @@ scope:
 - Owners manejan DI/side effects; screens son puros.
 - Textos via AppLanguage y fecha via DateProvider.
 - No exponer JWT/credenciales en logs; refresh 401 está implementado y requiere validación en dispositivo.
-

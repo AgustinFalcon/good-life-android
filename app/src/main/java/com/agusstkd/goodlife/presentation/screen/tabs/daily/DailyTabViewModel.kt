@@ -14,15 +14,18 @@ import com.agusstkd.goodlife.domain.usecase.daily.result.GetDailyItemsResult
 import com.agusstkd.goodlife.domain.usecase.daily.result.UpdateItemStatusResult
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyFilter
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyItemHighlight
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyNavigationEffect
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.toUiModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -78,6 +81,10 @@ class DailyTabViewModel(
     val accessibilityTexts: AccessibilityTexts get() = language.accessibilityTexts
 
     private var currentDate: LocalDate = dateProvider.today()
+    private var activeFilter: DailyFilter = DailyFilter.ALL
+    private val navigationEffectsChannel = Channel<DailyNavigationEffect>(Channel.RENDEZVOUS)
+    val navigationEffects = navigationEffectsChannel.receiveAsFlow()
+    private var detailNavigationInProgress = false
     private var latestLoadRequestId: Long = 0L
     private var loadJob: Job? = null
     private val statusUpdateMutex = Mutex()
@@ -89,6 +96,10 @@ class DailyTabViewModel(
 
     fun refresh() {
         loadItems()
+    }
+
+    fun onDailyListResumed() {
+        detailNavigationInProgress = false
     }
 
     fun onAction(action: DailyUiAction) {
@@ -103,6 +114,7 @@ class DailyTabViewModel(
     }
 
     private fun filterItems(filter: DailyFilter) {
+        activeFilter = filter
         val currentState = _uiState.value
         if (currentState is DailyUiState.Success) {
             _uiState.value = currentState.copy(activeFilter = filter)
@@ -179,7 +191,9 @@ class DailyTabViewModel(
     }
 
     private fun navigateToDetail(itemId: Long) {
-        // TODO: Implementar navegación a detalle
+        if (itemId <= 0 || detailNavigationInProgress) return
+        detailNavigationInProgress = true
+        if (navigationEffectsChannel.trySend(DailyNavigationEffect.NavigateToDailyDetail(itemId, currentDate)).isFailure) detailNavigationInProgress = false
     }
 
     /**
@@ -211,6 +225,7 @@ class DailyTabViewModel(
                 )
             }.toImmutableList(),
             isRefreshing = false,
+            activeFilter = activeFilter,
         )
     }
 

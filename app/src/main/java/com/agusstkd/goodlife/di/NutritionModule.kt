@@ -16,11 +16,25 @@ import com.agusstkd.goodlife.domain.usecase.nutrition.SearchIngredientsUseCase
 import com.agusstkd.goodlife.domain.usecase.nutrition.SearchMealsUseCase
 import com.agusstkd.goodlife.presentation.screen.add.mealplan.CreateMealPlanViewModel
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.MealsTabViewModel
+import com.agusstkd.goodlife.presentation.screen.tabs.meals.detail.MealDetailViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 
+/** Parameterized registration kept isolated so it can be validated without network bindings. */
+internal val mealDetailModule = module {
+    viewModel { (planId: Long, dateIso: String) ->
+        MealDetailViewModel(
+            planId = planId,
+            dateIso = dateIso,
+            language = get(),
+            getMealPlansUseCase = get(),
+        )
+    }
+}
+
 val nutritionModule = module {
+    includes(mealDetailModule)
 
     // ── API Services ──────────────────────────────────────────────────────────
     single<NutritionCatalogApiService> {

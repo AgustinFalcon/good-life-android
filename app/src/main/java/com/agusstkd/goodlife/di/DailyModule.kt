@@ -5,6 +5,7 @@ import com.agusstkd.goodlife.domain.repository.DailyRepository
 import com.agusstkd.goodlife.domain.usecase.daily.GetDailyItemsUseCase
 import com.agusstkd.goodlife.domain.usecase.daily.UpdateItemStatusUseCase
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.DailyTabViewModel
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.detail.DailyDetailViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -23,7 +24,20 @@ import com.agusstkd.goodlife.data.remote.datasource.remote.DailyRemoteDataSource
  * Cache: [DailyRepositoryImpl] usa [DailyDao] + patrón SWR (backend primero, fallback Room).
  * Ver también [DAILY-IMPLEMENTATION-PLAN] en docs (texto puede estar desfasado respecto al código).
  */
+/** Parameterized registration kept isolated so it can be validated without network bindings. */
+internal val dailyDetailModule = module {
+    viewModel { (itemId: Long, dateIso: String) ->
+        DailyDetailViewModel(
+            itemId = itemId,
+            dateIso = dateIso,
+            language = get(),
+            getDailyItemsUseCase = get(),
+        )
+    }
+}
+
 val dailyModule = module {
+    includes(dailyDetailModule)
 
     // ═══════════════════════════════════════════════════════════════════════════════════════════
     // DATA SOURCES
@@ -89,5 +103,4 @@ val dailyModule = module {
             getDailyItemsUseCase = get(),
             updateItemStatusUseCase = get()
         )
-    }
-}
+    }}
