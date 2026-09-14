@@ -15,6 +15,7 @@ scope:
 ## Expuestos
 
 - Android applicationId `com.agusstkd.goodlife`, minSdk 26, target/compile 35.
+- El icono primario instalable ic_logo_install es un adaptive icon base anydpi con capa monochrome; requiere una comprobación visual de launcher.
 - Routes AppRoute Splash/Login/Register/Main/Create* y TabRoute Daily/Workouts/Meals/Settings/Profile.
 
 ## Consumidos

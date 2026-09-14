@@ -17,6 +17,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Se normalizó el orden de `Modifier` frente a callbacks opcionales en componentes Compose reutilizables, reduciendo deuda lint sin cambiar la UI.
 - Coil Compose se centralizó en el version catalog conservando sus coordenadas y versión `2.7.0`.
 - CI ahora valida lint y ensamblado de la variante release no firmada, sin publicar ni distribuir artefactos.
+- El icono adaptativo primario de instalación se normalizó para minSdk 26 y declara capa monochrome para launchers compatibles.
 - Login obtiene el perfil canónico con `GET /api/v1/me`; ya no deriva el usuario del JWT ni de la entrada de login.
 - Settings redirige a Login y limpia el back stack después de cerrar sesión.
 - Profile combina el usuario Room y el estado de carga/error para recomponer correctamente.
