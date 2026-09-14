@@ -26,7 +26,7 @@ Abrir en Android Studio o instalar `app/build/outputs/apk/debug`; requiere JDK c
 Las pruebas de Login cubren el rechazo de intentos manual y biométrico superpuestos. Daily y Meals simulan una fuente que entrega una respuesta antigua aun después de cambiar de fecha y verifican que no publique estado obsoleto. No sustituir esos escenarios por `CompletableDeferred.await()` cancelable: no ejercita el guard de publicación.
 ## CI / release
 
-`.github/workflows/android-ci.yml` ejecuta `./gradlew :app:logicDebugUnitTestCoverageVerification` en push y PR contra `master`; sus Actions oficiales se fijan por SHA inmutable y se actualizan por PR cuando el proveedor las depreca. Instrumented tests requieren emulator/device y no forman parte del gate CI actual.
+`.github/workflows/android-ci.yml` fija `actions/checkout` a `${{ github.sha }}` en ambos jobs: en PR valida el SHA de integración que GitHub Actions evalúa contra `master`, y en push valida el SHA publicado. Sobre ese mismo ref ejecuta cobertura lógica debug (`:app:logicDebugUnitTestCoverageVerification`) y variante release no firmada (`:app:lintRelease :app:assembleRelease`). El segundo job no firma, sube ni distribuye artefactos. Sus Actions oficiales se fijan por SHA inmutable y se actualizan por PR cuando el proveedor las depreca. Instrumented tests requieren emulator/device y no forman parte del gate CI actual.
 
 ### Internal release readiness (contract only)
 
