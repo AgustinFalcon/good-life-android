@@ -16,3 +16,18 @@ local.properties
 
 # Android Studio Bot
 .idea/studiobot.xml
+# Android signing and local release artifacts — never version
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.key
+key.properties
+signing.properties
+.env
+.env.*
+*.apk
+*.aab
+/release
+/app/release
+/app/build/outputs

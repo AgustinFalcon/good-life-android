@@ -1,9 +1,10 @@
 # GoodLife Android — internal release readiness
 
 - Feature id: `20260911-goodlife-internal-release-readiness`
-- Estado: `spec_review`.
+- Estado: `in_progress` (contrato operativo #26; firma y distribución siguen bloqueadas).
 - Issue: #8.
-- Rama: `chore/android-release-readiness-spec`.
+- Rama de spec: `chore/android-release-readiness-spec`.
+- Implementación activa: `chore/android-release-readiness-contract` (issue #26).
 - Idioma: español (es-AR).
 
 ## Evidencia observada

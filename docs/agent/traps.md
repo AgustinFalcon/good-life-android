@@ -17,3 +17,6 @@ update_when: "Aparezca una discrepancia o riesgo real."
 - Una carga cancelable no demuestra que el guard contra respuestas tardías funcione: para Daily/Meals usar una fuente no cancelable y observar emisiones de estado.
 - No permitir login manual y biométrico en paralelo: el repositorio puede persistir tokens antes de que un ViewModel descarte una respuesta tardía.
 - `sdd/PROJECT.md` y los artefactos SDD versionados son la fuente canónica que viaja por PR. `docs/agent/` complementa la operación; no sustituye el contrato SDD.
+
+- Un smoke debug no valida el APK/AAB release firmado: para distribución interna se exige evidencia UI-only redacted del artefacto exacto y su registro externo opaco.
+- Nunca resolver firma, canal, audiencia, hash, rollback o proveedor por inferencia: hasta una aprobación explícita el estado correcto es BLOCKED, sin secretos ni artefactos en Git.
