@@ -40,7 +40,7 @@ jobs:
           DOCS_BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: bash .github/scripts/verify-governance.sh
   release-static:
-    name: Unsigned release lint and build
+    name: Lint baseline and unsigned release build
     runs-on: ubuntu-latest
 
     steps:
@@ -59,5 +59,21 @@ jobs:
       - name: Grant Gradle wrapper permissions
         run: chmod +x gradlew
 
-      - name: Verify unsigned release lint and assembly
-        run: ./gradlew :app:lintRelease :app:assembleRelease --no-daemon
+      - name: Generate debug and release lint reports
+        run: ./gradlew :app:lintDebug :app:lintRelease --no-daemon
+
+      - name: Verify exact lint debt inventory
+        run: python3 .github/scripts/verify_lint_baseline.py --baseline config/lint-baseline.json --debug-report app/build/reports/lint-results-debug.xml --release-report app/build/reports/lint-results-release.xml --repo-root "$GITHUB_WORKSPACE" --advisory-delta-out build/lint-advisory-delta.json
+
+      - name: Upload lint evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: lint-evidence
+          if-no-files-found: error
+          path: |
+            app/build/reports/lint-results-debug.xml
+            app/build/reports/lint-results-release.xml
+            build/lint-advisory-delta.json
+      - name: Verify unsigned release assembly
+        run: ./gradlew :app:assembleRelease --no-daemon

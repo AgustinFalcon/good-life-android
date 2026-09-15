@@ -1,28 +1,14 @@
 # GoodLife Android — lint baseline
 
 - Feature id: `20260911-goodlife-lint-baseline`
-- Estado: `spec_review`.
+- Estado: `spec_review` (revisión 2026-09-15 incorpora comparación exacta por variante antes de build).
 - Issue: #10.
-- Rama de spec: `chore/android-lint-baseline-spec`.
-- Implementación activa LB-02c: `fix/android-compose-modifier-contracts` (issue #24).
+- Rama de implementación: `chore/android-lint-baseline`.
+- Baseline de implementación: `origin/master` `5a7be32`.
 - Idioma: español (es-AR).
 
 ## Evidencia observada
 
-El reporte local `lintDebug` del 2026-09-11 sobre el código equivalente al baseline de trabajo registró 60 advertencias y 0 errores. Es evidencia de triage, no un baseline reproducible: LB-01 debe regenerar desde el SHA de implementación, en CI Linux, y versionar el inventario derivado junto con SHA base, Gradle wrapper, AGP, SDK/JDK relevantes, comando, conteos por regla y fingerprints relativos. Clasificación por regla:
+El reporte local `lintDebug` regenerado el 2026-09-15 sobre `5a7be32` registra 53 warnings y 0 errores. Es triage, no baseline: la autoridad será el inventario de debug/release verificado por CI Linux en LB-01. Las correcciones de manifest, icono, Compose y TOML ya integradas explican por qué el conteo histórico de 60 no puede mantenerse como contrato.
 
-| Regla | Cantidad | Tratamiento propuesto |
-|---|---:|---|
-| `UnusedResources` | 37 | Inventariar y eliminar sólo recursos propios confirmados; investigar recursos de compatibilidad antes de tocar. |
-| `GradleDependency` | 11 | Plan de upgrades por familia, fuera de fixes visuales. |
-| `ModifierParameter` | 3 | Fix mecánico con revisión Compose. |
-| `IconLocation` | 2 | Reubicar assets con verificación visual. |
-| `AndroidGradlePluginVersion` | 1 | Upgrade aislado y compatible, no en esta feature. |
-| `DataExtractionRules` | 1 | Corregir por privacidad/backup con revisión de manifest. |
-| `MonochromeLauncherIcon` | 1 | Completar icono adaptativo y verificar launcher. |
-| `ObsoleteSdkInt` | 1 | Migrar recurso v26 coherentemente con minSdk. |
-| `OldTargetApi` | 1 | Decisión de upgrade de target/SDK con pruebas. |
-| `RedundantLabel` | 1 | Fix mecánico de manifest. |
-| `UseTomlInstead` | 1 | Migración acotada de dependencia a version catalog. |
-
-La evidencia no contiene rutas locales, usuarios ni datos de runtime. Hasta que LB-01 produzca esa medición revisada, el número 60 no se usa como gate ni como afirmación del inventario definitivo.
+La evidencia no contiene rutas locales, usuarios ni datos de runtime. El inventario derivado versionará sólo rutas repo-relativas, fingerprints y metadatos de herramienta necesarios.

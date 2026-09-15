@@ -31,3 +31,7 @@ signing.properties
 /release
 /app/release
 /app/build/outputs
+
+# Python lint-gate cache
+__pycache__/
+*.py[cod]

@@ -1,0 +1,36 @@
+name: Android lint advisory monitor
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          ref: master
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+      - run: chmod +x gradlew
+      - run: ./gradlew :app:lintDebug :app:lintRelease --no-daemon
+      - name: Detect external advisory drift
+        run: python3 .github/scripts/verify_lint_baseline.py --baseline config/lint-baseline.json --debug-report app/build/reports/lint-results-debug.xml --release-report app/build/reports/lint-results-release.xml --repo-root "$GITHUB_WORKSPACE" --advisory-delta-out build/lint-advisory-delta.json --fail-on-advisory-drift
+      - name: Upload lint evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: lint-advisory-evidence
+          if-no-files-found: error
+          path: |
+            app/build/reports/lint-results-debug.xml
+            app/build/reports/lint-results-release.xml
+            build/lint-advisory-delta.json

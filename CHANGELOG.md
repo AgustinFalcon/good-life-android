@@ -34,6 +34,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - The ledger separates master quality evidence from the newer values still under review in PR #4.
 
 ### CI
+- CI compara ahora el inventario determinista versionado de advertencias lint de `debug` y `release` como multiset exacto; detecta deuda nueva, resuelta o reintroducida sin permitir supresiones globales. Los advisories externos de Gradle/AGP se publican como evidencia en PR y un monitor sobre `master` falla ante drift.
 - Android CI pins `actions/checkout` and `actions/setup-java` to their official v5 immutable commits, removing the Node 20 deprecation path.
 
 - Login usa un mensaje localizado y seguro ante fallos remotos, bloquea los controles mientras autentica y rechaza intentos manuales y biométricos concurrentes antes del caso de uso.
@@ -55,6 +56,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Inicializacion eager del `StateFlow` de `DailyTabViewModel` para que la carga inicial sea deterministica en tests unitarios.
 
 ### CI
+- CI compara ahora el inventario versionado de advertencias lint de `debug` y `release` como multiset exacto; detecta deuda nueva, resuelta o reintroducida sin permitir supresiones globales.
 - Agregado workflow `Android CI` para ejecutar `:app:testDebugUnitTest` en push y PR contra `master`.
 
 ---
