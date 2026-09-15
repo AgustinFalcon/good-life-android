@@ -1,0 +1,642 @@
+{
+  "schemaVersion": 1,
+  "sourceSchemaVersion": 2,
+  "sourceRevision": "5a7be32",
+  "semanticIdentity": [
+    "ruleId",
+    "type/name",
+    "message"
+  ],
+  "symbols": {
+    "color/black": {
+      "type": "color",
+      "name": "black",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.color.black` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "2b04d20c454c8a4a423f30592fc91105e0f8517a28b7db10662b0b0f0b6ba3ec",
+          "relativePath": "app/src/main/res/values/colors.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "4583b1146fe7b08246fd761680cc7b0fc7fd0aead40b1bb789e2fba2b19e34da",
+          "relativePath": "app/src/main/res/values/colors.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "color/notification_template_icon_bg_compat": {
+      "type": "color",
+      "name": "notification_template_icon_bg_compat",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.color.notification_template_icon_bg_compat` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "0be0e1cc35388828913e424cd3a49c154c00d62d9b6f3c85cd052c95da26ead5",
+          "relativePath": "app/src/main/res/values/core_compat.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "bdde063b1e0b956c2eadbb19658ce33e3529f0f82a53c769a5014af622c61bab",
+          "relativePath": "app/src/main/res/values/core_compat.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "color/notification_template_icon_low_bg_compat": {
+      "type": "color",
+      "name": "notification_template_icon_low_bg_compat",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.color.notification_template_icon_low_bg_compat` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "326f70e581f7d955a23bf4f6ffdcfeef9c0e02589b7a83bb03d01923b81ef914",
+          "relativePath": "app/src/main/res/values/core_compat.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "d9ca418fc2e281ee883a96545bd2d81472c4f5baed20d0cf8250c871b128dc5a",
+          "relativePath": "app/src/main/res/values/core_compat.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "color/purple_200": {
+      "type": "color",
+      "name": "purple_200",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.color.purple_200` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "5778f85195750cf5f1a9fd8ccd164f57fcf4cfb727bae69b9a9a4e38d87b2751",
+          "relativePath": "app/src/main/res/values/colors.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "9f6b979e5819c8e0a173f61fbfde4ba84b662a2ef10ea1ba5559120209b2f1f1",
+          "relativePath": "app/src/main/res/values/colors.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "color/purple_500": {
+      "type": "color",
+      "name": "purple_500",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.color.purple_500` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "4133f6d0fc7155cbd2ace6158fae6f8e8a733ab1923d0ea70b71c2826c4a9f22",
+          "relativePath": "app/src/main/res/values/colors.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "24984d1a45b43ab7c7a817b35022e2c90aaf75f79fda16bf4646be609fbfa978",
+          "relativePath": "app/src/main/res/values/colors.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "color/purple_700": {
+      "type": "color",
+      "name": "purple_700",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.color.purple_700` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "c6a9ca2c16742f17af0dae9f66326ec0fccb271accbe668045c4b86d129cf74a",
+          "relativePath": "app/src/main/res/values/colors.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "84fbcb6d30ba8a3b885c54f2f03d57ae7e6695524811fa283bfca56e887be56d",
+          "relativePath": "app/src/main/res/values/colors.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "color/teal_200": {
+      "type": "color",
+      "name": "teal_200",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.color.teal_200` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "aa52580aa6065e0a17d9c764228ce90b3e13c54c460c45258010f64dbb6575e9",
+          "relativePath": "app/src/main/res/values/colors.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "9c6de5d03d5c68baa9fe2ebf151b5b528e7c453a5cadde1853e23d348d9fc70a",
+          "relativePath": "app/src/main/res/values/colors.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "color/teal_700": {
+      "type": "color",
+      "name": "teal_700",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.color.teal_700` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "6cc1e589a447317b6a8d1daa37d5386c2817a55fff1298f3e2218c0db568a02f",
+          "relativePath": "app/src/main/res/values/colors.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "da9f4c6581224b622e21de67318cb0f786502b1f6c73cf6d952c7ef066aa063b",
+          "relativePath": "app/src/main/res/values/colors.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "color/white": {
+      "type": "color",
+      "name": "white",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.color.white` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "bcc74fd30c7c21a531f3d4e64ee09da968bb83030568836c61e2ed0e9bc7492a",
+          "relativePath": "app/src/main/res/values/colors.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "edfde130bc48e1e9aa3ffddad7c265792af2a0170d0ea5e79fad039fc13481b3",
+          "relativePath": "app/src/main/res/values/colors.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "drawable/notification_template_icon_bg": {
+      "type": "drawable",
+      "name": "notification_template_icon_bg",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.drawable.notification_template_icon_bg` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "1109016d9687a4d9e126511950c15c2888a8b75b370bff56e9f4263ac206caff",
+          "relativePath": "app/src/main/res/values/core_compat.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "b2e64206327550d610f05ce7ccb0e562302179e792e9cf45c93ad979daf3f8e6",
+          "relativePath": "app/src/main/res/values/core_compat.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "drawable/notification_template_icon_low_bg": {
+      "type": "drawable",
+      "name": "notification_template_icon_low_bg",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.drawable.notification_template_icon_low_bg` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "5ed10548b8af259c6faef99595b5d1f3c20f6db6d329f5c6680bd522e55e9925",
+          "relativePath": "app/src/main/res/values/core_compat.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "b5e0ebf5f95478989d46fc775c6fcbad58add6cd8bfeeface93ce9a62d8757d9",
+          "relativePath": "app/src/main/res/values/core_compat.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "mipmap/ic_launcher": {
+      "type": "mipmap",
+      "name": "ic_launcher",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.mipmap.ic_launcher` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "20471ffb451b7e99c978de1e2674a9f8f75abb15e873d2e0a4f74f221cdf7be0",
+          "relativePath": "app/src/main/res/mipmap-hdpi/ic_launcher.webp",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "a5c5db167da99bb914491a8b3d62a5eb4fb29777f80402e7f0d951a1100ce5e6",
+          "relativePath": "app/src/main/res/mipmap-hdpi/ic_launcher.webp",
+          "occurrences": 1
+        }
+      }
+    },
+    "mipmap/ic_logo_install_round": {
+      "type": "mipmap",
+      "name": "ic_logo_install_round",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.mipmap.ic_logo_install_round` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "e4c8d64253171748d04dc73dcf70d36bcdbd4100476df430f1f15a2e8b5f8e66",
+          "relativePath": "app/src/main/res/mipmap-hdpi/ic_logo_install_round.webp",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "551f262fe8266f902b0062d9be4400201c4bfb6fba1d06456372aee077abbaeb",
+          "relativePath": "app/src/main/res/mipmap-hdpi/ic_logo_install_round.webp",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/biometric_checkbox_label": {
+      "type": "string",
+      "name": "biometric_checkbox_label",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.biometric_checkbox_label` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "2df68339961c91bf7292f431c095050267e0cb0c59a5a3f39e35320b9f684399",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "5cae15fe7cbcab82bbb53dc4be5c1feef79de1b3a89e9939dfad0942c1284fd3",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/biometric_icon_description": {
+      "type": "string",
+      "name": "biometric_icon_description",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.biometric_icon_description` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "ca7f0d69eaa01db36d9a213057e15f48db3c9a433cebbd1607c20b3f3b90e67d",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "d998e82a057eb6b8633f8bd474a54308ddce34065611f03e4d0ac312ca01f19e",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/biometric_prompt_negative_button": {
+      "type": "string",
+      "name": "biometric_prompt_negative_button",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.biometric_prompt_negative_button` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "35190c2eb24475936a5ab2c50c66651e65b636c98c7e58f93f5f011e4bba5d2b",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "9189bef3d3844710da4b8f6f7ee87d7e289ea778bee31d277d7f66e738861f1f",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/biometric_prompt_subtitle": {
+      "type": "string",
+      "name": "biometric_prompt_subtitle",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.biometric_prompt_subtitle` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "cda7b9f7c7ad7b66ba211bdf49c8947dfc7308991ab1e101906e8aa4e03537a3",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "63cbb2dad43b198a561cf757e2036e242a29c8d84f049a56ea9bc56217384b96",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/biometric_prompt_title": {
+      "type": "string",
+      "name": "biometric_prompt_title",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.biometric_prompt_title` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "b34452a9a0292b9fbe934c355845b77e3b607db80d9da1be71bc7ac29a1766a7",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "c22438740f0ab6a1ec957b58504c6d85c52736c56fda6f01b48226f448bd48a1",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/daily_item_type_habit": {
+      "type": "string",
+      "name": "daily_item_type_habit",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.daily_item_type_habit` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "2c75b50f4c53bb2c75fe852d205f0fc364e6824d4f60dda53cafed2f86996adc",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "767200bdc118f7c6fc49e4f65fab49e1d4c795cca702aef424384de15de659b8",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/daily_item_type_meal": {
+      "type": "string",
+      "name": "daily_item_type_meal",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.daily_item_type_meal` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "1e882200120f3f9c10ec17a9ab8e3488c0d69271a35a422aba781f6834c6decc",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "cfb06fa44ca843eccbac431ddf15e27d4a00fb7471bd6568d38cb43ac0594da8",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/daily_item_type_task": {
+      "type": "string",
+      "name": "daily_item_type_task",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.daily_item_type_task` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "c9b321147c968bc8d5e967732e0ced8ea6aa0fdff763ed87525f00a9ab3a7276",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "1aa35e4c6665d229941f49099089abf8a198b9d9135e21b96abaf69240ede5f8",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/daily_item_type_workout": {
+      "type": "string",
+      "name": "daily_item_type_workout",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.daily_item_type_workout` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "09070a7a2bb5c5717c9db01687557b632216642da435c50a58d8ccb8e9a98020",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "a109444bfdf3a71172ca86b4cef62865cbfad23aa6716cfd045deafc3e9f9bb8",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/login_button": {
+      "type": "string",
+      "name": "login_button",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.login_button` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "d3cf4605dc3d5aea735e6777846ca723cd08eb9f0f82e41e3aab3e85a17e9638",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "6f3efa3d1a6645b4bd163c7e6afc933dbf4bae86de65c545c1642a94fb4a255e",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/login_email_placeholder": {
+      "type": "string",
+      "name": "login_email_placeholder",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.login_email_placeholder` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "bc16c289cd1cee997a6f9cffeabe802c79270f770b890082a6c5af94c40c3c22",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "c851603171db2db58a1b67839be7e02de644812c1b8163f06bc1e429d05b5c4d",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/login_forgot_password": {
+      "type": "string",
+      "name": "login_forgot_password",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.login_forgot_password` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "17c5833a12f05babcd01e23a594a2a8efb1b6ab31dc42160d8526e48149287d8",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "65dd1602ca47f89c76a668e06a74b677338b266d16ae2e2d7379fde570e34264",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/login_password_placeholder": {
+      "type": "string",
+      "name": "login_password_placeholder",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.login_password_placeholder` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "a4ffada9d6d273373b27c748064dfa1436c41a0058046e4936fb2c3808bc4b29",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "cf32da98c055996002a5a2dd9d45a9c64cb32cc016a686b4aa47151e178172ca",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/login_register_button": {
+      "type": "string",
+      "name": "login_register_button",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.login_register_button` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "be54911eb7cdc5568503bbfd9a5d4f5878c75938cf77d96772c2eaa5ac9b63fc",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "038f2408de9b33f0534954d6e5e78cf485724d37c7c39e4bcb95775d32326821",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/login_remember_user": {
+      "type": "string",
+      "name": "login_remember_user",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.login_remember_user` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "bc34cfc6eaf9c679146ba9646501dde0752b298a5b06f7e056d4150dc62d30dd",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "6738925ab68fac00956084c4f234da0313c155c54b3a58a9604395a814e1e3b5",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/login_subtitle": {
+      "type": "string",
+      "name": "login_subtitle",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.login_subtitle` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "405e1c4e5fb6ff59c91151cbc94b1e3d6346b91d7bcdeeac86cc301784b578d0",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "997f87177f209f2f6004c21a72c6378b3d1628f440d586ad5a03fe50b9b7345b",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/login_success": {
+      "type": "string",
+      "name": "login_success",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.login_success` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "ba47a7859e3bd451bc0a5ed346fd8804f45cff49c44057e133468ec991487503",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "6a75cdb6ae8e057afe79ab37a98733a01c6dcef97f8f84874c6baeb9db157515",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/login_title": {
+      "type": "string",
+      "name": "login_title",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.login_title` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "8f8c07932d8cd91605bbbc688bec879b094cb5a451cf488966bf39ae48648942",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "59ea144b7d0d8ee0d279a3e461af27617fd53bfd575ddf7a316879377f18c65b",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/tab_title_daily": {
+      "type": "string",
+      "name": "tab_title_daily",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.tab_title_daily` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "361dfdab250a4964a4f6188cc24e9b43a09c4f39b40d516c65f78fbd94710938",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "41d408b49231b88c109937eea8b07d5ddd9662abddbcd1491a66046666c6fd6b",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/tab_title_food": {
+      "type": "string",
+      "name": "tab_title_food",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.tab_title_food` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "3c1365bf2cf581554c48d2b477de259e185dbff2bbd353fad72d9a791e3a53cd",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "0b3401fbe0c67d443d584b51ad2491ba21fc10f336d307c61bf733862d7d6601",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/tab_title_more": {
+      "type": "string",
+      "name": "tab_title_more",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.tab_title_more` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "a5b9b7e71714bf11b140299eb3161b645390dbe683f9da21127af65c8c8c41a9",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "e06363fa1b8ac9608c0cf5c1db212057c420222fe32d337df2d43249428bbf10",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    },
+    "string/tab_title_workout": {
+      "type": "string",
+      "name": "tab_title_workout",
+      "ruleId": "UnusedResources",
+      "message": "The resource `R.string.tab_title_workout` appears to be unused",
+      "variants": {
+        "debug": {
+          "fingerprint": "b1b10c7c9793259b4b9e4f71a68848217fe7ed444233249a25835e64af9c4023",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        },
+        "release": {
+          "fingerprint": "d4097e9aed753868c1e869e3dce7789d7d7a1edad769acf277a4da9fdd73e58a",
+          "relativePath": "app/src/main/res/values/strings.xml",
+          "occurrences": 1
+        }
+      }
+    }
+  }
+}
