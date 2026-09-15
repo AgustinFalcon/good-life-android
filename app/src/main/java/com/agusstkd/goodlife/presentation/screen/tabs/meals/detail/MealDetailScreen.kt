@@ -119,5 +119,3 @@ internal fun MealDetailImage(imageUrl: String?, unavailableDescription: String, 
         )
     }
 }
-
-
