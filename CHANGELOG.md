@@ -16,7 +16,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Logout solicita revocación remota y siempre borra tokens, credenciales biométricas, usuario y cache Daily locales.
 
 ### Fixed
-- Macros nutricionales respetan el separador decimal de cada idioma (coma en ES/PT y punto en EN), y el copy español de reintento usa voseo.
+- Macros nutricionales respetan el separador decimal de cada idioma (coma en ES/PT y punto en EN), y el copy español de reintento usa voseo. ([#7](https://github.com/AgustinFalcon/good-life-android/issues/7))
 
 - Se normalizó el orden de `Modifier` frente a callbacks opcionales en componentes Compose reutilizables, reduciendo deuda lint sin cambiar la UI.
 - Coil Compose se centralizó en el version catalog conservando sus coordenadas y versión `2.7.0`.
