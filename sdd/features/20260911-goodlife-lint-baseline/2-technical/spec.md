@@ -39,7 +39,7 @@ Los fixtures cubren XML Windows/Unix equivalente, DTD rechazado, reporte ausente
 1. Implementar generador, schema, inventario de ambas variantes, verificador determinista y fixtures/tests.
 2. Activar el paso CI después de ambos lint.
 3. Mantener los fixes de bajo riesgo ya integrados como evidencia histórica; no volver a mezclar familias.
-4. Crear issues separados para `UnusedResources` y upgrades de toolchain/dependencias antes de reducirlos.
+4. Issues separados creados: #38 para `UnusedResources` y #39 para upgrades de toolchain/dependencias; cualquier reducción se entrega allí por PR independiente.
 5. Reducir el inventario en PRs pequeños hasta poder evaluar `warningsAsErrors` sólo cuando no quede deuda aceptada.
 
 ## Riesgos

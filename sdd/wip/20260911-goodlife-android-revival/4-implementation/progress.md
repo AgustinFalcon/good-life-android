@@ -12,7 +12,7 @@
 2. R-03 Workouts vertical (#6) — navigation hardening is integrated; the separate raw-error correction remains tracked in #19.
 3. R-04 Daily/Meals details (#7) — completed in PR #23; typed routes and observable detail states are in `master`.
 4. R-05 internal-release readiness (#8) — contract completed in PR #32; no release, signer, channel or distribution is authorized.
-5. R-07 lint baseline triage (#10) — specification review is ready; implementation is pending and no warning may be silently baselined.
+5. R-07 lint baseline triage (#10) — done by PR #37: schema-v2 exact deterministic inventory, external advisory monitor, CI green and independent approval; no warning is silently baselined.
 
 ## Exit gate
 
