@@ -2,7 +2,7 @@
   "featureId": "20260911-goodlife-daily-meals-details",
   "issue": 7,
   "branch": "feature/android-daily-meals-details",
-  "status": "in_review",
+  "status": "complete",
   "tasks": [
     {
       "id": "DM-01",
@@ -46,7 +46,7 @@
         "DM-04"
       ],
       "acceptance": "CI: cobertura lógica y lint/ensamblado release en verde; dos revisiones sin hallazgos bloqueantes. connectedDebugAndroidTest es validación local/dispositivo requerida antes de promoción release, no gate actual de PR.",
-      "status": "in_progress"
+      "status": "done"
     }
   ]
 }

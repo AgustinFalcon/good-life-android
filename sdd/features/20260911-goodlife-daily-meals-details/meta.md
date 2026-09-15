@@ -1,7 +1,7 @@
 # GoodLife Android — Daily y Meal Plan details
 
 - Feature id: `20260911-goodlife-daily-meals-details`
-- Estado: `in_review` — implementación y gates locales en curso; se requiere aprobación final y CI del PR antes de build-ready.
+- Estado: `complete` — CI del HEAD, validación focalizada y dos revisiones independientes aprobadas; archivado SDD pendiente de commit final.
 - Issue: #7 `feature(android): complete Daily and Meals detail flows`.
 - Rama: `feature/android-daily-meals-details`.
 - Idioma de specs: español (es-AR).
@@ -17,3 +17,10 @@ Los artefactos aquí son la fuente versionable del contrato de #7. No contienen 
 
 - CI del PR #23 en la baseline actual: cobertura lógica y lint/ensamblado release en verde.
 - Las pruebas instrumentadas permanecen versionadas para validación local/dispositivo; no son un gate CI ni se atribuye una API específica. La evidencia de una ejecución controlada se registra antes de promoción release.
+
+## Cierre SDD
+
+- CI de cierre: [Android CI #34920854561](https://github.com/AgustinFalcon/good-life-android/actions/runs/34920854561), con cobertura lógica/gobernanza y lint/ensamblado release en verde.
+- Revisión final de código y revisión independiente spec → tasks → código: aprobadas después de resolver P1-10 (fecha Meals exacta).
+- `connectedDebugAndroidTest` sigue fuera del gate de PR y es requisito de evidencia controlada antes de promoción release.
+- Specs de sistema afectadas: ninguna; este feature no cambia contratos HTTP ni arquitectura global.

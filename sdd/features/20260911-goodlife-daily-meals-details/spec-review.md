@@ -44,4 +44,4 @@
 
 ## Decisión de cierre
 
-**PENDIENTE DE CONFIRMACIÓN FINAL.** La corrección P1-10 requiere CI del HEAD que la contiene y dos revisiones independientes aprobadas antes de archivar el feature.
+**APROBADO PARA ARCHIVO.** P1-10 quedó corregido; CI #34920854561 aprobó cobertura/gobernanza y lint/ensamblado release, y dos revisiones independientes aprobaron el HEAD.
