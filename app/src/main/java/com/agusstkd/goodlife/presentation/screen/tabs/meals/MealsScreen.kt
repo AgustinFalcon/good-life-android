@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -33,9 +35,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.agusstkd.goodlife.core.datetime.language.Spanish
+import com.agusstkd.goodlife.core.datetime.language.TabDetailTexts
 import com.agusstkd.goodlife.presentation.components.header.DateHeaderParams
 import com.agusstkd.goodlife.presentation.components.header.DateHeaderComponent
 import com.agusstkd.goodlife.presentation.components.nutrition.MacrosSummaryCard
+import com.agusstkd.goodlife.presentation.components.nutrition.formatNutritionValue
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealPlanUiModel
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiState
@@ -65,10 +70,13 @@ import kotlinx.datetime.LocalDate
 @Composable
 fun MealsScreen(
     uiState: MealsUiState.Success,
+    texts: TabDetailTexts,
     dateHeaderParams: DateHeaderParams,
+    listState: LazyListState = rememberLazyListState(),
     onAction: (MealsUiAction) -> Unit,
 ) {
     LazyColumn(
+        state = listState,
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
@@ -90,9 +98,12 @@ fun MealsScreen(
                 protein = uiState.totalProtein,
                 carbs = uiState.totalCarbs,
                 fat = uiState.totalFat,
-                proteinLabel = "PROTEÍNA",
-                carbsLabel = "CARBOS",
-                fatLabel = "GRASAS",
+                proteinLabel = texts.proteinLabel,
+                carbsLabel = texts.carbsLabel,
+                fatLabel = texts.fatLabel,
+                calorieUnit = texts.calorieUnit,
+                gramUnit = texts.gramUnit,
+                decimalSeparator = texts.decimalSeparator,
                 modifier = Modifier.padding(horizontal = 12.dp),
             )
         }
@@ -100,7 +111,7 @@ fun MealsScreen(
         // ── Contador de planes del día ─────────────────────────────────────
         item {
             Text(
-                text = "${uiState.mealPlans.size} ${if (uiState.mealPlans.size == 1) "plan de comida" else "planes de comida"}",
+                text = "${uiState.mealPlans.size} ${if (uiState.mealPlans.size == 1) texts.mealPlanSingular else texts.mealPlanPlural}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -114,6 +125,7 @@ fun MealsScreen(
         ) { plan ->
             MealPlanCard(
                 plan = plan,
+                texts = texts,
                 onClick = { onAction(MealsUiAction.OnMealPlanClick(plan.id)) },
                 modifier = Modifier.padding(horizontal = 12.dp),
             )
@@ -134,6 +146,7 @@ fun MealsScreen(
 @Composable
 private fun MealPlanCard(
     plan: MealPlanUiModel,
+    texts: TabDetailTexts,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -197,25 +210,25 @@ private fun MealPlanCard(
                 // Macros con colores diferenciados por nutriente
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        text = "${plan.totalCalories.toInt()} kcal",
+                        text = "${formatNutritionValue(plan.totalCalories)} ${texts.calorieUnit}",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = CaloriesColor,
                     )
                     Text(
-                        text = "P ${plan.totalProtein.toInt()}g",
+                        text = "${texts.proteinLabel} ${formatNutritionValue(plan.totalProtein)}${texts.gramUnit}",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = ProteinColor,
                     )
                     Text(
-                        text = "C ${plan.totalCarbs.toInt()}g",
+                        text = "${texts.carbsLabel} ${formatNutritionValue(plan.totalCarbs)}${texts.gramUnit}",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = CarbsColor,
                     )
                     Text(
-                        text = "G ${plan.totalFat.toInt()}g",
+                        text = "${texts.fatLabel} ${formatNutritionValue(plan.totalFat)}${texts.gramUnit}",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = FatColor,
@@ -303,6 +316,7 @@ private fun MealsScreenWithPlansPreview() {
                 totalCarbs = 110.0,
                 totalFat = 24.0,
             ),
+            texts = Spanish.tabDetailTexts,
             dateHeaderParams = DateHeaderParams(
                 dayNumber = 15,
                 headerText = "Hoy",

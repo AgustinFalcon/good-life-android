@@ -5,6 +5,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 ## [Unreleased]
 
 ### Added
+- Daily y Meals incorporan detalles internos tipados y de solo lectura, con estados observables, validación de ruta, navegación protegida contra doble toque y copy ES/EN/PT.
 - Se incorporó el contrato redacted de readiness para releases internas; firma y distribución permanecen explícitamente bloqueadas hasta su aprobación.
 - Workouts now opens a typed, read-only detail with exercises, notes and target sets loaded from the active routine; missing and failed loads are observable states.
 
@@ -15,6 +16,8 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Logout solicita revocación remota y siempre borra tokens, credenciales biométricas, usuario y cache Daily locales.
 
 ### Fixed
+- Macros nutricionales respetan el separador decimal de cada idioma (coma en ES/PT y punto en EN), y el copy español de reintento usa voseo. ([#7](https://github.com/AgustinFalcon/good-life-android/issues/7))
+
 - Se normalizó el orden de `Modifier` frente a callbacks opcionales en componentes Compose reutilizables, reduciendo deuda lint sin cambiar la UI.
 - Coil Compose se centralizó en el version catalog conservando sus coordenadas y versión `2.7.0`.
 - CI ahora valida lint y ensamblado de la variante release no firmada, sin publicar ni distribuir artefactos.
@@ -47,6 +50,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 ## [Unreleased] - 2026-07-24 — P0 Quality Baseline
 
 ### Fixed
+
 - Implementado `getActiveRoutine()` en `FakeRoutineRepository` para mantener compatible el contrato de tests con `RoutineRepository`.
 - Inicializacion eager del `StateFlow` de `DailyTabViewModel` para que la carga inicial sea deterministica en tests unitarios.
 

@@ -12,11 +12,17 @@ import com.agusstkd.goodlife.domain.model.daily.DailyLog
 import com.agusstkd.goodlife.domain.usecase.daily.GetDailyItemsUseCase
 import com.agusstkd.goodlife.domain.usecase.daily.UpdateItemStatusUseCase
 import com.agusstkd.goodlife.fake.FakeDailyRepository
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyFilter
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyNavigationEffect
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.filteredItems
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -308,6 +314,54 @@ class DailyTabViewModelTest {
         assertTrue(emittedDates.none { it == fixedDate })
     }
 
+    @Test
+    fun `selected filter survives a refresh response`() = runTest(testDispatcher) {
+        repository.getDailyLogResult = Result.Success(
+            DailyLog(1, fixedDate, 0.0, listOf(
+                DailyItem(1, DailyItemType.TASK, 10, null, DailyItemStatus.PENDING, "Task", null),
+                DailyItem(2, DailyItemType.HABIT, 10, null, DailyItemStatus.PENDING, "Habit", null),
+            ))
+        )
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onAction(DailyUiAction.OnFilterChange(DailyFilter.HABIT))
+        viewModel.onAction(DailyUiAction.OnRefresh)
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value as DailyUiState.Success
+        assertEquals(DailyFilter.HABIT, state.activeFilter)
+        assertEquals(1, state.filteredItems.size)
+    }
+    @Test
+    fun `daily item click emits one typed detail effect and ignores duplicate taps`() = runTest(testDispatcher) {
+        repository.getDailyLogResult = Result.Success(DailyLog(1, fixedDate, 0.0, emptyList()))
+        viewModel = createViewModel()
+        advanceUntilIdle()
+        val effect = async { viewModel.navigationEffects.first() }
+        runCurrent()
+
+        viewModel.onAction(DailyUiAction.OnItemClick(42L))
+        viewModel.onAction(DailyUiAction.OnItemClick(42L))
+
+        assertEquals(DailyNavigationEffect.NavigateToDailyDetail(42L, fixedDate), effect.await())
+        viewModel.onDailyListResumed()
+        val staleEffect = async { withTimeoutOrNull(1) { viewModel.navigationEffects.first() } }
+        advanceUntilIdle()
+        assertEquals(null, staleEffect.await())
+    }
+
+    @Test
+    fun `non positive daily item id never emits navigation`() = runTest(testDispatcher) {
+        viewModel = createViewModel()
+        val effect = async { withTimeoutOrNull(1) { viewModel.navigationEffects.first() } }
+        runCurrent()
+
+        viewModel.onAction(DailyUiAction.OnItemClick(0L))
+        advanceUntilIdle()
+
+        assertEquals(null, effect.await())
+    }
     @Test
     fun `header text shows Hoy for today`() = runTest(testDispatcher) {
         repository.getDailyLogResult = Result.Success(

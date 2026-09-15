@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Card
@@ -49,6 +51,7 @@ fun DailyScreen(
     uiState: DailyUiState.Success,
     dailyTexts: DailyTexts,
     dateHeaderParams: DateHeaderParams,
+    listState: LazyListState = rememberLazyListState(),
     onAction: (DailyUiAction) -> Unit
 ) {
     val totalItems = uiState.items.size
@@ -57,6 +60,7 @@ fun DailyScreen(
     val percentage = (progress * 100).toInt()
 
     LazyColumn(
+        state = listState,
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {

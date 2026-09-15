@@ -1,6 +1,7 @@
 package com.agusstkd.goodlife.presentation.screen.tabs.meals
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.agusstkd.goodlife.presentation.components.header.DateHeaderParams
+import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsNavigationEffect
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiState
 import com.agusstkd.goodlife.presentation.theme.NutritionAccent
@@ -42,12 +45,23 @@ import org.koin.androidx.compose.koinViewModel
  */
 @Composable
 fun MealsScreenOwner(
+    onNavigateToMealDetail: (Long, String) -> Unit,
     viewModel: MealsTabViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(viewModel, onNavigateToMealDetail) {
+        viewModel.navigationEffects.collect { effect ->
+            when (effect) {
+                is MealsNavigationEffect.NavigateToMealDetail ->
+                    onNavigateToMealDetail(effect.planId, effect.dateIso)
+            }
+        }
+    }
 
     LifecycleResumeEffect(Unit) {
-        viewModel.refresh()
+        viewModel.onMealListResumed()
         onPauseOrDispose { }
     }
 
@@ -58,6 +72,7 @@ fun MealsScreenOwner(
 
         MealsUiState.Empty -> {
             MealsEmptyState(
+                texts = viewModel.tabDetailTexts,
                 onCreateMealPlan = { viewModel.onAction(MealsUiAction.OnCreateMealPlan) }
             )
         }
@@ -66,6 +81,8 @@ fun MealsScreenOwner(
             val a = viewModel.accessibilityTexts
             MealsScreen(
                 uiState = state,
+                texts = viewModel.tabDetailTexts,
+                listState = listState,
                 dateHeaderParams = DateHeaderParams(
                     dayNumber = state.dayNumber,
                     headerText = state.headerText,
@@ -82,6 +99,7 @@ fun MealsScreenOwner(
         is MealsUiState.Error -> {
             MealsErrorState(
                 message = state.message,
+                retryText = viewModel.tabDetailTexts.tapToRetry,
                 onRetry = { viewModel.onAction(MealsUiAction.OnRefresh) },
             )
         }
@@ -105,6 +123,7 @@ private fun MealsLoadingState() {
 
 @Composable
 private fun MealsEmptyState(
+    texts: com.agusstkd.goodlife.core.datetime.language.TabDetailTexts,
     onCreateMealPlan: () -> Unit,
 ) {
     Box(
@@ -117,13 +136,13 @@ private fun MealsEmptyState(
             modifier = Modifier.padding(32.dp),
         ) {
             Text(
-                text = "Sin planes de comida para hoy",
+                text = texts.emptyMealsTitle,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = "Creá tu primer plan de comida para llevar un registro de tu nutrición diaria.",
+                text = texts.emptyMealsDescription,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -132,7 +151,7 @@ private fun MealsEmptyState(
                 onClick = onCreateMealPlan,
                 colors = ButtonDefaults.buttonColors(containerColor = NutritionAccent),
             ) {
-                Text(text = "Crear plan de comida")
+                Text(text = texts.createMealPlan)
             }
         }
     }
@@ -141,6 +160,7 @@ private fun MealsEmptyState(
 @Composable
 private fun MealsErrorState(
     message: String,
+    retryText: String,
     onRetry: () -> Unit,
 ) {
     Box(
@@ -148,7 +168,7 @@ private fun MealsErrorState(
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = "$message\nTap para reintentar",
+            text = "$message\n$retryText",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.error,
             textAlign = TextAlign.Center,

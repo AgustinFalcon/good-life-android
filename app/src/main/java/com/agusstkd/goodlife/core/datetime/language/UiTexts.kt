@@ -346,6 +346,7 @@ data class CreateMealPlanTexts(
     val macroProteinLabel: String,   // Label corto para MacrosSummaryCard: "Proteína" / "Protein"
     val macroCarbsLabel: String,     // Label corto: "Carbos" / "Carbs"
     val macroFatLabel: String,       // Label corto: "Grasas" / "Fat"
+    val decimalSeparator: Char,     // Separador visible: ',' para ES/PT, '.' para EN.
     val myIngredientsSectionTitle: String,
     val ingredientCatalogSectionTitle: String,
     val searchIngredientPlaceholder: String,
@@ -466,4 +467,17 @@ data class CreateRoutineTexts(
     val errorServer: String,
     val errorNetwork: String,
     val loadingTitle: String,
+)
+
+/** Copy shared by the read-only Daily and Meals details. */
+data class TabDetailTexts(
+    val dailyTitle: String, val mealTitle: String, val back: String, val loading: String,
+    val dailyNotFound: String, val mealNotFound: String, val invalidRoute: String, val retry: String,
+    val typeLabel: String, val statusLabel: String, val scheduleLabel: String, val descriptionLabel: String,
+    val pending: String, val inProgress: String, val completed: String, val skipped: String,
+    val mealLabel: String, val proteinLabel: String, val carbsLabel: String, val fatLabel: String,
+    val active: String, val inactive: String,
+    val mealImageUnavailable: String, val emptyMealsTitle: String, val emptyMealsDescription: String,
+    val createMealPlan: String, val tapToRetry: String, val mealPlanSingular: String, val mealPlanPlural: String,
+    val calorieUnit: String, val gramUnit: String, val decimalSeparator: Char,
 )

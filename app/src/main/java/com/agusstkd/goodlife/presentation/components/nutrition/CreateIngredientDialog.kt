@@ -379,7 +379,7 @@ private fun previewTexts() = CreateMealPlanTexts(
     createNewMealButton = "", newMealNameLabel = "", newMealNamePlaceholder = "",
     newMealDescriptionLabel = "", newMealDescriptionPlaceholder = "",
     newMealTypeLabel = "", macrosSummaryTitle = "", macroProteinLabel = "",
-    macroCarbsLabel = "", macroFatLabel = "", myIngredientsSectionTitle = "",
+    macroCarbsLabel = "", macroFatLabel = "", decimalSeparator = ',', myIngredientsSectionTitle = "",
     ingredientCatalogSectionTitle = "", searchIngredientPlaceholder = "",
     addIngredientButton = "", createCustomIngredientButton = "",
     quantitySheetQuantityLabel = "", quantitySheetUnitLabel = "",

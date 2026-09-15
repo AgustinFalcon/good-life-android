@@ -42,4 +42,3 @@ El rollback sólo puede terminar como `withdrawn`, `restored_verified` o `blocke
 - No se agregan secretos/artefactos locales.
 - Cobertura Android tiene gate JaCoCo sobre logica elegible: core/domain/data logic, navigation core y ViewModels. Excluye Compose UI, theme, DTO/request/response, Room entities/DAO/database, DI, Activity/App, modelos UI y adaptadores no ejecutables en JVM documentados en Gradle. Objetivo configurado: linea >= 80%. Estado de master medido el 2026-09-11: 80.38% (1.483/1.845), gate aprobado con `.\gradlew.bat :app:logicDebugUnitTestCoverageVerification`.
 - Docs/agent y SSD quedan alineados.
-

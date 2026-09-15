@@ -51,6 +51,7 @@ fun MealIngredientsStep(
             proteinLabel = texts.macroProteinLabel,
             carbsLabel = texts.macroCarbsLabel,
             fatLabel = texts.macroFatLabel,
+            decimalSeparator = texts.decimalSeparator,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
         )
 

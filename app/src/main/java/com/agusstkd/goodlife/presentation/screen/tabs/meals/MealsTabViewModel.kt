@@ -12,14 +12,17 @@ import com.agusstkd.goodlife.domain.usecase.nutrition.result.GetMealPlansResult
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
 import com.agusstkd.goodlife.presentation.navigation.route.AppRoute
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealPlanUiModel
+import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsNavigationEffect
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiState
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.toUiModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
@@ -66,10 +69,16 @@ class MealsTabViewModel(
 ) : ViewModel() {
 
     val accessibilityTexts: AccessibilityTexts get() = language.accessibilityTexts
+    val tabDetailTexts get() = language.tabDetailTexts
 
     private var currentDate: LocalDate = dateProvider.today()
     private var latestLoadRequestId: Long = 0L
     private var loadJob: Job? = null
+
+    /** Tab-local effects are never replayed or buffered for a later composition. */
+    private val navigationEffectsChannel = Channel<MealsNavigationEffect>(Channel.RENDEZVOUS)
+    val navigationEffects = navigationEffectsChannel.receiveAsFlow()
+    private var mealDetailNavigationInProgress = false
 
     private val _uiState = MutableStateFlow<MealsUiState>(MealsUiState.Loading)
     val uiState: StateFlow<MealsUiState> = _uiState
@@ -78,6 +87,11 @@ class MealsTabViewModel(
 
     fun refresh() {
         loadMealPlans()
+    }
+
+    /** Clears the one-shot guard after returning to this tab-local list. */
+    fun onMealListResumed() {
+        mealDetailNavigationInProgress = false
     }
 
     fun onAction(action: MealsUiAction) {
@@ -134,7 +148,15 @@ class MealsTabViewModel(
     }
 
     private fun navigateToMealDetail(planId: Long) {
-        // TODO: Implementar navegación a detalle de plan de comida
+        if (planId <= 0 || mealDetailNavigationInProgress) return
+
+        mealDetailNavigationInProgress = true
+        val dispatch = navigationEffectsChannel.trySend(
+            MealsNavigationEffect.NavigateToMealDetail(planId = planId, dateIso = currentDate.toString())
+        )
+        if (dispatch.isFailure) {
+            mealDetailNavigationInProgress = false
+        }
     }
 
     /**

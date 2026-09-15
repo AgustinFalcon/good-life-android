@@ -373,6 +373,7 @@ data object English : AppLanguage {
         macroProteinLabel = "Protein",
         macroCarbsLabel = "Carbs",
         macroFatLabel = "Fat",
+        decimalSeparator = '.',
         myIngredientsSectionTitle = "My ingredients",
         ingredientCatalogSectionTitle = "Ingredient catalog",
         searchIngredientPlaceholder = "Search ingredients...",
@@ -416,4 +417,16 @@ data object English : AppLanguage {
     override val splashTexts = SplashTexts(
         tapToContinue = "Tap to continue",
     )
+    override val tabDetailTexts = TabDetailTexts(
+        dailyTitle = "Daily detail", mealTitle = "Meal detail", back = "Back", loading = "Loading detail…",
+        dailyNotFound = "We could not find this daily item", mealNotFound = "We could not find this meal plan", invalidRoute = "This detail route is invalid", retry = "Retry",
+        typeLabel = "Type", statusLabel = "Status", scheduleLabel = "Schedule", descriptionLabel = "Description",
+        pending = "Pending", inProgress = "In progress", completed = "Completed", skipped = "Skipped",
+        mealLabel = "Meal", proteinLabel = "Protein", carbsLabel = "Carbs", fatLabel = "Fat",
+        active = "Active", inactive = "Inactive", mealImageUnavailable = "Meal image unavailable",
+        emptyMealsTitle = "No meal plans for today", emptyMealsDescription = "Create your first meal plan to track your daily nutrition.",
+        createMealPlan = "Create meal plan", tapToRetry = "Tap to retry", mealPlanSingular = "meal plan", mealPlanPlural = "meal plans",
+        calorieUnit = "kcal", gramUnit = "g", decimalSeparator = '.',
+    )
+
 }

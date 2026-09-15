@@ -56,4 +56,5 @@ sealed interface AppLanguage {
     val mealTypeTexts: MealTypeTexts
     val createMealPlanTexts: CreateMealPlanTexts
     val splashTexts: SplashTexts
+    val tabDetailTexts: TabDetailTexts
 }

@@ -366,5 +366,6 @@ private fun previewTexts() = CreateMealPlanTexts(
     macroProteinLabel = "",
     macroCarbsLabel = "",
     macroFatLabel = "",
+    decimalSeparator = ',',
     quantitySheetMacroTooltip = ""
 )

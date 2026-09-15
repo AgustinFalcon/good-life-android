@@ -372,6 +372,7 @@ data object Portuguese : AppLanguage {
         macroProteinLabel = "Proteína",
         macroCarbsLabel = "Carbos",
         macroFatLabel = "Gordura",
+        decimalSeparator = ',',
         myIngredientsSectionTitle = "Meus ingredientes",
         ingredientCatalogSectionTitle = "Catálogo de ingredientes",
         searchIngredientPlaceholder = "Buscar ingredientes...",
@@ -415,4 +416,16 @@ data object Portuguese : AppLanguage {
     override val splashTexts = SplashTexts(
         tapToContinue = "Toque para continuar",
     )
+    override val tabDetailTexts = TabDetailTexts(
+        dailyTitle = "Detalhe diário", mealTitle = "Detalhe da refeição", back = "Voltar", loading = "Carregando detalhe…",
+        dailyNotFound = "Não encontramos este item diário", mealNotFound = "Não encontramos este plano de refeição", invalidRoute = "A rota do detalhe não é válida", retry = "Tentar novamente",
+        typeLabel = "Tipo", statusLabel = "Status", scheduleLabel = "Horário", descriptionLabel = "Descrição",
+        pending = "Pendente", inProgress = "Em andamento", completed = "Concluído", skipped = "Ignorado",
+        mealLabel = "Refeição", proteinLabel = "Proteína", carbsLabel = "Carboidratos", fatLabel = "Gorduras",
+        active = "Ativo", inactive = "Inativo", mealImageUnavailable = "Imagem da refeição indisponível",
+        emptyMealsTitle = "Nenhum plano de refeições para hoje", emptyMealsDescription = "Crie seu primeiro plano de refeições para acompanhar sua nutrição diária.",
+        createMealPlan = "Criar plano de refeições", tapToRetry = "Toque para tentar novamente", mealPlanSingular = "plano de refeições", mealPlanPlural = "planos de refeições",
+        calorieUnit = "kcal", gramUnit = "g", decimalSeparator = ',',
+    )
+
 }

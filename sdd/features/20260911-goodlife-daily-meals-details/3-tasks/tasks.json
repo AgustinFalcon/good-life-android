@@ -1,0 +1,52 @@
+{
+  "featureId": "20260911-goodlife-daily-meals-details",
+  "issue": 7,
+  "branch": "feature/android-daily-meals-details",
+  "status": "complete",
+  "tasks": [
+    {
+      "id": "DM-01",
+      "title": "Corregir rutas, efectos locales y Koin",
+      "dependsOn": [],
+      "acceptance": "IDs/fecha tipados; guardia anti doble toque; graph, Owner y back stack verificados.",
+      "status": "done"
+    },
+    {
+      "id": "DM-02",
+      "title": "Implementar detalle Daily read-only",
+      "dependsOn": [
+        "DM-01"
+      ],
+      "acceptance": "Campos explícitos, estados, validación, mapping y pruebas cubiertos.",
+      "status": "done"
+    },
+    {
+      "id": "DM-03",
+      "title": "Implementar detalle Meals read-only",
+      "dependsOn": [
+        "DM-01"
+      ],
+      "acceptance": "Campos explícitos, fallback determinista, mapping y pruebas cubiertos.",
+      "status": "done"
+    },
+    {
+      "id": "DM-04",
+      "title": "Completar copy localizado y accesibilidad",
+      "dependsOn": [
+        "DM-02",
+        "DM-03"
+      ],
+      "acceptance": "ES/EN/PT exhaustivos; copy tocado sin hardcodear; semantics y estado salvable verificadas.",
+      "status": "done"
+    },
+    {
+      "id": "DM-05",
+      "title": "Ejecutar gates y revisión de PR",
+      "dependsOn": [
+        "DM-04"
+      ],
+      "acceptance": "CI: cobertura lógica y lint/ensamblado release en verde; dos revisiones sin hallazgos bloqueantes. connectedDebugAndroidTest es validación local/dispositivo requerida antes de promoción release, no gate actual de PR.",
+      "status": "done"
+    }
+  ]
+}
