@@ -1,0 +1,11 @@
+{
+  "feature": "goodlife-internal-release-readiness",
+  "status": "done",
+  "tasks": [
+    {"id":"IRR-00","title":"Versionar contrato redacted de readiness","status":"done","acceptance":"Runbook, registro externo opaco, traps e ignore rules versionados sin secretos, firma ni distribución."},
+    {"id":"IRR-01","title":"Definir versionado y metadatos de artefacto","status":"done","acceptance":"El contrato versionado exige commit, versión, hash y registro externo opaco sin almacenar binarios o secretos en Git."},
+    {"id":"IRR-02","title":"Externalizar la decisión de inyección segura de firma","status":"done","acceptance":"El contrato prohíbe material de firma en Git y expone `blocked` hasta que exista proveedor y responsable aprobados; no se improvisa una firma."},
+    {"id":"IRR-03","title":"Documentar canal interno y rollback","status":"done","acceptance":"El contrato externaliza audiencia/canal, define retiro, compatibilidad, restauración verificada y `blocked_incompatible`."},
+    {"id":"IRR-04","title":"Documentar gates y smoke redacted","status":"done","acceptance":"El contrato exige calidad, R-01 explícito y smoke sobre el binario firmado exacto antes de distribuir. La ejecución real permanece fuera de este feature: R-01/#5 y una decisión posterior de candidato."}
+  ]
+}

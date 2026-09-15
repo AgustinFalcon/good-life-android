@@ -4,7 +4,7 @@
 
 - Mode: local.
 - Target: `20260911-goodlife-internal-release-readiness`.
-- Base: `origin/master` `3dcedfc`, as declared in feature metadata.
+- Original pre-build base: `origin/master` `3dcedfc` (historical); closeout revalidation base: `origin/master` `5a7be32`.
 - Sources reviewed: project SDD contracts; feature metadata, functional/technical specs and task plan; R-01 smoke specification as release dependency.
 - Redaction: no signing material, tester identity, distribution location or private artifact metadata is included.
 - Review status: independent final re-review approved; no open finding in scope.
@@ -96,3 +96,18 @@ Las propuestas P-01 a P-03 fueron aprobadas por el usuario y aplicadas. El candi
 
 - Residual risk: firma y distribución siguen externas y requieren un proveedor/runbook aprobado para implementar.
 - Next action: implementar en PRs aisladas, conservar los gates definidos y revisar cualquier cambio de contrato.
+
+## Revisión de cierre — 2026-09-15
+
+La relectura independiente confirma que el alcance de este feature es **documental** y ya fue integrado por PR #32: contrato redacted, registro externo opaco, gates del candidato, firma, distribución y rollback. No hay evidencia ni autorización para firmar, seleccionar proveedor/canal, distribuir o declarar una release.
+
+Cambios de cierre aplicados:
+
+- `meta.md` y tareas reflejan el baseline `5a7be32`, PR #32 y el bloqueo externo explícito;
+- las tareas de firma/canal se consideran completas como **contratos externalizados**, no como ejecución;
+- R-05 del ledger principal queda terminado con ese límite; la ejecución autenticada sigue exclusivamente en R-01/#5;
+- la traza de Knowledge apunta al feature existente `002-goodlife-quality-foundation`, sin fabricar un PRD `008` inexistente.
+
+## Decisión de archivo
+
+**APROBADO PARA ARCHIVO.** El artefacto versiona el contrato que le corresponde y no simula una entrega real. Cualquier candidato futuro requiere un issue/spec separado, aprobación explícita del proveedor/canal y evidencia redacted del artefacto firmado exacto.
