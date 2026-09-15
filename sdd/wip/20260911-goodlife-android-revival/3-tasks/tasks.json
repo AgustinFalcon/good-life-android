@@ -9,6 +9,6 @@
     {"id":"R-04","issue":"#7","title":"Complete Daily and Meals detail flows","status":"done","acceptance":"Every exposed detail action has a documented route and real loading, not-found and error behavior."},
     {"id":"R-05","issue":"#8","title":"Internal release readiness","status":"done","acceptance":"Redacted signing, distribution, rollback and instrumentation expectations are versioned. No release, signing provider or distribution is authorized by this closure."},
     {"id":"R-06","issue":"#3","title":"Harden session and local data","status":"in_review","acceptance":"Session concurrency, stale tab requests and local cleanup remain covered by tests and review."},
-    {"id":"R-07","issue":"#10","title":"Triage Android lint baseline","status":"todo","acceptance":"The 60 current warnings are classified, reduced or explicitly baselined before warnings become a blocking gate."}
+    {"id":"R-07","issue":"#10","title":"Triage Android lint baseline","status":"done","acceptance":"PR #37 versions and gates 41 deterministic warnings plus 12 external advisories per variant; deterministic debt blocks exactly, external feed drift is monitored separately."}
   ]
 }
