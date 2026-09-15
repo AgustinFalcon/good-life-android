@@ -35,3 +35,13 @@
 ## Decisión final
 
 **LISTO PARA BUILD.** La re-revisión posterior al rebase aprobó la alineación CI/instrumentación, baseline e i18n; producción y fuentes de test compilan sin hallazgos accionables.
+
+## Re-revisión SDD de cierre
+
+| ID | Severidad | Resolución y evidencia |
+|---|---|---|
+| P1-10 | P1 | Meals ahora exige antes del parseo el patrón exacto `YYYY-MM-DD`; la prueba `extended ISO year is invalid and does not query` verifica que `+12026-09-13` produce `InvalidRoute` sin consulta. `MealDetailViewModelTest`: 6/6 OK localmente. |
+
+## Decisión de cierre
+
+**PENDIENTE DE CONFIRMACIÓN FINAL.** La corrección P1-10 requiere CI del HEAD que la contiene y dos revisiones independientes aprobadas antes de archivar el feature.

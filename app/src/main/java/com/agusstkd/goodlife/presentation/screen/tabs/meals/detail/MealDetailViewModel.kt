@@ -16,6 +16,8 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 
 /** Loads one meal plan from the authenticated user's daily meal-plan collection. */
+private val EXACT_ISO_DATE = Regex("\\d{4}-\\d{2}-\\d{2}")
+
 class MealDetailViewModel(
     private val planId: Long,
     private val dateIso: String,
@@ -59,7 +61,7 @@ class MealDetailViewModel(
     }
 
     private fun validRouteDateOrNull(): LocalDate? {
-        if (planId <= 0) return null
+        if (planId <= 0 || !dateIso.matches(EXACT_ISO_DATE)) return null
         return runCatching { LocalDate.parse(dateIso) }
             .getOrNull()
             ?.takeIf { it.toString() == dateIso }

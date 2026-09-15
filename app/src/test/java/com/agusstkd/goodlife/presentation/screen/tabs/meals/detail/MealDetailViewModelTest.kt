@@ -40,6 +40,12 @@ class MealDetailViewModelTest {
         assertEquals(MealDetailUiState.InvalidRoute, viewModel.uiState.value)
         assertTrue(repository.requestedDates.isEmpty())
     }
+    @Test fun `extended ISO year is invalid and does not query`() = runTest(dispatcher) {
+        val viewModel = vm(4, "+12026-09-13")
+        assertEquals(MealDetailUiState.InvalidRoute, viewModel.uiState.value)
+        assertTrue(repository.requestedDates.isEmpty())
+    }
+
     @Test fun `found plan exposes visible state`() = runTest(dispatcher) {
         repository.getResult = Result.Success(listOf(DailyMealPlanSummary(4, "Plan", date, MealType.LUNCH, null, "Bowl", null, 500.0, 30.0, 60.0, 10.0, true)))
         val viewModel = vm(); advanceUntilIdle(); val state = viewModel.uiState.value as MealDetailUiState.Content
