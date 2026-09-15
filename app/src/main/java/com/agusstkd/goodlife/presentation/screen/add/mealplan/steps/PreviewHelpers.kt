@@ -30,6 +30,7 @@ internal fun previewMealPlanTexts() = CreateMealPlanTexts(
     macroProteinLabel = "Proteína",
     macroCarbsLabel = "Carbos",
     macroFatLabel = "Grasas",
+    decimalSeparator = ',',
     myIngredientsSectionTitle = "Mis ingredientes",
     ingredientCatalogSectionTitle = "Catálogo de ingredientes",
     searchIngredientPlaceholder = "Buscar ingrediente...",

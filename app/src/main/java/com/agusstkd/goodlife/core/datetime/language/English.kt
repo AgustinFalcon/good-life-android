@@ -373,6 +373,7 @@ data object English : AppLanguage {
         macroProteinLabel = "Protein",
         macroCarbsLabel = "Carbs",
         macroFatLabel = "Fat",
+        decimalSeparator = '.',
         myIngredientsSectionTitle = "My ingredients",
         ingredientCatalogSectionTitle = "Ingredient catalog",
         searchIngredientPlaceholder = "Search ingredients...",
@@ -425,7 +426,7 @@ data object English : AppLanguage {
         active = "Active", inactive = "Inactive", mealImageUnavailable = "Meal image unavailable",
         emptyMealsTitle = "No meal plans for today", emptyMealsDescription = "Create your first meal plan to track your daily nutrition.",
         createMealPlan = "Create meal plan", tapToRetry = "Tap to retry", mealPlanSingular = "meal plan", mealPlanPlural = "meal plans",
-        calorieUnit = "kcal", gramUnit = "g",
+        calorieUnit = "kcal", gramUnit = "g", decimalSeparator = '.',
     )
 
 }

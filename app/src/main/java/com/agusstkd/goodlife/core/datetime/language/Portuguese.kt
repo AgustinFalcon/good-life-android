@@ -372,6 +372,7 @@ data object Portuguese : AppLanguage {
         macroProteinLabel = "Proteína",
         macroCarbsLabel = "Carbos",
         macroFatLabel = "Gordura",
+        decimalSeparator = ',',
         myIngredientsSectionTitle = "Meus ingredientes",
         ingredientCatalogSectionTitle = "Catálogo de ingredientes",
         searchIngredientPlaceholder = "Buscar ingredientes...",
@@ -424,7 +425,7 @@ data object Portuguese : AppLanguage {
         active = "Ativo", inactive = "Inativo", mealImageUnavailable = "Imagem da refeição indisponível",
         emptyMealsTitle = "Nenhum plano de refeições para hoje", emptyMealsDescription = "Crie seu primeiro plano de refeições para acompanhar sua nutrição diária.",
         createMealPlan = "Criar plano de refeições", tapToRetry = "Toque para tentar novamente", mealPlanSingular = "plano de refeições", mealPlanPlural = "planos de refeições",
-        calorieUnit = "kcal", gramUnit = "g",
+        calorieUnit = "kcal", gramUnit = "g", decimalSeparator = ',',
     )
 
 }

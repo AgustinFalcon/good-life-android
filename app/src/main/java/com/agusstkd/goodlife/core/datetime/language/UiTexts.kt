@@ -346,6 +346,7 @@ data class CreateMealPlanTexts(
     val macroProteinLabel: String,   // Label corto para MacrosSummaryCard: "Proteína" / "Protein"
     val macroCarbsLabel: String,     // Label corto: "Carbos" / "Carbs"
     val macroFatLabel: String,       // Label corto: "Grasas" / "Fat"
+    val decimalSeparator: Char,     // Separador visible: ',' para ES/PT, '.' para EN.
     val myIngredientsSectionTitle: String,
     val ingredientCatalogSectionTitle: String,
     val searchIngredientPlaceholder: String,
@@ -478,5 +479,5 @@ data class TabDetailTexts(
     val active: String, val inactive: String,
     val mealImageUnavailable: String, val emptyMealsTitle: String, val emptyMealsDescription: String,
     val createMealPlan: String, val tapToRetry: String, val mealPlanSingular: String, val mealPlanPlural: String,
-    val calorieUnit: String, val gramUnit: String,
+    val calorieUnit: String, val gramUnit: String, val decimalSeparator: Char,
 )

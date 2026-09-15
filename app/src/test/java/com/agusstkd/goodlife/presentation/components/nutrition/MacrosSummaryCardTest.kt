@@ -9,5 +9,7 @@ class MacrosSummaryCardTest {
         assertEquals("12", formatNutritionValue(12.0))
         assertEquals("12.5", formatNutritionValue(12.5))
         assertEquals("0.125", formatNutritionValue(0.125))
+        assertEquals("12,5", formatNutritionValue(12.5, ','))
+        assertEquals("0,125", formatNutritionValue(0.125, ','))
     }
 }

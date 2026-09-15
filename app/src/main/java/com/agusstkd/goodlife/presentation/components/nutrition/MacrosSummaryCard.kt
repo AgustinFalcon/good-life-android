@@ -67,6 +67,7 @@ fun MacrosSummaryCard(
     fatLabel: String,
     calorieUnit: String = "kcal",
     gramUnit: String = "g",
+    decimalSeparator: Char = '.',
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -91,7 +92,7 @@ fun MacrosSummaryCard(
                     modifier = Modifier.size(28.dp),
                 )
                 Text(
-                    text = "${formatNutritionValue(calories)} $calorieUnit",
+                    text = "${formatNutritionValue(calories, decimalSeparator)} $calorieUnit",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.ExtraBold,
                     color = CaloriesColor,
@@ -108,6 +109,7 @@ fun MacrosSummaryCard(
                     labelColor = ProteinColor,
                     valueColor = ProteinColorDark,
                     gramUnit = gramUnit,
+                    decimalSeparator = decimalSeparator,
                     modifier = Modifier.weight(1f),
                 )
                 MacroCard(
@@ -116,6 +118,7 @@ fun MacrosSummaryCard(
                     labelColor = CarbsColor,
                     valueColor = CarbsColorDark,
                     gramUnit = gramUnit,
+                    decimalSeparator = decimalSeparator,
                     modifier = Modifier.weight(1f),
                 )
                 MacroCard(
@@ -124,6 +127,7 @@ fun MacrosSummaryCard(
                     labelColor = FatColor,
                     valueColor = FatColorDark,
                     gramUnit = gramUnit,
+                    decimalSeparator = decimalSeparator,
                     modifier = Modifier.weight(1f),
                 )
             }
@@ -142,6 +146,7 @@ private fun MacroCard(
     labelColor: Color,
     valueColor: Color,
     gramUnit: String,
+    decimalSeparator: Char,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -164,7 +169,7 @@ private fun MacroCard(
                 color = labelColor,
             )
             Text(
-                text = "${formatNutritionValue(value)}$gramUnit",
+                text = "${formatNutritionValue(value, decimalSeparator)}$gramUnit",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = valueColor,
@@ -173,7 +178,8 @@ private fun MacroCard(
     }
 }
 
-internal fun formatNutritionValue(value: Double): String = BigDecimal.valueOf(value).stripTrailingZeros().toPlainString()
+internal fun formatNutritionValue(value: Double, decimalSeparator: Char = '.'): String =
+    BigDecimal.valueOf(value).stripTrailingZeros().toPlainString().replace('.', decimalSeparator)
 
 // ════════════════════════════════════════════════════════════
 // PREVIEW

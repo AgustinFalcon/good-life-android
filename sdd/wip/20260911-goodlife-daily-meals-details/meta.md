@@ -5,7 +5,7 @@
 - Issue: #7 `feature(android): complete Daily and Meals detail flows`.
 - Rama: `feature/android-daily-meals-details`.
 - Idioma de specs: español (es-AR).
-- Baseline de implementación: `origin/master` `7c67804` (2026-09-12).
+- Baseline de implementación y re-revisión: `origin/master` `341930e` (2026-09-14).
 
 ## Evidencia y precedencia
 
@@ -15,6 +15,5 @@ Los artefactos aquí son la fuente versionable del contrato de #7. No contienen 
 
 ## Evidencia de implementación
 
-- Compilación Kotlin, unit tests, cobertura y lint locales ejecutados en esta rama.
-- Gate conectado Gradle en emulador Android API 36: 8/8 tests OK; Daily y Meals (scroll → detalle → back), estados NotFound/InvalidRoute/Retry, Back y fallback accesible.
-- El gate CI ejecuta connectedDebugAndroidTest sobre API 35; su resultado se acreditará desde el PR.
+- CI del PR #23 en la baseline actual: cobertura lógica y lint/ensamblado release en verde.
+- Las pruebas instrumentadas permanecen versionadas para validación local/dispositivo; no son un gate CI ni se atribuye una API específica. La evidencia de una ejecución controlada se registra antes de promoción release.

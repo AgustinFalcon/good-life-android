@@ -232,6 +232,6 @@ private fun previewMyIngredientsTexts() = CreateMealPlanTexts(
     errorNoMealSelected = "", errorMealNameEmpty = "", errorNoIngredients = "",
     errorNoMealType = "", errorNoDays = "", errorEndBeforeStart = "", errorQuantityZero = "",
     errorIngredientNameEmpty = "", errorServer = "", errorNetwork = "", loadingTitle = "",
-    macroProteinLabel = "", macroCarbsLabel = "", macroFatLabel = "",
+    macroProteinLabel = "", macroCarbsLabel = "", macroFatLabel = "", decimalSeparator = ',',
     // endregion
 )

@@ -78,7 +78,7 @@ data object Spanish : AppLanguage {
         noPermissions = "Sin permisos",
         invalidRequest = "Solicitud inválida",
         error = "Error",
-        tapToRetry = "Tap para reintentar",
+        tapToRetry = "Tocá para reintentar",
         nextUp = "PRÓXIMO",
         inProgress = "EN PROGRESO",
         all = "Todos",
@@ -373,6 +373,7 @@ data object Spanish : AppLanguage {
         macroProteinLabel = "Proteína",
         macroCarbsLabel = "Carbos",
         macroFatLabel = "Grasas",
+        decimalSeparator = ',',
         myIngredientsSectionTitle = "Mis ingredientes",
         ingredientCatalogSectionTitle = "Catálogo de ingredientes",
         searchIngredientPlaceholder = "Buscar ingredientes...",
@@ -424,8 +425,8 @@ data object Spanish : AppLanguage {
         mealLabel = "Comida", proteinLabel = "Proteína", carbsLabel = "Carbohidratos", fatLabel = "Grasas",
         active = "Activo", inactive = "Inactivo", mealImageUnavailable = "Imagen de comida no disponible",
         emptyMealsTitle = "Sin planes de comida para hoy", emptyMealsDescription = "Creá tu primer plan de comida para llevar un registro de tu nutrición diaria.",
-        createMealPlan = "Crear plan de comida", tapToRetry = "Tap para reintentar", mealPlanSingular = "plan de comida", mealPlanPlural = "planes de comida",
-        calorieUnit = "kcal", gramUnit = "g",
+        createMealPlan = "Crear plan de comida", tapToRetry = "Tocá para reintentar", mealPlanSingular = "plan de comida", mealPlanPlural = "planes de comida",
+        calorieUnit = "kcal", gramUnit = "g", decimalSeparator = ',',
     )
 
 }

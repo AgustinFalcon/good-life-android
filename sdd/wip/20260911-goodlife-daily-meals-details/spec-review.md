@@ -2,7 +2,7 @@
 
 - Mode: local, revisión adversarial independiente.
 - Target: `20260911-goodlife-daily-meals-details` / issue #7.
-- Baseline único: `origin/master` `7c67804` (2026-09-12).
+- Baseline único revalidado: `origin/master` `341930e` (2026-09-14).
 - Fuentes: `sdd/PROJECT.md`, `sdd/PATTERNS.md`, los tres artefactos de este feature, rutas, Owners, módulos Koin, use cases y tests actuales.
 - Redacción: sin datos runtime, credenciales, hosts privados ni contenido personal.
 
@@ -26,7 +26,7 @@
 | ID | Severidad | Resolución |
 |---|---|---|
 | P1-08 | P1 | Se define preservación: sin refresh al volver, fecha/filtro en ViewModel y `LazyListState` salvable; pruebas de retorno obligatorias. |
-| P1-09 | P1 | Se añade `connectedDebugAndroidTest` local y en PR con emulador como gate de semántica/navegación/fallback. |
+| P1-09 | P1 | Se mantienen pruebas `connectedDebugAndroidTest` para semántica/navegación/fallback como validación local/dispositivo; el CI actual no las declara gate. |
 
 ## Decisión actual
 
@@ -34,4 +34,4 @@
 
 ## Decisión final
 
-**LISTO PARA BUILD.** Dos revisiones independientes aprobaron los artefactos luego de aplicar P1-01…P1-09; no quedan hallazgos P0/P1/P2.
+**LISTO PARA BUILD.** La re-revisión posterior al rebase aprobó la alineación CI/instrumentación, baseline e i18n; producción y fuentes de test compilan sin hallazgos accionables.

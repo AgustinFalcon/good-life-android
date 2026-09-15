@@ -77,6 +77,7 @@ fun MealDetailScreen(
                 fatLabel = texts.fatLabel,
                 calorieUnit = texts.calorieUnit,
                 gramUnit = texts.gramUnit,
+                decimalSeparator = texts.decimalSeparator,
                 modifier = Modifier.padding(horizontal = 12.dp),
             )
         }

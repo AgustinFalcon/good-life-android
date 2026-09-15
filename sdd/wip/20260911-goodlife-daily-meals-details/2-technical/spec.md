@@ -37,4 +37,4 @@ Los Owners inician carga al entrar por el flujo existente de `uiState`, pero no 
 
 ## Gate instrumentado
 
-Se agregan pruebas Compose instrumentadas para semántica de card, Volver, Retry y fallback, y para navegación/retorno. La entrega ejecuta `:app:connectedDebugAndroidTest` sobre un emulador API compatible: localmente antes de abrir PR y en el workflow de PR contra `master`. Si la infraestructura de emulador no está disponible, el gate falla o se marca bloqueado; nunca se sustituye por una afirmación manual. Unit, cobertura y lint siguen siendo gates complementarios.
+Se agregan pruebas Compose instrumentadas para semántica de card, Volver, Retry y fallback, y para navegación/retorno. Se ejecutan localmente o en dispositivo controlado con `:app:connectedDebugAndroidTest`; no son un gate del workflow actual de PR mientras el runner de emulador no sea confiable. Los gates de PR son cobertura lógica y lint/ensamblado release. La evidencia instrumentada debe registrar comando, AVD/API y resultado antes de una promoción de release; no se afirma ejecución CI ni API concreta. Unit, cobertura y lint siguen siendo gates complementarios.

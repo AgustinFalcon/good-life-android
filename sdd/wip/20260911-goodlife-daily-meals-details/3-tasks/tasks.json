@@ -45,7 +45,7 @@
       "dependsOn": [
         "DM-04"
       ],
-      "acceptance": "Unit, cobertura, lint y connectedDebugAndroidTest en emulador; CI y dos revisiones sin hallazgos bloqueantes.",
+      "acceptance": "CI: cobertura lógica y lint/ensamblado release en verde; dos revisiones sin hallazgos bloqueantes. connectedDebugAndroidTest es validación local/dispositivo requerida antes de promoción release, no gate actual de PR.",
       "status": "in_progress"
     }
   ]

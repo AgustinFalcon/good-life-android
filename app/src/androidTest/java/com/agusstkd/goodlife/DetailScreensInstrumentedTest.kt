@@ -323,7 +323,7 @@ class DetailScreensInstrumentedTest {
         MealDetailTexts(
             it.mealTitle, it.back, it.retry, it.loading, it.mealNotFound, it.invalidRoute,
             it.mealLabel, it.scheduleLabel, it.proteinLabel, it.carbsLabel, it.fatLabel,
-            it.statusLabel, it.active, it.inactive, it.mealImageUnavailable, it.calorieUnit, it.gramUnit,
+            it.statusLabel, it.active, it.inactive, it.mealImageUnavailable, it.calorieUnit, it.gramUnit, it.decimalSeparator,
         )
     }
 }

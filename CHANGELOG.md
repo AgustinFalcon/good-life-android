@@ -16,6 +16,8 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Logout solicita revocación remota y siempre borra tokens, credenciales biométricas, usuario y cache Daily locales.
 
 ### Fixed
+- Macros nutricionales respetan el separador decimal de cada idioma (coma en ES/PT y punto en EN), y el copy español de reintento usa voseo.
+
 - Se normalizó el orden de `Modifier` frente a callbacks opcionales en componentes Compose reutilizables, reduciendo deuda lint sin cambiar la UI.
 - Coil Compose se centralizó en el version catalog conservando sus coordenadas y versión `2.7.0`.
 - CI ahora valida lint y ensamblado de la variante release no firmada, sin publicar ni distribuir artefactos.
@@ -48,6 +50,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 ## [Unreleased] - 2026-07-24 — P0 Quality Baseline
 
 ### Fixed
+
 - Implementado `getActiveRoutine()` en `FakeRoutineRepository` para mantener compatible el contrato de tests con `RoutineRepository`.
 - Inicializacion eager del `StateFlow` de `DailyTabViewModel` para que la carga inicial sea deterministica en tests unitarios.
 
