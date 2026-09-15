@@ -7,7 +7,7 @@ scope:
   - app/build.gradle.kts
   - .github/workflows/android-ci.yml
   - docs/agent/runbook.md
-  - sdd/wip/20260911-goodlife-internal-release-readiness
+  - sdd/features/20260911-goodlife-internal-release-readiness
 ---
 
 # Contrato de readiness para release interno
