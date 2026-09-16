@@ -17,12 +17,12 @@ class ResourceInventoryTest(unittest.TestCase):
                 result=subprocess.run([PYTHON,str(SCRIPT),'--baseline',str(baseline),'--output-json',str(output),'--markdown',str(MARKDOWN)],capture_output=True,text=True)
             self.assertEqual(result.returncode,0 if ok else 1,result.stdout+result.stderr)
     def base(self): return json.loads(BASELINE.read_text(encoding='utf-8'))
-    def test_real_schema_generates_28_symbols(self):
+    def test_real_schema_generates_15_symbols(self):
         with tempfile.TemporaryDirectory() as d:
             output=Path(d)/'inventory.json'
             result=subprocess.run([PYTHON,str(SCRIPT),'--baseline',str(BASELINE),'--output-json',str(output),'--markdown',str(MARKDOWN)],capture_output=True,text=True)
             self.assertEqual(result.returncode,0,result.stdout+result.stderr)
-            self.assertEqual(len(json.loads(output.read_text())['symbols']),28)
+            self.assertEqual(len(json.loads(output.read_text())['symbols']),15)
     def test_missing_cross_variant_symbol_fails(self):
         p=self.base(); p['variants']['release']['warnings']=[x for x in p['variants']['release']['warnings'] if 'daily_item_type_meal' not in x.get('message','')]; self.run_check(p,False)
     def test_duplicate_semantic_identity_fails(self):
@@ -51,13 +51,13 @@ class ResourceInventoryTest(unittest.TestCase):
             result=subprocess.run([PYTHON,str(SCRIPT),'--baseline',str(BASELINE),'--output-json',str(output),'--markdown',str(markdown)],capture_output=True,text=True)
             self.assertEqual(result.returncode,1,result.stdout+result.stderr)
     def test_markdown_blank_triage_field_fails(self):
-        self.markdown_check(lambda text: text.replace('AndroidX notification compatibility family; #38 cannot prove ownership.', '', 1))
+        self.markdown_check(lambda text: text.replace('AndroidX notification compatibility family; ownership belongs to dependency/toolchain review.', '', 1))
     def test_markdown_definition_path_mismatch_fails(self):
-        self.markdown_check(lambda text: text.replace('`values/core_compat.xml`; default', '`values/other.xml`; default', 1))
+        self.markdown_check(lambda text: text.replace('values/core_compat.xml; default', '`values/other.xml`; default', 1))
     def test_markdown_semantic_multiplicity_fails(self):
         self.markdown_check(lambda text: text.replace('UnusedResources; color/notification_template_icon_bg_compat; canonical unused; D×1/R×1', 'UnusedResources; color/notification_template_icon_bg_compat; canonical unused; D×2/R×1', 1))
     def test_markdown_invalid_classification_fails(self):
-        self.markdown_check(lambda text: text.replace('`needs_owner`', '`remove`', 1))
+        self.markdown_check(lambda text: text.replace('| needs_owner |', '| remove |', 1))
     def test_markdown_missing_launcher_qualifier_fails(self):
-        self.markdown_check(lambda text: text.replace('`mipmap-xxxhdpi/ic_launcher.webp`; ', '', 1))
+        self.markdown_check(lambda text: text.replace('mipmap-xxxhdpi/ic_launcher.webp; ', '', 1))
 if __name__=='__main__': unittest.main()

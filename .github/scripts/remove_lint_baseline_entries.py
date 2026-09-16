@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed reducer for the exact #38 legacy-colors lint remediation."""
+"""Fail-closed reducer for immutable #38 resource-remediation scopes."""
 from __future__ import annotations
 
 import argparse
@@ -11,15 +11,19 @@ from pathlib import Path
 VARIANTS = ("debug", "release")
 RESOURCE_MESSAGE = re.compile(r"^The resource `R\.([a-z0-9_]+)\.([a-z0-9_]+)` appears to be unused$")
 PROTECTED_TOP_LEVEL = ("generatedFrom", "externalAdvisories", "exceptions")
-EXPECTED_SYMBOLS = frozenset({
-    "color/black",
-    "color/white",
-    "color/purple_200",
-    "color/purple_500",
-    "color/purple_700",
-    "color/teal_200",
-    "color/teal_700",
-})
+SCOPES = {
+    "legacy-colors": frozenset({
+        "color/black", "color/white", "color/purple_200", "color/purple_500",
+        "color/purple_700", "color/teal_200", "color/teal_700",
+    }),
+    "auth-strings": frozenset({
+        "string/biometric_checkbox_label", "string/biometric_icon_description",
+        "string/biometric_prompt_negative_button", "string/biometric_prompt_subtitle",
+        "string/biometric_prompt_title", "string/login_button", "string/login_email_placeholder",
+        "string/login_forgot_password", "string/login_password_placeholder", "string/login_remember_user",
+        "string/login_subtitle", "string/login_success", "string/login_title",
+    }),
+}
 
 
 def fail(message: str) -> None:
@@ -54,10 +58,14 @@ def load_baseline(path: Path) -> dict:
     return value
 
 
-def load_manifest(path: Path) -> list[dict]:
+def load_manifest(path: Path) -> tuple[str, list[dict]]:
     value = load_json(path, "manifest")
-    if not isinstance(value, dict) or value.get("schemaVersion") != 1 or value.get("issue") != "#38" or set(value) != {"schemaVersion", "issue", "resources"}:
+    expected_fields = {"schemaVersion", "issue", "scope", "resources"}
+    if not isinstance(value, dict) or value.get("schemaVersion") != 2 or value.get("issue") != "#38" or set(value) != expected_fields:
         fail("manifest schema is invalid")
+    scope = value.get("scope")
+    if not isinstance(scope, str) or scope not in SCOPES:
+        fail(f"manifest scope must be one of: {', '.join(sorted(SCOPES))}")
     resources = value.get("resources")
     if not isinstance(resources, list) or not resources:
         fail("manifest resources must be a non-empty list")
@@ -75,10 +83,11 @@ def load_manifest(path: Path) -> list[dict]:
             fingerprint = item[f"{variant}Fingerprint"]
             if not isinstance(fingerprint, str) or not re.fullmatch(r"[0-9a-f]{64}", fingerprint):
                 fail(f"invalid {variant} fingerprint for {symbol}")
-    if symbols != EXPECTED_SYMBOLS:
-        missing, extra = sorted(EXPECTED_SYMBOLS - symbols), sorted(symbols - EXPECTED_SYMBOLS)
-        fail(f"#38 manifest symbols must match the immutable legacy-color scope; missing={missing}, extra={extra}")
-    return resources
+    expected_symbols = SCOPES[scope]
+    if symbols != expected_symbols:
+        missing, extra = sorted(expected_symbols - symbols), sorted(symbols - expected_symbols)
+        fail(f"#38 manifest symbols must match immutable {scope} scope; missing={missing}, extra={extra}")
+    return scope, resources
 
 
 def canonical(value) -> str:
@@ -93,7 +102,7 @@ def main() -> int:
     args = parser.parse_args()
 
     before = load_baseline(args.baseline)
-    resources = load_manifest(args.manifest)
+    scope, resources = load_manifest(args.manifest)
     after = copy.deepcopy(before)
     protected_before = {key: canonical(before.get(key)) for key in PROTECTED_TOP_LEVEL}
     for variant in VARIANTS:
@@ -121,13 +130,13 @@ def main() -> int:
             targets.add(expected)
         after["variants"][variant]["warnings"] = [entry for entry in warnings if entry.get("fingerprint") not in targets]
         if len(after["variants"][variant]["warnings"]) != len(warnings) - len(resources):
-            fail(f"{variant} removal count is not exactly {len(resources)}")
+            fail(f"{variant} removal count is not exactly {len(resources)} for scope {scope}")
     for key, expected in protected_before.items():
         if canonical(after.get(key)) != expected:
             fail(f"protected top-level section changed: {key}")
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(canonical(after), encoding="utf-8")
-    print(f"Removed {len(resources)} exact UnusedResources entries per variant from {args.output}")
+    print(f"Removed {len(resources)} exact {scope} UnusedResources entries per variant from {args.output}")
     return 0
 
 

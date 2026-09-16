@@ -2,22 +2,9 @@
     <string name="app_name">Good Life</string>
     
     <!-- Biometric Authentication -->
-    <string name="biometric_prompt_title">Iniciar sesión en GoodLife</string>
-    <string name="biometric_prompt_subtitle">Usa tu huella, rostro, PIN o patrón</string>
-    <string name="biometric_prompt_negative_button">Cancelar</string>
-    <string name="biometric_checkbox_label">Activar login con huella</string>
-    <string name="biometric_icon_description">Autenticar con huella digital</string>
     
     <!-- Login Screen -->
-    <string name="login_title">GoodLife</string>
-    <string name="login_subtitle">Tu bienestar, tu ritmo</string>
-    <string name="login_email_placeholder">Correo electrónico o usuario</string>
-    <string name="login_password_placeholder">Contraseña</string>
-    <string name="login_remember_user">Recordar</string>
-    <string name="login_forgot_password">¿Olvidaste tu contraseña?</string>
-    <string name="login_button">Iniciar Sesión</string>
     <string name="login_register_button">Crear Cuenta</string>
-    <string name="login_success">✅ Login Exitoso!</string>
 
 
     <!-- Tab Navigation -->

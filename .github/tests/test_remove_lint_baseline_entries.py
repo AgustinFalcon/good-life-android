@@ -11,9 +11,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / ".github" / "scripts" / "remove_lint_baseline_entries.py"
 PYTHON = sys.executable
-TARGETS = (
+LEGACY_TARGETS = (
     "color/black", "color/white", "color/purple_200", "color/purple_500",
     "color/purple_700", "color/teal_200", "color/teal_700",
+)
+AUTH_TARGETS = (
+    "string/biometric_checkbox_label", "string/biometric_icon_description",
+    "string/biometric_prompt_negative_button", "string/biometric_prompt_subtitle",
+    "string/biometric_prompt_title", "string/login_button", "string/login_email_placeholder",
+    "string/login_forgot_password", "string/login_password_placeholder", "string/login_remember_user",
+    "string/login_subtitle", "string/login_success", "string/login_title",
 )
 KEEP_SYMBOL = "string/keep_me"
 
@@ -28,7 +35,7 @@ def entry(variant: str, symbol: str, value: str) -> dict:
         "fingerprint": value,
         "variant": variant,
         "ruleId": "UnusedResources",
-        "relativePath": "app/src/main/res/values/colors.xml",
+        "relativePath": f"app/src/main/res/values/{'colors' if resource_type == 'color' else 'strings'}.xml",
         "message": f"The resource `R.{resource_type}.{name}` appears to be unused",
         "classification": "investigate",
         "owner": "android-maintainers",
@@ -45,17 +52,19 @@ class RemoveBaselineEntriesTest(unittest.TestCase):
         self.baseline = self.root / "baseline.json"
         self.manifest = self.root / "manifest.json"
         self.output = self.root / "updated.json"
-        resources = [
-            {"symbol": symbol, "debugFingerprint": fingerprint(index), "releaseFingerprint": fingerprint(index + 100)}
-            for index, symbol in enumerate(TARGETS, start=1)
-        ]
+        self.original = self.payload_for(LEGACY_TARGETS)
+        self.baseline.write_text(json.dumps(self.original, indent=2), encoding="utf-8")
+        self.write_manifest("legacy-colors", LEGACY_TARGETS)
+
+    def tearDown(self) -> None:
+        self.temp.cleanup()
+
+    @staticmethod
+    def payload_for(targets: tuple[str, ...]) -> dict:
         variants = {}
         for variant, offset in (("debug", 0), ("release", 100)):
-            variants[variant] = {"warnings": [
-                entry(variant, symbol, fingerprint(index + offset))
-                for index, symbol in enumerate(TARGETS, start=1)
-            ] + [entry(variant, KEEP_SYMBOL, fingerprint(900 + offset))]}
-        payload = {
+            variants[variant] = {"warnings": [entry(variant, symbol, fingerprint(index + offset)) for index, symbol in enumerate(targets, start=1)] + [entry(variant, KEEP_SYMBOL, fingerprint(900 + offset))]}
+        return {
             "schemaVersion": 2,
             "normalizationVersion": 1,
             "generatedFrom": {"sourceRevision": "abc1234", "commands": [":app:lintDebug", ":app:lintRelease"], "toolchain": {"gradleWrapper": "8", "agp": "8", "jdk": "17", "sdk": "35"}, "authority": "test"},
@@ -63,12 +72,10 @@ class RemoveBaselineEntriesTest(unittest.TestCase):
             "externalAdvisories": {"debug": {"warnings": []}, "release": {"warnings": []}},
             "exceptions": [],
         }
-        self.original = copy.deepcopy(payload)
-        self.baseline.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-        self.manifest.write_text(json.dumps({"schemaVersion": 1, "issue": "#38", "resources": resources}, indent=2), encoding="utf-8")
 
-    def tearDown(self) -> None:
-        self.temp.cleanup()
+    def write_manifest(self, scope: str, targets: tuple[str, ...]) -> None:
+        resources = [{"symbol": symbol, "debugFingerprint": fingerprint(index), "releaseFingerprint": fingerprint(index + 100)} for index, symbol in enumerate(targets, start=1)]
+        self.manifest.write_text(json.dumps({"schemaVersion": 2, "issue": "#38", "scope": scope, "resources": resources}, indent=2), encoding="utf-8")
 
     def read_baseline(self) -> dict:
         return json.loads(self.baseline.read_text(encoding="utf-8"))
@@ -76,7 +83,7 @@ class RemoveBaselineEntriesTest(unittest.TestCase):
     def read_manifest(self) -> dict:
         return json.loads(self.manifest.read_text(encoding="utf-8"))
 
-    def write_manifest(self, payload: dict) -> None:
+    def write_manifest_payload(self, payload: dict) -> None:
         self.manifest.write_text(json.dumps(payload), encoding="utf-8")
 
     def run_reducer(self):
@@ -100,19 +107,19 @@ class RemoveBaselineEntriesTest(unittest.TestCase):
     def test_missing_target_fails_closed(self):
         payload = self.read_manifest()
         payload["resources"].pop()
-        self.write_manifest(payload)
-        self.assert_fails_closed("immutable legacy-color scope")
+        self.write_manifest_payload(payload)
+        self.assert_fails_closed("immutable legacy-colors scope")
 
     def test_extra_legitimate_resource_fails_closed(self):
         payload = self.read_manifest()
         payload["resources"].append({"symbol": KEEP_SYMBOL, "debugFingerprint": fingerprint(900), "releaseFingerprint": fingerprint(1000)})
-        self.write_manifest(payload)
-        self.assert_fails_closed("immutable legacy-color scope")
+        self.write_manifest_payload(payload)
+        self.assert_fails_closed("immutable legacy-colors scope")
 
     def test_fingerprint_mismatch_fails_closed(self):
         payload = self.read_manifest()
         payload["resources"][0]["debugFingerprint"] = "0" * 64
-        self.write_manifest(payload)
+        self.write_manifest_payload(payload)
         self.assert_fails_closed("fingerprint mismatch")
 
     def test_wrong_baseline_variant_fails_closed(self):
@@ -136,8 +143,31 @@ class RemoveBaselineEntriesTest(unittest.TestCase):
     def test_duplicate_manifest_symbol_fails_closed(self):
         payload = self.read_manifest()
         payload["resources"].append(copy.deepcopy(payload["resources"][0]))
-        self.write_manifest(payload)
+        self.write_manifest_payload(payload)
         self.assert_fails_closed("duplicate")
+
+    def test_auth_strings_scope_is_immutable_and_removes_exact_targets(self):
+        self.original = self.payload_for(AUTH_TARGETS)
+        self.baseline.write_text(json.dumps(self.original, indent=2), encoding="utf-8")
+        self.write_manifest("auth-strings", AUTH_TARGETS)
+        result = self.run_reducer()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        updated = json.loads(self.output.read_text(encoding="utf-8"))
+        for variant, offset in (("debug", 0), ("release", 100)):
+            self.assertEqual(len(updated["variants"][variant]["warnings"]), 1)
+            self.assertEqual(updated["variants"][variant]["warnings"][0]["fingerprint"], fingerprint(900 + offset))
+
+    def test_auth_scope_rejects_legacy_symbol(self):
+        payload = self.read_manifest()
+        payload["scope"] = "auth-strings"
+        self.write_manifest_payload(payload)
+        self.assert_fails_closed("immutable auth-strings scope")
+
+    def test_schema_one_manifest_fails_closed(self):
+        payload = self.read_manifest()
+        payload["schemaVersion"] = 1
+        self.write_manifest_payload(payload)
+        self.assert_fails_closed("manifest schema is invalid")
 
 
 if __name__ == "__main__":

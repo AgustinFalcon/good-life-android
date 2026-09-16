@@ -12,14 +12,14 @@
     {
       "id": "UR-02a",
       "title": "Remediar colores legacy propios",
-      "status": "in_review",
-      "acceptance": "PR aislada #38; owner Android maintainers; manifest exacto de 14 fingerprints; reducer fail-closed; colors.xml eliminado; snapshots before/after/remaining; UnusedResources 35→28 y warnings determinísticos 41→34 por variante; lint/verifier/assemble debug y release verdes."
+      "status": "done",
+      "acceptance": "PR #42 mergeada; owner Android maintainers; manifest exacto de 14 fingerprints; reducer fail-closed; colors.xml eliminado; snapshots before/after/remaining; UnusedResources 35→28 y warnings determinísticos 41→34 por variante; lint/verifier/assemble debug y release verdes."
     },
     {
       "id": "UR-02b",
       "title": "Remediar strings por owner",
-      "status": "todo",
-      "acceptance": "Login/biometría, tabs/navegación y Daily se separan; cada borrado prueba ausencia de referencias dinámicas, contrato visible y evidencia de owner."
+      "status": "in_review",
+      "acceptance": "La PR auth/login elimina 13 strings tras probar ausencia de referencias estáticas y dinámicas y confirmar que la UI usa UiTexts; tabs/navegación y Daily permanecen separados y requieren owner/contrato visible antes de cualquier borrado."
     },
     {
       "id": "UR-03",

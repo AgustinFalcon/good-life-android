@@ -1,0 +1,359 @@
+{
+  "schemaVersion": 1,
+  "feature": "20260915-goodlife-unused-resources",
+  "execution": "auth-strings-remediation",
+  "issue": "#38",
+  "owner": "android-maintainers",
+  "scope": {
+    "beforeSymbols": 28,
+    "afterSymbols": 15,
+    "removedSymbols": 13,
+    "removedFingerprints": 26,
+    "definition": "app/src/main/res/values/strings.xml",
+    "excluded": [
+      "legacy colors (already remediated)",
+      "Daily strings",
+      "tab navigation strings",
+      "launcher resources",
+      "compatibility resources",
+      "Kotlin",
+      "Compose",
+      "Gradle",
+      "manifest",
+      "UI behavior"
+    ]
+  },
+  "authorization": {
+    "classification": "remove",
+    "accountable": "Android maintainers",
+    "staticSearch": "No references in app/src for the 13 authorized symbols; current UI uses UiTexts/domain text contracts.",
+    "review": "Pending Terra/Sol review and CI before merge"
+  },
+  "resources": [
+    {
+      "symbol": "string/biometric_checkbox_label",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy authentication/login resource is not referenced by the current UiTexts-based presentation flow; no Kotlin or Compose behavior is changed.",
+      "trigger": "Revert only if a future auth UI contract or resource graph proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@string/(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'R\\.string\\.(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'stringResource' app/src",
+        "result": "No references in app/src; current presentation supplies auth copy through UiTexts/domain text contracts."
+      },
+      "before": {
+        "debugFingerprint": "2df68339961c91bf7292f431c095050267e0cb0c59a5a3f39e35320b9f684399",
+        "releaseFingerprint": "5cae15fe7cbcab82bbb53dc4be5c1feef79de1b3a89e9939dfad0942c1284fd3",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/biometric_icon_description",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy authentication/login resource is not referenced by the current UiTexts-based presentation flow; no Kotlin or Compose behavior is changed.",
+      "trigger": "Revert only if a future auth UI contract or resource graph proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@string/(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'R\\.string\\.(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'stringResource' app/src",
+        "result": "No references in app/src; current presentation supplies auth copy through UiTexts/domain text contracts."
+      },
+      "before": {
+        "debugFingerprint": "ca7f0d69eaa01db36d9a213057e15f48db3c9a433cebbd1607c20b3f3b90e67d",
+        "releaseFingerprint": "d998e82a057eb6b8633f8bd474a54308ddce34065611f03e4d0ac312ca01f19e",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/biometric_prompt_negative_button",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy authentication/login resource is not referenced by the current UiTexts-based presentation flow; no Kotlin or Compose behavior is changed.",
+      "trigger": "Revert only if a future auth UI contract or resource graph proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@string/(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'R\\.string\\.(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'stringResource' app/src",
+        "result": "No references in app/src; current presentation supplies auth copy through UiTexts/domain text contracts."
+      },
+      "before": {
+        "debugFingerprint": "35190c2eb24475936a5ab2c50c66651e65b636c98c7e58f93f5f011e4bba5d2b",
+        "releaseFingerprint": "9189bef3d3844710da4b8f6f7ee87d7e289ea778bee31d277d7f66e738861f1f",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/biometric_prompt_subtitle",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy authentication/login resource is not referenced by the current UiTexts-based presentation flow; no Kotlin or Compose behavior is changed.",
+      "trigger": "Revert only if a future auth UI contract or resource graph proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@string/(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'R\\.string\\.(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'stringResource' app/src",
+        "result": "No references in app/src; current presentation supplies auth copy through UiTexts/domain text contracts."
+      },
+      "before": {
+        "debugFingerprint": "cda7b9f7c7ad7b66ba211bdf49c8947dfc7308991ab1e101906e8aa4e03537a3",
+        "releaseFingerprint": "63cbb2dad43b198a561cf757e2036e242a29c8d84f049a56ea9bc56217384b96",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/biometric_prompt_title",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy authentication/login resource is not referenced by the current UiTexts-based presentation flow; no Kotlin or Compose behavior is changed.",
+      "trigger": "Revert only if a future auth UI contract or resource graph proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@string/(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'R\\.string\\.(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'stringResource' app/src",
+        "result": "No references in app/src; current presentation supplies auth copy through UiTexts/domain text contracts."
+      },
+      "before": {
+        "debugFingerprint": "b34452a9a0292b9fbe934c355845b77e3b607db80d9da1be71bc7ac29a1766a7",
+        "releaseFingerprint": "c22438740f0ab6a1ec957b58504c6d85c52736c56fda6f01b48226f448bd48a1",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/login_button",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy authentication/login resource is not referenced by the current UiTexts-based presentation flow; no Kotlin or Compose behavior is changed.",
+      "trigger": "Revert only if a future auth UI contract or resource graph proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@string/(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'R\\.string\\.(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'stringResource' app/src",
+        "result": "No references in app/src; current presentation supplies auth copy through UiTexts/domain text contracts."
+      },
+      "before": {
+        "debugFingerprint": "d3cf4605dc3d5aea735e6777846ca723cd08eb9f0f82e41e3aab3e85a17e9638",
+        "releaseFingerprint": "6f3efa3d1a6645b4bd163c7e6afc933dbf4bae86de65c545c1642a94fb4a255e",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/login_email_placeholder",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy authentication/login resource is not referenced by the current UiTexts-based presentation flow; no Kotlin or Compose behavior is changed.",
+      "trigger": "Revert only if a future auth UI contract or resource graph proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@string/(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'R\\.string\\.(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'stringResource' app/src",
+        "result": "No references in app/src; current presentation supplies auth copy through UiTexts/domain text contracts."
+      },
+      "before": {
+        "debugFingerprint": "bc16c289cd1cee997a6f9cffeabe802c79270f770b890082a6c5af94c40c3c22",
+        "releaseFingerprint": "c851603171db2db58a1b67839be7e02de644812c1b8163f06bc1e429d05b5c4d",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/login_forgot_password",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy authentication/login resource is not referenced by the current UiTexts-based presentation flow; no Kotlin or Compose behavior is changed.",
+      "trigger": "Revert only if a future auth UI contract or resource graph proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@string/(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'R\\.string\\.(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'stringResource' app/src",
+        "result": "No references in app/src; current presentation supplies auth copy through UiTexts/domain text contracts."
+      },
+      "before": {
+        "debugFingerprint": "17c5833a12f05babcd01e23a594a2a8efb1b6ab31dc42160d8526e48149287d8",
+        "releaseFingerprint": "65dd1602ca47f89c76a668e06a74b677338b266d16ae2e2d7379fde570e34264",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/login_password_placeholder",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy authentication/login resource is not referenced by the current UiTexts-based presentation flow; no Kotlin or Compose behavior is changed.",
+      "trigger": "Revert only if a future auth UI contract or resource graph proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@string/(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'R\\.string\\.(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'stringResource' app/src",
+        "result": "No references in app/src; current presentation supplies auth copy through UiTexts/domain text contracts."
+      },
+      "before": {
+        "debugFingerprint": "a4ffada9d6d273373b27c748064dfa1436c41a0058046e4936fb2c3808bc4b29",
+        "releaseFingerprint": "cf32da98c055996002a5a2dd9d45a9c64cb32cc016a686b4aa47151e178172ca",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/login_remember_user",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy authentication/login resource is not referenced by the current UiTexts-based presentation flow; no Kotlin or Compose behavior is changed.",
+      "trigger": "Revert only if a future auth UI contract or resource graph proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@string/(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'R\\.string\\.(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'stringResource' app/src",
+        "result": "No references in app/src; current presentation supplies auth copy through UiTexts/domain text contracts."
+      },
+      "before": {
+        "debugFingerprint": "bc34cfc6eaf9c679146ba9646501dde0752b298a5b06f7e056d4150dc62d30dd",
+        "releaseFingerprint": "6738925ab68fac00956084c4f234da0313c155c54b3a58a9604395a814e1e3b5",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/login_subtitle",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy authentication/login resource is not referenced by the current UiTexts-based presentation flow; no Kotlin or Compose behavior is changed.",
+      "trigger": "Revert only if a future auth UI contract or resource graph proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@string/(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'R\\.string\\.(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'stringResource' app/src",
+        "result": "No references in app/src; current presentation supplies auth copy through UiTexts/domain text contracts."
+      },
+      "before": {
+        "debugFingerprint": "405e1c4e5fb6ff59c91151cbc94b1e3d6346b91d7bcdeeac86cc301784b578d0",
+        "releaseFingerprint": "997f87177f209f2f6004c21a72c6378b3d1628f440d586ad5a03fe50b9b7345b",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/login_success",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy authentication/login resource is not referenced by the current UiTexts-based presentation flow; no Kotlin or Compose behavior is changed.",
+      "trigger": "Revert only if a future auth UI contract or resource graph proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@string/(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'R\\.string\\.(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'stringResource' app/src",
+        "result": "No references in app/src; current presentation supplies auth copy through UiTexts/domain text contracts."
+      },
+      "before": {
+        "debugFingerprint": "ba47a7859e3bd451bc0a5ed346fd8804f45cff49c44057e133468ec991487503",
+        "releaseFingerprint": "6a75cdb6ae8e057afe79ab37a98733a01c6dcef97f8f84874c6baeb9db157515",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/login_title",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy authentication/login resource is not referenced by the current UiTexts-based presentation flow; no Kotlin or Compose behavior is changed.",
+      "trigger": "Revert only if a future auth UI contract or resource graph proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@string/(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'R\\.string\\.(biometric_checkbox_label|biometric_icon_description|biometric_prompt_negative_button|biometric_prompt_subtitle|biometric_prompt_title|login_button|login_email_placeholder|login_forgot_password|login_password_placeholder|login_remember_user|login_subtitle|login_success|login_title)' -e 'stringResource' app/src",
+        "result": "No references in app/src; current presentation supplies auth copy through UiTexts/domain text contracts."
+      },
+      "before": {
+        "debugFingerprint": "8f8c07932d8cd91605bbbc688bec879b094cb5a451cf488966bf39ae48648942",
+        "releaseFingerprint": "59ea144b7d0d8ee0d279a3e461af27617fd53bfd575ddf7a316879377f18c65b",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    }
+  ]
+}
