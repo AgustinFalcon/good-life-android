@@ -1,0 +1,13 @@
+{
+  "feature": "goodlife-unused-resources",
+  "updatedAt": "2026-09-15",
+  "status": "spec_review",
+  "tasks": [
+    {"id":"UR-01","title":"Inventariar 35 símbolos / 70 fingerprints por familia","status":"todo","acceptance":"resource-inventory.md tiene exactamente 35 filas semánticas en el snapshot inicial y 35 fingerprints por variante; incluye definiciones/qualifiers, SHA/multiplicidad D/R, clave semántica sin variant, accountable, búsquedas/evidencia, issue/PR, clasificación, rationale y trigger. La derivación schema-v2 falla cerrado ante formato de mensaje, parseo, duplicate o multiset inesperado; `.github/scripts/resource_inventory.py` genera y verifica el artefacto JSON/Markdown."},
+    {"id":"UR-02a","title":"Remediar colores legacy propios","status":"todo","acceptance":"PR aislada posterior; sólo tras owner/evidencia; snapshots before/after/remaining, delta baseline determinista exacto, lint, verifier y assemble debug/release verdes."},
+    {"id":"UR-02b","title":"Remediar strings por owner","status":"todo","acceptance":"Login/biometría, tabs/navegación y Daily se separan; cada borrado prueba ausencia de referencias dinámicas, contrato visible y evidencia de owner."},
+    {"id":"UR-03","title":"Conservar o revisar launcher y compatibilidad","status":"todo","acceptance":"core_compat queda retain_compat en #38 con inspección AAR/merged read-only; launcher sólo sale de retain_launcher con manifest roots/qualifiers y smoke instalación/upgrade/launcher. Dependency/AGP/packaging sólo en #39."},
+    {"id":"UR-04","title":"Resolver ownership restante","status":"todo","acceptance":"needs_owner tiene accountable follow-up, issue y trigger; bloquea hasta resolver ownership o transferirlo explícitamente; retain tiene rationale/reevaluación."},
+    {"id":"UR-05","title":"Cerrar trazabilidad documental","status":"todo","acceptance":"Tras implementación y reviews: actualizar CHANGELOG con /ship, docs/runbook, Knowledge, issue/PR; ejecutar finish/archive SDD sólo con gates verdes. No marca tareas de eliminación como done."}
+  ]
+}

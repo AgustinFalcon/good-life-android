@@ -62,6 +62,12 @@ jobs:
       - name: Generate debug and release lint reports
         run: ./gradlew :app:lintDebug :app:lintRelease --no-daemon
 
+      - name: Verify resource inventory derivation
+        run: python3 .github/scripts/resource_inventory.py --baseline config/lint-baseline.json --output-json sdd/wip/20260915-goodlife-unused-resources/4-implementation/resource-inventory.json --markdown sdd/wip/20260915-goodlife-unused-resources/4-implementation/resource-inventory.md --check
+
+      - name: Test resource inventory checker
+        run: python3 .github/tests/test_resource_inventory.py
+
       - name: Verify exact lint debt inventory
         run: python3 .github/scripts/verify_lint_baseline.py --baseline config/lint-baseline.json --debug-report app/build/reports/lint-results-debug.xml --release-report app/build/reports/lint-results-release.xml --repo-root "$GITHUB_WORKSPACE" --advisory-delta-out build/lint-advisory-delta.json
 
