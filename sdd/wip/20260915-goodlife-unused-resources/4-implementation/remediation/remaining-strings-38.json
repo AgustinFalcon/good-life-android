@@ -1,0 +1,220 @@
+{
+  "schemaVersion": 1,
+  "feature": "20260915-goodlife-unused-resources",
+  "execution": "remaining-strings-remediation",
+  "issue": "#38",
+  "owner": "android-maintainers",
+  "scope": {
+    "beforeSymbols": 15,
+    "afterSymbols": 6,
+    "removedSymbols": 9,
+    "removedFingerprints": 18,
+    "definition": "app/src/main/res/values/strings.xml",
+    "excluded": [
+      "launcher resources",
+      "compatibility resources",
+      "Kotlin",
+      "Compose",
+      "Gradle",
+      "manifest",
+      "UI behavior"
+    ]
+  },
+  "authorization": {
+    "classification": "remove",
+    "accountable": "Android maintainers",
+    "staticSearch": "No R.string, stringResource, getIdentifier or reflection references in app/src; current UI uses UiTexts/domain text contracts.",
+    "review": "Pending review and CI before merge"
+  },
+  "resources": [
+    {
+      "symbol": "string/daily_item_type_habit",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy resource has no direct or dynamic reference; current presentation uses UiTexts/domain copy contracts.",
+      "trigger": "Revert only if a future resource graph or UI contract proves a reference.",
+      "before": {
+        "debugFingerprint": "2c75b50f4c53bb2c75fe852d205f0fc364e6824d4f60dda53cafed2f86996adc",
+        "releaseFingerprint": "767200bdc118f7c6fc49e4f65fab49e1d4c795cca702aef424384de15de659b8",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/daily_item_type_meal",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy resource has no direct or dynamic reference; current presentation uses UiTexts/domain copy contracts.",
+      "trigger": "Revert only if a future resource graph or UI contract proves a reference.",
+      "before": {
+        "debugFingerprint": "1e882200120f3f9c10ec17a9ab8e3488c0d69271a35a422aba781f6834c6decc",
+        "releaseFingerprint": "cfb06fa44ca843eccbac431ddf15e27d4a00fb7471bd6568d38cb43ac0594da8",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/daily_item_type_task",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy resource has no direct or dynamic reference; current presentation uses UiTexts/domain copy contracts.",
+      "trigger": "Revert only if a future resource graph or UI contract proves a reference.",
+      "before": {
+        "debugFingerprint": "c9b321147c968bc8d5e967732e0ced8ea6aa0fdff763ed87525f00a9ab3a7276",
+        "releaseFingerprint": "1aa35e4c6665d229941f49099089abf8a198b9d9135e21b96abaf69240ede5f8",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/daily_item_type_workout",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy resource has no direct or dynamic reference; current presentation uses UiTexts/domain copy contracts.",
+      "trigger": "Revert only if a future resource graph or UI contract proves a reference.",
+      "before": {
+        "debugFingerprint": "09070a7a2bb5c5717c9db01687557b632216642da435c50a58d8ccb8e9a98020",
+        "releaseFingerprint": "a109444bfdf3a71172ca86b4cef62865cbfad23aa6716cfd045deafc3e9f9bb8",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/login_register_button",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy resource has no direct or dynamic reference; current presentation uses UiTexts/domain copy contracts.",
+      "trigger": "Revert only if a future resource graph or UI contract proves a reference.",
+      "before": {
+        "debugFingerprint": "be54911eb7cdc5568503bbfd9a5d4f5878c75938cf77d96772c2eaa5ac9b63fc",
+        "releaseFingerprint": "038f2408de9b33f0534954d6e5e78cf485724d37c7c39e4bcb95775d32326821",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/tab_title_daily",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy resource has no direct or dynamic reference; current presentation uses UiTexts/domain copy contracts.",
+      "trigger": "Revert only if a future resource graph or UI contract proves a reference.",
+      "before": {
+        "debugFingerprint": "361dfdab250a4964a4f6188cc24e9b43a09c4f39b40d516c65f78fbd94710938",
+        "releaseFingerprint": "41d408b49231b88c109937eea8b07d5ddd9662abddbcd1491a66046666c6fd6b",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/tab_title_food",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy resource has no direct or dynamic reference; current presentation uses UiTexts/domain copy contracts.",
+      "trigger": "Revert only if a future resource graph or UI contract proves a reference.",
+      "before": {
+        "debugFingerprint": "3c1365bf2cf581554c48d2b477de259e185dbff2bbd353fad72d9a791e3a53cd",
+        "releaseFingerprint": "0b3401fbe0c67d443d584b51ad2491ba21fc10f336d307c61bf733862d7d6601",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/tab_title_more",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy resource has no direct or dynamic reference; current presentation uses UiTexts/domain copy contracts.",
+      "trigger": "Revert only if a future resource graph or UI contract proves a reference.",
+      "before": {
+        "debugFingerprint": "a5b9b7e71714bf11b140299eb3161b645390dbe683f9da21127af65c8c8c41a9",
+        "releaseFingerprint": "e06363fa1b8ac9608c0cf5c1db212057c420222fe32d337df2d43249428bbf10",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "string/tab_title_workout",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Legacy resource has no direct or dynamic reference; current presentation uses UiTexts/domain copy contracts.",
+      "trigger": "Revert only if a future resource graph or UI contract proves a reference.",
+      "before": {
+        "debugFingerprint": "b1b10c7c9793259b4b9e4f71a68848217fe7ed444233249a25835e64af9c4023",
+        "releaseFingerprint": "d4097e9aed753868c1e869e3dce7789d7d7a1edad769acf277a4da9fdd73e58a",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    }
+  ]
+}

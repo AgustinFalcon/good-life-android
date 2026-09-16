@@ -22,7 +22,12 @@ SCOPES = {
         "string/biometric_prompt_title", "string/login_button", "string/login_email_placeholder",
         "string/login_forgot_password", "string/login_password_placeholder", "string/login_remember_user",
         "string/login_subtitle", "string/login_success", "string/login_title",
+    }),    "remaining-strings": frozenset({
+        "string/daily_item_type_habit", "string/daily_item_type_meal", "string/daily_item_type_task",
+        "string/daily_item_type_workout", "string/login_register_button", "string/tab_title_daily",
+        "string/tab_title_food", "string/tab_title_more", "string/tab_title_workout",
     }),
+
 }
 
 
