@@ -127,18 +127,6 @@
           "createdOn": "2026-09-15"
         },
         {
-          "fingerprint": "2b04d20c454c8a4a423f30592fc91105e0f8517a28b7db10662b0b0f0b6ba3ec",
-          "variant": "debug",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "message": "The resource `R.color.black` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
           "fingerprint": "2c75b50f4c53bb2c75fe852d205f0fc364e6824d4f60dda53cafed2f86996adc",
           "variant": "debug",
           "ruleId": "UnusedResources",
@@ -223,30 +211,6 @@
           "createdOn": "2026-09-15"
         },
         {
-          "fingerprint": "4133f6d0fc7155cbd2ace6158fae6f8e8a733ab1923d0ea70b71c2826c4a9f22",
-          "variant": "debug",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "message": "The resource `R.color.purple_500` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "5778f85195750cf5f1a9fd8ccd164f57fcf4cfb727bae69b9a9a4e38d87b2751",
-          "variant": "debug",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "message": "The resource `R.color.purple_200` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
           "fingerprint": "5ed10548b8af259c6faef99595b5d1f3c20f6db6d329f5c6680bd522e55e9925",
           "variant": "debug",
           "ruleId": "UnusedResources",
@@ -264,18 +228,6 @@
           "ruleId": "ObsoleteSdkInt",
           "relativePath": "app/src/main/res/mipmap-anydpi-v26",
           "message": "This folder configuration (`v26`) is unnecessary; `minSdkVersion` is 26. Merge all the resources in this folder into `mipmap-anydpi`.",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "6cc1e589a447317b6a8d1daa37d5386c2817a55fff1298f3e2218c0db568a02f",
-          "variant": "debug",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "message": "The resource `R.color.teal_700` appears to be unused",
           "classification": "investigate",
           "owner": "android-maintainers",
           "justification": "Pre-existing deterministic lint debt measured for issue #10.",
@@ -324,18 +276,6 @@
           "ruleId": "UnusedResources",
           "relativePath": "app/src/main/res/values/strings.xml",
           "message": "The resource `R.string.tab_title_more` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "aa52580aa6065e0a17d9c764228ce90b3e13c54c460c45258010f64dbb6575e9",
-          "variant": "debug",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "message": "The resource `R.color.teal_200` appears to be unused",
           "classification": "investigate",
           "owner": "android-maintainers",
           "justification": "Pre-existing deterministic lint debt measured for issue #10.",
@@ -403,18 +343,6 @@
           "createdOn": "2026-09-15"
         },
         {
-          "fingerprint": "bcc74fd30c7c21a531f3d4e64ee09da968bb83030568836c61e2ed0e9bc7492a",
-          "variant": "debug",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "message": "The resource `R.color.white` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
           "fingerprint": "be147917010956c7a11272c904818a44fcf8134c4ce689d713b15187b1158828",
           "variant": "debug",
           "ruleId": "IconLocation",
@@ -432,18 +360,6 @@
           "ruleId": "UnusedResources",
           "relativePath": "app/src/main/res/values/strings.xml",
           "message": "The resource `R.string.login_register_button` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "c6a9ca2c16742f17af0dae9f66326ec0fccb271accbe668045c4b86d129cf74a",
-          "variant": "debug",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "message": "The resource `R.color.purple_700` appears to be unused",
           "classification": "investigate",
           "owner": "android-maintainers",
           "justification": "Pre-existing deterministic lint debt measured for issue #10.",
@@ -563,35 +479,11 @@
           "createdOn": "2026-09-15"
         },
         {
-          "fingerprint": "24984d1a45b43ab7c7a817b35022e2c90aaf75f79fda16bf4646be609fbfa978",
-          "variant": "release",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "message": "The resource `R.color.purple_500` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
           "fingerprint": "41d408b49231b88c109937eea8b07d5ddd9662abddbcd1491a66046666c6fd6b",
           "variant": "release",
           "ruleId": "UnusedResources",
           "relativePath": "app/src/main/res/values/strings.xml",
           "message": "The resource `R.string.tab_title_daily` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "4583b1146fe7b08246fd761680cc7b0fc7fd0aead40b1bb789e2fba2b19e34da",
-          "variant": "release",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "message": "The resource `R.color.black` appears to be unused",
           "classification": "investigate",
           "owner": "android-maintainers",
           "justification": "Pre-existing deterministic lint debt measured for issue #10.",
@@ -719,18 +611,6 @@
           "createdOn": "2026-09-15"
         },
         {
-          "fingerprint": "84fbcb6d30ba8a3b885c54f2f03d57ae7e6695524811fa283bfca56e887be56d",
-          "variant": "release",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "message": "The resource `R.color.purple_700` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
           "fingerprint": "9189bef3d3844710da4b8f6f7ee87d7e289ea778bee31d277d7f66e738861f1f",
           "variant": "release",
           "ruleId": "UnusedResources",
@@ -748,30 +628,6 @@
           "ruleId": "UnusedResources",
           "relativePath": "app/src/main/res/values/strings.xml",
           "message": "The resource `R.string.login_subtitle` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "9c6de5d03d5c68baa9fe2ebf151b5b528e7c453a5cadde1853e23d348d9fc70a",
-          "variant": "release",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "message": "The resource `R.color.teal_200` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "9f6b979e5819c8e0a173f61fbfde4ba84b662a2ef10ea1ba5559120209b2f1f1",
-          "variant": "release",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "message": "The resource `R.color.purple_200` appears to be unused",
           "classification": "investigate",
           "owner": "android-maintainers",
           "justification": "Pre-existing deterministic lint debt measured for issue #10.",
@@ -959,18 +815,6 @@
           "createdOn": "2026-09-15"
         },
         {
-          "fingerprint": "da9f4c6581224b622e21de67318cb0f786502b1f6c73cf6d952c7ef066aa063b",
-          "variant": "release",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "message": "The resource `R.color.teal_700` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
           "fingerprint": "e06363fa1b8ac9608c0cf5c1db212057c420222fe32d337df2d43249428bbf10",
           "variant": "release",
           "ruleId": "UnusedResources",
@@ -988,18 +832,6 @@
           "ruleId": "DataExtractionRules",
           "relativePath": "app/src/main/AndroidManifest.xml",
           "message": "The attribute `android:allowBackup` is deprecated from Android 12 and higher and may be removed in future versions. Consider adding the attribute `android:dataExtractionRules` specifying an `@xml` resource which configures cloud backups and device transfers on Android 12 and higher.",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "edfde130bc48e1e9aa3ffddad7c265792af2a0170d0ea5e79fad039fc13481b3",
-          "variant": "release",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "message": "The resource `R.color.white` appears to be unused",
           "classification": "investigate",
           "owner": "android-maintainers",
           "justification": "Pre-existing deterministic lint debt measured for issue #10.",

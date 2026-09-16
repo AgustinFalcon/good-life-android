@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "issue": "#38",
+  "resources": [
+    {
+      "symbol": "color/black",
+      "debugFingerprint": "2b04d20c454c8a4a423f30592fc91105e0f8517a28b7db10662b0b0f0b6ba3ec",
+      "releaseFingerprint": "4583b1146fe7b08246fd761680cc7b0fc7fd0aead40b1bb789e2fba2b19e34da"
+    },
+    {
+      "symbol": "color/white",
+      "debugFingerprint": "bcc74fd30c7c21a531f3d4e64ee09da968bb83030568836c61e2ed0e9bc7492a",
+      "releaseFingerprint": "edfde130bc48e1e9aa3ffddad7c265792af2a0170d0ea5e79fad039fc13481b3"
+    },
+    {
+      "symbol": "color/purple_200",
+      "debugFingerprint": "5778f85195750cf5f1a9fd8ccd164f57fcf4cfb727bae69b9a9a4e38d87b2751",
+      "releaseFingerprint": "9f6b979e5819c8e0a173f61fbfde4ba84b662a2ef10ea1ba5559120209b2f1f1"
+    },
+    {
+      "symbol": "color/purple_500",
+      "debugFingerprint": "4133f6d0fc7155cbd2ace6158fae6f8e8a733ab1923d0ea70b71c2826c4a9f22",
+      "releaseFingerprint": "24984d1a45b43ab7c7a817b35022e2c90aaf75f79fda16bf4646be609fbfa978"
+    },
+    {
+      "symbol": "color/purple_700",
+      "debugFingerprint": "c6a9ca2c16742f17af0dae9f66326ec0fccb271accbe668045c4b86d129cf74a",
+      "releaseFingerprint": "84fbcb6d30ba8a3b885c54f2f03d57ae7e6695524811fa283bfca56e887be56d"
+    },
+    {
+      "symbol": "color/teal_200",
+      "debugFingerprint": "aa52580aa6065e0a17d9c764228ce90b3e13c54c460c45258010f64dbb6575e9",
+      "releaseFingerprint": "9c6de5d03d5c68baa9fe2ebf151b5b528e7c453a5cadde1853e23d348d9fc70a"
+    },
+    {
+      "symbol": "color/teal_700",
+      "debugFingerprint": "6cc1e589a447317b6a8d1daa37d5386c2817a55fff1298f3e2218c0db568a02f",
+      "releaseFingerprint": "da9f4c6581224b622e21de67318cb0f786502b1f6c73cf6d952c7ef066aa063b"
+    }
+  ]
+}

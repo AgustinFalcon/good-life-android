@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "feature": "20260915-goodlife-unused-resources",
+  "execution": "legacy-colors-remediation",
+  "issue": "#38",
+  "owner": "android-maintainers",
+  "scope": {
+    "beforeSymbols": 35,
+    "afterSymbols": 28,
+    "removedSymbols": 7,
+    "removedFingerprints": 14,
+    "definition": "app/src/main/res/values/colors.xml",
+    "excluded": [
+      "strings",
+      "compatibility resources",
+      "launcher resources",
+      "Gradle",
+      "manifest",
+      "UI"
+    ]
+  },
+  "authorization": {
+    "classification": "remove",
+    "accountable": "Android maintainers",
+    "staticSearch": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@color/(black|white|purple_200|purple_500|purple_700|teal_200|teal_700)' -e 'R\\.color\\.(black|white|purple_200|purple_500|purple_700|teal_200|teal_700)' app/src => no matches",
+    "review": "Terra conditional GO and Sol independent confirmation"
+  },
+  "resources": [
+    {
+      "symbol": "color/black",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Generated template legacy colors are no longer referenced by the Android source or resource graph; retain no compatibility or launcher ownership.",
+      "trigger": "Revert only if a future manifest/resource graph or UI contract proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@color/(black|white|purple_200|purple_500|purple_700|teal_200|teal_700)' -e 'R\\.color\\.(black|white|purple_200|purple_500|purple_700|teal_200|teal_700)' app/src",
+        "result": "No matches in app/src after removal."
+      },
+      "before": {
+        "debugFingerprint": "2b04d20c454c8a4a423f30592fc91105e0f8517a28b7db10662b0b0f0b6ba3ec",
+        "releaseFingerprint": "4583b1146fe7b08246fd761680cc7b0fc7fd0aead40b1bb789e2fba2b19e34da",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "color/white",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Generated template legacy colors are no longer referenced by the Android source or resource graph; retain no compatibility or launcher ownership.",
+      "trigger": "Revert only if a future manifest/resource graph or UI contract proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@color/(black|white|purple_200|purple_500|purple_700|teal_200|teal_700)' -e 'R\\.color\\.(black|white|purple_200|purple_500|purple_700|teal_200|teal_700)' app/src",
+        "result": "No matches in app/src after removal."
+      },
+      "before": {
+        "debugFingerprint": "bcc74fd30c7c21a531f3d4e64ee09da968bb83030568836c61e2ed0e9bc7492a",
+        "releaseFingerprint": "edfde130bc48e1e9aa3ffddad7c265792af2a0170d0ea5e79fad039fc13481b3",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "color/purple_200",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Generated template legacy colors are no longer referenced by the Android source or resource graph; retain no compatibility or launcher ownership.",
+      "trigger": "Revert only if a future manifest/resource graph or UI contract proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@color/(black|white|purple_200|purple_500|purple_700|teal_200|teal_700)' -e 'R\\.color\\.(black|white|purple_200|purple_500|purple_700|teal_200|teal_700)' app/src",
+        "result": "No matches in app/src after removal."
+      },
+      "before": {
+        "debugFingerprint": "5778f85195750cf5f1a9fd8ccd164f57fcf4cfb727bae69b9a9a4e38d87b2751",
+        "releaseFingerprint": "9f6b979e5819c8e0a173f61fbfde4ba84b662a2ef10ea1ba5559120209b2f1f1",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "color/purple_500",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Generated template legacy colors are no longer referenced by the Android source or resource graph; retain no compatibility or launcher ownership.",
+      "trigger": "Revert only if a future manifest/resource graph or UI contract proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@color/(black|white|purple_200|purple_500|purple_700|teal_200|teal_700)' -e 'R\\.color\\.(black|white|purple_200|purple_500|purple_700|teal_200|teal_700)' app/src",
+        "result": "No matches in app/src after removal."
+      },
+      "before": {
+        "debugFingerprint": "4133f6d0fc7155cbd2ace6158fae6f8e8a733ab1923d0ea70b71c2826c4a9f22",
+        "releaseFingerprint": "24984d1a45b43ab7c7a817b35022e2c90aaf75f79fda16bf4646be609fbfa978",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "color/purple_700",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Generated template legacy colors are no longer referenced by the Android source or resource graph; retain no compatibility or launcher ownership.",
+      "trigger": "Revert only if a future manifest/resource graph or UI contract proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@color/(black|white|purple_200|purple_500|purple_700|teal_200|teal_700)' -e 'R\\.color\\.(black|white|purple_200|purple_500|purple_700|teal_200|teal_700)' app/src",
+        "result": "No matches in app/src after removal."
+      },
+      "before": {
+        "debugFingerprint": "c6a9ca2c16742f17af0dae9f66326ec0fccb271accbe668045c4b86d129cf74a",
+        "releaseFingerprint": "84fbcb6d30ba8a3b885c54f2f03d57ae7e6695524811fa283bfca56e887be56d",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "color/teal_200",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Generated template legacy colors are no longer referenced by the Android source or resource graph; retain no compatibility or launcher ownership.",
+      "trigger": "Revert only if a future manifest/resource graph or UI contract proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@color/(black|white|purple_200|purple_500|purple_700|teal_200|teal_700)' -e 'R\\.color\\.(black|white|purple_200|purple_500|purple_700|teal_200|teal_700)' app/src",
+        "result": "No matches in app/src after removal."
+      },
+      "before": {
+        "debugFingerprint": "aa52580aa6065e0a17d9c764228ce90b3e13c54c460c45258010f64dbb6575e9",
+        "releaseFingerprint": "9c6de5d03d5c68baa9fe2ebf151b5b528e7c453a5cadde1853e23d348d9fc70a",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    },
+    {
+      "symbol": "color/teal_700",
+      "owner": "android-maintainers",
+      "issue": "#38",
+      "classification": "remove",
+      "rationale": "Generated template legacy colors are no longer referenced by the Android source or resource graph; retain no compatibility or launcher ownership.",
+      "trigger": "Revert only if a future manifest/resource graph or UI contract proves a reference.",
+      "staticSearch": {
+        "command": "rg -n --hidden --glob '!**/.git/**' --glob '!config/lint-baseline.json' --glob '!sdd/**' -e '@color/(black|white|purple_200|purple_500|purple_700|teal_200|teal_700)' -e 'R\\.color\\.(black|white|purple_200|purple_500|purple_700|teal_200|teal_700)' app/src",
+        "result": "No matches in app/src after removal."
+      },
+      "before": {
+        "debugFingerprint": "6cc1e589a447317b6a8d1daa37d5386c2817a55fff1298f3e2218c0db568a02f",
+        "releaseFingerprint": "da9f4c6581224b622e21de67318cb0f786502b1f6c73cf6d952c7ef066aa063b",
+        "occurrences": "D×1/R×1",
+        "lintRule": "UnusedResources"
+      },
+      "after": {
+        "debugFingerprint": null,
+        "releaseFingerprint": null,
+        "occurrences": "D×0/R×0",
+        "lintRule": "UnusedResources removed"
+      },
+      "remaining": false
+    }
+  ]
+}
