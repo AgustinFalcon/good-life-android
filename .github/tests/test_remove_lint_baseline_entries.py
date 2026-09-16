@@ -22,6 +22,11 @@ AUTH_TARGETS = (
     "string/login_forgot_password", "string/login_password_placeholder", "string/login_remember_user",
     "string/login_subtitle", "string/login_success", "string/login_title",
 )
+REMAINING_STRING_TARGETS = (
+    "string/daily_item_type_habit", "string/daily_item_type_meal", "string/daily_item_type_task",
+    "string/daily_item_type_workout", "string/login_register_button", "string/tab_title_daily",
+    "string/tab_title_food", "string/tab_title_more", "string/tab_title_workout",
+)
 KEEP_SYMBOL = "string/keep_me"
 
 
@@ -163,6 +168,27 @@ class RemoveBaselineEntriesTest(unittest.TestCase):
         self.write_manifest_payload(payload)
         self.assert_fails_closed("immutable auth-strings scope")
 
+    def test_remaining_strings_scope_is_immutable_and_removes_exact_targets(self):
+        self.original = self.payload_for(REMAINING_STRING_TARGETS)
+        self.baseline.write_text(json.dumps(self.original, indent=2), encoding="utf-8")
+        self.write_manifest("remaining-strings", REMAINING_STRING_TARGETS)
+        result = self.run_reducer()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        updated = json.loads(self.output.read_text(encoding="utf-8"))
+        for variant, offset in (("debug", 0), ("release", 100)):
+            self.assertEqual(updated["variants"][variant]["warnings"], [self.original["variants"][variant]["warnings"][-1]])
+            self.assertEqual(updated["variants"][variant]["warnings"][0]["fingerprint"], fingerprint(900 + offset))
+        for section in ("generatedFrom", "externalAdvisories", "exceptions"):
+            self.assertEqual(updated[section], self.original[section])
+
+    def test_remaining_strings_scope_rejects_auth_symbol(self):
+        self.original = self.payload_for(REMAINING_STRING_TARGETS)
+        self.baseline.write_text(json.dumps(self.original, indent=2), encoding="utf-8")
+        self.write_manifest("remaining-strings", REMAINING_STRING_TARGETS)
+        payload = self.read_manifest()
+        payload["resources"][0]["symbol"] = AUTH_TARGETS[0]
+        self.write_manifest_payload(payload)
+        self.assert_fails_closed("immutable remaining-strings scope")
     def test_schema_one_manifest_fails_closed(self):
         payload = self.read_manifest()
         payload["schemaVersion"] = 1

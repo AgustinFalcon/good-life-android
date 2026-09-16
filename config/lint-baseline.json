@@ -19,18 +19,6 @@
     "debug": {
       "warnings": [
         {
-          "fingerprint": "09070a7a2bb5c5717c9db01687557b632216642da435c50a58d8ccb8e9a98020",
-          "variant": "debug",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/strings.xml",
-          "message": "The resource `R.string.daily_item_type_workout` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
           "fingerprint": "0be0e1cc35388828913e424cd3a49c154c00d62d9b6f3c85cd052c95da26ead5",
           "variant": "debug",
           "ruleId": "UnusedResources",
@@ -79,18 +67,6 @@
           "createdOn": "2026-09-15"
         },
         {
-          "fingerprint": "1e882200120f3f9c10ec17a9ab8e3488c0d69271a35a422aba781f6834c6decc",
-          "variant": "debug",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/strings.xml",
-          "message": "The resource `R.string.daily_item_type_meal` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
           "fingerprint": "20471ffb451b7e99c978de1e2674a9f8f75abb15e873d2e0a4f74f221cdf7be0",
           "variant": "debug",
           "ruleId": "UnusedResources",
@@ -115,47 +91,11 @@
           "createdOn": "2026-09-15"
         },
         {
-          "fingerprint": "2c75b50f4c53bb2c75fe852d205f0fc364e6824d4f60dda53cafed2f86996adc",
-          "variant": "debug",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/strings.xml",
-          "message": "The resource `R.string.daily_item_type_habit` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
           "fingerprint": "326f70e581f7d955a23bf4f6ffdcfeef9c0e02589b7a83bb03d01923b81ef914",
           "variant": "debug",
           "ruleId": "UnusedResources",
           "relativePath": "app/src/main/res/values/core_compat.xml",
           "message": "The resource `R.color.notification_template_icon_low_bg_compat` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "361dfdab250a4964a4f6188cc24e9b43a09c4f39b40d516c65f78fbd94710938",
-          "variant": "debug",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/strings.xml",
-          "message": "The resource `R.string.tab_title_daily` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "3c1365bf2cf581554c48d2b477de259e185dbff2bbd353fad72d9a791e3a53cd",
-          "variant": "debug",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/strings.xml",
-          "message": "The resource `R.string.tab_title_food` appears to be unused",
           "classification": "investigate",
           "owner": "android-maintainers",
           "justification": "Pre-existing deterministic lint debt measured for issue #10.",
@@ -199,59 +139,11 @@
           "createdOn": "2026-09-15"
         },
         {
-          "fingerprint": "a5b9b7e71714bf11b140299eb3161b645390dbe683f9da21127af65c8c8c41a9",
-          "variant": "debug",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/strings.xml",
-          "message": "The resource `R.string.tab_title_more` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "b1b10c7c9793259b4b9e4f71a68848217fe7ed444233249a25835e64af9c4023",
-          "variant": "debug",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/strings.xml",
-          "message": "The resource `R.string.tab_title_workout` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
           "fingerprint": "be147917010956c7a11272c904818a44fcf8134c4ce689d713b15187b1158828",
           "variant": "debug",
           "ruleId": "IconLocation",
           "relativePath": "app/src/main/res/drawable/ic_header_calendar_red.PNG",
           "message": "Found bitmap drawable `res/drawable/ic_header_calendar_red.PNG` in densityless folder",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "be54911eb7cdc5568503bbfd9a5d4f5878c75938cf77d96772c2eaa5ac9b63fc",
-          "variant": "debug",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/strings.xml",
-          "message": "The resource `R.string.login_register_button` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "c9b321147c968bc8d5e967732e0ced8ea6aa0fdff763ed87525f00a9ab3a7276",
-          "variant": "debug",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/strings.xml",
-          "message": "The resource `R.string.daily_item_type_task` appears to be unused",
           "classification": "investigate",
           "owner": "android-maintainers",
           "justification": "Pre-existing deterministic lint debt measured for issue #10.",
@@ -275,59 +167,11 @@
     "release": {
       "warnings": [
         {
-          "fingerprint": "038f2408de9b33f0534954d6e5e78cf485724d37c7c39e4bcb95775d32326821",
-          "variant": "release",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/strings.xml",
-          "message": "The resource `R.string.login_register_button` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "0b3401fbe0c67d443d584b51ad2491ba21fc10f336d307c61bf733862d7d6601",
-          "variant": "release",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/strings.xml",
-          "message": "The resource `R.string.tab_title_food` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
           "fingerprint": "0e24b1c1188f6aadea73cfd55122195914099f823e6be5df9b6eec91f0da6163",
           "variant": "release",
           "ruleId": "IconLocation",
           "relativePath": "app/src/main/res/drawable/ic_header_calendar_red.PNG",
           "message": "Found bitmap drawable `res/drawable/ic_header_calendar_red.PNG` in densityless folder",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "1aa35e4c6665d229941f49099089abf8a198b9d9135e21b96abaf69240ede5f8",
-          "variant": "release",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/strings.xml",
-          "message": "The resource `R.string.daily_item_type_task` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "41d408b49231b88c109937eea8b07d5ddd9662abddbcd1491a66046666c6fd6b",
-          "variant": "release",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/strings.xml",
-          "message": "The resource `R.string.tab_title_daily` appears to be unused",
           "classification": "investigate",
           "owner": "android-maintainers",
           "justification": "Pre-existing deterministic lint debt measured for issue #10.",
@@ -347,35 +191,11 @@
           "createdOn": "2026-09-15"
         },
         {
-          "fingerprint": "767200bdc118f7c6fc49e4f65fab49e1d4c795cca702aef424384de15de659b8",
-          "variant": "release",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/strings.xml",
-          "message": "The resource `R.string.daily_item_type_habit` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
           "fingerprint": "81e8f0c39ef37583dd6d737555503e19f919892bc6360a726f2f4f9c16482254",
           "variant": "release",
           "ruleId": "IconLocation",
           "relativePath": "app/src/main/res/drawable/good_life_logo.png",
           "message": "Found bitmap drawable `res/drawable/good_life_logo.png` in densityless folder",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "a109444bfdf3a71172ca86b4cef62865cbfad23aa6716cfd045deafc3e9f9bb8",
-          "variant": "release",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/strings.xml",
-          "message": "The resource `R.string.daily_item_type_workout` appears to be unused",
           "classification": "investigate",
           "owner": "android-maintainers",
           "justification": "Pre-existing deterministic lint debt measured for issue #10.",
@@ -455,30 +275,6 @@
           "createdOn": "2026-09-15"
         },
         {
-          "fingerprint": "cfb06fa44ca843eccbac431ddf15e27d4a00fb7471bd6568d38cb43ac0594da8",
-          "variant": "release",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/strings.xml",
-          "message": "The resource `R.string.daily_item_type_meal` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "d4097e9aed753868c1e869e3dce7789d7d7a1edad769acf277a4da9fdd73e58a",
-          "variant": "release",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/strings.xml",
-          "message": "The resource `R.string.tab_title_workout` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
           "fingerprint": "d51b1dd340c9dda771331e35189ace02b99b50baa6d64ce687288b1889b04902",
           "variant": "release",
           "ruleId": "ModifierParameter",
@@ -496,18 +292,6 @@
           "ruleId": "UnusedResources",
           "relativePath": "app/src/main/res/values/core_compat.xml",
           "message": "The resource `R.color.notification_template_icon_low_bg_compat` appears to be unused",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "e06363fa1b8ac9608c0cf5c1db212057c420222fe32d337df2d43249428bbf10",
-          "variant": "release",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/values/strings.xml",
-          "message": "The resource `R.string.tab_title_more` appears to be unused",
           "classification": "investigate",
           "owner": "android-maintainers",
           "justification": "Pre-existing deterministic lint debt measured for issue #10.",

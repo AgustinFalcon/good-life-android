@@ -18,6 +18,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 ### Removed
 - Se eliminaron siete colores legacy sin referencias (black, white, purple_200, purple_500, purple_700, teal_200, teal_700) con trazabilidad before/after y owner en la issue #38 (PR en revisión).
 - Se eliminaron 13 strings legacy de autenticación/login sin referencias estáticas ni dinámicas en `app/src`; el copy vigente sigue provisto por `UiTexts` y la evidencia exacta before/after queda trazada en la issue #38 (PR en revisión).
+- Se eliminaron nueve strings legacy de Daily, tabs y registro tras verificar que el copy canónico vive en `UiTexts`; launcher y compatibilidad permanecen explícitamente retenidos en la issue #38 (PR en revisión).
 
 ### Fixed
 - Macros nutricionales respetan el separador decimal de cada idioma (coma en ES/PT y punto en EN), y el copy español de reintento usa voseo. ([#7](https://github.com/AgustinFalcon/good-life-android/issues/7))
