@@ -8,24 +8,6 @@
     "message"
   ],
   "symbols": {
-    "color/black": {
-      "type": "color",
-      "name": "black",
-      "ruleId": "UnusedResources",
-      "message": "The resource `R.color.black` appears to be unused",
-      "variants": {
-        "debug": {
-          "fingerprint": "2b04d20c454c8a4a423f30592fc91105e0f8517a28b7db10662b0b0f0b6ba3ec",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "occurrences": 1
-        },
-        "release": {
-          "fingerprint": "4583b1146fe7b08246fd761680cc7b0fc7fd0aead40b1bb789e2fba2b19e34da",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "occurrences": 1
-        }
-      }
-    },
     "color/notification_template_icon_bg_compat": {
       "type": "color",
       "name": "notification_template_icon_bg_compat",
@@ -58,114 +40,6 @@
         "release": {
           "fingerprint": "d9ca418fc2e281ee883a96545bd2d81472c4f5baed20d0cf8250c871b128dc5a",
           "relativePath": "app/src/main/res/values/core_compat.xml",
-          "occurrences": 1
-        }
-      }
-    },
-    "color/purple_200": {
-      "type": "color",
-      "name": "purple_200",
-      "ruleId": "UnusedResources",
-      "message": "The resource `R.color.purple_200` appears to be unused",
-      "variants": {
-        "debug": {
-          "fingerprint": "5778f85195750cf5f1a9fd8ccd164f57fcf4cfb727bae69b9a9a4e38d87b2751",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "occurrences": 1
-        },
-        "release": {
-          "fingerprint": "9f6b979e5819c8e0a173f61fbfde4ba84b662a2ef10ea1ba5559120209b2f1f1",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "occurrences": 1
-        }
-      }
-    },
-    "color/purple_500": {
-      "type": "color",
-      "name": "purple_500",
-      "ruleId": "UnusedResources",
-      "message": "The resource `R.color.purple_500` appears to be unused",
-      "variants": {
-        "debug": {
-          "fingerprint": "4133f6d0fc7155cbd2ace6158fae6f8e8a733ab1923d0ea70b71c2826c4a9f22",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "occurrences": 1
-        },
-        "release": {
-          "fingerprint": "24984d1a45b43ab7c7a817b35022e2c90aaf75f79fda16bf4646be609fbfa978",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "occurrences": 1
-        }
-      }
-    },
-    "color/purple_700": {
-      "type": "color",
-      "name": "purple_700",
-      "ruleId": "UnusedResources",
-      "message": "The resource `R.color.purple_700` appears to be unused",
-      "variants": {
-        "debug": {
-          "fingerprint": "c6a9ca2c16742f17af0dae9f66326ec0fccb271accbe668045c4b86d129cf74a",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "occurrences": 1
-        },
-        "release": {
-          "fingerprint": "84fbcb6d30ba8a3b885c54f2f03d57ae7e6695524811fa283bfca56e887be56d",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "occurrences": 1
-        }
-      }
-    },
-    "color/teal_200": {
-      "type": "color",
-      "name": "teal_200",
-      "ruleId": "UnusedResources",
-      "message": "The resource `R.color.teal_200` appears to be unused",
-      "variants": {
-        "debug": {
-          "fingerprint": "aa52580aa6065e0a17d9c764228ce90b3e13c54c460c45258010f64dbb6575e9",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "occurrences": 1
-        },
-        "release": {
-          "fingerprint": "9c6de5d03d5c68baa9fe2ebf151b5b528e7c453a5cadde1853e23d348d9fc70a",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "occurrences": 1
-        }
-      }
-    },
-    "color/teal_700": {
-      "type": "color",
-      "name": "teal_700",
-      "ruleId": "UnusedResources",
-      "message": "The resource `R.color.teal_700` appears to be unused",
-      "variants": {
-        "debug": {
-          "fingerprint": "6cc1e589a447317b6a8d1daa37d5386c2817a55fff1298f3e2218c0db568a02f",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "occurrences": 1
-        },
-        "release": {
-          "fingerprint": "da9f4c6581224b622e21de67318cb0f786502b1f6c73cf6d952c7ef066aa063b",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "occurrences": 1
-        }
-      }
-    },
-    "color/white": {
-      "type": "color",
-      "name": "white",
-      "ruleId": "UnusedResources",
-      "message": "The resource `R.color.white` appears to be unused",
-      "variants": {
-        "debug": {
-          "fingerprint": "bcc74fd30c7c21a531f3d4e64ee09da968bb83030568836c61e2ed0e9bc7492a",
-          "relativePath": "app/src/main/res/values/colors.xml",
-          "occurrences": 1
-        },
-        "release": {
-          "fingerprint": "edfde130bc48e1e9aa3ffddad7c265792af2a0170d0ea5e79fad039fc13481b3",
-          "relativePath": "app/src/main/res/values/colors.xml",
           "occurrences": 1
         }
       }
