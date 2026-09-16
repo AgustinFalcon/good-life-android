@@ -1,6 +1,7 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "issue": "#38",
+  "scope": "legacy-colors",
   "resources": [
     {
       "symbol": "color/black",

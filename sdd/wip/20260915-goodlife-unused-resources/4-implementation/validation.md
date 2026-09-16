@@ -25,3 +25,24 @@ Issue: #38 (se mantiene abierta hasta merge)
 - `verify-governance.sh`: OK contra la estructura vigente; se repetirá sobre el commit del PR.
 
 La eliminación queda en revisión; no se declara cerrada hasta aprobación de reviewers, CI verde y merge.
+
+# Validación de UR-02b — strings auth/login
+
+Fecha: 2026-09-16
+Base: `origin/master` `25d068ab8758203f182158240c344adede7c0d05` (PR #42)
+Rama: `chore/android-remove-auth-strings`
+Issue: #38 (se mantiene abierta hasta review, CI y merge)
+
+## Alcance ejecutado
+
+- Eliminados únicamente 13 strings legacy autorizados de `app/src/main/res/values/strings.xml`: cinco de biometría y ocho de login, sin modificar Kotlin, Compose, navegación, manifest, launcher, compatibilidad ni Gradle.
+- La búsqueda estática cubre `@string/...`, `R.string...`, `stringResource`, reflexión y lookups dinámicos para el conjunto autorizado; no encontró referencias en `app/src`. La presentación vigente suministra copy por `UiTexts`/contratos de dominio.
+- `.github/scripts/manifests/auth-strings-38.json` autoriza exactamente 26 fingerprints (13 símbolos × debug/release), generados desde la baseline previa.
+- El reducer versionado acepta scopes inmutables `legacy-colors` y `auth-strings`; para auth retira exactamente 13 entradas por variante y preserva `generatedFrom`, `externalAdvisories` y `exceptions`.
+- `resource-inventory.json` y `resource-inventory.md` se regeneraron: 28 → 15 símbolos restantes por variante. El ledger `remediation/auth-strings-38.json` conserva before/after/remaining por cada símbolo.
+
+## Gates ejecutados
+
+- `python -m unittest discover -s .github/tests -p 'test_*.py'`: OK, 42 tests.
+- `python .github/scripts/resource_inventory.py ... --check`: OK, 15 símbolos y multiset debug/release coherente.
+- `python .github/scripts/verify_lint_baseline.py ...`: OK para debug/release; no hay drift determinístico ni de advisories.\n- `./gradlew.bat :app:lintDebug :app:lintRelease :app:assembleDebug :app:assembleRelease :app:logicDebugUnitTestCoverageVerification --no-daemon`: OK, generó APK debug y release no firmado; cobertura lógica verificada.
