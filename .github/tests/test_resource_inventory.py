@@ -60,4 +60,19 @@ class ResourceInventoryTest(unittest.TestCase):
         self.markdown_check(lambda text: text.replace('| retain_compat |', '| remove |', 1))
     def test_markdown_missing_launcher_qualifier_fails(self):
         self.markdown_check(lambda text: text.replace('mipmap-xxxhdpi/ic_launcher.webp; ', '', 1))
+    def test_remaining_symbols_have_retention_ownership(self):
+        expected = {
+            'notification_template_icon_bg_compat': ('retain_compat', '#39'),
+            'notification_template_icon_low_bg_compat': ('retain_compat', '#39'),
+            'notification_template_icon_bg': ('retain_compat', '#39'),
+            'notification_template_icon_low_bg': ('retain_compat', '#39'),
+            'ic_launcher': ('retain_launcher', '#38'),
+            'ic_logo_install_round': ('retain_launcher', '#38'),
+        }
+        for variant in ('debug', 'release'):
+            rows = [x for x in self.base()['variants'][variant]['warnings'] if x['ruleId'] == 'UnusedResources']
+            self.assertEqual(len(rows), 6)
+            for name, (classification, linked) in expected.items():
+                row = next(x for x in rows if f'.{name}' in x['message'])
+                self.assertEqual((row['classification'], row['linkedIssueOrPr']), (classification, linked))
 if __name__=='__main__': unittest.main()

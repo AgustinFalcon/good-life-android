@@ -1,6 +1,6 @@
 {
   "feature": "goodlife-unused-resources",
-  "updatedAt": "2026-09-16",
+  "updatedAt": "2026-09-17",
   "status": "in_review",
   "tasks": [
     {
@@ -18,26 +18,26 @@
     {
       "id": "UR-02b",
       "title": "Remediar strings por owner",
-      "status": "in_review",
-      "acceptance": "La PR auth/login elimina 13 strings tras probar ausencia de referencias estáticas y dinámicas y confirmar que la UI usa UiTexts; tabs/navegación y Daily permanecen separados y requieren owner/contrato visible antes de cualquier borrado."
+      "status": "done",
+      "acceptance": "PR #43 elimina 13 strings auth/login y PR #44 elimina 9 strings Daily/tabs/registro, tras probar ausencia de referencias estáticas y dinámicas y confirmar que la UI usa UiTexts."
     },
     {
       "id": "UR-03",
       "title": "Conservar o revisar launcher y compatibilidad",
-      "status": "todo",
-      "acceptance": "core_compat queda retain_compat en #38 con inspección AAR/merged read-only; launcher sólo sale de retain_launcher con manifest roots/qualifiers y smoke instalación/upgrade/launcher. Dependency/AGP/packaging sólo en #39."
+      "status": "done",
+      "acceptance": "Los cuatro símbolos core_compat quedan retain_compat, con ownership de toolchain/dependency transferido a #39. Las dos familias launcher quedan retain_launcher con raíces manifest/qualifiers documentadas; no se eliminan ni se afirma un smoke de upgrade que no fue ejecutado."
     },
     {
       "id": "UR-04",
       "title": "Resolver ownership restante",
-      "status": "todo",
-      "acceptance": "needs_owner tiene accountable follow-up, issue y trigger; bloquea hasta resolver ownership o transferirlo explícitamente; retain tiene rationale/reevaluación."
+      "status": "done",
+      "acceptance": "No queda needs_owner: las seis familias restantes tienen accountable, rationale, trigger y issue de seguimiento cuando corresponde."
     },
     {
       "id": "UR-05",
       "title": "Cerrar trazabilidad documental",
-      "status": "in_progress",
-      "acceptance": "Tras implementación y reviews: actualizar CHANGELOG con /ship, docs/runbook, Knowledge, issue/PR; ejecutar finish/archive SDD sólo con gates verdes. No marca tareas de eliminación como done."
+      "status": "in_review",
+      "acceptance": "CHANGELOG, inventario, ledgers, CI y cierre SDD quedan alineados; PR #44 tiene CI verde y review independiente aprobada. La issue se cierra sin declarar eliminables los recursos retenidos."
     }
   ]
 }
