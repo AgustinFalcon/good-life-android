@@ -42,6 +42,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ### CI
 - El refresh de advisories lint externos importa de forma fail-closed evidencia CI remota, preserva la baseline determinista y exige trazabilidad de issue. ([#52](https://github.com/AgustinFalcon/good-life-android/issues/52))
+- `actions/upload-artifact` se actualizó al pin oficial v6 con runtime Node 24 en Android CI y el monitor lint, sin alterar evidencia ni permisos. ([#53](https://github.com/AgustinFalcon/good-life-android/issues/53))
 - Android CI ahora valida también ramas `release/**` con los mismos gates de cobertura, lint e ensamblado release no firmado. ([#49](https://github.com/AgustinFalcon/good-life-android/issues/49))
 - El reducer de baseline de #38 retira únicamente los 14 fingerprints autorizados de colores legacy y falla cerrado ante drift; el inventario queda en 28 símbolos por variante.
 

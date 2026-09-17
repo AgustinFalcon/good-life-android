@@ -26,7 +26,7 @@ jobs:
         run: python3 .github/scripts/verify_lint_baseline.py --baseline config/lint-baseline.json --debug-report app/build/reports/lint-results-debug.xml --release-report app/build/reports/lint-results-release.xml --repo-root "$GITHUB_WORKSPACE" --advisory-delta-out build/lint-advisory-delta.json --fail-on-advisory-drift
       - name: Upload lint evidence
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: lint-advisory-evidence
           if-no-files-found: error
