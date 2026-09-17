@@ -1,0 +1,24 @@
+{
+  "feature": "goodlife-release-ci-branches",
+  "status": "in_progress",
+  "tasks": [
+    {
+      "id": "RCI-01",
+      "title": "Extender triggers a release/**",
+      "status": "done",
+      "acceptance": "El workflow conserva sus jobs y cubre master y release."
+    },
+    {
+      "id": "RCI-02",
+      "title": "Validar ejecución manual sobre la rama release",
+      "status": "done",
+      "acceptance": "Cobertura y lint/release resultan verdes sobre el SHA propuesto."
+    },
+    {
+      "id": "RCI-03",
+      "title": "Revalidar PRs abiertos de release",
+      "status": "todo",
+      "acceptance": "Los PRs a release reciben checks antes de merge."
+    }
+  ]
+}
