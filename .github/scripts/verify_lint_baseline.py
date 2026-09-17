@@ -26,7 +26,7 @@ toolchain = generated["toolchain"]
 if not isinstance(toolchain, dict) or set(toolchain) != {"gradleWrapper", "agp", "jdk", "sdk"} or any(not isinstance(value, str) or not value.strip() for value in toolchain.values()): raise SystemExit("Lint baseline toolchain metadata is invalid")
 if not isinstance(data["exceptions"], list): raise SystemExit("Lint baseline exceptions schema is invalid")
 BASE_KEYS = {"fingerprint", "variant", "ruleId", "relativePath", "message", "classification", "owner", "justification", "linkedIssueOrPr", "createdOn"}
-DETERMINISTIC_CLASSES = {"fix_now", "split_upgrade", "investigate"}
+DETERMINISTIC_CLASSES = {"fix_now", "split_upgrade", "investigate", "retain_compat", "retain_launcher"}
 
 def validate_record(entry, variant, domain):
     if not isinstance(entry, dict) or not BASE_KEYS.issubset(entry): fail("Baseline entry has missing required fields")
