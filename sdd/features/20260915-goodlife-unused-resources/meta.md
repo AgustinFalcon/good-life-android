@@ -1,8 +1,8 @@
 # GoodLife Android — recursos no usados
 
 - Feature id: `20260915-goodlife-unused-resources`
-- Estado: `in_review` (PRs #42, #43 y #44 mergeadas; esta rama reconcilia el cierre).
-- Issue: #38 (abierta hasta que esta PR tenga review y CI verde; label `type: chore`; sin asignación de tablero requerida).
+- Estado: `done` (PRs #42, #43, #44 y #45 mergeadas; SDD archivada).
+- Issue: #38 (cerrada por la PR #45; label `type: chore`).
 - Rama: `chore/android-close-unused-resources`.
 - Base verificada: `origin/master` `283d2cbb98b976968f606f305b2f1880357910ec` (PR #44 mergeada).
 - PRD: no requerido; remediación técnica acotada, sin comportamiento nuevo.
