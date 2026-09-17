@@ -73,6 +73,6 @@ class ResourceInventoryTest(unittest.TestCase):
             rows = [x for x in self.base()['variants'][variant]['warnings'] if x['ruleId'] == 'UnusedResources']
             self.assertEqual(len(rows), 6)
             for name, (classification, linked) in expected.items():
-                row = next(x for x in rows if x['message'].split('`')[1] == f'R.{name}')
+                row = next(x for x in rows if x['message'].split('`')[1].split('.')[-1] == name)
                 self.assertEqual((row['classification'], row['linkedIssueOrPr']), (classification, linked))
 if __name__=='__main__': unittest.main()
