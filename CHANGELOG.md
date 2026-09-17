@@ -40,6 +40,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - The ledger separates master quality evidence from the newer values still under review in PR #4.
 
 ### CI
+- Android CI ahora valida también ramas `release/**` con los mismos gates de cobertura, lint e ensamblado release no firmado. ([#49](https://github.com/AgustinFalcon/good-life-android/issues/49))
 - El reducer de baseline de #38 retira únicamente los 14 fingerprints autorizados de colores legacy y falla cerrado ante drift; el inventario queda en 28 símbolos por variante.
 
 - CI compara ahora el inventario determinista versionado de advertencias lint de `debug` y `release` como multiset exacto; detecta deuda nueva, resuelta o reintroducida sin permitir supresiones globales. Los advisories externos de Gradle/AGP se publican como evidencia en PR y un monitor sobre `master` falla ante drift.
