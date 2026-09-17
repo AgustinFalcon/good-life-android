@@ -20,3 +20,5 @@ update_when: "Aparezca una discrepancia o riesgo real."
 
 - Un smoke debug no valida el APK/AAB release firmado: para distribución interna se exige evidencia UI-only redacted del artefacto exacto y su registro externo opaco.
 - Nunca resolver firma, canal, audiencia, hash, rollback o proveedor por inferencia: hasta una aprobación explícita el estado correcto es BLOCKED, sin secretos ni artefactos en Git.
+
+- Nunca regenere `config/lint-baseline.json` completo para aceptar advisories remotos: use el refresh externo atómico con XML CI, `--report-root` POSIX explícito e issue trazable; rutas remotas no mapeadas se rechazan.

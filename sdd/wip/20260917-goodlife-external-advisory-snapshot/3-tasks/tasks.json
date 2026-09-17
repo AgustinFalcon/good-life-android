@@ -1,0 +1,11 @@
+{
+  "feature": "goodlife-external-advisory-snapshot",
+  "status": "done",
+  "tasks": [
+    {"id":"LAS-01","title":"Definir mapeo explícito y fail-closed de raíz de reporte remoto","status":"done","acceptance":"Solo rutas POSIX remotas bajo el prefijo exacto se normalizan de forma segura; el contrato y rechazos están especificados."},
+    {"id":"LAS-02","title":"Implementar refresh externo atómico y trazable","status":"done","acceptance":"Preserva generatedFrom, variants y exceptions; aborta ante drift determinista y vincula advisories a #52."},
+    {"id":"LAS-03","title":"Probar CLIs con evidencia local/remota y rechazos","status":"done","acceptance":"Tests E2E cubren import, verificación estricta, seguridad de rutas y no-escritura ante drift."},
+    {"id":"LAS-04","title":"Regenerar desde evidencia CI y validar","status":"done","acceptance":"El verificador estricto pasa sobre ambos XML CI y no hay delta determinista."},
+    {"id":"LAS-05","title":"Documentar runbook, changelog y revisión","status":"done","acceptance":"Docs, changelog, SDD y revisión registran resultado verificable."}
+  ]
+}
