@@ -16,4 +16,8 @@
 
 ## CI remoto
 
-Pendiente de ejecución del PR. Android CI es el gate operativo que confirmará el runtime de la Action; no se dispara el monitor programado, porque comparte runner/contrato y no cambia su schedule.
+- PR #55, GitHub Actions run `35286706734`: **PASS**.
+- `Logic tests and 80% coverage`: PASS.
+- `Lint baseline and unsigned release build`: PASS; generó reportes, verificó baseline, subió `lint-evidence` con el pin Node 24 y ensambló release no firmado.
+- GitHub emitió una advertencia futura de migración `ubuntu-latest` a Ubuntu 26; está trazada separadamente en #56 y no se silenció ni se mezcló con #53.
+- El monitor programado sigue sin dispararse: comparte runner/contrato y #53 no cambia su schedule.

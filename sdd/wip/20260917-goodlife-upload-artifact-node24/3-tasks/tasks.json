@@ -1,5 +1,5 @@
-{"feature":"goodlife-upload-artifact-node24","status":"in_progress","tasks":[
+{"feature":"goodlife-upload-artifact-node24","status":"done","tasks":[
 {"id":"UAN-01","title":"Verificar fuente oficial y especificar cambio mínimo","status":"done","acceptance":"SHA v6 oficial y alcance de ambos workflows documentados."},
 {"id":"UAN-02","title":"Actualizar ambos pins sin alterar contratos","status":"done","acceptance":"Ambos workflows conservan parámetros y usan el mismo SHA."},
-{"id":"UAN-03","title":"Validar, documentar y revisar el PR","status":"pending","acceptance":"Dos pins nuevos/cero SHA antiguo, YAML/static checks, Android CI, changelog, evidencia y revisión quedan registrados."}
+{"id":"UAN-03","title":"Validar, documentar y revisar el PR","status":"done","acceptance":"Dos pins nuevos/cero SHA antiguo, YAML/static checks, Android CI, changelog, evidencia y revisión quedan registrados."}
 ]}

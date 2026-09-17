@@ -13,3 +13,8 @@
 ## Revisión de confirmación
 
 - Decisión final pre-build: **LISTO PARA BUILD**.
+
+## Code review and CI
+
+- Code review independiente: **APPROVE**.
+- Android CI PR #55 / run 35286706734: **PASS** en ambos jobs.

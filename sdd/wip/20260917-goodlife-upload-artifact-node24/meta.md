@@ -1,7 +1,7 @@
 # Migración de runtime upload-artifact
 
 - Feature id: `20260917-goodlife-upload-artifact-node24`.
-- Estado: `in_progress`.
+- Estado: `done`.
 - Issue: #53.
 - Rama: `chore/android-upload-artifact-node24`.
 
