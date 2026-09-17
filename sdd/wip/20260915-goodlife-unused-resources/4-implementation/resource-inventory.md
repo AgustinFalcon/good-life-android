@@ -41,6 +41,7 @@ The launcher families are protected roots from the merged manifest: `android:ico
 ## Evidencia de remediación
 
 - Colores: 35 → 28 símbolos por variante; 14 fingerprints retirados, exactamente los siete `color/*` del manifiesto legacy.
-- Auth/login: 28 → 15 símbolos por variante; 26 fingerprints retirados, exactamente los 13 `string/*` del manifiesto auth.`n- Daily/tabs/registro: 15 → 6 símbolos por variante; 18 fingerprints retirados, exactamente los 9 `string/*` del manifiesto remaining-strings.
+- Auth/login: 28 → 15 símbolos por variante; 26 fingerprints retirados, exactamente los 13 `string/*` del manifiesto auth.
+- Daily/tabs/registro: 15 → 6 símbolos por variante; 18 fingerprints retirados, exactamente los 9 `string/*` del manifiesto remaining-strings.
 - El reducer fail-closed valida los fingerprints exactos autorizados para cada scope antes de retirar entradas y preserva `generatedFrom`, `externalAdvisories` y `exceptions`.
 - Los ledgers `remediation/legacy-colors-38.json`, `remediation/auth-strings-38.json` y `remediation/remaining-strings-38.json` conservan owner, issue, búsqueda estática, evidencia lint y estado before/after/remaining.

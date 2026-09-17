@@ -13,7 +13,8 @@
 - Owner/accountable: Android maintainers; issue #38; clasificación `remove`.
 - Manifiesto exacto: `.github/scripts/manifests/auth-strings-38.json` (13 símbolos × 2 variantes = 26 fingerprints).
 - Sólo se retiran declaraciones legacy de `strings.xml`; la UI vigente obtiene ese copy de `UiTexts`/textos de dominio y no hay referencias estáticas ni lookups dinámicos para estos símbolos en `app/src`.
-- Evidencia: `4-implementation/remediation/auth-strings-38.json`; delta 28 → 15 símbolos `UnusedResources` y 34 → 21 warnings determinísticos por variante.`n- La PR #44 retira los 9 strings Daily/tabs/registro autorizados; `4-implementation/remediation/remaining-strings-38.json` registra 15 → 6 símbolos y 18 fingerprints retirados.
+- Evidencia: `4-implementation/remediation/auth-strings-38.json`; delta 28 → 15 símbolos `UnusedResources` y 34 → 21 warnings determinísticos por variante.
+- La PR #44 retira los 9 strings Daily/tabs/registro autorizados; `4-implementation/remediation/remaining-strings-38.json` registra 15 → 6 símbolos y 18 fingerprints retirados.
 
 ## Decisiones de alcance
 
