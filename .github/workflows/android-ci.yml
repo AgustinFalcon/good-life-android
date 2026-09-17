@@ -63,7 +63,7 @@ jobs:
         run: ./gradlew :app:lintDebug :app:lintRelease --no-daemon
 
       - name: Verify resource inventory derivation
-        run: python3 .github/scripts/resource_inventory.py --baseline config/lint-baseline.json --output-json sdd/wip/20260915-goodlife-unused-resources/4-implementation/resource-inventory.json --markdown sdd/wip/20260915-goodlife-unused-resources/4-implementation/resource-inventory.md --check
+        run: python3 .github/scripts/resource_inventory.py --baseline config/lint-baseline.json --output-json sdd/features/20260915-goodlife-unused-resources/4-implementation/resource-inventory.json --markdown sdd/features/20260915-goodlife-unused-resources/4-implementation/resource-inventory.md --check
 
       - name: Test resource inventory checker
         run: python3 .github/tests/test_resource_inventory.py

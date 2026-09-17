@@ -1,7 +1,7 @@
 {
   "feature": "goodlife-unused-resources",
   "updatedAt": "2026-09-17",
-  "status": "in_review",
+  "status": "done",
   "tasks": [
     {
       "id": "UR-01",
@@ -36,7 +36,7 @@
     {
       "id": "UR-05",
       "title": "Cerrar trazabilidad documental",
-      "status": "in_review",
+      "status": "done",
       "acceptance": "CHANGELOG, inventario, ledgers, CI y cierre SDD quedan alineados; PR #44 tiene CI verde y review independiente aprobada. La issue se cierra sin declarar eliminables los recursos retenidos."
     }
   ]

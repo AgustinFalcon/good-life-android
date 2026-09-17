@@ -4,7 +4,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 SCRIPT=ROOT/'.github/scripts/resource_inventory.py'
 BASELINE=ROOT/'config/lint-baseline.json'
-MARKDOWN=ROOT/'sdd/wip/20260915-goodlife-unused-resources/4-implementation/resource-inventory.md'
+MARKDOWN=ROOT/'sdd/features/20260915-goodlife-unused-resources/4-implementation/resource-inventory.md'
 PYTHON=sys.executable
 class ResourceInventoryTest(unittest.TestCase):
     def run_check(self, payload, ok):
