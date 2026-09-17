@@ -45,4 +45,20 @@ Issue: #38 (se mantiene abierta hasta review, CI y merge)
 
 - `python -m unittest discover -s .github/tests -p 'test_*.py'`: OK, 42 tests.
 - `python .github/scripts/resource_inventory.py ... --check`: OK, 15 símbolos y multiset debug/release coherente.
-- `python .github/scripts/verify_lint_baseline.py ...`: OK para debug/release; no hay drift determinístico ni de advisories.\n- `./gradlew.bat :app:lintDebug :app:lintRelease :app:assembleDebug :app:assembleRelease :app:logicDebugUnitTestCoverageVerification --no-daemon`: OK, generó APK debug y release no firmado; cobertura lógica verificada.
+- `python .github/scripts/verify_lint_baseline.py ...`: OK para debug/release; no hay drift determinístico ni de advisories.
+- `./gradlew.bat :app:lintDebug :app:lintRelease :app:assembleDebug :app:assembleRelease :app:logicDebugUnitTestCoverageVerification --no-daemon`: OK, generó APK debug y release no firmado; cobertura lógica verificada.
+
+# Validación de cierre UR-02c a UR-05 — recursos restantes
+
+Fecha: 2026-09-17
+Base: `origin/master` `283d2cbb98b976968f606f305b2f1880357910ec` (PR #44)
+Issue: #38
+
+## Resultado
+
+- PRs #42, #43 y #44 están mergeadas; sus dos checks de Android CI concluyeron `SUCCESS` en la última remediación.
+- El inventario versionado y su verificador declaran seis símbolos `UnusedResources`: cuatro `retain_compat` de AndroidX y dos `retain_launcher` protegidos por manifest/qualifiers.
+- Los tests de guardrail, inventario multivariante y baseline debug/release se reejecutan en la rama de cierre antes de su commit; la evidencia de producto permanece en las PRs #42–#44. No se eliminan recursos retenidos, no se actualizan dependencias, ni se altera UI o comportamiento.
+- El cierre de #38 no reemplaza el smoke autenticado #5 ni el plan de compatibilidad #39.
+
+- La baseline clasifica explícitamente los seis recursos restantes: cuatro retain_compat con seguimiento #39 y dos retain_launcher con seguimiento #38. El test de inventario verifica la clasificación y el enlace en debug/release.

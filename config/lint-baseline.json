@@ -24,10 +24,10 @@
           "ruleId": "UnusedResources",
           "relativePath": "app/src/main/res/values/core_compat.xml",
           "message": "The resource `R.color.notification_template_icon_bg_compat` appears to be unused",
-          "classification": "investigate",
+          "classification": "retain_compat",
           "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
+          "justification": "AndroidX notification compatibility resource retained; toolchain/dependency follow-up is #39.",
+          "linkedIssueOrPr": "#39",
           "createdOn": "2026-09-15"
         },
         {
@@ -36,10 +36,10 @@
           "ruleId": "UnusedResources",
           "relativePath": "app/src/main/res/values/core_compat.xml",
           "message": "The resource `R.drawable.notification_template_icon_bg` appears to be unused",
-          "classification": "investigate",
+          "classification": "retain_compat",
           "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
+          "justification": "AndroidX notification compatibility resource retained; toolchain/dependency follow-up is #39.",
+          "linkedIssueOrPr": "#39",
           "createdOn": "2026-09-15"
         },
         {
@@ -72,10 +72,10 @@
           "ruleId": "UnusedResources",
           "relativePath": "app/src/main/res/mipmap-hdpi/ic_launcher.webp",
           "message": "The resource `R.mipmap.ic_launcher` appears to be unused",
-          "classification": "investigate",
+          "classification": "retain_launcher",
           "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
+          "justification": "Manifest/qualifier launcher family retained; removal requires dedicated install/upgrade/launcher smoke.",
+          "linkedIssueOrPr": "#38",
           "createdOn": "2026-09-15"
         },
         {
@@ -96,10 +96,10 @@
           "ruleId": "UnusedResources",
           "relativePath": "app/src/main/res/values/core_compat.xml",
           "message": "The resource `R.color.notification_template_icon_low_bg_compat` appears to be unused",
-          "classification": "investigate",
+          "classification": "retain_compat",
           "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
+          "justification": "AndroidX notification compatibility resource retained; toolchain/dependency follow-up is #39.",
+          "linkedIssueOrPr": "#39",
           "createdOn": "2026-09-15"
         },
         {
@@ -108,10 +108,10 @@
           "ruleId": "UnusedResources",
           "relativePath": "app/src/main/res/values/core_compat.xml",
           "message": "The resource `R.drawable.notification_template_icon_low_bg` appears to be unused",
-          "classification": "investigate",
+          "classification": "retain_compat",
           "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
+          "justification": "AndroidX notification compatibility resource retained; toolchain/dependency follow-up is #39.",
+          "linkedIssueOrPr": "#39",
           "createdOn": "2026-09-15"
         },
         {
@@ -156,10 +156,10 @@
           "ruleId": "UnusedResources",
           "relativePath": "app/src/main/res/mipmap-hdpi/ic_logo_install_round.webp",
           "message": "The resource `R.mipmap.ic_logo_install_round` appears to be unused",
-          "classification": "investigate",
+          "classification": "retain_launcher",
           "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
+          "justification": "Manifest/qualifier launcher family retained; removal requires dedicated install/upgrade/launcher smoke.",
+          "linkedIssueOrPr": "#38",
           "createdOn": "2026-09-15"
         }
       ]
@@ -184,10 +184,10 @@
           "ruleId": "UnusedResources",
           "relativePath": "app/src/main/res/mipmap-hdpi/ic_logo_install_round.webp",
           "message": "The resource `R.mipmap.ic_logo_install_round` appears to be unused",
-          "classification": "investigate",
+          "classification": "retain_launcher",
           "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
+          "justification": "Manifest/qualifier launcher family retained; removal requires dedicated install/upgrade/launcher smoke.",
+          "linkedIssueOrPr": "#38",
           "createdOn": "2026-09-15"
         },
         {
@@ -208,10 +208,10 @@
           "ruleId": "UnusedResources",
           "relativePath": "app/src/main/res/mipmap-hdpi/ic_launcher.webp",
           "message": "The resource `R.mipmap.ic_launcher` appears to be unused",
-          "classification": "investigate",
+          "classification": "retain_launcher",
           "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
+          "justification": "Manifest/qualifier launcher family retained; removal requires dedicated install/upgrade/launcher smoke.",
+          "linkedIssueOrPr": "#38",
           "createdOn": "2026-09-15"
         },
         {
@@ -220,10 +220,10 @@
           "ruleId": "UnusedResources",
           "relativePath": "app/src/main/res/values/core_compat.xml",
           "message": "The resource `R.drawable.notification_template_icon_bg` appears to be unused",
-          "classification": "investigate",
+          "classification": "retain_compat",
           "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
+          "justification": "AndroidX notification compatibility resource retained; toolchain/dependency follow-up is #39.",
+          "linkedIssueOrPr": "#39",
           "createdOn": "2026-09-15"
         },
         {
@@ -232,10 +232,10 @@
           "ruleId": "UnusedResources",
           "relativePath": "app/src/main/res/values/core_compat.xml",
           "message": "The resource `R.drawable.notification_template_icon_low_bg` appears to be unused",
-          "classification": "investigate",
+          "classification": "retain_compat",
           "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
+          "justification": "AndroidX notification compatibility resource retained; toolchain/dependency follow-up is #39.",
+          "linkedIssueOrPr": "#39",
           "createdOn": "2026-09-15"
         },
         {
@@ -256,10 +256,10 @@
           "ruleId": "UnusedResources",
           "relativePath": "app/src/main/res/values/core_compat.xml",
           "message": "The resource `R.color.notification_template_icon_bg_compat` appears to be unused",
-          "classification": "investigate",
+          "classification": "retain_compat",
           "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
+          "justification": "AndroidX notification compatibility resource retained; toolchain/dependency follow-up is #39.",
+          "linkedIssueOrPr": "#39",
           "createdOn": "2026-09-15"
         },
         {
@@ -292,10 +292,10 @@
           "ruleId": "UnusedResources",
           "relativePath": "app/src/main/res/values/core_compat.xml",
           "message": "The resource `R.color.notification_template_icon_low_bg_compat` appears to be unused",
-          "classification": "investigate",
+          "classification": "retain_compat",
           "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
+          "justification": "AndroidX notification compatibility resource retained; toolchain/dependency follow-up is #39.",
+          "linkedIssueOrPr": "#39",
           "createdOn": "2026-09-15"
         },
         {

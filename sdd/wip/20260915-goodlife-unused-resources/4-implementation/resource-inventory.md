@@ -4,15 +4,15 @@ Estado: inventario vigente después de las remediaciones de colores legacy y str
 
 ## Fuente y contrato de derivación
 
-El snapshot se deriva de `config/lint-baseline.json` schema v2. El snapshot autorizado contenía 35 símbolos `UnusedResources` por variante. La PR de colores retiró exactamente 7 familias propias (14 fingerprints) y esta remediación auth/login retira 13 familias (26 fingerprints), dejando 6 símbolos por variante. La baseline es evolutiva: cada ejecución conserva evidencia before/after/remaining y un manifiesto exacto versionado en `remediation/` y `.github/scripts/manifests/`.
+El snapshot se deriva de `config/lint-baseline.json` schema v2. El snapshot autorizado contenía 35 símbolos `UnusedResources` por variante. La PR de colores retiró exactamente 7 familias propias (14 fingerprints), la PR auth/login retiró 13 (26 fingerprints) y la PR Daily/tabs/registro retiró 9 (18 fingerprints), dejando 6 símbolos por variante. La baseline es evolutiva: cada ejecución conserva evidencia before/after/remaining y un manifiesto exacto versionado en `remediation/` y `.github/scripts/manifests/`.
 
 La herramienta acepta únicamente mensajes canonicalizados con el formato The resource R.type.name appears to be unused. Debe extraer type/name y fallar cerrado si cambia el formato, si el símbolo no puede parsearse o si hay una discrepancia de multiplicidad del multiset. La proyección semántica para comparar variantes es ruleId + type/name + normalizedMessage + occurrences; no incluye variant ni location. Los fingerprints debug/release se conservan por separado porque contienen la variante.
 
-Cada fila representa una familia type/name, consolidando definiciones, source sets y qualifiers. D×1/R×1 significa una aparición en el multiset de cada variante. Las filas actuales `retain_*` y `needs_owner` no son removibles sin una PR enfocada con autorización, evidencia y review; la clasificación no autoriza un borrado genérico.
+Cada fila representa una familia type/name, consolidando definiciones, source sets y qualifiers. D×1/R×1 significa una aparición en el multiset de cada variante. Las seis filas actuales `retain_*` no son removibles sin una PR enfocada con autorización, evidencia y review; la clasificación no autoriza un borrado genérico.
 
 ## Inventario restante
 
-El inventario vigente se deriva de config/lint-baseline.json schema v2 después de retirar colores legacy (7 familias) y strings de autenticación/login (13 familias). Quedan 15 símbolos (30 fingerprints): 4 recursos de compatibilidad AndroidX, 2 familias launcher, 4 etiquetas Daily, 1 etiqueta de registro y 4 etiquetas de tabs. Cada remediación conserva su ledger before/after/remaining y su manifiesto inmutable.
+El inventario vigente se deriva de config/lint-baseline.json schema v2 después de retirar colores legacy (7 familias), strings de autenticación/login (13 familias) y strings Daily/tabs/registro (9 familias). Quedan 6 símbolos (12 fingerprints): 4 recursos de compatibilidad AndroidX y 2 familias launcher. Cada remediación conserva su ledger before/after/remaining y su manifiesto inmutable.
 
 | # | Symbol | Definitions / qualifiers | Debug fingerprint(s) | Release fingerprint(s) | Semantic key / occurrences | Accountable follow-up | References / evidence searched | Linked issue / PR | Classification | Rationale | Re-evaluate when |
 |---:|---|---|---|---|---|---|---|---|---|---|---|
@@ -34,13 +34,14 @@ The launcher families are protected roots from the merged manifest: `android:ico
 
 ## Guardrails
 
-- Las filas numeradas son las 6 familias restantes. Los ledgers de colores y auth/login registran los únicos borrados autorizados; las filas actuales no pueden eliminarse sin evidencia, autorización y una PR enfocada. `needs_owner` permanece abierto hasta registrar owner, evidencia y trigger; `retain_compat` sólo admite inspección read-only en #38 y #39 es el único ámbito para dependencies/AGP/packaging; `retain_launcher` requiere roots del manifest, qualifiers y smoke de instalación/upgrade/launcher.
+- Las filas numeradas son las 6 familias restantes. Los ledgers de colores, auth/login y Daily/tabs/registro registran todos los borrados autorizados; las filas actuales no pueden eliminarse sin evidencia, autorización y una PR enfocada. No queda `needs_owner`; `retain_compat` sólo admite inspección read-only y #39 es el único ámbito para dependencies/AGP/packaging; `retain_launcher` requiere roots del manifest, qualifiers y smoke de instalación/upgrade/launcher antes de una propuesta de eliminación.
 - The reducer, when needed for a focused remediation PR, may remove only exact fingerprints explicitly listed in that PR’s `before` snapshot. It must prove that `externalAdvisories`, `exceptions`, `generatedFrom`, canonicalizers and policy are byte-for-byte unchanged.
 - Every remediation PR records `before`, `after` and `remaining` snapshots and runs both variants, verifier, assemble and the logical gates. No task is considered complete merely because lint count decreased.
 
 ## Evidencia de remediación
 
 - Colores: 35 → 28 símbolos por variante; 14 fingerprints retirados, exactamente los siete `color/*` del manifiesto legacy.
-- Auth/login: 28 → 15 símbolos por variante; 26 fingerprints retirados, exactamente los 13 `string/*` del manifiesto auth. El alcance sólo toca `app/src/main/res/values/strings.xml`; no modifica Kotlin, Compose, compatibilidad, launcher, Gradle, manifest ni UI.
+- Auth/login: 28 → 15 símbolos por variante; 26 fingerprints retirados, exactamente los 13 `string/*` del manifiesto auth.
+- Daily/tabs/registro: 15 → 6 símbolos por variante; 18 fingerprints retirados, exactamente los 9 `string/*` del manifiesto remaining-strings.
 - El reducer fail-closed valida los fingerprints exactos autorizados para cada scope antes de retirar entradas y preserva `generatedFrom`, `externalAdvisories` y `exceptions`.
-- Los ledgers `remediation/legacy-colors-38.json` y `remediation/auth-strings-38.json` conservan owner, issue, búsqueda estática, evidencia lint y estado before/after/remaining.
+- Los ledgers `remediation/legacy-colors-38.json`, `remediation/auth-strings-38.json` y `remediation/remaining-strings-38.json` conservan owner, issue, búsqueda estática, evidencia lint y estado before/after/remaining.
