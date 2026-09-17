@@ -1,6 +1,6 @@
 {
   "feature": "goodlife-release-ci-branches",
-  "status": "in_progress",
+  "status": "done",
   "tasks": [
     {
       "id": "RCI-01",
@@ -17,7 +17,7 @@
     {
       "id": "RCI-03",
       "title": "Revalidar PRs abiertos de release",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Los PRs a release reciben checks antes de merge."
     }
   ]
