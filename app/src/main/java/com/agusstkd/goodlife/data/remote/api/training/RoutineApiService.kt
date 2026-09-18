@@ -22,5 +22,5 @@ interface RoutineApiService {
     ): BaseResponse<RoutineResponse>
 
     @GET("api/v1/routines/active")
-    suspend fun getActiveRoutine(): BaseResponse<RoutineResponse>
+    suspend fun getActiveRoutine(): BaseResponse<RoutineResponse?>
 }

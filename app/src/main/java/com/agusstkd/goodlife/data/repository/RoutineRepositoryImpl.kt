@@ -75,9 +75,9 @@ class RoutineRepositoryImpl(
         }
     }
 
-    override suspend fun getActiveRoutine(): Result<Routine> {
+    override suspend fun getActiveRoutine(): Result<Routine?> {
         return when (val result = routineRemoteDataSource.getActiveRoutine()) {
-            is Result.Success -> Result.Success(result.data.toDomain())
+            is Result.Success -> Result.Success(result.data?.toDomain())
             is Result.Error -> Result.Error(result.exception)
         }
     }

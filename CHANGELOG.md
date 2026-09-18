@@ -21,6 +21,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Se eliminaron nueve strings legacy de Daily, tabs y registro tras verificar que el copy canónico vive en `UiTexts`; launcher y compatibilidad permanecen explícitamente retenidos en la issue #38 (PR #44 mergeada).
 
 ### Fixed
+- Workouts interpreta la respuesta exitosa sin rutina activa como estado vacío y reserva `Connection error` para fallos reales. ([#59](https://github.com/AgustinFalcon/good-life-android/issues/59))
 - Macros nutricionales respetan el separador decimal de cada idioma (coma en ES/PT y punto en EN), y el copy español de reintento usa voseo. ([#7](https://github.com/AgustinFalcon/good-life-android/issues/7))
 
 - Se normalizó el orden de `Modifier` frente a callbacks opcionales en componentes Compose reutilizables, reduciendo deuda lint sin cambiar la UI.

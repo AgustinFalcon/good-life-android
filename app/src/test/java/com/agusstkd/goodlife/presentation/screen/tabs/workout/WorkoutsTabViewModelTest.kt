@@ -71,6 +71,12 @@ class WorkoutsTabViewModelTest {
         assertTrue(vm.uiState.value is WorkoutsUiState.NoRoutine)
     }
 
+    @Test fun `successful missing active routine maps to no routine`() = runTest(dispatcher) {
+        repo.getActiveRoutineResult = Result.Success(null)
+        val vm = vm(); backgroundScope.launch { vm.uiState.collect {} }; vm.refresh(); advanceUntilIdle()
+
+        assertTrue(vm.uiState.value is WorkoutsUiState.NoRoutine)
+    }
     @Test fun `network error preserves localized connection copy`() = runTest(dispatcher) {
         repo.getActiveRoutineResult = Result.Error(Exception("offline"))
         val vm = vm(); backgroundScope.launch { vm.uiState.collect {} }; vm.refresh(); advanceUntilIdle()

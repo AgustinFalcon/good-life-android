@@ -4,6 +4,7 @@ import com.agusstkd.goodlife.core.network.ApiException
 import com.agusstkd.goodlife.core.network.HttpCode
 import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.data.remote.dto.response.BaseResponse
+import kotlinx.coroutines.CancellationException
 
 /**
  * Extensiones para manejo uniforme de llamadas a la API.
@@ -133,3 +134,30 @@ public fun <T> processResponse(response: BaseResponse<T>): Result<T> {
         )
     }
 }
+
+/**
+ * Executes an endpoint whose resource may be absent despite a successful HTTP response.
+ * This nullable contract is opt-in; standard [executeApiCall] keeps rejecting absent data.
+ */
+public suspend fun <T> executeOptionalApiCall(
+    call: suspend () -> BaseResponse<T?>,
+): Result<T?> = try {
+    processOptionalResponse(call())
+} catch (e: CancellationException) {
+    throw e
+} catch (e: Exception) {
+    Result.Error(exception = Exception(e.message ?: "Error de conexión", e))
+}
+
+/** Preserves a successful absent payload for an explicitly optional endpoint. */
+public fun <T> processOptionalResponse(response: BaseResponse<T?>): Result<T?> =
+    if (HttpCode.isSuccess(response.code)) {
+        Result.Success(response.data)
+    } else {
+        Result.Error(
+            ApiException.fromCode(
+                response.code,
+                response.message ?: "Error del servidor (código: ${response.code})",
+            ),
+        )
+    }
