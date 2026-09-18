@@ -1,0 +1,5 @@
+{"feature":"goodlife-ubuntu26-runner-assessment","status":"in_progress","tasks":[
+ {"id":"U26-01","title":"Especificar alcance, compatibilidad y rollback","status":"done","acceptance":"Tres jobs y exclusiones quedan trazados en SDD e issue #56."},
+ {"id":"U26-02","title":"Usar Ubuntu 26 explícito sin cambiar contratos de workflow","status":"done","acceptance":"Exactamente tres runs-on usan ubuntu-26.04 y no quedan ubuntu-latest."},
+ {"id":"U26-03","title":"Validar CI, monitor, revisión y promoción","status":"in_progress","acceptance":"CI PR y dispatch monitor verdes, evidencia/review/changelog versionados y PR promovido."}
+]}
