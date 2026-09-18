@@ -1,0 +1,6 @@
+{"feature":"goodlife-workouts-empty-contract","issue":59,"status":"implemented_pending_pr_review","tasks":[
+ {"id":"WEC-01","title":"Modelar rutina activa como resultado opcional sólo en su frontera","status":"done","acceptance":"200 sin data llega al use case como éxito nullable."},
+ {"id":"WEC-02","title":"Mapear ausencia semántica a NoRoutine sin alterar fallos reales","status":"done","acceptance":"Success(null) se traduce a NoRoutine y NetworkError conserva su copy."},
+ {"id":"WEC-03","title":"Agregar regresiones de contrato y presentación","status":"done","acceptance":"Payload nulo/poblado, error server, cancelación y red quedan cubiertos."},
+ {"id":"WEC-04","title":"Ejecutar gates, revisión y smoke redacted","status":"in_progress","acceptance":"Gates locales y revisión independiente aprobados; CI y smoke post-merge siguen pendientes."}
+]}

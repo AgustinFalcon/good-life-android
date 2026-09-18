@@ -28,8 +28,8 @@ interface RoutineRepository {
     /**
      * Obtiene la rutina activa del usuario autenticado.
      *
-     * @return [Result.Success] con la [Routine] activa,
-     *         o [Result.Error] con [ApiException.NotFoundException] si no hay ninguna activa.
+     * @return [Result.Success] con la [Routine] activa o `null` cuando no existe una activa.
+     *         Los fallos de transporte y servidor se representan con [Result.Error].
      */
-    suspend fun getActiveRoutine(): Result<Routine>
+    suspend fun getActiveRoutine(): Result<Routine?>
 }

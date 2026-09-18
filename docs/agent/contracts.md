@@ -32,3 +32,7 @@ scope:
 - Owners manejan DI/side effects; screens son puros.
 - Textos via AppLanguage y fecha via DateProvider.
 - No exponer JWT/credenciales en logs; refresh 401 está implementado y requiere validación en dispositivo.
+
+## Rutina activa opcional
+
+GET /api/v1/routines/active puede responder exitosamente sin data cuando el usuario no tiene una rutina activa. Sólo esa frontera propaga Routine?; el caso de uso lo traduce a NoRoutine. No extender esta semántica a endpoints con payload obligatorio.

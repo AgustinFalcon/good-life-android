@@ -36,7 +36,7 @@ class GetActiveRoutineUseCase(
     suspend operator fun invoke(): GetActiveRoutineResult {
         return withContext(dispatcher.io) {
             when (val result = repository.getActiveRoutine()) {
-                is Result.Success -> GetActiveRoutineResult.Success(result.data)
+                is Result.Success -> result.data?.let(GetActiveRoutineResult::Success) ?: GetActiveRoutineResult.NotFound
                 is Result.Error -> when (val ex = result.exception) {
                     is ApiException.NotFoundException -> GetActiveRoutineResult.NotFound
                     is ApiException.ServerException -> GetActiveRoutineResult.ServerError(ex.message)
