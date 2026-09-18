@@ -2,6 +2,6 @@
 
 - Issue: #60
 - Branch: `fix/launcher-icon`
-- Status: pr_open_pending_ci_visual_and_review
+- Status: approved_pending_merge
 - Evidence: `4-implementation/evidence.md`
 - Sensitive-data policy: no device IDs, screenshots or user data are committed.
