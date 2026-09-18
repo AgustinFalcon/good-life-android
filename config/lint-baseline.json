@@ -325,8 +325,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "2a9eaa2844674401c20a9783c86c784330c0b8efb2c64505864383e07a41e461",
@@ -337,8 +337,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "44d0a4bbec15f65db70daf0cacc2cfd0cbbafdde71cebe84e34c44369a4e246e",
@@ -349,8 +349,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "4fb001c94ca8019cce4664f078c63c243e488cd4a59b3832a3c8bbf9f128461f",
@@ -361,8 +361,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "8645d68cd54a71690d4b2c67d3679a0eb181bdcd677130cdd65dffacd14a91ec",
@@ -373,8 +373,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "d1796d4556f36e7d0ee49cca7a1f671b40f049cc9ad0f8cc05855e29651b3c9b",
@@ -385,8 +385,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "d513c234d36a8747b1828adeedee5d4e746db668ed6450f8d156acdf37f56ff5",
@@ -397,8 +397,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "ed4b79c153422eabad005f6fa385e9229914904565e68304a87baea765dbcc77",
@@ -409,8 +409,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "efd85d1d6c64fa6fdfa504fe02e14194008b1baa106c8ff8bd5f01538bd51893",
@@ -421,8 +421,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "f1ecadf5a003efac6d8855605c3f12d0f883d3dfb16c2158df91f27bb3d96800",
@@ -433,8 +433,20 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
+        },
+        {
+          "fingerprint": "f2a9d8c03b976890b3aa64b58a44d10d9c278992871f003ac9be760d10daddbd",
+          "variant": "debug",
+          "ruleId": "GradleDependency",
+          "relativePath": "gradle/libs.versions.toml",
+          "message": "A newer version of org.jetbrains.kotlinx:kotlinx-serialization-json than 1.7.3 is available",
+          "classification": "split_upgrade",
+          "owner": "android-maintainers",
+          "justification": "External dependency advisory snapshot.",
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "f67a45b8bd8da3874f226b8ad0ceaec942345f338a6bdceb4948b52a56955760",
@@ -445,8 +457,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "fa017cae91d88d1fb897b92bed49c9da8014a4b0bcb74ae7f9dd2e33dba88c53",
@@ -457,8 +469,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         }
       ]
     },
@@ -473,8 +485,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "36623a83aeb80c25a353641ec848f5556a0fd60ab9e3194d5115d4872d7764e2",
@@ -485,8 +497,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "3f84fc2529fa010701a1429849de4873a1a35c8c02b81ed9146f6c1b38749eff",
@@ -497,8 +509,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "436ac2b0fe9763e2668ea844e134a9ad3c7e04e94d505e6c2d2f22ee508e1f97",
@@ -509,8 +521,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "4615533246986838ad11882ead8ec84b829e0e877af0513bee8769b268ee2e57",
@@ -521,8 +533,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "4ff2085d59d011ba03415164364308b71db446d74c1406e6d3c2f13e74b9c0ab",
@@ -533,8 +545,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "67c8b2a7bfa7d06effd5ab2bb0fda501ceda643a9340f0d42d95350b399f34ec",
@@ -545,8 +557,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "8328576c584728ae8a6e8fdde24b954ce0b5767575a131845db320313389aedb",
@@ -557,8 +569,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "9f2334af21a0082b593deebcfbb9d5489921c471d5afc75a161370a9e65acfc3",
@@ -569,8 +581,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "bd7e238779ac8ab7f2c30f58424cf49f0b433ffeda4bc10bdf1b3278db5e700f",
@@ -581,8 +593,20 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
+        },
+        {
+          "fingerprint": "cd2d9130771b993475429c78a2589a7ef37ee134d12f3599bb76f13654ab42d7",
+          "variant": "release",
+          "ruleId": "GradleDependency",
+          "relativePath": "gradle/libs.versions.toml",
+          "message": "A newer version of org.jetbrains.kotlinx:kotlinx-serialization-json than 1.7.3 is available",
+          "classification": "split_upgrade",
+          "owner": "android-maintainers",
+          "justification": "External dependency advisory snapshot.",
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "e79d0dd95c625533735ba526c869e9a3b13cbd9c2573393128b3fbfe6283ef0e",
@@ -593,8 +617,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         },
         {
           "fingerprint": "f684816023e5fcaaaf53247140fc0ef332724a063b660e0dd3a0f0d2d8a47148",
@@ -605,8 +629,8 @@
           "classification": "split_upgrade",
           "owner": "android-maintainers",
           "justification": "External dependency advisory snapshot.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
+          "linkedIssueOrPr": "#52",
+          "createdOn": "2026-09-17"
         }
       ]
     }

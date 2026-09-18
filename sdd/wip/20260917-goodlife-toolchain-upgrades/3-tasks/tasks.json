@@ -1,0 +1,9 @@
+{
+  "feature": "goodlife-toolchain-upgrades",
+  "status": "ready_for_execution",
+  "tasks": [
+    {"id":"TUP-01","title":"Registrar baseline, familias y matriz","status":"done","acceptance":"La decisión no cambia versiones y separa toolchain, Compose, AndroidX y terceros."},
+    {"id":"TUP-02","title":"Revisar la especificación antes de crear un PR de ejecución","status":"done","acceptance":"La revisión confirma ledger exhaustivo, subfamilias atómicas, bytecode 11, semántica del snapshot y gates ejecutables sin upgrade masivo."},
+    {"id":"TUP-03","title":"Crear issues/PRs de ejecución por familia aprobada","status":"todo","acceptance":"Cada ejecución aporta compatibilidad oficial, evidencia de gates y actualización del advisory snapshot."}
+  ]
+}
