@@ -51,4 +51,4 @@ El rollback sólo puede terminar como `withdrawn`, `restored_verified` o `blocke
 - Docs/agent y SSD quedan alineados.
 ## GitHub-hosted runner
 
-This candidate selects `ubuntu-26.04` explicitly for Android CI and the lint advisory monitor. It is not validated until both remote workflows pass and their run identifiers are recorded in the reviewed SDD. Do not treat a local Windows build as equivalent runner evidence.
+Android CI and the lint advisory monitor run explicitly on `ubuntu-26.04`. The configuration was validated by Android CI run `35309485642` and manual monitor run `35310137341`; their redacted evidence is in `sdd/wip/20260918-goodlife-ubuntu26-runner-assessment/`. Any future runner change must execute both workflows and record the result in a reviewed SDD. Do not treat a local Windows build as equivalent runner evidence.

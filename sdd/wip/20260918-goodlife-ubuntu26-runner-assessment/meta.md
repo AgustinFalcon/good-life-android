@@ -1,7 +1,7 @@
 # GoodLife Android — evaluación de runner Ubuntu 26
 
 - Feature id: `20260918-goodlife-ubuntu26-runner-assessment`.
-- Estado: `in_progress`.
+- Estado: `done`; pendiente únicamente de revisión y promoción del PR #58.
 - Issue: #56.
 - Rama: `chore/ubuntu-26-runner-assessment`.
 - Alcance: validar de forma anticipada los tres jobs GitHub-hosted que hoy usan `ubuntu-latest`; no cambia producto, Gradle, dependencias, permisos ni distribución.
