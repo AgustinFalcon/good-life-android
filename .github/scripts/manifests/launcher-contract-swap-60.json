@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 2,
+  "issue": "#60",
+  "scope": "launcher-contract-swap",
+  "resources": [
+    {
+      "symbol": "mipmap/ic_launcher",
+      "debugFingerprint": "20471ffb451b7e99c978de1e2674a9f8f75abb15e873d2e0a4f74f221cdf7be0",
+      "releaseFingerprint": "a5c5db167da99bb914491a8b3d62a5eb4fb29777f80402e7f0d951a1100ce5e6"
+    },
+    {
+      "symbol": "mipmap/ic_logo_install_round",
+      "debugFingerprint": "e4c8d64253171748d04dc73dcf70d36bcdbd4100476df430f1f15a2e8b5f8e66",
+      "releaseFingerprint": "551f262fe8266f902b0062d9be4400201c4bfb6fba1d06456372aee077abbaeb"
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+# Especificación técnica — GoodLife launcher icon
+
+El manifest conserva `android:icon="@mipmap/ic_logo_install"` y cambia `android:roundIcon` a `@mipmap/ic_logo_install_round`; el adaptive round incorpora su capa monochrome. La familia genérica `ic_launcher` queda huérfana y se elimina sólo después de búsqueda de referencias. El reductor fail-closed de issue #60 retira exactamente los dos símbolos resueltos de baseline y el inventario queda en cuatro recursos AndroidX de compatibilidad. Validación: tests Python de inventario/reductor, lint debug/release, ensamblados, inspección empaquetada del manifest y reinstalación limpia por caché del launcher. Rollback: revertir el commit.

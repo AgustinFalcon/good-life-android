@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed reducer for immutable #38 resource-remediation scopes."""
+"""Fail-closed reducer for immutable, issue-scoped resource-remediation scopes."""
 from __future__ import annotations
 
 import argparse
@@ -27,7 +27,7 @@ SCOPES = {
         "string/daily_item_type_workout", "string/login_register_button", "string/tab_title_daily",
         "string/tab_title_food", "string/tab_title_more", "string/tab_title_workout",
     }),
-
+    "launcher-contract-swap": frozenset({"mipmap/ic_launcher", "mipmap/ic_logo_install_round"}),
 }
 
 
@@ -66,11 +66,14 @@ def load_baseline(path: Path) -> dict:
 def load_manifest(path: Path) -> tuple[str, list[dict]]:
     value = load_json(path, "manifest")
     expected_fields = {"schemaVersion", "issue", "scope", "resources"}
-    if not isinstance(value, dict) or value.get("schemaVersion") != 2 or value.get("issue") != "#38" or set(value) != expected_fields:
+    if not isinstance(value, dict) or set(value) != expected_fields:
         fail("manifest schema is invalid")
     scope = value.get("scope")
     if not isinstance(scope, str) or scope not in SCOPES:
         fail(f"manifest scope must be one of: {', '.join(sorted(SCOPES))}")
+    expected_issue = "#60" if scope == "launcher-contract-swap" else "#38"
+    if value.get("schemaVersion") != 2 or value.get("issue") != expected_issue:
+        fail("manifest schema is invalid")
     resources = value.get("resources")
     if not isinstance(resources, list) or not resources:
         fail("manifest resources must be a non-empty list")
@@ -91,7 +94,7 @@ def load_manifest(path: Path) -> tuple[str, list[dict]]:
     expected_symbols = SCOPES[scope]
     if symbols != expected_symbols:
         missing, extra = sorted(expected_symbols - symbols), sorted(symbols - expected_symbols)
-        fail(f"#38 manifest symbols must match immutable {scope} scope; missing={missing}, extra={extra}")
+        fail(f"immutable {scope} scope symbols must match exactly; missing={missing}, extra={extra}")
     return scope, resources
 
 

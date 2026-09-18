@@ -68,6 +68,9 @@ jobs:
       - name: Test resource inventory checker
         run: python3 .github/tests/test_resource_inventory.py
 
+      - name: Test fail-closed baseline reducer
+        run: python3 .github/tests/test_remove_lint_baseline_entries.py
+
       - name: Verify exact lint debt inventory
         run: python3 .github/scripts/verify_lint_baseline.py --baseline config/lint-baseline.json --debug-report app/build/reports/lint-results-debug.xml --release-report app/build/reports/lint-results-release.xml --repo-root "$GITHUB_WORKSPACE" --advisory-delta-out build/lint-advisory-delta.json
 

@@ -27,6 +27,7 @@ REMAINING_STRING_TARGETS = (
     "string/daily_item_type_workout", "string/login_register_button", "string/tab_title_daily",
     "string/tab_title_food", "string/tab_title_more", "string/tab_title_workout",
 )
+LAUNCHER_SWAP_TARGETS = ("mipmap/ic_launcher", "mipmap/ic_logo_install_round",)
 KEEP_SYMBOL = "string/keep_me"
 
 
@@ -78,9 +79,9 @@ class RemoveBaselineEntriesTest(unittest.TestCase):
             "exceptions": [],
         }
 
-    def write_manifest(self, scope: str, targets: tuple[str, ...]) -> None:
+    def write_manifest(self, scope: str, targets: tuple[str, ...], issue: str = "#38") -> None:
         resources = [{"symbol": symbol, "debugFingerprint": fingerprint(index), "releaseFingerprint": fingerprint(index + 100)} for index, symbol in enumerate(targets, start=1)]
-        self.manifest.write_text(json.dumps({"schemaVersion": 2, "issue": "#38", "scope": scope, "resources": resources}, indent=2), encoding="utf-8")
+        self.manifest.write_text(json.dumps({"schemaVersion": 2, "issue": issue, "scope": scope, "resources": resources}, indent=2), encoding="utf-8")
 
     def read_baseline(self) -> dict:
         return json.loads(self.baseline.read_text(encoding="utf-8"))
@@ -189,6 +190,29 @@ class RemoveBaselineEntriesTest(unittest.TestCase):
         payload["resources"][0]["symbol"] = AUTH_TARGETS[0]
         self.write_manifest_payload(payload)
         self.assert_fails_closed("immutable remaining-strings scope")
+    def test_launcher_contract_swap_scope_is_immutable_and_removes_exact_targets(self):
+        self.original = self.payload_for(LAUNCHER_SWAP_TARGETS)
+        self.baseline.write_text(json.dumps(self.original, indent=2), encoding="utf-8")
+        self.write_manifest("launcher-contract-swap", LAUNCHER_SWAP_TARGETS, issue="#60")
+        result = self.run_reducer()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        updated = json.loads(self.output.read_text(encoding="utf-8"))
+        for variant in ("debug", "release"):
+            self.assertEqual(updated["variants"][variant]["warnings"], [self.original["variants"][variant]["warnings"][-1]])
+
+    def test_launcher_contract_swap_rejects_non_launcher_symbol(self):
+        self.original = self.payload_for(LAUNCHER_SWAP_TARGETS)
+        self.baseline.write_text(json.dumps(self.original, indent=2), encoding="utf-8")
+        self.write_manifest("launcher-contract-swap", LAUNCHER_SWAP_TARGETS, issue="#60")
+        payload = self.read_manifest()
+        payload["resources"][0]["symbol"] = LEGACY_TARGETS[0]
+        self.write_manifest_payload(payload)
+        self.assert_fails_closed("immutable launcher-contract-swap scope")
+    def test_launcher_contract_swap_requires_issue_60(self):
+        self.original = self.payload_for(LAUNCHER_SWAP_TARGETS)
+        self.baseline.write_text(json.dumps(self.original, indent=2), encoding="utf-8")
+        self.write_manifest("launcher-contract-swap", LAUNCHER_SWAP_TARGETS, issue="#38")
+        self.assert_fails_closed("manifest schema is invalid")
     def test_schema_one_manifest_fails_closed(self):
         payload = self.read_manifest()
         payload["schemaVersion"] = 1
