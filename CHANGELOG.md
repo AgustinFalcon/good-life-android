@@ -38,11 +38,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Se registró evidencia redactada del preflight físico del smoke autenticado; #5 permanece bloqueado hasta completar login, Daily reversible, restauración, refresh seguro y logout.
 - Se versionó el plan SDD de compatibilidad para los advisories de toolchain: ledger exhaustivo, subfamilias atómicas, matriz, gates y rollback, sin actualizar dependencias aún. ([#39](https://github.com/AgustinFalcon/good-life-android/issues/39))
 - Android revival SDD ownership now lives under `sdd/` with a versioned ledger; the external Desktop SDD is historical input and no longer a delivery source of truth.
-- The ledger separates master quality evidence from the newer values still under review in PR #4.
+- The ledger separates dated quality evidence from the current CI evidence; a closed PR is not treated as a baseline source.
 
 ### CI
 - El refresh de advisories lint externos importa de forma fail-closed evidencia CI remota, preserva la baseline determinista y exige trazabilidad de issue. ([#52](https://github.com/AgustinFalcon/good-life-android/issues/52))
 - `actions/upload-artifact` se actualizó al pin oficial v6 con runtime Node 24 en Android CI y el monitor lint, sin alterar evidencia ni permisos. ([#53](https://github.com/AgustinFalcon/good-life-android/issues/53))
+- Android CI y el monitor de advisories usan explícitamente `ubuntu-26.04`, validado por CI y monitor manual antes de la migración anunciada de `ubuntu-latest`; no cambia comandos, permisos ni distribución. ([#56](https://github.com/AgustinFalcon/good-life-android/issues/56))
 - Android CI ahora valida también ramas `release/**` con los mismos gates de cobertura, lint e ensamblado release no firmado. ([#49](https://github.com/AgustinFalcon/good-life-android/issues/49))
 - El reducer de baseline de #38 retira únicamente los 14 fingerprints autorizados de colores legacy y falla cerrado ante drift; el inventario queda en 28 símbolos por variante.
 

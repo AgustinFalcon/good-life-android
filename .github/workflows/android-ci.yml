@@ -13,7 +13,7 @@ permissions:
 jobs:
   logic-quality:
     name: Logic tests and 80% coverage
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
       - name: Checkout code
@@ -41,7 +41,7 @@ jobs:
         run: bash .github/scripts/verify-governance.sh
   release-static:
     name: Lint baseline and unsigned release build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
       - name: Checkout code

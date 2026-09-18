@@ -1,0 +1,7 @@
+# Especificación técnica — runner GitHub-hosted Ubuntu 26
+
+Los jobs `logic-quality` y `release-static` de `.github/workflows/android-ci.yml`, más `monitor` de `.github/workflows/lint-advisory-monitor.yml`, pasan de `ubuntu-latest` a `ubuntu-26.04`.
+
+La modificación es deliberadamente sólo de `runs-on`. Las Actions checkout/setup-java/upload-artifact siguen con sus SHAs oficiales; Java 17, Python 3, Gradle wrapper y Android SDK permanecen provistos por el runner GitHub-hosted. `ubuntu-26.04` está disponible y soportado por GitHub; la verificación remota es necesaria porque las herramientas preinstaladas pueden diferir.
+
+Validación: inspección estática de exactamente tres etiquetas explícitas y cero `ubuntu-latest`; Android CI en PR; dispatch del monitor desde esta rama. Rollback: revertir el commit completo para restaurar las tres etiquetas `ubuntu-latest`; crear PR de reversión, ejecutar Android CI y despachar el monitor sobre esa reversión. El rollback sólo se considera exitoso si ambos workflows terminan verdes y sus run identifiers quedan registrados. Si Ubuntu 26 falla, no se oculta el fallo ni se cambia Gradle: el issue decide por separado un pin temporal soportado. La evidencia se redacta sin variables de entorno, rutas locales, artefactos ni datos de usuario.
