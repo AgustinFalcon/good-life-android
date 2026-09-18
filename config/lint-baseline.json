@@ -67,18 +67,6 @@
           "createdOn": "2026-09-15"
         },
         {
-          "fingerprint": "20471ffb451b7e99c978de1e2674a9f8f75abb15e873d2e0a4f74f221cdf7be0",
-          "variant": "debug",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/mipmap-hdpi/ic_launcher.webp",
-          "message": "The resource `R.mipmap.ic_launcher` appears to be unused",
-          "classification": "retain_launcher",
-          "owner": "android-maintainers",
-          "justification": "Manifest/qualifier launcher family retained; removal requires dedicated install/upgrade/launcher smoke.",
-          "linkedIssueOrPr": "#38",
-          "createdOn": "2026-09-15"
-        },
-        {
           "fingerprint": "22f496daa3fe3328ff8ff7c48211a76c9ed47d0df3dac2a954fed649d8456c26",
           "variant": "debug",
           "ruleId": "ModifierParameter",
@@ -149,18 +137,6 @@
           "justification": "Pre-existing deterministic lint debt measured for issue #10.",
           "linkedIssueOrPr": "#10",
           "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "e4c8d64253171748d04dc73dcf70d36bcdbd4100476df430f1f15a2e8b5f8e66",
-          "variant": "debug",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/mipmap-hdpi/ic_logo_install_round.webp",
-          "message": "The resource `R.mipmap.ic_logo_install_round` appears to be unused",
-          "classification": "retain_launcher",
-          "owner": "android-maintainers",
-          "justification": "Manifest/qualifier launcher family retained; removal requires dedicated install/upgrade/launcher smoke.",
-          "linkedIssueOrPr": "#38",
-          "createdOn": "2026-09-15"
         }
       ]
     },
@@ -179,18 +155,6 @@
           "createdOn": "2026-09-15"
         },
         {
-          "fingerprint": "551f262fe8266f902b0062d9be4400201c4bfb6fba1d06456372aee077abbaeb",
-          "variant": "release",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/mipmap-hdpi/ic_logo_install_round.webp",
-          "message": "The resource `R.mipmap.ic_logo_install_round` appears to be unused",
-          "classification": "retain_launcher",
-          "owner": "android-maintainers",
-          "justification": "Manifest/qualifier launcher family retained; removal requires dedicated install/upgrade/launcher smoke.",
-          "linkedIssueOrPr": "#38",
-          "createdOn": "2026-09-15"
-        },
-        {
           "fingerprint": "81e8f0c39ef37583dd6d737555503e19f919892bc6360a726f2f4f9c16482254",
           "variant": "release",
           "ruleId": "IconLocation",
@@ -200,18 +164,6 @@
           "owner": "android-maintainers",
           "justification": "Pre-existing deterministic lint debt measured for issue #10.",
           "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "a5c5db167da99bb914491a8b3d62a5eb4fb29777f80402e7f0d951a1100ce5e6",
-          "variant": "release",
-          "ruleId": "UnusedResources",
-          "relativePath": "app/src/main/res/mipmap-hdpi/ic_launcher.webp",
-          "message": "The resource `R.mipmap.ic_launcher` appears to be unused",
-          "classification": "retain_launcher",
-          "owner": "android-maintainers",
-          "justification": "Manifest/qualifier launcher family retained; removal requires dedicated install/upgrade/launcher smoke.",
-          "linkedIssueOrPr": "#38",
           "createdOn": "2026-09-15"
         },
         {
