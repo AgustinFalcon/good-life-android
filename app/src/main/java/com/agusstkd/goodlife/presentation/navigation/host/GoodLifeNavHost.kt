@@ -108,7 +108,7 @@ private fun handleNavigationAction(
             is NavigationAction.PopBackTo<*> -> navController.popBackStack(action.route, action.inclusive)
         }
     } catch (_: IllegalArgumentException) {
-        // Keep navigation failures non-sensitive; malformed typed routes remain a programming error in debug.
+        // Do not log the exception or route: navigation failures must not expose session details.
         Log.w(NAVIGATION_TAG, "Navigation action rejected.")
     }
 }
