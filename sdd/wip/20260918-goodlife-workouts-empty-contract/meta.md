@@ -1,7 +1,8 @@
 # Metadata — Workouts empty active-routine contract
 
-- Issue: #59
-- Branch: `fix/workouts-empty-state`
-- Status: pr_open_pending_ci_and_smoke
+- Implementation: #59 / PR #61
+- Closeout evidence: #63
+- Branch: `chore/workouts-sdd-postmerge-evidence`
+- Status: closed_post_merge_evidence
 - Evidence: `4-implementation/evidence.md`
 - Sensitive-data policy: credentials, tokens, messages and routine data are excluded.
