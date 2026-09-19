@@ -15,3 +15,8 @@ Make cancellation and app-level navigation deterministic without changing produc
 
 - No backend, route, deep-link, UI-copy, signing, distribution or token-storage migration.
 - No claim of a signed release or authenticated release smoke.
+
+## Delivery
+
+- PR #70 was merged into `master` after two independent approvals and final CI validation.
+- This SDD is closed for the bounded source hardening; it does not create or certify a distributable release.
