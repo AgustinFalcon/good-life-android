@@ -1,7 +1,7 @@
 {
   "feature": "goodlife-cancellation-navigation-hardening",
   "issue": 69,
-  "status": "implementation_ready_for_pr",
+  "status": "closed",
   "tasks": [
     {
       "id": "CNH-01",
