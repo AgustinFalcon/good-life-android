@@ -10,6 +10,7 @@ import com.agusstkd.goodlife.data.remote.dto.response.daily.toDomain
 import com.agusstkd.goodlife.domain.model.daily.DailyLog
 import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 import com.agusstkd.goodlife.domain.repository.DailyRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.datetime.LocalDate
 
 /**
@@ -77,6 +78,8 @@ class DailyRepositoryImpl(
             val logEntity = dailyLog.toEntity()
             val itemEntities = dailyLog.items.map { it.toItemEntity(dailyLog.id) }
             dailyDao.saveDailyLog(logEntity, itemEntities)
+        } catch (e: CancellationException) {
+            throw e
         } catch (_: Exception) {
             // Cache failure is non-critical; backend data already returned
         }

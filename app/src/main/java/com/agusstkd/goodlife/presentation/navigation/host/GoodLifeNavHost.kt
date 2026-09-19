@@ -1,5 +1,7 @@
 package com.agusstkd.goodlife.presentation.navigation.host
 
+import android.util.Log
+
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -18,7 +20,7 @@ private const val ANIMATION_DURATION = 300
 /**
  * NavHost inteligente que observa eventos de navegación reactivos.
  *
- * Escucha el [ComposeNavigationController.navigationAction] SharedFlow
+ * Escucha el [ComposeNavigationController.navigationAction] Flow one-shot
  * usando collect directo (sin repeatOnLifecycle) porque:
  *
  * 1. Los eventos de navegación son **one-shot**: no es estado que se puede perder.
@@ -87,6 +89,8 @@ fun GoodLifeNavHost(
     )
 }
 
+private const val NAVIGATION_TAG = "GoodLifeNavigation"
+
 /**
  * Procesa una acción de navegación y la ejecuta en el NavController.
  *
@@ -99,17 +103,12 @@ private fun handleNavigationAction(
 ) {
     try {
         when (action) {
-            is NavigationAction.NavigateTo<*> -> {
-                navController.navigate(action.route, action.navOptions)
-            }
-            is NavigationAction.NavigateUp -> {
-                navController.navigateUp()
-            }
-            is NavigationAction.PopBackTo<*> -> {
-                navController.popBackStack(action.route, action.inclusive)
-            }
+            is NavigationAction.NavigateTo<*> -> navController.navigate(action.route, action.navOptions)
+            is NavigationAction.NavigateUp -> navController.navigateUp()
+            is NavigationAction.PopBackTo<*> -> navController.popBackStack(action.route, action.inclusive)
         }
-    } catch (e: Exception) {
-        e.printStackTrace()
+    } catch (_: IllegalArgumentException) {
+        // Keep navigation failures non-sensitive; malformed typed routes remain a programming error in debug.
+        Log.w(NAVIGATION_TAG, "Navigation action rejected.")
     }
 }

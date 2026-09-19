@@ -1,54 +1,39 @@
 package com.agusstkd.goodlife.presentation.navigation.core
 
 import androidx.navigation.NavOptions
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.receiveAsFlow
 
 /**
- * Implementación de [ComposeNavigationController] basada en SharedFlow.
+ * One-shot [ComposeNavigationController] backed by a bounded channel.
  *
- * Emite eventos de navegación que son observados por [GoodLifeNavHost].
- * Es thread-safe y puede ser llamada desde cualquier contexto.
- *
- * ## replay = 1
- * Necesario para evitar la race condition inicial en el Splash:
- * el SplashViewModel emite la navegación antes de que el GoodLifeNavHost
- * empiece a colectar. Con replay=1, el último evento queda guardado y
- * se entrega en cuanto el NavHost se suscribe.
- *
- * Seguro porque el [LaunchedEffect] del NavHost usa el navigationController
- * (singleton) como key y nunca se reinicia, por lo que el replay no puede
- * causar navegaciones duplicadas.
+ * The buffer preserves the Splash handoff when it happens before the root host
+ * starts collecting. Once delivered, an action is consumed and cannot replay to
+ * a recreated host. Dispatch is synchronous and has no unmanaged coroutine
+ * lifetime.
  */
-class ComposeNavigationControllerImpl(
-    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO + NonCancellable)
-) : ComposeNavigationController {
+class ComposeNavigationControllerImpl : ComposeNavigationController {
 
-    private val _navigationAction = MutableSharedFlow<NavigationAction>(replay = 1)
+    private val navigationActions = Channel<NavigationAction>(Channel.BUFFERED)
 
-    override val navigationAction: SharedFlow<NavigationAction>
-        get() = _navigationAction.asSharedFlow()
+    override val navigationAction: Flow<NavigationAction> = navigationActions.receiveAsFlow()
 
     override fun <T : Any> navigateTo(route: T, navOptions: NavOptions) {
-        coroutineScope.launch {
-            _navigationAction.emit(NavigationAction.NavigateTo(route, navOptions))
-        }
+        dispatch(NavigationAction.NavigateTo(route, navOptions))
     }
 
     override fun navigateUp() {
-        coroutineScope.launch {
-            _navigationAction.emit(NavigationAction.NavigateUp)
-        }
+        dispatch(NavigationAction.NavigateUp)
     }
 
     override fun <T : Any> popBackTo(route: T, inclusive: Boolean) {
-        coroutineScope.launch {
-            _navigationAction.emit(NavigationAction.PopBackTo(route, inclusive))
+        dispatch(NavigationAction.PopBackTo(route, inclusive))
+    }
+
+    private fun dispatch(action: NavigationAction) {
+        check(navigationActions.trySend(action).isSuccess) {
+            "Navigation action could not be dispatched."
         }
     }
 }

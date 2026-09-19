@@ -1,15 +1,15 @@
 package com.agusstkd.goodlife.presentation.navigation.core
 
 import androidx.navigation.NavOptions
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Abstracción del sistema de navegación de Compose.
  *
  * Desacopla los ViewModels del NavController, permitiendo:
- * - Testing sin dependencias de Android
- * - Navegación reactiva mediante SharedFlow
- * - Preparación para Kotlin Multiplatform
+ * - Testing sin dependencias de Android.
+ * - Navegación reactiva mediante un stream one-shot.
+ * - Preparación para Kotlin Multiplatform.
  *
  * Los ViewModels inyectan esta interface y llaman sus métodos.
  * [GoodLifeNavHost] observa [navigationAction] y ejecuta la navegación real.
@@ -20,36 +20,23 @@ import kotlinx.coroutines.flow.SharedFlow
 interface ComposeNavigationController {
 
     /**
-     * Flow de acciones de navegación.
+     * Stream de acciones de navegación consumibles una sola vez.
      *
-     * GoodLifeNavHost observa este flow y ejecuta las navegaciones.
-     * Es SharedFlow (no StateFlow) para evitar reemitir eventos al rotar.
+     * GoodLifeNavHost observa este stream y ejecuta las navegaciones. No es
+     * StateFlow ni replayed SharedFlow: una acción consumida no se repite ante
+     * una recreación del host.
      */
-    val navigationAction: SharedFlow<NavigationAction>
+    val navigationAction: Flow<NavigationAction>
 
-    /**
-     * Navega a una ruta type-safe.
-     *
-     * @param T Tipo de la ruta (@Serializable).
-     * @param route Ruta destino.
-     * @param navOptions Opciones de navegación.
-     */
+    /** Navigates to a type-safe route. */
     fun <T : Any> navigateTo(
         route: T,
         navOptions: NavOptions = NavOptions.Builder().build()
     )
 
-    /**
-     * Navega hacia atrás en el stack.
-     */
+    /** Navigates up in the back stack. */
     fun navigateUp()
 
-    /**
-     * Hace pop del stack hasta una ruta específica.
-     *
-     * @param T Tipo de la ruta (@Serializable).
-     * @param route Ruta hasta donde hacer pop.
-     * @param inclusive Si es true, también remueve la ruta destino.
-     */
+    /** Pops the stack back to a typed route. */
     fun <T : Any> popBackTo(route: T, inclusive: Boolean = false)
 }

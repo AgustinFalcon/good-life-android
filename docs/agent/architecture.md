@@ -30,11 +30,13 @@ scope:
 
 ```text
 Compose Owner -> ViewModel -> use case -> repository -> Retrofit/Room
-navigation SharedFlow -> GoodLifeNavHost -> type-safe route
+navigation buffered Channel/Flow -> GoodLifeNavHost -> type-safe route
 network success -> cache; offline read -> Room
 ```
 
 Koin modules registran APIs, datasources, repositories, use cases y ViewModels. Solo ScreenOwner obtiene ViewModel.
+
+AppRoute navigation uses a bounded Channel exposed as a one-shot Flow: it bridges Splash-before-host without replaying an already consumed action after host recreation. The controller owns no unmanaged coroutine scope; TabRoute effects remain local rendezvous events.
 
 ## Tab details
 

@@ -6,6 +6,7 @@ import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.data.remote.api.executeApiCall
 import com.agusstkd.goodlife.data.remote.api.media.MediaApiService
 import com.agusstkd.goodlife.domain.repository.MediaRepository
+import kotlinx.coroutines.CancellationException
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -31,6 +32,8 @@ class MediaRepositoryImpl(
                 is Result.Success -> Result.Success(result.data.url)
                 is Result.Error -> result
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Result.Error(e)
         }

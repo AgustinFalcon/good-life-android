@@ -1,0 +1,31 @@
+{
+  "feature": "goodlife-cancellation-navigation-hardening",
+  "issue": 69,
+  "status": "implementation_ready_for_pr",
+  "tasks": [
+    {
+      "id": "CNH-01",
+      "title": "Preservar cancelación estructurada en wrappers y repositorios",
+      "status": "done",
+      "acceptance": "CancellationException se relanza en las fronteras definidas; los errores ordinarios conservan su mapeo."
+    },
+    {
+      "id": "CNH-02",
+      "title": "Reemplazar replay/scope global por navegación one-shot acotada",
+      "status": "done",
+      "acceptance": "El handoff Splash previo al collector llega una vez y una acción consumida no se reproduce tras recreación."
+    },
+    {
+      "id": "CNH-03",
+      "title": "Eliminar impresión cruda de excepción de navegación",
+      "status": "done",
+      "acceptance": "No queda printStackTrace en el host; el manejo esperado no expone datos sensibles."
+    },
+    {
+      "id": "CNH-04",
+      "title": "Agregar regresiones y actualizar documentación",
+      "status": "implementation_ready_for_pr",
+      "acceptance": "Tests enfocados, gate de cobertura, guardrails, docs/agent, changelog y evidencia están actualizados."
+    }
+  ]
+}
