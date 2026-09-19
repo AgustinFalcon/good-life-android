@@ -37,4 +37,12 @@ class ApiExtTest {
             // expected
         }
     }
+    @Test fun `standard call rethrows cancellation`() = runTest {
+        try {
+            executeApiCall<Any> { throw CancellationException("cancel") }
+            fail("CancellationException must propagate")
+        } catch (_: CancellationException) {
+            // expected
+        }
+    }
 }

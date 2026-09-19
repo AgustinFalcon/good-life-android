@@ -36,6 +36,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - La cache Daily se limpia al cerrar sesión, evitando exposición offline entre cuentas del mismo dispositivo.
 - Login conserva usuario y contraseña ante un error remoto y muestra el mensaje general, en lugar de marcar ambos campos como inválidos.
 - Workouts y Workout Detail convierten errores de servidor en copy localizado y no exponen el detalle remoto.
+- La cancelación estructurada ya no se convierte en errores de red/dominio, y la navegación global usa eventos one-shot acotados, lifecycle-aware y sin replay al recrear el host. ([#69](https://github.com/AgustinFalcon/good-life-android/issues/69))
 
 ### Documentation
 - Se registró evidencia redactada del preflight físico del smoke autenticado; #5 permanece bloqueado hasta completar login, Daily reversible, restauración, refresh seguro y logout.

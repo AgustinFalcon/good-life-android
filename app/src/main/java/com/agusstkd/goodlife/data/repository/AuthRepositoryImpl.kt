@@ -12,6 +12,9 @@ import com.agusstkd.goodlife.domain.exception.NoSessionException
 import com.agusstkd.goodlife.domain.model.auth.User
 import com.agusstkd.goodlife.domain.repository.AuthRepository
 import com.agusstkd.goodlife.domain.storage.SecureCredentialsStorage
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 
 /**
  * Implementación del repositorio de autenticación.
@@ -65,12 +68,11 @@ class AuthRepositoryImpl(
             val remoteResult = remoteDataSource.logout()
             clearLocalSession()
             remoteResult
+        } catch (e: CancellationException) {
+            clearLocalSessionBestEffort()
+            throw e
         } catch (e: Exception) {
-            try {
-                clearLocalSession()
-            } catch (_: Exception) {
-                // Preserve the original failure; the next launch will not consider the session valid.
-            }
+            clearLocalSessionBestEffort()
             Result.Error(Exception("Error al cerrar sesión", e))
         }
     }
@@ -93,5 +95,14 @@ class AuthRepositoryImpl(
         secureCredentialsStorage.clearCredentials()
         dailyDao.clearCache()
         userDao.deleteUser()
+    }
+
+    /** Clears locally persisted session data even when the caller cancels an explicit logout. */
+    private suspend fun clearLocalSessionBestEffort() = withContext(NonCancellable) {
+        try {
+            clearLocalSession()
+        } catch (_: Exception) {
+            // Preserve the original logout failure or cancellation; never mask it with cleanup.
+        }
     }
 }

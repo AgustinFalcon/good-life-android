@@ -87,6 +87,8 @@ public suspend fun <T> executeApiCall(
     return try {
         val response = call()
         processResponse(response)
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         // Error de red, timeout, etc.
         Result.Error(

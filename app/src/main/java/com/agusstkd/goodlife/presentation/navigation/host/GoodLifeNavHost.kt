@@ -1,5 +1,7 @@
 package com.agusstkd.goodlife.presentation.navigation.host
 
+import android.util.Log
+
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -7,7 +9,11 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavGraphBuilder
+import kotlinx.coroutines.flow.Flow
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
@@ -18,20 +24,13 @@ private const val ANIMATION_DURATION = 300
 /**
  * NavHost inteligente que observa eventos de navegación reactivos.
  *
- * Escucha el [ComposeNavigationController.navigationAction] SharedFlow
- * usando collect directo (sin repeatOnLifecycle) porque:
+ * Escucha el [ComposeNavigationController.navigationAction] Flow one-shot
+ * mientras el lifecycle del host está en [Lifecycle.State.STARTED].
  *
- * 1. Los eventos de navegación son **one-shot**: no es estado que se puede perder.
- *    Si la app va al fondo y llega un SessionExpired, queremos procesarlo.
- * 2. El LaunchedEffect ya está atado al lifecycle de la composición:
- *    se cancela si y solo si el NavHost sale del árbol de composición
- *    (que en este caso es nunca, porque es el root).
- * 3. Evita la race condition inicial con el Splash:
- *    el collect empieza en el primer frame, sin esperar a STARTED.
- *
- * Nota: [repeatOnLifecycle(STARTED)] es correcto para **estado** (UiState).
- * Para **eventos one-shot** de navegación, el collect directo es la práctica estándar.
- *
+ * El [LaunchedEffect] ata el trabajo a la composición y [repeatOnLifecycle]
+ * evita mutar el [NavHostController] cuando la Activity está detenida. El
+ * controller conserva acciones one-shot en su buffer durante STOPPED; al volver
+ * a STARTED se consumen una vez, sin replay después de la entrega.
  * Incluye animaciones de transición preconfiguradas (slide + fade).
  *
  * @param navController Controlador de navegación de Compose.
@@ -46,8 +45,13 @@ fun GoodLifeNavHost(
     startDestination: Any,
     graphBuilder: NavGraphBuilder.() -> Unit
 ) {
-    LaunchedEffect(navigationController) {
-        navigationController.navigationAction.collect { action ->
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(navigationController, lifecycleOwner) {
+        collectNavigationActionsWhenStarted(
+            lifecycle = lifecycleOwner.lifecycle,
+            navigationActions = navigationController.navigationAction
+        ) { action ->
             handleNavigationAction(navController, action)
         }
     }
@@ -87,6 +91,19 @@ fun GoodLifeNavHost(
     )
 }
 
+/** Collects one-shot navigation only while the host is visible to the user. */
+internal suspend fun collectNavigationActionsWhenStarted(
+    lifecycle: Lifecycle,
+    navigationActions: Flow<NavigationAction>,
+    onAction: (NavigationAction) -> Unit
+) {
+    lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        navigationActions.collect(onAction)
+    }
+}
+
+private const val NAVIGATION_TAG = "GoodLifeNavigation"
+
 /**
  * Procesa una acción de navegación y la ejecuta en el NavController.
  *
@@ -99,17 +116,12 @@ private fun handleNavigationAction(
 ) {
     try {
         when (action) {
-            is NavigationAction.NavigateTo<*> -> {
-                navController.navigate(action.route, action.navOptions)
-            }
-            is NavigationAction.NavigateUp -> {
-                navController.navigateUp()
-            }
-            is NavigationAction.PopBackTo<*> -> {
-                navController.popBackStack(action.route, action.inclusive)
-            }
+            is NavigationAction.NavigateTo<*> -> navController.navigate(action.route, action.navOptions)
+            is NavigationAction.NavigateUp -> navController.navigateUp()
+            is NavigationAction.PopBackTo<*> -> navController.popBackStack(action.route, action.inclusive)
         }
-    } catch (e: Exception) {
-        e.printStackTrace()
+    } catch (_: IllegalArgumentException) {
+        // Do not log the exception or route: navigation failures must not expose session details.
+        Log.w(NAVIGATION_TAG, "Navigation action rejected.")
     }
 }

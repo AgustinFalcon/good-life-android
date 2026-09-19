@@ -15,6 +15,9 @@ update_when: "Aparezca una discrepancia o riesgo real."
 - La cobertura no debe inflarse excluyendo ViewModels o casos de uso: las exclusiones se limitan a UI Compose y superficies framework-bound documentadas en Gradle/runbook.
 - Preservar cambios locales; no registrar credenciales, artefactos del SDK ni reportes con datos de usuario.
 - Una carga cancelable no demuestra que el guard contra respuestas tardías funcione: para Daily/Meals usar una fuente no cancelable y observar emisiones de estado.
+- `CancellationException` no es un error de dominio: todo wrapper suspendido debe relanzarla antes de mapear fallos ordinarios. El cleanup local de logout es la única sección permitida en `NonCancellable`, y debe relanzar la cancelación original.
+- Incluso los eventos one-shot de navegación deben respetar el lifecycle visible: GoodLifeNavHost recolecta en `STARTED` mediante `repeatOnLifecycle`; el Channel conserva la acción hasta el retorno, sin mutar NavController en background.
+- `EncryptedSharedPreferences` está deprecado en AndroidX. No reemplazarlo por preferencias planas como “fix”; una migración debe diseñar almacenamiento/rotación con Keystore, compatibilidad de sesión y rollback antes de cambiar tokens.
 - No permitir login manual y biométrico en paralelo: el repositorio puede persistir tokens antes de que un ViewModel descarte una respuesta tardía.
 - `sdd/PROJECT.md` y los artefactos SDD versionados son la fuente canónica que viaja por PR. `docs/agent/` complementa la operación; no sustituye el contrato SDD.
 

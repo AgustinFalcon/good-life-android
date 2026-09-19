@@ -1,5 +1,7 @@
 package com.agusstkd.goodlife.core.result
 
+import kotlinx.coroutines.CancellationException
+
 /**
  * Wrapper genérico para operaciones que pueden fallar.
  *
@@ -109,6 +111,8 @@ inline fun <T> resultOf(block: () -> T): Result<T> = try {
  */
 suspend inline fun <T> suspendResultOf(crossinline block: suspend () -> T): Result<T> = try {
     Result.Success(block())
+} catch (e: CancellationException) {
+    throw e
 } catch (e: Exception) {
     Result.Error(e)
 }
