@@ -10,7 +10,7 @@ The feature contains meta, functional/technical specifications, independently ve
 
 - Structured cancellation is a correctness requirement: it must not become a user-facing error.
 - Logout is the sole exception where minimal local cleanup intentionally survives caller cancellation; the cancellation still propagates.
-- Channel delivery removes both unmanaged lifetime and replay-after-consumption while preserving the initial Splash handoff.
+- Channel delivery removes both unmanaged lifetime and replay-after-consumption while preserving the initial Splash handoff; collection is lifecycle-aware at STARTED.
 
 ### Contract and security
 

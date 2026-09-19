@@ -13,7 +13,7 @@
       "id": "CNH-02",
       "title": "Reemplazar replay/scope global por navegación one-shot acotada",
       "status": "done",
-      "acceptance": "El handoff Splash previo al collector llega una vez y una acción consumida no se reproduce tras recreación."
+      "acceptance": "El handoff Splash previo al collector llega una vez, una acción emitida en STOPPED espera hasta STARTED y una acción consumida no se reproduce tras recreación."
     },
     {
       "id": "CNH-03",
@@ -24,8 +24,8 @@
     {
       "id": "CNH-04",
       "title": "Agregar regresiones y actualizar documentación",
-      "status": "implementation_ready_for_pr",
-      "acceptance": "Tests enfocados, gate de cobertura, guardrails, docs/agent, changelog y evidencia están actualizados."
+      "status": "done",
+      "acceptance": "Tests enfocados para wrappers reutilizables y navegación lifecycle-aware, gate de cobertura, guardrails, docs/agent, changelog y evidencia están actualizados."
     }
   ]
 }

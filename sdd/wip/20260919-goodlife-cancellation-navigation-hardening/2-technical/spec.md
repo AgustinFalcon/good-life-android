@@ -21,7 +21,7 @@ Replace replayed `SharedFlow` plus ad-hoc scope with `Channel<NavigationAction>(
 - A buffered action bridges the Splash-before-host race.
 - Delivery consumes an action; it is not replayed to a later host collector.
 - Synchronous controller methods use `trySend`; a rejected dispatch is fail-fast rather than silently dropped.
-- There is one root collector by design. Tab-local effects remain unchanged.
+- There is one root collector by design, active only through `repeatOnLifecycle(STARTED)`; an action emitted during STOPPED stays buffered until the host returns. Tab-local effects remain unchanged.
 
 ### T3 — no raw exception print
 
@@ -41,7 +41,8 @@ Narrow navigation handling to expected invalid-navigation failures and emit only
 
 ## Verification
 
-- Focused unit tests for all specified cancellation and navigation cases.
+- Focused unit tests for reusable cancellation wrappers and lifecycle-aware one-shot navigation cases.
+- Concrete repository catches stay source-compatible and compile through the full logic gate. They do not gain artificial test seams in this bounded fix; introducing ports solely for direct mocks is a separate architectural change.
 - `:app:logicDebugUnitTestCoverageVerification`.
 - Existing resource/baseline guardrails.
 - `git diff --check` and SDD JSON parse.
