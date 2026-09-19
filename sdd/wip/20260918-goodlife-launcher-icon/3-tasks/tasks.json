@@ -1,6 +1,6 @@
-{"feature":"goodlife-launcher-icon","issue":60,"status":"approved_pending_merge","tasks":[
+{"feature":"goodlife-launcher-icon","issue":60,"closeout_issue":65,"status":"closed_post_merge_evidence","tasks":[
  {"id":"LIC-01","title":"Apuntar roundIcon al asset GoodLife existente","status":"done","acceptance":"Manifest no referencia ic_launcher_round genérico."},
  {"id":"LIC-04","title":"Cerrar la familia genérica y baseline asociada","status":"done","acceptance":"ic_launcher se elimina y el reductor fail-closed retira sólo sus dos símbolos autorizados."},
  {"id":"LIC-02","title":"Validar empaquetado y launcher","status":"done","acceptance":"Build, empaquetado, inventory y guardrails locales verifican la familia GoodLife; CI actualizado pasó y la G fue confirmada visualmente en Pixel Launcher."},
- {"id":"LIC-03","title":"Revisión y evidencia redacted","status":"done","acceptance":"Revisión independiente aprobada, CI actualizado verde y confirmación visual redacted registrados; sólo resta mergear el PR."}
+ {"id":"LIC-03","title":"Revisión y evidencia redacted","status":"done","acceptance":"Revisión independiente aprobada, CI actualizado verde y confirmación visual redacted registrados; el PR #62 está mergeado en master."}
 ]}
