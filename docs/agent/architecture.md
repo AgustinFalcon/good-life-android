@@ -48,7 +48,7 @@ AppRoute navigation uses a bounded Channel exposed as a one-shot Flow: it bridge
 
 `TabRoute.WorkoutDetail` carries only `workoutId`. Its Owner resolves the current active routine through the existing use case, so it has no duplicate API contract, repository mutation or deep-link dependency. The ViewModel exposes loading, content, missing and error states; composables remain pure.
 
-User intents for this screen are the closed type `WorkoutDetailUiAction`: `OnRetry` and `OnFinishWorkout`. Back stays as Owner `onNavigateUp`. Finish is not wired yet: Screen still has no `onAction`, and the ViewModel still loads via `retry()` instead of `onAction`.
+User intents are `WorkoutDetailUiAction`: `OnRetry` and `OnFinishWorkout`. The Content screen emits finish through `onAction`; the ViewModel method is still empty. Back remains Owner `onNavigateUp` (tab-graph chrome). A successful finish will later pop via a tab-local navigation effect, not via `NavController` in the ViewModel.
 
 ## SDD ownership
 

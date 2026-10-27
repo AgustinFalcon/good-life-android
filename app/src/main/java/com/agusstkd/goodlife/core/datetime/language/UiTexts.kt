@@ -393,7 +393,7 @@ data class CreateMealPlanTexts(
 )
 
 /**
- * Textos del tab Workouts y su detalle de solo lectura.
+ * Textos del tab Workouts y su detalle.
  */
 data class WorkoutTexts(
     val noRoutineTitle: String,
@@ -413,6 +413,7 @@ data class WorkoutTexts(
     val repsFormat: String,
     val repsAndWeightFormat: String,
     val workoutNotFound: String,
+    val finishWorkout: String,
 )
 /**
  * Textos para el wizard de creación de Rutina (SPEC-011).

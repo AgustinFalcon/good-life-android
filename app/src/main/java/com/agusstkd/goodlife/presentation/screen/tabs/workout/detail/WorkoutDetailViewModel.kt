@@ -7,6 +7,7 @@ import com.agusstkd.goodlife.core.extensions.formatArgs
 import com.agusstkd.goodlife.domain.model.training.Workout
 import com.agusstkd.goodlife.domain.usecase.routine.GetActiveRoutineUseCase
 import com.agusstkd.goodlife.domain.usecase.routine.result.GetActiveRoutineResult
+import com.agusstkd.goodlife.presentation.screen.tabs.workout.detail.model.WorkoutDetailUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.detail.model.WorkoutDetailUiState
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.detail.model.WorkoutExerciseUiModel
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.detail.model.WorkoutSetUiModel
@@ -28,8 +29,18 @@ class WorkoutDetailViewModel(
     val uiState: StateFlow<WorkoutDetailUiState> = _uiState.asStateFlow()
     val texts get() = language.workoutTexts
 
-    init { load() }
+    init {
+        load()
+    }
+
     fun retry() = load()
+
+    fun onAction(action: WorkoutDetailUiAction) {
+        when (action) {
+            WorkoutDetailUiAction.OnFinishWorkout -> finishWorkout()
+            WorkoutDetailUiAction.OnRetry -> retry()
+        }
+    }
 
     private fun load() {
         val request = ++latestRequest
@@ -39,6 +50,7 @@ class WorkoutDetailViewModel(
             val state = when (val result = getActiveRoutineUseCase()) {
                 is GetActiveRoutineResult.Success -> result.routine.workouts.firstOrNull { it.id == workoutId }
                     ?.let(::content) ?: WorkoutDetailUiState.NotFound
+
                 GetActiveRoutineResult.NotFound -> WorkoutDetailUiState.NotFound
                 is GetActiveRoutineResult.ServerError -> WorkoutDetailUiState.Error(language.errorTexts.dataLoadError)
                 GetActiveRoutineResult.NetworkError -> WorkoutDetailUiState.Error(language.errorTexts.connectionError)
@@ -47,22 +59,32 @@ class WorkoutDetailViewModel(
         }
     }
 
-    private fun content(workout: Workout): WorkoutDetailUiState.Content = WorkoutDetailUiState.Content(
-        workoutName = workout.name,
-        dayLabel = workout.dayOfWeek?.let { texts.dayFormat.formatArgs(it) },
-        exercises = workout.exercises.sortedBy { it.orderIndex }.map { exercise ->
-            WorkoutExerciseUiModel(
-                id = exercise.id,
-                name = exercise.exerciseName,
-                notes = exercise.notes?.takeIf { it.isNotBlank() },
-                sets = exercise.sets.sortedBy { it.setNumber }.map { set ->
-                    val weight = set.targetWeight?.let { if (it % 1.0 == 0.0) it.toInt().toString() else it.toString() }
-                    WorkoutSetUiModel(
-                        label = texts.setFormat.formatArgs(set.setNumber),
-                        summary = if (weight == null) texts.repsFormat.formatArgs(set.targetReps) else texts.repsAndWeightFormat.formatArgs(set.targetReps, weight),
-                    )
-                },
-            )
-        },
-    )
+    private fun content(workout: Workout): WorkoutDetailUiState.Content =
+        WorkoutDetailUiState.Content(
+            workoutName = workout.name,
+            dayLabel = workout.dayOfWeek?.let { texts.dayFormat.formatArgs(it) },
+            exercises = workout.exercises.sortedBy { it.orderIndex }.map { exercise ->
+                WorkoutExerciseUiModel(
+                    id = exercise.id,
+                    name = exercise.exerciseName,
+                    notes = exercise.notes?.takeIf { it.isNotBlank() },
+                    sets = exercise.sets.sortedBy { it.setNumber }.map { set ->
+                        val weight = set.targetWeight?.let {
+                            if (it % 1.0 == 0.0) it.toInt().toString() else it.toString()
+                        }
+                        WorkoutSetUiModel(
+                            label = texts.setFormat.formatArgs(set.setNumber),
+                            summary = if (weight == null) texts.repsFormat.formatArgs(set.targetReps) else texts.repsAndWeightFormat.formatArgs(
+                                set.targetReps,
+                                weight
+                            ),
+                        )
+                    },
+                )
+            },
+        )
+
+    private fun finishWorkout() {
+
+    }
 }

@@ -338,6 +338,7 @@ data object Spanish : AppLanguage {
         repsFormat = "{0} reps",
         repsAndWeightFormat = "{0} reps · {1} kg",
         workoutNotFound = "No encontramos este workout en tu rutina activa.",
+        finishWorkout = "Terminar workout",
     )
     override val mealTypeTexts = MealTypeTexts(
         breakfast = "Desayuno",
