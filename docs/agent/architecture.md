@@ -48,6 +48,8 @@ AppRoute navigation uses a bounded Channel exposed as a one-shot Flow: it bridge
 
 `TabRoute.WorkoutDetail` carries only `workoutId`. Its Owner resolves the current active routine through the existing use case, so it has no duplicate API contract, repository mutation or deep-link dependency. The ViewModel exposes loading, content, missing and error states; composables remain pure.
 
+User intents for this screen are the closed type `WorkoutDetailUiAction`: `OnRetry` and `OnFinishWorkout`. Back stays as Owner `onNavigateUp`. Finish is not wired yet: Screen still has no `onAction`, and the ViewModel still loads via `retry()` instead of `onAction`.
+
 ## SDD ownership
 
 `sdd/PROJECT.md` y `sdd/wip/20260911-goodlife-android-revival/` son el contrato de recovery Android versionado. Repo-minology feature 008 conserva la intención de producto transversal; el SDD externo del Desktop es solo insumo histórico.
