@@ -49,6 +49,7 @@ internal fun previewRoutineTexts() = CreateRoutineTexts(
     errorNoDays = "",
     errorNoWorkouts = "",
     errorWorkoutNoExercises = "",
+    errorExerciseNoSets = "",
     errorEndBeforeStart = "",
     errorServer = "",
     errorNetwork = "",

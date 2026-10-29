@@ -464,6 +464,7 @@ data class CreateRoutineTexts(
     val errorNoDays: String,
     val errorNoWorkouts: String,
     val errorWorkoutNoExercises: String,
+    val errorExerciseNoSets: String,
     val errorEndBeforeStart: String,
     val errorServer: String,
     val errorNetwork: String,

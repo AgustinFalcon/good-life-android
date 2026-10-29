@@ -313,6 +313,7 @@ data object Portuguese : AppLanguage {
         errorNoDays = "Selecione pelo menos um dia",
         errorNoWorkouts = "Adicione pelo menos um treino",
         errorWorkoutNoExercises = "Cada treino precisa de pelo menos um exercício",
+        errorExerciseNoSets = "\"{0}\" não tem séries configuradas",
         errorEndBeforeStart = "A data de término não pode ser anterior ao início",
         errorServer = "Erro no servidor, tente novamente",
         errorNetwork = "Sem conexão, verifique sua internet",

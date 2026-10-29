@@ -4,6 +4,9 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Unreleased]
 
+### Changed
+- `CreateRoutineUseCase` valida con `CreateRoutineValidation` (tipo cerrado) y el ViewModel traduce a `CreateRoutineTexts`. El dominio ya no emite copy en español.
+
 ### Added
 - Workout Detail declara `WorkoutDetailUiAction` (`OnRetry`, `OnFinishWorkout`) y muestra el botón “Terminar workout” (ES/EN/PT). El UseCase y el POST `/workouts/log/finish` siguen pendientes.
 - Daily y Meals incorporan detalles internos tipados y de solo lectura, con estados observables, validación de ruta, navegación protegida contra doble toque y copy ES/EN/PT.

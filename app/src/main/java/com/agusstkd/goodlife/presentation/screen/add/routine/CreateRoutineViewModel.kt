@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.core.datetime.language.CreateItemSharedTexts
 import com.agusstkd.goodlife.core.datetime.language.CreateRoutineTexts
+import com.agusstkd.goodlife.core.extensions.formatArgs
 import com.agusstkd.goodlife.core.extensions.toggleDay
 import com.agusstkd.goodlife.domain.model.training.DifficultyLevel
 import com.agusstkd.goodlife.domain.model.training.ExerciseDraft
@@ -18,6 +19,7 @@ import com.agusstkd.goodlife.domain.usecase.routine.GetMuscleGroupsUseCase
 import com.agusstkd.goodlife.domain.usecase.routine.SearchExercisesUseCase
 import com.agusstkd.goodlife.domain.usecase.routine.result.ActivateRoutineResult
 import com.agusstkd.goodlife.domain.usecase.routine.result.CreateRoutineResult
+import com.agusstkd.goodlife.domain.usecase.routine.result.CreateRoutineValidation
 import com.agusstkd.goodlife.domain.usecase.routine.result.GetMuscleGroupsResult
 import com.agusstkd.goodlife.domain.usecase.routine.result.SearchExercisesResult
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
@@ -405,11 +407,15 @@ class CreateRoutineViewModel(
                         _uiState.update { it.copy(isLoading = false, isSuccess = true) }
                     }
                 }
-                is CreateRoutineResult.ValidationError -> {
-                    _uiState.update { it.copy(isLoading = false, errorMessage = result.message) }
+                is CreateRoutineResult.Invalid -> {
+                    _uiState.update {
+                        it.copy(isLoading = false, errorMessage = validationMessage(result.reason))
+                    }
                 }
                 is CreateRoutineResult.ServerError -> {
-                    _uiState.update { it.copy(isLoading = false, errorMessage = result.message) }
+                    _uiState.update {
+                        it.copy(isLoading = false, errorMessage = routineTexts.errorServer)
+                    }
                 }
                 CreateRoutineResult.NetworkError -> {
                     _uiState.update {
@@ -417,6 +423,22 @@ class CreateRoutineViewModel(
                     }
                 }
             }
+        }
+    }
+
+    private fun validationMessage(reason: CreateRoutineValidation): String {
+        val texts = routineTexts
+        return when (reason) {
+            CreateRoutineValidation.EmptyName -> texts.errorNameEmpty
+            CreateRoutineValidation.MissingDifficulty -> texts.errorNoDifficulty
+            CreateRoutineValidation.MissingGoal -> texts.errorNoGoal
+            CreateRoutineValidation.EmptyDays -> texts.errorNoDays
+            CreateRoutineValidation.EmptyWorkouts -> texts.errorNoWorkouts
+            is CreateRoutineValidation.WorkoutWithoutExercises -> texts.errorWorkoutNoExercises
+            is CreateRoutineValidation.ExerciseWithoutSets ->
+                texts.errorExerciseNoSets.formatArgs(reason.exerciseName)
+            CreateRoutineValidation.EndBeforeStart -> texts.errorEndBeforeStart
+            CreateRoutineValidation.RemoteRejected -> texts.errorServer
         }
     }
 }

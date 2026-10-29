@@ -314,6 +314,7 @@ data object English : AppLanguage {
         errorNoDays = "Select at least one day",
         errorNoWorkouts = "Add at least one workout",
         errorWorkoutNoExercises = "Each workout needs at least one exercise",
+        errorExerciseNoSets = "\"{0}\" has no configured sets",
         errorEndBeforeStart = "End date cannot be before start date",
         errorServer = "Server error, please try again",
         errorNetwork = "No connection, check your internet",
