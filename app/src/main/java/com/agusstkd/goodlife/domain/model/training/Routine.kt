@@ -18,11 +18,18 @@ data class Routine(
     val workouts: List<Workout>,
 )
 
+/**
+ * Día de entrenamiento dentro de una rutina activa.
+ *
+ * @property notes Notas a nivel workout. Vacío si el backend no envía copy.
+ * El detalle las pre-carga y el usuario puede editarlas como feedback de sesión.
+ */
 data class Workout(
     val id: Long,
     val name: String,
     val dayOfWeek: Int?,
     val exercises: List<WorkoutExercise>,
+    val notes: String = "",
 )
 
 data class WorkoutExercise(

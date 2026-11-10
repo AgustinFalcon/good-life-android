@@ -69,8 +69,7 @@ data class MainScaffoldTexts(
     val lunch: String,
     val dinner: String,
     val snack: String,
-    val preWorkout: String,
-    val postWorkout: String,
+    val afternoonSnack: String,
     val tabDaily: String,
     val tabWorkouts: String,
     val tabFood: String,
@@ -274,6 +273,7 @@ data class HabitCategoryTexts(
 data class CreateHabitTexts(
     val screenTitle: String,
     val typeBadge: String,
+    val namePlaceholder: String,
     val saveButton: String,
     val successTitle: String,
     val categorySectionTitle: String,
@@ -293,7 +293,7 @@ data class CreateHabitTexts(
 )
 
 /**
- * Nombres localizados para los 6 tipos de comida del enum [MealType].
+ * Nombres localizados para los tipos de comida del enum [MealType].
  *
  * Se usan como chips de filtro en el catálogo (Paso 1A)
  * y como selector de tipo en el Paso 3 del wizard de comidas.
@@ -302,9 +302,8 @@ data class MealTypeTexts(
     val breakfast: String,
     val lunch: String,
     val dinner: String,
+    val afternoonSnack: String,
     val snack: String,
-    val preWorkout: String,
-    val postWorkout: String,
 )
 
 /**
@@ -394,6 +393,9 @@ data class CreateMealPlanTexts(
 
 /**
  * Textos del tab Workouts y su detalle.
+ *
+ * Los labels de set (`setWeightLabel`, `setRepsLabel`, `setRpeLabel`) identifican
+ * qué hay que ingresar en cada input de sesión; la Screen los pide a [com.agusstkd.goodlife.presentation.screen.tabs.workout.detail.model.WorkoutSetField.label].
  */
 data class WorkoutTexts(
     val noRoutineTitle: String,
@@ -408,12 +410,21 @@ data class WorkoutTexts(
     val exercisesTitle: String,
     val noExercises: String,
     val notesLabel: String,
+    val notesPlaceholder: String,
     val noSets: String,
     val setFormat: String,
     val repsFormat: String,
     val repsAndWeightFormat: String,
     val workoutNotFound: String,
     val finishWorkout: String,
+    val workoutFinishedTitle: String,
+    val finishFailed: String,
+    /** Label del input de peso de la sesión (kg). */
+    val setWeightLabel: String,
+    /** Label del input de repeticiones de la sesión. */
+    val setRepsLabel: String,
+    /** Label del input de RPE (1–10, opcional). */
+    val setRpeLabel: String,
 )
 /**
  * Textos para el wizard de creación de Rutina (SPEC-011).
@@ -421,6 +432,7 @@ data class WorkoutTexts(
 data class CreateRoutineTexts(
     val screenTitle: String,
     val typeBadge: String,
+    val namePlaceholder: String,
     val stepOf: String,
     val nextButton: String,
     val backButton: String,

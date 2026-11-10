@@ -95,6 +95,8 @@ class FakeDateProvider(
     private val fixedDate: LocalDate
 ) : DateProvider {
 
+    private var nowInstant: Instant = fixedDate.atStartOfDayIn(TimeZone.UTC)
+
     /**
      * Siempre devuelve la fecha fija pasada en el constructor.
      *
@@ -123,6 +125,12 @@ class FakeDateProvider(
      *
      * @return Instant de [fixedDate] a las 00:00:00 UTC
      */
-    override fun now(): Instant =
-        fixedDate.atStartOfDayIn(TimeZone.UTC)
+    override fun now(): Instant = nowInstant
+
+    /**
+     * Avanza solo [now]. No muta [today].
+     */
+    fun advance(duration: kotlin.time.Duration) {
+        nowInstant += duration
+    }
 }

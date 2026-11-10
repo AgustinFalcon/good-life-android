@@ -31,6 +31,8 @@ data class WorkoutResponse(
     val id: Long,
     val name: String? = null,
     val dayOfWeek: Int? = null,
+    val notes: String? = null,
+    val description: String? = null,
     val exercises: List<WorkoutExerciseResponse>? = null,
 )
 
@@ -76,6 +78,7 @@ fun WorkoutResponse.toDomain(): Workout = Workout(
     name = name.orEmpty(),
     dayOfWeek = dayOfWeek,
     exercises = exercises?.map { it.toDomain() } ?: emptyList(),
+    notes = notes?.takeIf { it.isNotBlank() } ?: description.orEmpty(),
 )
 
 fun WorkoutExerciseResponse.toDomain(): WorkoutExercise = WorkoutExercise(

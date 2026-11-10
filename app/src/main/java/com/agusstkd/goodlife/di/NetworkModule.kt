@@ -15,6 +15,7 @@ import com.agusstkd.goodlife.data.remote.api.media.MediaApiService
 import com.agusstkd.goodlife.data.remote.api.task.TaskApiService
 import com.agusstkd.goodlife.data.remote.api.training.RoutineApiService
 import com.agusstkd.goodlife.data.remote.api.training.TrainingCatalogApiService
+import com.agusstkd.goodlife.data.remote.api.training.WorkoutLogApiService
 import kotlinx.serialization.json.Json
 import okhttp3.Authenticator
 import okhttp3.OkHttpClient
@@ -33,14 +34,19 @@ import retrofit2.Retrofit
  * - [GoodLifeAuthenticator]: Refresh automático en 401
  * - [OkHttpClient]: Cliente HTTP con interceptors
  * - [Retrofit]: Cliente REST
- * - [AuthApiService]: Endpoints de Auth (login, refreshToken, register)
- * - [DailyApiService]: Endpoints de Daily (getDailyLog, updateItemStatus)
- * - [TaskApiService]: Endpoints de Task (createTask)
+ * - [AuthApiService]: Auth (login, refreshToken, register)
+ * - [DailyApiService]: Daily log
+ * - [TaskApiService]: Tasks
+ * - [HabitApiService]: Habits
+ * - [TrainingCatalogApiService]: Catálogo de ejercicios
+ * - [RoutineApiService]: Rutinas
+ * - [WorkoutLogApiService]: Finish workout
+ * - [MediaApiService]: Upload de imagen
  *
  * ## Cómo agregar un nuevo service
  * ```kotlin
- * single<WorkoutsApiService> {
- *     get<Retrofit>().create(WorkoutsApiService::class.java)
+ * single<NuevoApiService> {
+ *     get<Retrofit>().create(NuevoApiService::class.java)
  * }
  * ```
  * No es necesario tocar nada más — Retrofit reutiliza el mismo [OkHttpClient].
@@ -161,18 +167,42 @@ val networkModule = module {
         get<Retrofit>().create(TaskApiService::class.java)
     }
 
+    /**
+     * HabitApiService — endpoints del módulo Habit.
+     * Usado por [com.agusstkd.goodlife.data.remote.datasource.remote.HabitRemoteDataSource].
+     */
     single<HabitApiService> {
         get<Retrofit>().create(HabitApiService::class.java)
     }
 
+    /**
+     * TrainingCatalogApiService — catálogo de grupos musculares y ejercicios.
+     * Usado por [com.agusstkd.goodlife.data.remote.datasource.remote.TrainingCatalogRemoteDataSource].
+     */
     single<TrainingCatalogApiService> {
         get<Retrofit>().create(TrainingCatalogApiService::class.java)
     }
 
+    /**
+     * RoutineApiService — crear, activar y obtener la rutina activa.
+     * Usado por [com.agusstkd.goodlife.data.remote.datasource.remote.RoutineRemoteDataSource].
+     */
     single<RoutineApiService> {
         get<Retrofit>().create(RoutineApiService::class.java)
     }
 
+    /**
+     * WorkoutLogApiService — `POST /api/v1/workouts/log/finish`.
+     * Lo usará [com.agusstkd.goodlife.data.remote.datasource.remote.WorkoutLogRemoteDataSource].
+     */
+    single<WorkoutLogApiService> {
+        get<Retrofit>().create(WorkoutLogApiService::class.java)
+    }
+
+    /**
+     * MediaApiService — upload de imagen de perfil.
+     * Usado por [com.agusstkd.goodlife.data.repository.MediaRepositoryImpl].
+     */
     single<MediaApiService> {
         get<Retrofit>().create(MediaApiService::class.java)
     }

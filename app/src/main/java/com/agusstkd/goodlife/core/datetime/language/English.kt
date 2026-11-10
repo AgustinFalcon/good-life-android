@@ -99,8 +99,7 @@ data object English : AppLanguage {
         lunch = "Lunch",
         dinner = "Dinner",
         snack = "Snack",
-        preWorkout = "Pre-workout",
-        postWorkout = "Post-workout",
+        afternoonSnack = "Afternoon snack",
         tabDaily = "Daily",
         tabWorkouts = "Workouts",
         tabFood = "Food",
@@ -250,6 +249,7 @@ data object English : AppLanguage {
     override val createHabitTexts = CreateHabitTexts(
         screenTitle = "New habit",
         typeBadge = "HABIT",
+        namePlaceholder = "E.g. Drink water",
         saveButton = "Save habit",
         successTitle = "Habit created successfully",
         categorySectionTitle = "Category",
@@ -271,6 +271,7 @@ data object English : AppLanguage {
     override val createRoutineTexts = CreateRoutineTexts(
         screenTitle = "New routine",
         typeBadge = "ROUTINE",
+        namePlaceholder = "E.g. Strength routine",
         stepOf = "Step %d of %d",
         nextButton = "Next",
         backButton = "Back",
@@ -334,20 +335,25 @@ data object English : AppLanguage {
         exercisesTitle = "Exercises",
         noExercises = "This workout has no configured exercises.",
         notesLabel = "Notes",
+        notesPlaceholder = "How did you feel (optional)",
         noSets = "No configured sets.",
         setFormat = "Set {0}",
         repsFormat = "{0} reps",
         repsAndWeightFormat = "{0} reps · {1} kg",
         workoutNotFound = "We could not find this workout in your active routine.",
         finishWorkout = "Finish workout",
+        workoutFinishedTitle = "Workout finished!",
+        finishFailed = "Server error, please try again",
+        setWeightLabel = "Weight (kg)",
+        setRepsLabel = "Reps",
+        setRpeLabel = "RPE",
     )
     override val mealTypeTexts = MealTypeTexts(
         breakfast = "Breakfast",
         lunch = "Lunch",
         dinner = "Dinner",
+        afternoonSnack = "Afternoon snack",
         snack = "Snack",
-        preWorkout = "Pre-workout",
-        postWorkout = "Post-workout",
     )
 
     override val createMealPlanTexts = CreateMealPlanTexts(
@@ -426,7 +432,7 @@ data object English : AppLanguage {
         pending = "Pending", inProgress = "In progress", completed = "Completed", skipped = "Skipped",
         mealLabel = "Meal", proteinLabel = "Protein", carbsLabel = "Carbs", fatLabel = "Fat",
         active = "Active", inactive = "Inactive", mealImageUnavailable = "Meal image unavailable",
-        emptyMealsTitle = "No meal plans for today", emptyMealsDescription = "Create your first meal plan to track your daily nutrition.",
+        emptyMealsTitle = "No meal plans for this day", emptyMealsDescription = "Create your first meal plan to track your daily nutrition.",
         createMealPlan = "Create meal plan", tapToRetry = "Tap to retry", mealPlanSingular = "meal plan", mealPlanPlural = "meal plans",
         calorieUnit = "kcal", gramUnit = "g", decimalSeparator = '.',
     )
