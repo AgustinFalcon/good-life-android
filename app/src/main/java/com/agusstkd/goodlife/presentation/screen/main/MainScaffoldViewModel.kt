@@ -113,8 +113,7 @@ class MainScaffoldViewModel(
             MealOptionItem(MealType.LUNCH, t.lunch, Icons.Default.Dining),
             MealOptionItem(MealType.DINNER, t.dinner, Icons.Default.Dining),
             MealOptionItem(MealType.SNACK, t.snack, Icons.Default.LocalDining),
-            MealOptionItem(MealType.PRE_WORKOUT, t.preWorkout, Icons.Default.FitnessCenter),
-            MealOptionItem(MealType.POST_WORKOUT, t.postWorkout, Icons.Default.FitnessCenter)
+            MealOptionItem(MealType.AFTERNOON_SNACK, t.afternoonSnack, Icons.Default.LocalDining),
         ).toImmutableList()
     }
 

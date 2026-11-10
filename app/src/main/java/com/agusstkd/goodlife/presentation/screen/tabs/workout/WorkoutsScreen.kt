@@ -1,11 +1,21 @@
 package com.agusstkd.goodlife.presentation.screen.tabs.workout
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
@@ -244,6 +254,125 @@ private fun WorkoutsScreenEmptyPreview() {
                 workouts = emptyList(),
             ),
             onAction = {}
+        )
+    }
+}
+
+@Composable
+internal fun WorkoutsLoadingState() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        WorkoutsSkeletonBlock(height = 120.dp, alpha = 0.35f)
+        WorkoutsSkeletonBlock(height = 80.dp, alpha = 0.30f)
+        WorkoutsSkeletonBlock(height = 80.dp, alpha = 0.25f)
+        WorkoutsSkeletonBlock(height = 80.dp, alpha = 0.20f)
+    }
+}
+
+@Composable
+internal fun WorkoutsNoRoutineState(
+    texts: WorkoutTexts,
+    onCreateRoutine: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier.padding(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = texts.noRoutineTitle,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = texts.noRoutineDescription,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(
+                onClick = onCreateRoutine,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = WorkoutsTabAccent
+                )
+            ) {
+                Text(text = texts.createRoutine)
+            }
+        }
+    }
+}
+
+@Composable
+internal fun WorkoutsErrorState(
+    message: String,
+    retryText: String,
+    onRetry: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "$message\n$retryText",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .padding(32.dp)
+                .clickable(onClick = onRetry)
+        )
+    }
+}
+
+@Composable
+private fun WorkoutsSkeletonBlock(
+    height: androidx.compose.ui.unit.Dp,
+    alpha: Float
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(height)
+            .alpha(alpha),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {}
+}
+
+@Preview(showBackground = true, name = "WorkoutsScreen - Loading")
+@Composable
+private fun WorkoutsLoadingPreview() {
+    GoodLifeTheme { WorkoutsLoadingState() }
+}
+
+@Preview(showBackground = true, name = "WorkoutsScreen - sin rutina")
+@Composable
+private fun WorkoutsNoRoutinePreview() {
+    GoodLifeTheme {
+        WorkoutsNoRoutineState(texts = Spanish.workoutTexts, onCreateRoutine = {})
+    }
+}
+
+@Preview(showBackground = true, name = "WorkoutsScreen - Error")
+@Composable
+private fun WorkoutsErrorPreview() {
+    GoodLifeTheme {
+        WorkoutsErrorState(
+            message = Spanish.errorTexts.connectionError,
+            retryText = Spanish.workoutTexts.retry,
+            onRetry = {},
         )
     }
 }

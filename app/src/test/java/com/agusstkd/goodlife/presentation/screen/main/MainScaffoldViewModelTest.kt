@@ -22,7 +22,7 @@ class MainScaffoldViewModelTest {
         val state = viewModel().uiState.value
         assertEquals(4, state.bottomNavItems.size)
         assertEquals(5, state.quickActions.size)
-        assertEquals(7, state.mealOptions.size)
+        assertEquals(6, state.mealOptions.size)
         assertTrue(state.currentDateFormatted.startsWith("Hoy"))
     }
 

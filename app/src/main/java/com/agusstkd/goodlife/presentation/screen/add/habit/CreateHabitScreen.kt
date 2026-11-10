@@ -122,7 +122,7 @@ fun CreateHabitScreen(
         TextFieldComponent(
             params = TextFieldParams(
                 value = uiState.name,
-                placeholder = sharedTexts.fieldTitlePlaceholder,
+                placeholder = createHabitTexts.namePlaceholder,
                 type = TextFieldType.TEXT,
             ),
             onValueChange = { onAction(CreateHabitUiAction.OnNameChange(it)) },
@@ -316,6 +316,7 @@ private fun CreateHabitScreenPreview() {
     val previewHabitTexts = CreateHabitTexts(
         screenTitle = "Nuevo hábito",
         typeBadge = "HÁBITO",
+        namePlaceholder = "Ej: Tomar agua",
         saveButton = "Guardar hábito",
         successTitle = "Hábito creado con éxito",
         categorySectionTitle = "Categoría",
@@ -355,6 +356,67 @@ private fun CreateHabitScreenPreview() {
             createHabitTexts = previewHabitTexts,
             sharedTexts = previewSharedTexts,
             categoryEntries = previewCategories,
+            dayNames = listOf("L", "M", "X", "J", "V", "S", "D"),
+            closeContentDescription = "Cerrar",
+        )
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "CreateHabitScreen — vacío")
+@Composable
+private fun CreateHabitScreenEmptyPreview() {
+    GoodLifeTheme {
+        CreateHabitScreen(
+            uiState = CreateHabitUiState(),
+            onAction = {},
+            createHabitTexts = CreateHabitTexts(
+                screenTitle = "Nuevo hábito",
+                typeBadge = "HÁBITO",
+                namePlaceholder = "Ej: Tomar agua",
+                saveButton = "Guardar hábito",
+                successTitle = "Hábito creado con éxito",
+                categorySectionTitle = "Categoría",
+                categoryPlaceholder = "Seleccionar categoría",
+                goalSectionTitle = "Meta diaria",
+                targetValuePlaceholder = "Ej: 8",
+                unitPlaceholder = "Ej: vasos",
+                errorNameEmpty = "",
+                errorNoDays = "",
+                errorNoCategory = "",
+                errorInvalidGoal = "",
+                errorUnitEmpty = "",
+                errorEndBeforeStart = "",
+                errorServer = "",
+                errorNetwork = "",
+                loadingTitle = "",
+            ),
+            sharedTexts = CreateItemSharedTexts(
+                fieldTitleLabel = "Nombre",
+                fieldTitlePlaceholder = "Ej: Tomar agua",
+                fieldDescriptionLabel = "Descripción",
+                fieldDescriptionPlaceholder = "Opcional",
+                whenSectionTitle = "¿Cuándo?",
+                modeOnce = "Una vez",
+                modeRepeats = "Se repite",
+                daysRowTitle = "Días de la semana",
+                fromDateLabel = "Desde",
+                toDateLabel = "Hasta",
+                noEndDate = "Sin fecha de fin",
+                hasEndDate = "Fecha de fin",
+                noSpecificTime = "Sin hora específica",
+                timeLabel = "Hora",
+                reminderLabel = "Recordatorio",
+                cancelButton = "Cancelar",
+                confirmLabel = "Confirmar",
+                cancelLabel = "Cancelar",
+                retryLabel = "Reintentar",
+                loadingMessage = "",
+                errorTitle = "",
+            ),
+            categoryEntries = listOf(
+                HabitCategory.HYDRATION to "Hidratación",
+                HabitCategory.MEDITATION to "Meditación",
+            ),
             dayNames = listOf("L", "M", "X", "J", "V", "S", "D"),
             closeContentDescription = "Cerrar",
         )

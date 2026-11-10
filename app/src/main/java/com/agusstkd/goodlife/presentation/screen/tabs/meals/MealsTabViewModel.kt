@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.agusstkd.goodlife.core.datetime.DateProvider
 import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.core.datetime.language.AccessibilityTexts
+import com.agusstkd.goodlife.core.datetime.language.DatePickerTexts
 import com.agusstkd.goodlife.domain.model.nutrition.DailyMealPlanSummary
 import com.agusstkd.goodlife.domain.model.nutrition.MealType
 import com.agusstkd.goodlife.domain.usecase.nutrition.GetMealPlansUseCase
@@ -21,6 +22,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -70,8 +72,12 @@ class MealsTabViewModel(
 
     val accessibilityTexts: AccessibilityTexts get() = language.accessibilityTexts
     val tabDetailTexts get() = language.tabDetailTexts
+    val datePickerTexts: DatePickerTexts get() = language.datePickerTexts
 
     private var currentDate: LocalDate = dateProvider.today()
+    private var hasResumedOnce = false
+    private val _isCalendarVisible = MutableStateFlow(false)
+    val isCalendarVisible: StateFlow<Boolean> = _isCalendarVisible.asStateFlow()
     private var latestLoadRequestId: Long = 0L
     private var loadJob: Job? = null
 
@@ -86,19 +92,26 @@ class MealsTabViewModel(
         .stateIn(viewModelScope, SharingStarted.Lazily, MealsUiState.Loading)
 
     fun refresh() {
-        loadMealPlans()
+        loadMealPlans(retainContent = true)
     }
 
     /** Clears the one-shot guard after returning to this tab-local list. */
     fun onMealListResumed() {
         mealDetailNavigationInProgress = false
+        if (hasResumedOnce) {
+            loadMealPlans(retainContent = true)
+        }
+        hasResumedOnce = true
     }
 
     fun onAction(action: MealsUiAction) {
         when (action) {
             MealsUiAction.OnPreviousDay -> navigateToPreviousDay()
             MealsUiAction.OnNextDay -> navigateToNextDay()
-            MealsUiAction.OnRefresh -> loadMealPlans()
+            MealsUiAction.OnCalendarClick -> _isCalendarVisible.value = true
+            MealsUiAction.OnCalendarDismiss -> _isCalendarVisible.value = false
+            is MealsUiAction.OnCalendarDateSelected -> selectDate(action.date)
+            MealsUiAction.OnRefresh -> loadMealPlans(retainContent = true)
             MealsUiAction.OnCreateMealPlan -> navigateToCreateMealPlan()
             is MealsUiAction.OnMealPlanClick -> navigateToMealDetail(action.planId)
         }
@@ -109,25 +122,38 @@ class MealsTabViewModel(
      *
      * Muestra [MealsUiState.Loading] mientras se hace la request.
      */
-    private fun loadMealPlans() {
+    private fun loadMealPlans(retainContent: Boolean = false) {
         val requestedDate = currentDate
         val requestId = ++latestLoadRequestId
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
             if (!isCurrentLoadRequest(requestId, requestedDate)) return@launch
-            _uiState.value = MealsUiState.Loading
+            val current = _uiState.value
+            _uiState.value = when {
+                retainContent && current is MealsUiState.Success -> current.copy(isRefreshing = true)
+                retainContent -> current
+                else -> MealsUiState.Loading
+            }
 
             val result = getMealPlansUseCase(requestedDate)
             if (!isCurrentLoadRequest(requestId, requestedDate)) return@launch
 
             when (result) {
                 is GetMealPlansResult.Success -> _uiState.value = buildSuccessState(result.plans, requestedDate)
-                is GetMealPlansResult.NotFound -> _uiState.value = MealsUiState.Empty
+                is GetMealPlansResult.NotFound -> _uiState.value = emptyState(requestedDate)
                 is GetMealPlansResult.ServerError -> _uiState.value = MealsUiState.Error(language.errorTexts.dataLoadError)
                 is GetMealPlansResult.NetworkError -> _uiState.value = MealsUiState.Error(language.errorTexts.connectionError)
             }
         }
     }
+
+    private fun emptyState(date: LocalDate) = MealsUiState.Empty(
+        date = date,
+        dayNumber = date.day,
+        headerText = formatHeaderText(date),
+        monthYear = formatMonthYear(date),
+        showFullDate = !isRelativeDate(date),
+    )
 
     private fun isCurrentLoadRequest(requestId: Long, requestedDate: LocalDate): Boolean {
         return requestId == latestLoadRequestId && requestedDate == currentDate
@@ -140,6 +166,13 @@ class MealsTabViewModel(
 
     private fun navigateToNextDay() {
         currentDate = currentDate.plus(1, DateTimeUnit.DAY)
+        loadMealPlans()
+    }
+
+    private fun selectDate(date: LocalDate) {
+        _isCalendarVisible.value = false
+        if (date == currentDate) return
+        currentDate = date
         loadMealPlans()
     }
 
@@ -187,9 +220,8 @@ class MealsTabViewModel(
             MealType.BREAKFAST -> texts.breakfast
             MealType.LUNCH -> texts.lunch
             MealType.DINNER -> texts.dinner
+            MealType.AFTERNOON_SNACK -> texts.afternoonSnack
             MealType.SNACK -> texts.snack
-            MealType.PRE_WORKOUT -> texts.preWorkout
-            MealType.POST_WORKOUT -> texts.postWorkout
         }
     }
 

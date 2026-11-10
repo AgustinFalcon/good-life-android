@@ -5,13 +5,20 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 ## [Unreleased]
 
 ### Changed
-- `CreateRoutineUseCase` valida con `CreateRoutineValidation` (tipo cerrado) y el ViewModel traduce a `CreateRoutineTexts`. El dominio ya no emite copy en español.
+- `CreateRoutineUseCase` valida con `CreateRoutineValidation` (tipo cerrado) y reglas strategy nombradas. El ViewModel traduce a `CreateRoutineTexts`; el dominio ya no emite copy.
 
 ### Added
-- Workout Detail declara `WorkoutDetailUiAction` (`OnRetry`, `OnFinishWorkout`) y muestra el botón “Terminar workout” (ES/EN/PT). El UseCase y el POST `/workouts/log/finish` siguen pendientes.
+- Los inputs de set en Workout Detail muestran label AppLanguage (`WorkoutSetField.label`: peso/reps/RPE) en ES/EN/PT.
+- Workout Detail registra la sesión real al terminar: reloj `DateProvider`, `durationMinutes` ≥ 1, sets editables (peso/reps/RPE vía `PerceivedExertion`), anti doble tap y error de POST en Content (`finishFailed`). GET sigue en `Error`/`NotFound`.
+- Spec SDD `sdd/wip/20261106-android-finish-workout-session/`: sesión real al terminar workout (reloj, duración, RPE, sets editables). Reconfirma CU-19 y deja R-03 como contrato de carga/notes/Lottie hasta implementar. Sin cambio de código en este paso.
+- Workout Detail declara `WorkoutDetailUiAction` (`OnRetry`, `OnFinishWorkout`, `OnNotesChange`) y muestra el botón “Terminar workout” (ES/EN/PT).
+- El detalle de workout permite feedback de sesión (`Content.notes` + campo multiline). `FinishWorkoutDraft.notes` es `String` no null (vacío si el usuario no escribió). El ViewModel arma el draft desde campos privados de dominio y lee `notes` desde UiState.
+- Tras `FinishWorkoutResult.Success`, `Content.finished` pasa a `true` y el detalle muestra `SuccessDialog` (Lottie `success_animation`). Al terminar la animación se vuelve atrás con `onNavigateUp`.
+- Dominio de Finish Workout: `FinishWorkoutDraft`, `WorkoutLogRepository`, `FinishWorkoutUseCase` y resultado cerrado (`Success`, `EmptyExercises`, `NotFound`, `ServerError`, `NetworkError`).
+- Data layer de Finish Workout: `FinishWorkoutRequest` + `toRequest()`, `WorkoutLogApiService`, `WorkoutLogRemoteDataSource`, `WorkoutLogRepositoryImpl` y Koin en `routineModule` (`finishWorkoutUseCase` y `dateProvider` inyectados en `WorkoutDetailViewModel`).
 - Daily y Meals incorporan detalles internos tipados y de solo lectura, con estados observables, validación de ruta, navegación protegida contra doble toque y copy ES/EN/PT.
 - Se incorporó el contrato redacted de readiness para releases internas; firma y distribución permanecen explícitamente bloqueadas hasta su aprobación.
-- Workouts now opens a typed, read-only detail with exercises, notes and target sets loaded from the active routine; missing and failed loads are observable states.
+- Workouts opens a typed detail with exercises, target sets and editable session notes loaded from the active routine; missing and failed loads are observable states.
 
 ### Security
 - Se eliminan plantillas de backup inactivas y se mantiene explícita la política `android:allowBackup=false`.
@@ -25,6 +32,10 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Se eliminaron nueve strings legacy de Daily, tabs y registro tras verificar que el copy canónico vive en `UiTexts`; launcher y compatibilidad permanecen explícitamente retenidos en la issue #38 (PR #44 mergeada).
 
 ### Fixed
+- Diario recarga al volver de crear un item; el progreso se calcula con items completados / total; el calendario del header abre el bottomsheet de fecha reutilizable. Diario y Comidas tienen pull-to-refresh. Comidas y Entrenamientos recargan al volver.
+- `POST /api/v1/meal-plans` envía el contrato del backend (`mealId`, `mealType`, `daysOfWeek`) y un 400 deja de mostrarse como "Sin conexión". `MealType` coincide con el backend (incluye `AFTERNOON_SNACK`, sin pre/post entreno). El GET de Comida mapea `mealName`/`daysOfWeek` y filtra el día pedido. Los macros se redondean a 1 decimal.
+- La card de workout en Diario usa `dayOrder` si no hay `exerciseCount`; un hábito completado con log en 0 muestra la meta.
+- Placeholders de hábito/rutina propios, chips de dificultad sin cortar “Avanzado”, y el botón del wizard queda sobre la barra de sistema.
 - Workouts interpreta la respuesta exitosa sin rutina activa como estado vacío y reserva `Connection error` para fallos reales. ([#59](https://github.com/AgustinFalcon/good-life-android/issues/59))
 - El launcher redondo usa el asset GoodLife en lugar de la plantilla genérica de Android. ([#60](https://github.com/AgustinFalcon/good-life-android/issues/60))
 - Se retiró la familia de launcher genérica ya huérfana y se preservó el ícono GoodLife redondo con capa monocroma. ([#60](https://github.com/AgustinFalcon/good-life-android/issues/60))

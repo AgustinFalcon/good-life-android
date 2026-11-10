@@ -74,8 +74,25 @@ fun RegisterScreen(
                 auth = auth,
                 accessibility = accessibility
             )
-            is RegisterUiState.Success -> { }
+            is RegisterUiState.Success -> RegisterSuccessScreen(text = auth.register)
         }
+    }
+}
+
+@Composable
+internal fun RegisterSuccessScreen(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.primary
+        )
     }
 }
 
@@ -356,6 +373,42 @@ private fun RegisterScreenFilledPreview() {
                 confirmPassword = "123456",
                 acceptedTerms = true
             ),
+            onAction = {},
+            texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Content - Error")
+@Composable
+private fun RegisterScreenErrorPreview() {
+    GoodLifeTheme {
+        RegisterScreen(
+            uiState = RegisterUiState.Content(
+                fullName = "Agustín",
+                userName = "ag",
+                email = "mal",
+                password = "123",
+                confirmPassword = "456",
+                isFullNameError = true,
+                isUserNameError = true,
+                isEmailError = true,
+                isPasswordError = true,
+                isConfirmPasswordError = true,
+                errorMessage = Spanish.errorTexts.registerError,
+            ),
+            onAction = {},
+            texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Success")
+@Composable
+private fun RegisterScreenSuccessPreview() {
+    GoodLifeTheme {
+        RegisterScreen(
+            uiState = RegisterUiState.Success,
             onAction = {},
             texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)
         )

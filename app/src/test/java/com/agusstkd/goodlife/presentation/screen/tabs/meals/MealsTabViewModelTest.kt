@@ -161,6 +161,45 @@ class MealsTabViewModelTest {
         assertEquals(AppRoute.CreateMealPlan, action.route)
     }
 
+    @Test fun `calendar date selection jumps without leaving the picker open`() = runTest(dispatcher) {
+        repository.getResult = Result.Success(listOf(plan(1, MealType.BREAKFAST, 300.0)))
+        val vm = viewModel()
+        backgroundScope.launch { vm.uiState.collect {} }
+        vm.refresh()
+        advanceUntilIdle()
+
+        vm.onAction(MealsUiAction.OnCalendarClick)
+        assertTrue(vm.isCalendarVisible.value)
+
+        val jumped = LocalDate(2026, 8, 1)
+        repository.getResult = Result.Success(listOf(plan(9, MealType.LUNCH, 500.0)))
+        vm.onAction(MealsUiAction.OnCalendarDateSelected(jumped))
+        advanceUntilIdle()
+
+        assertTrue(!vm.isCalendarVisible.value)
+        val state = vm.uiState.value as MealsUiState.Success
+        assertEquals(jumped, state.date)
+        assertEquals(jumped, repository.requestedDates.last())
+    }
+
+    @Test fun `returning to meals after the first resume reloads plans`() = runTest(dispatcher) {
+        repository.getResult = Result.Success(listOf(plan(1, MealType.BREAKFAST, 300.0)))
+        val vm = viewModel()
+        backgroundScope.launch { vm.uiState.collect {} }
+        vm.refresh()
+        advanceUntilIdle()
+        val afterInit = repository.requestedDates.size
+
+        vm.onMealListResumed()
+        advanceUntilIdle()
+        assertEquals(afterInit, repository.requestedDates.size)
+
+        vm.onMealListResumed()
+        advanceUntilIdle()
+        assertEquals(afterInit + 1, repository.requestedDates.size)
+        assertTrue(vm.uiState.value is MealsUiState.Success)
+    }
+
     private fun plan(id: Long, type: MealType, calories: Double) = DailyMealPlanSummary(
         id = id, name = "Plan $id", date = LocalDate(2026, 7, 26), mealType = type,
         scheduledTime = LocalTime(12, 0), mealName = "Meal $id", imageUrl = null,

@@ -2,6 +2,7 @@ package com.agusstkd.goodlife.presentation.components.nutrition
 
 import androidx.compose.foundation.layout.Arrangement
 import java.math.BigDecimal
+import java.math.RoundingMode
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -179,7 +180,11 @@ private fun MacroCard(
 }
 
 internal fun formatNutritionValue(value: Double, decimalSeparator: Char = '.'): String =
-    BigDecimal.valueOf(value).stripTrailingZeros().toPlainString().replace('.', decimalSeparator)
+    BigDecimal.valueOf(value)
+        .setScale(1, RoundingMode.HALF_UP)
+        .stripTrailingZeros()
+        .toPlainString()
+        .replace('.', decimalSeparator)
 
 // ════════════════════════════════════════════════════════════
 // PREVIEW

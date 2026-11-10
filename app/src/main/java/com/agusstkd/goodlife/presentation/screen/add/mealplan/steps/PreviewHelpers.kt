@@ -94,7 +94,8 @@ internal fun previewMealTypeEntries() = listOf(
     MealType.BREAKFAST to "Desayuno",
     MealType.LUNCH to "Almuerzo",
     MealType.DINNER to "Cena",
-    MealType.SNACK to "Merienda",
+    MealType.AFTERNOON_SNACK to "Merienda",
+    MealType.SNACK to "Snack",
 )
 
 internal fun previewMealCatalog() = listOf(

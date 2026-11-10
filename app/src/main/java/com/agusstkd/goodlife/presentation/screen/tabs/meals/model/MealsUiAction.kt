@@ -1,6 +1,7 @@
 package com.agusstkd.goodlife.presentation.screen.tabs.meals.model
 
 import androidx.compose.runtime.Stable
+import kotlinx.datetime.LocalDate
 
 /**
  * Acciones del usuario en la pantalla Meals.
@@ -26,6 +27,19 @@ sealed interface MealsUiAction {
 
     /** Navega al día siguiente. */
     data object OnNextDay : MealsUiAction
+
+    /** Abre el bottomsheet de calendario. */
+    data object OnCalendarClick : MealsUiAction
+
+    /** Cierra el calendario sin cambiar la fecha. */
+    data object OnCalendarDismiss : MealsUiAction
+
+    /**
+     * Usuario eligió una fecha en el calendario.
+     *
+     * @property date Día al que debe saltar Meals.
+     */
+    data class OnCalendarDateSelected(val date: LocalDate) : MealsUiAction
 
     /** Pull-to-refresh o retry manual. */
     data object OnRefresh : MealsUiAction

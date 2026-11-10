@@ -1,5 +1,7 @@
 package com.agusstkd.goodlife.domain.model.nutrition
 
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 /**
@@ -17,6 +19,9 @@ data class MealPlanDraft(
     val name: String,
     val description: String?,
     val scheduledMeals: List<ScheduledMealDraft>,
+    val daysOfWeek: Set<DayOfWeek> = emptySet(),
+    val startDate: LocalDate? = null,
+    val endDate: LocalDate? = null,
 ) {
     /**
      * Total de kilocalorías del plan completo.

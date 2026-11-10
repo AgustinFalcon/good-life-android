@@ -70,6 +70,7 @@ class WorkoutsTabViewModel(
     private val navigationEffectsChannel = Channel<WorkoutsNavigationEffect>(Channel.RENDEZVOUS)
     val navigationEffects = navigationEffectsChannel.receiveAsFlow()
     private var workoutDetailNavigationInProgress = false
+    private var hasResumedOnce = false
 
     fun refresh() {
         loadData()
@@ -78,6 +79,10 @@ class WorkoutsTabViewModel(
     /** Clears the one-shot detail-navigation guard when this list becomes visible again. */
     fun onWorkoutListResumed() {
         workoutDetailNavigationInProgress = false
+        if (hasResumedOnce) {
+            loadData(retainContent = true)
+        }
+        hasResumedOnce = true
     }
 
     fun onAction(action: WorkoutsUiAction) {
@@ -93,9 +98,11 @@ class WorkoutsTabViewModel(
      *
      * Muestra [WorkoutsUiState.Loading] (skeleton) mientras se hace la request.
      */
-    private fun loadData() {
+    private fun loadData(retainContent: Boolean = false) {
         viewModelScope.launch {
-            _uiState.value = WorkoutsUiState.Loading
+            if (!retainContent) {
+                _uiState.value = WorkoutsUiState.Loading
+            }
 
             when (val result = getActiveRoutineUseCase()) {
                 is GetActiveRoutineResult.Success ->

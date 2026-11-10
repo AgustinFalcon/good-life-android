@@ -16,7 +16,12 @@ import androidx.compose.ui.unit.dp
 import com.agusstkd.goodlife.core.datetime.language.CreateItemSharedTexts
 import com.agusstkd.goodlife.core.datetime.language.CreateRoutineTexts
 import com.agusstkd.goodlife.domain.model.training.DifficultyLevel
+import com.agusstkd.goodlife.domain.model.training.ExerciseDraft
+import com.agusstkd.goodlife.domain.model.training.ExerciseMaster
 import com.agusstkd.goodlife.domain.model.training.GoalType
+import com.agusstkd.goodlife.domain.model.training.MuscleGroup
+import com.agusstkd.goodlife.domain.model.training.SetDraft
+import com.agusstkd.goodlife.domain.model.training.WorkoutDraft
 import com.agusstkd.goodlife.presentation.components.wizard.WizardHeaderComponent
 import com.agusstkd.goodlife.presentation.screen.add.routine.model.CreateRoutineUiAction
 import com.agusstkd.goodlife.presentation.screen.add.routine.model.CreateRoutineUiState
@@ -122,16 +127,87 @@ fun CreateRoutineScreen(
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true, showSystemUi = true, name = "CreateRoutineScreen — Paso 1")
 @Composable
 private fun CreateRoutineScreenStep1Preview() {
+    CreateRoutinePreviewHost(
+        uiState = CreateRoutineUiState(
+            name = "Push Pull Legs",
+            difficultyLevel = DifficultyLevel.INTERMEDIATE,
+            goalType = GoalType.MUSCLE_GAIN,
+        )
+    )
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "CreateRoutineScreen — Paso 2")
+@Composable
+private fun CreateRoutineScreenStep2Preview() {
+    CreateRoutinePreviewHost(
+        uiState = CreateRoutineUiState(
+            currentStep = RoutineWizardStep.WORKOUTS,
+            name = "Push Pull Legs",
+            difficultyLevel = DifficultyLevel.INTERMEDIATE,
+            goalType = GoalType.MUSCLE_GAIN,
+            workouts = listOf(
+                WorkoutDraft(
+                    name = "Push Day",
+                    exercises = listOf(
+                        ExerciseDraft(1, "Bench Press", null, "Pecho", 1, sets = listOf(SetDraft(), SetDraft(2), SetDraft(3))),
+                    ),
+                ),
+                WorkoutDraft(name = "Pull Day"),
+            ),
+        )
+    )
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "CreateRoutineScreen — Paso 3")
+@Composable
+private fun CreateRoutineScreenStep3Preview() {
+    CreateRoutinePreviewHost(
+        uiState = CreateRoutineUiState(
+            currentStep = RoutineWizardStep.WORKOUT_EXERCISES,
+            activeWorkoutIndex = 0,
+            workouts = listOf(
+                WorkoutDraft(
+                    name = "Push Day",
+                    exercises = listOf(
+                        ExerciseDraft(1, "Bench Press", null, "Pecho", 1, sets = listOf(SetDraft(1, 12, 60.0))),
+                    ),
+                ),
+            ),
+            exerciseCatalog = listOf(
+                ExerciseMaster(3, "Dumbbell Flyes", "Aislamiento de pecho", null, 1, "Pecho", 7),
+            ),
+            muscleGroups = listOf(MuscleGroup(1, "CHEST", "Pecho", null)),
+        )
+    )
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "CreateRoutineScreen — Resumen")
+@Composable
+private fun CreateRoutineScreenSummaryPreview() {
+    CreateRoutinePreviewHost(
+        uiState = CreateRoutineUiState(
+            currentStep = RoutineWizardStep.SUMMARY,
+            name = "Push Pull Legs",
+            difficultyLevel = DifficultyLevel.INTERMEDIATE,
+            goalType = GoalType.MUSCLE_GAIN,
+            workouts = listOf(
+                WorkoutDraft(
+                    name = "Push Day",
+                    exercises = listOf(ExerciseDraft(1, "Bench Press", null, "Pecho", 1)),
+                ),
+            ),
+        )
+    )
+}
+
+@Composable
+private fun CreateRoutinePreviewHost(uiState: CreateRoutineUiState) {
     GoodLifeTheme {
         CreateRoutineScreen(
-            uiState = CreateRoutineUiState(
-                name = "Push Pull Legs",
-                difficultyLevel = DifficultyLevel.INTERMEDIATE,
-                goalType = GoalType.MUSCLE_GAIN,
-            ),
+            uiState = uiState,
             onAction = {},
             routineTexts = previewRoutineTexts(),
             sharedTexts = previewSharedTexts(),

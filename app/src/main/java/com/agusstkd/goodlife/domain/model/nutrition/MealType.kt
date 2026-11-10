@@ -10,9 +10,8 @@ enum class MealType {
     BREAKFAST,
     LUNCH,
     DINNER,
-    SNACK,
-    PRE_WORKOUT,
-    POST_WORKOUT;
+    AFTERNOON_SNACK,
+    SNACK;
 
     companion object {
         /**
@@ -24,7 +23,7 @@ enum class MealType {
         fun suggestFromHour(hour: Int): MealType = when (hour) {
             in 6..10 -> BREAKFAST
             in 11..14 -> LUNCH
-            in 15..17 -> SNACK
+            in 15..17 -> AFTERNOON_SNACK
             in 18..22 -> DINNER
             else -> SNACK
         }

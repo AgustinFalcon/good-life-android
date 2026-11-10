@@ -3,13 +3,19 @@ package com.agusstkd.goodlife.presentation.screen.tabs.daily
 import com.agusstkd.goodlife.core.extensions.formatArgs
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.alpha
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -17,10 +23,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -46,6 +54,7 @@ import kotlinx.datetime.LocalDate
  * UI pura: solo renderiza, sin lógica de negocio.
  * Todos los textos formateados y acciones vienen desde ViewModel.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DailyScreen(
     uiState: DailyUiState.Success,
@@ -56,9 +65,14 @@ fun DailyScreen(
 ) {
     val totalItems = uiState.items.size
     val completedItems = uiState.items.count { it.status == DailyItemStatus.COMPLETED }
-    val progress = uiState.completionRate.coerceIn(0.0, 1.0).toFloat()
+    val progress = if (totalItems == 0) 0f else completedItems.toFloat() / totalItems
     val percentage = (progress * 100).toInt()
 
+    PullToRefreshBox(
+        isRefreshing = uiState.isRefreshing,
+        onRefresh = { onAction(DailyUiAction.OnRefresh) },
+        modifier = Modifier.fillMaxSize(),
+    ) {
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize(),
@@ -67,10 +81,12 @@ fun DailyScreen(
         item {
             val onPreviousDay = remember(onAction) { { onAction(DailyUiAction.OnPreviousDay) } }
             val onNextDay = remember(onAction) { { onAction(DailyUiAction.OnNextDay) } }
+            val onCalendarClick = remember(onAction) { { onAction(DailyUiAction.OnCalendarClick) } }
             DateHeaderComponent(
                 params = dateHeaderParams,
                 onPreviousDay = onPreviousDay,
-                onNextDay = onNextDay
+                onNextDay = onNextDay,
+                onCalendarClick = onCalendarClick,
             )
         }
 
@@ -124,6 +140,7 @@ fun DailyScreen(
                 modifier = Modifier.padding(16.dp)
             )
         }
+    }
     }
 }
 
@@ -246,6 +263,100 @@ private fun DailyScreenEmptyPreview() {
                 items = persistentListOf()
             ),
             onAction = {}
+        )
+    }
+}
+
+@Composable
+internal fun DailyLoadingState() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        DailySkeletonBlock(height = 64.dp, alpha = 0.35f)
+        DailySkeletonBlock(height = 96.dp, alpha = 0.30f)
+        DailySkeletonBlock(height = 88.dp, alpha = 0.25f)
+        DailySkeletonBlock(height = 88.dp, alpha = 0.20f)
+    }
+}
+
+@Composable
+internal fun DailyEmptyState(
+    dailyTexts: DailyTexts,
+    onRetry: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "${dailyTexts.noData}\n${dailyTexts.tapToRetry}",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.clickable(onClick = onRetry)
+        )
+    }
+}
+
+@Composable
+internal fun DailyErrorState(
+    message: String,
+    dailyTexts: DailyTexts,
+    onRetry: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "$message\n${dailyTexts.tapToRetry}",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.clickable(onClick = onRetry)
+        )
+    }
+}
+
+@Composable
+private fun DailySkeletonBlock(
+    height: androidx.compose.ui.unit.Dp,
+    alpha: Float
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(height)
+            .alpha(alpha),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {}
+}
+
+@Preview(showBackground = true, name = "DailyScreen - Loading")
+@Composable
+private fun DailyLoadingPreview() {
+    GoodLifeTheme { DailyLoadingState() }
+}
+
+@Preview(showBackground = true, name = "DailyScreen - Empty")
+@Composable
+private fun DailyEmptyPreview() {
+    GoodLifeTheme {
+        DailyEmptyState(dailyTexts = Spanish.dailyTexts, onRetry = {})
+    }
+}
+
+@Preview(showBackground = true, name = "DailyScreen - Error")
+@Composable
+private fun DailyErrorPreview() {
+    GoodLifeTheme {
+        DailyErrorState(
+            message = Spanish.errorTexts.connectionError,
+            dailyTexts = Spanish.dailyTexts,
+            onRetry = {},
         )
     }
 }

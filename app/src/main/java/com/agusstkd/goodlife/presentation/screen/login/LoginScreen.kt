@@ -109,8 +109,25 @@ fun LoginScreen(
                 auth = auth,
                 accessibility = accessibility
             )
-            is LoginUiState.Success -> { }
+            is LoginUiState.Success -> LoginSuccessScreen(text = auth.loginSuccess)
         }
+    }
+}
+
+@Composable
+internal fun LoginSuccessScreen(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.primary
+        )
     }
 }
 
@@ -491,6 +508,30 @@ fun LoginScreenRemoteErrorPreview() {
                 password = "password",
                 errorMessage = "No se pudo iniciar sesión. Intentá nuevamente."
             ),
+            onAction = {},
+            texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Error")
+@Composable
+fun LoginScreenErrorPreview() {
+    GoodLifeTheme {
+        LoginScreen(
+            uiState = LoginUiState.Error,
+            onAction = {},
+            texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Success")
+@Composable
+fun LoginScreenSuccessPreview() {
+    GoodLifeTheme {
+        LoginScreen(
+            uiState = LoginUiState.Success,
             onAction = {},
             texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)
         )

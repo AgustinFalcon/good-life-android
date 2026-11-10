@@ -46,7 +46,13 @@ sealed interface DailyUiState {
      * La UI debe mostrar un mensaje invitando a agregar items.
      */
     @Immutable
-    data object Empty : DailyUiState
+    data class Empty(
+        val date: LocalDate,
+        val dayNumber: Int,
+        val headerText: String,
+        val monthYear: String,
+        val showFullDate: Boolean,
+    ) : DailyUiState
 
     /**
      * Estado principal con el daily log cargado.

@@ -6,6 +6,7 @@ import com.agusstkd.goodlife.core.datetime.language.CreateRoutineTexts
 internal fun previewRoutineTexts() = CreateRoutineTexts(
     screenTitle = "Nueva rutina",
     typeBadge = "RUTINA",
+    namePlaceholder = "Ej: Rutina de fuerza",
     stepOf = "Paso %d de %d",
     nextButton = "Siguiente",
     backButton = "Atrás",

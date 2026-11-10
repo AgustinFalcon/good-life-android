@@ -3,6 +3,7 @@ package com.agusstkd.goodlife.presentation.screen.tabs.daily.model
 import androidx.compose.runtime.Stable
 
 import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
+import kotlinx.datetime.LocalDate
 
 /**
  * Acciones del usuario en la pantalla Daily.
@@ -41,6 +42,19 @@ sealed interface DailyUiAction {
      * Ejemplo: De "Hoy" (4 de febrero) → "Mañana" (5 de febrero)
      */
     data object OnNextDay : DailyUiAction
+
+    /** Abre el bottomsheet de calendario para saltar a una fecha. */
+    data object OnCalendarClick : DailyUiAction
+
+    /** Cierra el bottomsheet de calendario sin cambiar la fecha. */
+    data object OnCalendarDismiss : DailyUiAction
+
+    /**
+     * Usuario eligió una fecha en el calendario.
+     *
+     * @property date Día al que debe saltar el Daily.
+     */
+    data class OnCalendarDateSelected(val date: LocalDate) : DailyUiAction
 
     /**
      * Usuario pull-to-refresh para recargar datos.

@@ -1,34 +1,25 @@
 package com.agusstkd.goodlife.data.remote.dto.request.nutrition
 
-import com.agusstkd.goodlife.domain.model.nutrition.MealType
-import kotlinx.datetime.LocalTime
 import kotlinx.serialization.Serializable
 
 /**
- * DTO de request para crear plan de comidas completo.
- * 
- * Representa el plan completo del día con múltiples comidas programadas.
+ * Body de `POST /api/v1/meal-plans`.
+ *
+ * El backend espera un plan por comida (mealId + mealType + días), no un
+ * agregado de `scheduledMeals`. Las fechas van en ISO-8601.
  */
 @Serializable
 data class CreateMealPlanRequestDto(
-    val name: String,
-    val description: String?,
-    val scheduledMeals: List<ScheduledMealRequestDto>,
+    val mealId: Long,
+    val mealType: String,
+    val scheduledTime: String? = null,
+    val daysOfWeek: List<Int>,
+    val startDate: String? = null,
+    val endDate: String? = null,
 )
 
 /**
- * DTO de request para una comida programada dentro del plan.
- */
-@Serializable 
-data class ScheduledMealRequestDto(
-    val mealType: MealType,
-    val scheduledTime: LocalTime?,
-    val mealId: Long?,  // ID de comida del catálogo (opcional)
-    val customIngredients: List<MealIngredientRequestDto>,  // Ingredientes custom adicionales
-)
-
-/**
- * DTO de request para un ingrediente dentro de una comida programada.
+ * Ingrediente dentro de una meal custom (POST /meals).
  */
 @Serializable
 data class MealIngredientRequestDto(

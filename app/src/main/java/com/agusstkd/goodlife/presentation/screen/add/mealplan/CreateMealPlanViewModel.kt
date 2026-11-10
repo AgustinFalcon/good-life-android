@@ -133,9 +133,8 @@ class CreateMealPlanViewModel(
             MealType.BREAKFAST to t.breakfast,
             MealType.LUNCH to t.lunch,
             MealType.DINNER to t.dinner,
+            MealType.AFTERNOON_SNACK to t.afternoonSnack,
             MealType.SNACK to t.snack,
-            MealType.PRE_WORKOUT to t.preWorkout,
-            MealType.POST_WORKOUT to t.postWorkout,
         )
     }
 
@@ -616,6 +615,9 @@ class CreateMealPlanViewModel(
             name = if (state.isCreatingNewMeal) state.newMealName else state.selectedMeal?.name ?: "",
             description = if (state.isCreatingNewMeal) state.newMealDescription.ifBlank { null } else null,
             scheduledMeals = listOf(scheduledMealDraft),
+            daysOfWeek = state.selectedDays,
+            startDate = state.startDate,
+            endDate = if (state.hasEndDate) state.endDate else null,
         )
 
         when (val result = createMealPlanUseCase.execute(mealPlanDraft = mealPlanDraft)) {

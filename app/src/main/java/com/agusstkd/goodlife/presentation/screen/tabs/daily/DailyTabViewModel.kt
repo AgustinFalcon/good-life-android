@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.agusstkd.goodlife.core.datetime.DateProvider
 import com.agusstkd.goodlife.core.datetime.language.AccessibilityTexts
+import com.agusstkd.goodlife.core.datetime.language.DatePickerTexts
 import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 import com.agusstkd.goodlife.domain.model.daily.DailyItemType
@@ -24,6 +25,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -79,9 +81,13 @@ class DailyTabViewModel(
 
     val dailyTexts get() = language.dailyTexts
     val accessibilityTexts: AccessibilityTexts get() = language.accessibilityTexts
+    val datePickerTexts: DatePickerTexts get() = language.datePickerTexts
 
     private var currentDate: LocalDate = dateProvider.today()
+    private var hasResumedOnce = false
     private var activeFilter: DailyFilter = DailyFilter.ALL
+    private val _isCalendarVisible = MutableStateFlow(false)
+    val isCalendarVisible: StateFlow<Boolean> = _isCalendarVisible.asStateFlow()
     private val navigationEffectsChannel = Channel<DailyNavigationEffect>(Channel.RENDEZVOUS)
     val navigationEffects = navigationEffectsChannel.receiveAsFlow()
     private var detailNavigationInProgress = false
@@ -95,18 +101,25 @@ class DailyTabViewModel(
         .stateIn(viewModelScope, SharingStarted.Eagerly, DailyUiState.Loading)
 
     fun refresh() {
-        loadItems()
+        loadItems(retainContent = true)
     }
 
     fun onDailyListResumed() {
         detailNavigationInProgress = false
+        if (hasResumedOnce) {
+            loadItems(retainContent = true)
+        }
+        hasResumedOnce = true
     }
 
     fun onAction(action: DailyUiAction) {
         when (action) {
             DailyUiAction.OnPreviousDay -> navigateToPreviousDay()
             DailyUiAction.OnNextDay -> navigateToNextDay()
-            DailyUiAction.OnRefresh -> loadItems()
+            DailyUiAction.OnCalendarClick -> _isCalendarVisible.value = true
+            DailyUiAction.OnCalendarDismiss -> _isCalendarVisible.value = false
+            is DailyUiAction.OnCalendarDateSelected -> selectDate(action.date)
+            DailyUiAction.OnRefresh -> loadItems(retainContent = true)
             is DailyUiAction.OnItemClick -> navigateToDetail(action.itemId)
             is DailyUiAction.OnItemStatusChange -> updateItemStatus(action.itemId, action.newStatus)
             is DailyUiAction.OnFilterChange -> filterItems(action.filter)
@@ -126,20 +139,25 @@ class DailyTabViewModel(
      *
      * Muestra [DailyUiState.Loading] (skeleton) mientras se hace la request.
      */
-    private fun loadItems() {
+    private fun loadItems(retainContent: Boolean = false) {
         val requestedDate = currentDate
         val requestId = ++latestLoadRequestId
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
             if (!isCurrentLoadRequest(requestId, requestedDate)) return@launch
-            _uiState.value = DailyUiState.Loading
+            val current = _uiState.value
+            _uiState.value = when {
+                retainContent && current is DailyUiState.Success -> current.copy(isRefreshing = true)
+                retainContent -> current
+                else -> DailyUiState.Loading
+            }
 
             val result = getDailyItemsUseCase(requestedDate)
             if (!isCurrentLoadRequest(requestId, requestedDate)) return@launch
 
             when (result) {
                     is GetDailyItemsResult.Success -> _uiState.value = buildSuccessState(result.dailyLog, requestedDate)
-                    is GetDailyItemsResult.NotFound -> showEmptyState()
+                    is GetDailyItemsResult.NotFound -> showEmptyState(requestedDate)
                     is GetDailyItemsResult.ServerError -> showServerError()
                     is GetDailyItemsResult.NetworkError -> showNetworkError()
             }
@@ -190,6 +208,13 @@ class DailyTabViewModel(
         loadItems()
     }
 
+    private fun selectDate(date: LocalDate) {
+        _isCalendarVisible.value = false
+        if (date == currentDate) return
+        currentDate = date
+        loadItems()
+    }
+
     private fun navigateToDetail(itemId: Long) {
         if (itemId <= 0 || detailNavigationInProgress) return
         detailNavigationInProgress = true
@@ -213,7 +238,12 @@ class DailyTabViewModel(
             headerText = formatHeaderText(date),
             monthYear = formatMonthYear(date),
             showFullDate = !isRelativeDate(date),
-            completionRate = dailyLog.completionRate,
+            completionRate = if (dailyLog.items.isEmpty()) {
+                0.0
+            } else {
+                dailyLog.items.count { it.status == DailyItemStatus.COMPLETED }.toDouble() /
+                    dailyLog.items.size
+            },
             items = dailyLog.items.map { domainItem ->
                 domainItem.toUiModel(
                     typeLabel = resolveTypeLabel(domainItem.type),
@@ -229,8 +259,14 @@ class DailyTabViewModel(
         )
     }
 
-    private fun showEmptyState() {
-        _uiState.value = DailyUiState.Empty
+    private fun showEmptyState(date: LocalDate) {
+        _uiState.value = DailyUiState.Empty(
+            date = date,
+            dayNumber = date.day,
+            headerText = formatHeaderText(date),
+            monthYear = formatMonthYear(date),
+            showFullDate = !isRelativeDate(date),
+        )
     }
 
     private fun showServerError() {

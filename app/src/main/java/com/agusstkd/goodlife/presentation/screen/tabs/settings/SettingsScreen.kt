@@ -23,9 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.agusstkd.goodlife.presentation.screen.tabs.settings.model.SettingsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.settings.model.SettingsUiState
+import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
 
 /**
  * Pantalla de Settings (UI pura).
@@ -113,5 +115,27 @@ private fun SettingsOptionCard(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true, name = "SettingsScreen - con usuario")
+@Composable
+private fun SettingsScreenPreview() {
+    GoodLifeTheme {
+        SettingsScreen(
+            uiState = SettingsUiState(username = "agustin"),
+            onAction = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "SettingsScreen - sin usuario")
+@Composable
+private fun SettingsScreenEmptyUsernamePreview() {
+    GoodLifeTheme {
+        SettingsScreen(
+            uiState = SettingsUiState(username = ""),
+            onAction = {},
+        )
     }
 }

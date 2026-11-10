@@ -119,6 +119,24 @@ class WorkoutsTabViewModelTest {
         advanceUntilIdle()
         assertEquals(null, staleEffect.await())
     }
+    @Test fun `returning to workouts after the first resume reloads the active routine`() = runTest(dispatcher) {
+        repo.getActiveRoutineResult = Result.Success(routine())
+        val vm = vm()
+        backgroundScope.launch { vm.uiState.collect {} }
+        vm.refresh()
+        advanceUntilIdle()
+        val afterInit = repo.getActiveRoutineCallCount
+
+        vm.onWorkoutListResumed()
+        advanceUntilIdle()
+        assertEquals(afterInit, repo.getActiveRoutineCallCount)
+
+        vm.onWorkoutListResumed()
+        advanceUntilIdle()
+        assertEquals(afterInit + 1, repo.getActiveRoutineCallCount)
+        assertTrue(vm.uiState.value is WorkoutsUiState.Success)
+    }
+
     @Test fun `create routine action navigates to the app creation route`() = runTest(dispatcher) {
         val navigation = FakeNavigationController()
         val vm = vm(navigation)

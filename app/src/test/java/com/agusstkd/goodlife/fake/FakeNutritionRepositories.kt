@@ -19,6 +19,7 @@ class FakeMealPlanRepository : MealPlanRepository {
     var getHandler: (suspend (LocalDate) -> Result<List<DailyMealPlanSummary>>)? = null
     val requestedDates = mutableListOf<LocalDate>()
     var createCallCount = 0
+    var lastCreateRequest: CreateMealPlanRequestDto? = null
 
     override suspend fun getMealPlansByDate(date: LocalDate): Result<List<DailyMealPlanSummary>> {
         requestedDates.add(date)
@@ -27,6 +28,7 @@ class FakeMealPlanRepository : MealPlanRepository {
 
     override suspend fun createMealPlan(request: CreateMealPlanRequestDto): Result<MealPlanResponseDto> {
         createCallCount++
+        lastCreateRequest = request
         return createResult
     }
 }

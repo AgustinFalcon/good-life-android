@@ -44,11 +44,15 @@ AppRoute navigation uses a bounded Channel exposed as a one-shot Flow: it bridge
 
 `addDailyTabGraph` and `addMealsTabGraph` are internal typed graph boundaries included by `addTabNavGraph`; instrumentation exercises the same routes with deterministic content and no backend.
 
+Daily and Meals headers open the shared `DatePickerBottomSheetComponent`. `DailyTabViewModel`, `MealsTabViewModel` and `WorkoutsTabViewModel` reload on resume after the first composition (`hasResumedOnce`) so popping a create flow refreshes the list without changing day. Daily `completionRate` is completed items / total on the loaded list. Daily and Meals wrap the list in `PullToRefreshBox`.
+
 ## Workout detail
 
 `TabRoute.WorkoutDetail` carries only `workoutId`. Its Owner resolves the current active routine through the existing use case, so it has no duplicate API contract, repository mutation or deep-link dependency. The ViewModel exposes loading, content, missing and error states; composables remain pure.
 
-User intents are `WorkoutDetailUiAction`: `OnRetry` and `OnFinishWorkout`. The Content screen emits finish through `onAction`; the ViewModel method is still empty. Back remains Owner `onNavigateUp` (tab-graph chrome). A successful finish will later pop via a tab-local navigation effect, not via `NavController` in the ViewModel.
+User intents are `WorkoutDetailUiAction`: `OnRetry`, `OnNotesChange`, `OnSetFieldChange` (`WorkoutSetField` Weight/Reps/Rpe) and `OnFinishWorkout`. Content holds editable session `notes`, editable set inputs (seeded from targets, labelled via `WorkoutSetField.label` + `WorkoutTexts` ES/EN/PT), `isFinishing`, `finishError` and `finished`. The ViewModel starts the session clock with `DateProvider.now()` when it publishes Content and ends it on Finish; `durationMinutes` is that interval coerced to at least 1. Finish parses Content inputs into `FinishWorkoutDraft` (RPE via `PerceivedExertion.fromWire`); exercise notes still come from `WorkoutExercise.notes`. GET failures remain `Error`/`NotFound`; POST failures stay on Content with `WorkoutTexts.finishFailed` or existing network/empty copy. On `FinishWorkoutResult.Success` the ViewModel sets `Content.finished = true`; the Screen shows the existing `SuccessDialog` Lottie (`R.raw.success_animation`) and then calls Owner `onNavigateUp`. Domain and data are wired (`FinishWorkoutUseCase` → `WorkoutLogRepository` → `POST /api/v1/workouts/log/finish`). The Screen never holds a `NavController`. `GetActiveRoutineUseCase` stays remote-only; cache is `loadedWorkout` / `loadedRoutineId` on the ViewModel.
+
+Contract: `sdd/wip/20261106-android-finish-workout-session/` (CU-19 reconfirmed against R-03).
 
 ## SDD ownership
 

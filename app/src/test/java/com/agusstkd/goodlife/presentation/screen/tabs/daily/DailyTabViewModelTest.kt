@@ -87,7 +87,7 @@ class DailyTabViewModelTest {
         assertTrue(state is DailyUiState.Success)
         val success = state as DailyUiState.Success
         assertEquals(2, success.items.size)
-        assertEquals(0.75, success.completionRate, 0.001)
+        assertEquals(0.5, success.completionRate, 0.001)
     }
 
     @Test
@@ -127,7 +127,12 @@ class DailyTabViewModelTest {
     @Test
     fun `OnNextDay increments date and reloads`() = runTest(testDispatcher) {
         val todayLog = DailyLog(1, fixedDate, 0.5, emptyList())
-        val tomorrowLog = DailyLog(2, fixedDate, 1.0, emptyList())
+        val tomorrowLog = DailyLog(
+            2,
+            fixedDate,
+            1.0,
+            listOf(DailyItem(1, DailyItemType.TASK, 10, null, DailyItemStatus.COMPLETED, "Task", null)),
+        )
         repository.getDailyLogResult = Result.Success(todayLog)
 
         viewModel = createViewModel()
@@ -182,7 +187,12 @@ class DailyTabViewModelTest {
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        val updatedLog = log.copy(completionRate = 1.0)
+        val updatedLog = log.copy(
+            completionRate = 1.0,
+            items = listOf(
+                DailyItem(1, DailyItemType.TASK, 10, null, DailyItemStatus.COMPLETED, "Task", null)
+            ),
+        )
         repository.updateItemStatusResult = Result.Success(updatedLog)
 
         viewModel.onAction(DailyUiAction.OnItemStatusChange(1, DailyItemStatus.COMPLETED))
@@ -225,11 +235,20 @@ class DailyTabViewModelTest {
         firstResult.complete(Result.Success(log.copy(completionRate = 0.2)))
         runCurrent()
         assertEquals(2, repository.updateItemStatusCallCount)
-        secondResult.complete(Result.Success(log.copy(completionRate = 0.8)))
+        secondResult.complete(
+            Result.Success(
+                log.copy(
+                    completionRate = 0.8,
+                    items = listOf(
+                        DailyItem(1, DailyItemType.TASK, 10, null, DailyItemStatus.COMPLETED, "Task", null)
+                    ),
+                )
+            )
+        )
         advanceUntilIdle()
 
         val state = viewModel.uiState.value as DailyUiState.Success
-        assertEquals(0.8, state.completionRate, 0.001)
+        assertEquals(1.0, state.completionRate, 0.001)
     }
 
     @Test
@@ -289,7 +308,16 @@ class DailyTabViewModelTest {
                     completeInitialRequest = { result -> continuation.resume(result) }
                 }
             } else {
-                Result.Success(DailyLog(2, nextDate, 1.0, emptyList()))
+                Result.Success(
+                    DailyLog(
+                        2,
+                        nextDate,
+                        1.0,
+                        listOf(
+                            DailyItem(9, DailyItemType.TASK, 10, null, DailyItemStatus.COMPLETED, "Task", null)
+                        ),
+                    )
+                )
             }
         }
 
@@ -373,5 +401,42 @@ class DailyTabViewModelTest {
 
         val state = viewModel.uiState.value as DailyUiState.Success
         assertEquals("Hoy", state.headerText)
+    }
+
+    @Test
+    fun `calendar date selection jumps without leaving the picker open`() = runTest(testDispatcher) {
+        repository.getDailyLogResult = Result.Success(DailyLog(1, fixedDate, 0.0, emptyList()))
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onAction(DailyUiAction.OnCalendarClick)
+        assertTrue(viewModel.isCalendarVisible.value)
+
+        val jumped = LocalDate(2026, 3, 15)
+        repository.getDailyLogResult = Result.Success(DailyLog(9, jumped, 0.0, emptyList()))
+        viewModel.onAction(DailyUiAction.OnCalendarDateSelected(jumped))
+        advanceUntilIdle()
+
+        assertTrue(!viewModel.isCalendarVisible.value)
+        val state = viewModel.uiState.value as DailyUiState.Success
+        assertEquals(jumped, state.date)
+        assertEquals(2, repository.getDailyLogCallCount)
+    }
+
+    @Test
+    fun `returning to daily after the first resume reloads items`() = runTest(testDispatcher) {
+        repository.getDailyLogResult = Result.Success(DailyLog(1, fixedDate, 0.0, emptyList()))
+        viewModel = createViewModel()
+        advanceUntilIdle()
+        assertEquals(1, repository.getDailyLogCallCount)
+
+        viewModel.onDailyListResumed()
+        advanceUntilIdle()
+        assertEquals(1, repository.getDailyLogCallCount)
+
+        viewModel.onDailyListResumed()
+        advanceUntilIdle()
+        assertEquals(2, repository.getDailyLogCallCount)
+        assertTrue(viewModel.uiState.value is DailyUiState.Success)
     }
 }

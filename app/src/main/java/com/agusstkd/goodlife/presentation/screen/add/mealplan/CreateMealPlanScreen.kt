@@ -153,10 +153,31 @@ fun CreateMealPlanScreen(
 
 @Preview(showBackground = true, showSystemUi = true, name = "CreateMealPlanScreen — Paso 1")
 @Composable
-private fun CreateMealPlanScreenPreview() {
+private fun CreateMealPlanScreenStep1Preview() {
+    CreateMealPlanPreviewHost(previewMealPlanUiState())
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "CreateMealPlanScreen — Paso 2")
+@Composable
+private fun CreateMealPlanScreenStep2Preview() {
+    CreateMealPlanPreviewHost(
+        previewMealPlanUiState().copy(currentStep = MealPlanWizardStep.MEAL_INGREDIENTS)
+    )
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "CreateMealPlanScreen — Paso 3")
+@Composable
+private fun CreateMealPlanScreenStep3Preview() {
+    CreateMealPlanPreviewHost(
+        previewMealPlanUiState().copy(currentStep = MealPlanWizardStep.SCHEDULE)
+    )
+}
+
+@Composable
+private fun CreateMealPlanPreviewHost(uiState: CreateMealPlanUiState) {
     GoodLifeTheme {
         CreateMealPlanScreen(
-            uiState = previewMealPlanUiState(),
+            uiState = uiState,
             onAction = {},
             texts = previewMealPlanTexts(),
             sharedTexts = previewSharedTexts(),

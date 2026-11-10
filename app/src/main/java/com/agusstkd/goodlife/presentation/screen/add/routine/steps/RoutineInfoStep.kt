@@ -2,6 +2,8 @@ package com.agusstkd.goodlife.presentation.screen.add.routine.steps
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,6 +48,7 @@ import com.agusstkd.goodlife.presentation.theme.TextPrimary
 import com.agusstkd.goodlife.presentation.theme.WorkoutAccent
 import kotlinx.datetime.DayOfWeek
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RoutineInfoStep(
     uiState: CreateRoutineUiState,
@@ -67,7 +70,7 @@ fun RoutineInfoStep(
         TextFieldComponent(
             params = TextFieldParams(
                 value = uiState.name,
-                placeholder = sharedTexts.fieldTitlePlaceholder,
+                placeholder = routineTexts.namePlaceholder,
                 type = TextFieldType.TEXT,
             ),
             onValueChange = { onAction(CreateRoutineUiAction.OnNameChange(it)) },
@@ -91,15 +94,16 @@ fun RoutineInfoStep(
         // ── Dificultad ──
         SectionLabel(text = routineTexts.difficultySectionTitle)
         Spacer(modifier = Modifier.height(8.dp))
-        Row(
+        FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             difficultyEntries.forEach { (level, label) ->
                 FilterChip(
                     selected = uiState.difficultyLevel == level,
                     onClick = { onAction(CreateRoutineUiAction.OnDifficultySelected(level)) },
-                    label = { Text(label) },
+                    label = { Text(text = label, maxLines = 1) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = WorkoutAccent.copy(alpha = 0.15f),
                         selectedLabelColor = WorkoutAccent,
@@ -113,15 +117,16 @@ fun RoutineInfoStep(
         // ── Objetivo ──
         SectionLabel(text = routineTexts.goalSectionTitle)
         Spacer(modifier = Modifier.height(8.dp))
-        Row(
+        FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             goalEntries.forEach { (goal, label) ->
                 FilterChip(
                     selected = uiState.goalType == goal,
                     onClick = { onAction(CreateRoutineUiAction.OnGoalTypeSelected(goal)) },
-                    label = { Text(label, style = MaterialTheme.typography.labelSmall) },
+                    label = { Text(text = label, maxLines = 1, style = MaterialTheme.typography.labelSmall) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = WorkoutAccent.copy(alpha = 0.15f),
                         selectedLabelColor = WorkoutAccent,

@@ -78,6 +78,16 @@ fun DailyItemResponse.toDomain(): DailyItem {
 /**
  * Extrae título y descripción según el tipo de item.
  */
+internal fun WorkoutSummaryDto.toDailyDescription(): String {
+    val routine = routineName ?: "Sin rutina"
+    val suffix = when {
+        exerciseCount != null && exerciseCount > 0 -> " • $exerciseCount ejercicios"
+        dayOrder != null -> " • Día $dayOrder"
+        else -> ""
+    }
+    return "Rutina: $routine$suffix"
+}
+
 private fun DailyItemResponse.extractTitleAndDescription(): Pair<String, String?> {
     return when (type) {
         DailyItemType.TASK -> {
@@ -86,19 +96,15 @@ private fun DailyItemResponse.extractTitleAndDescription(): Pair<String, String?
         DailyItemType.HABIT -> {
             val habitName = habitLog?.habit?.name ?: "Hábito sin nombre"
             val unit = habitLog?.habit?.unit ?: ""
-            val current = habitLog?.currentValue?.toInt() ?: 0
-            val target = habitLog?.targetValue?.toInt() ?: 0
-            val description = "$current / $target $unit"
+            val target = habitLog?.targetValue?.toInt() ?: habitLog?.habit?.targetValue ?: 0
+            val logged = habitLog?.currentValue?.toInt() ?: 0
+            val current = if (status == DailyItemStatus.COMPLETED && logged < target) target else logged
+            val description = "$current / $target $unit".trimEnd()
             habitName to description
         }
         DailyItemType.WORKOUT -> {
             val name = workout?.name ?: "Entrenamiento"
-            val description = workout?.let {
-                val routine = it.routineName ?: "Sin rutina"
-                val count = it.exerciseCount ?: 0
-                "Rutina: $routine • $count ejercicios"
-            }
-            name to description
+            name to workout?.toDailyDescription()
         }
         DailyItemType.MEAL -> {
             val name = mealPlan?.mealName ?: "Comida"

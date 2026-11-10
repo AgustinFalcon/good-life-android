@@ -88,9 +88,8 @@ class MealDetailViewModel(
             MealType.BREAKFAST -> breakfast
             MealType.LUNCH -> lunch
             MealType.DINNER -> dinner
+            MealType.AFTERNOON_SNACK -> afternoonSnack
             MealType.SNACK -> snack
-            MealType.PRE_WORKOUT -> preWorkout
-            MealType.POST_WORKOUT -> postWorkout
         }
     }
 }
