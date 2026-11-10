@@ -32,5 +32,8 @@ data class DailyItemEntity(
     val scheduledTime: String?,
     val status: String,
     val title: String,
-    val description: String?
+    val description: String?,
+    val workoutRoutineName: String? = null,
+    val workoutExerciseCount: Int? = null,
+    val workoutDayOrder: Int? = null,
 )

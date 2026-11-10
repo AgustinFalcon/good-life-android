@@ -35,7 +35,10 @@ fun DailyItemEntity.toDomain(): DailyItem = DailyItem(
     scheduledTime = scheduledTime?.let { LocalTime.parse(it) },
     status = DailyItemStatus.valueOf(status),
     title = title,
-    description = description
+    description = description,
+    workoutRoutineName = workoutRoutineName,
+    workoutExerciseCount = workoutExerciseCount,
+    workoutDayOrder = workoutDayOrder,
 )
 
 fun DailyLog.toEntity(): DailyLogEntity = DailyLogEntity(
@@ -52,5 +55,8 @@ fun DailyItem.toItemEntity(dailyLogId: Long): DailyItemEntity = DailyItemEntity(
     scheduledTime = scheduledTime?.toString(),
     status = status.name,
     title = title,
-    description = description
+    description = description,
+    workoutRoutineName = workoutRoutineName,
+    workoutExerciseCount = workoutExerciseCount,
+    workoutDayOrder = workoutDayOrder,
 )

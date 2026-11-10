@@ -2,6 +2,8 @@ package com.agusstkd.goodlife.presentation.screen.tabs.daily.model
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
+import com.agusstkd.goodlife.core.datetime.language.WorkoutTexts
+import com.agusstkd.goodlife.core.extensions.formatArgs
 import com.agusstkd.goodlife.core.extensions.toDisplayString
 import com.agusstkd.goodlife.domain.model.daily.DailyItem
 import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
@@ -143,21 +145,37 @@ data class DailyItemUiModel(
  * Mapea [DailyItem][com.agusstkd.goodlife.domain.model.daily.DailyItem] (Domain Model)
  * → [DailyItemUiModel] (UI Model).
  *
- * El título y descripción ya vienen extraídos en el Domain Model
- * (el mapeo Response→Domain se hizo en el Repository).
- * Este método solo formatea la hora para la UI.
+ * El título ya viene extraído en el Domain Model. La hora se formatea aquí.
+ * Un workout arma la descripción con [WorkoutTexts], no con copy del DTO.
  */
-fun DailyItem.toUiModel(typeLabel: String, highlight: DailyItemHighlight = DailyItemHighlight.NONE): DailyItemUiModel {
+fun DailyItem.toUiModel(
+    typeLabel: String,
+    highlight: DailyItemHighlight = DailyItemHighlight.NONE,
+    workoutTexts: WorkoutTexts,
+): DailyItemUiModel {
     return DailyItemUiModel(
         id = id,
         type = type,
         title = title,
-        description = description,
+        description = formattedDescription(workoutTexts),
         scheduledTime = scheduledTime?.toDisplayString(),
         status = status,
         typeLabel = typeLabel,
         highlight = highlight
     )
+}
+
+fun DailyItem.formattedDescription(texts: WorkoutTexts): String? {
+    if (type != DailyItemType.WORKOUT) return description
+    val routine = workoutRoutineName?.takeIf { it.isNotBlank() } ?: texts.noRoutineName
+    val suffix = when {
+        workoutExerciseCount != null && workoutExerciseCount > 0 ->
+            " • ${texts.dailyExercisesFormat.formatArgs(workoutExerciseCount)}"
+        workoutDayOrder != null ->
+            " • ${texts.dayFormat.formatArgs(workoutDayOrder)}"
+        else -> ""
+    }
+    return texts.dailyRoutineFormat.formatArgs(routine) + suffix
 }
 
 enum class DailyItemHighlight { NONE, NEXT_UP, IN_PROGRESS }

@@ -426,6 +426,9 @@ data class WorkoutTexts(
     val setRepsLabel: String,
     /** Label del input de RPE (1–10, opcional). */
     val setRpeLabel: String,
+    val dailyRoutineFormat: String,
+    val dailyExercisesFormat: String,
+    val noRoutineName: String,
 )
 /**
  * Textos para el wizard de creación de Rutina (SPEC-011).

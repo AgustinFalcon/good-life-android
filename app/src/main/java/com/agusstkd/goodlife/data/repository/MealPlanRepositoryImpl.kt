@@ -21,7 +21,7 @@ class MealPlanRepositoryImpl(
 ) : MealPlanRepository {
 
     override suspend fun getMealPlansByDate(date: LocalDate): Result<List<DailyMealPlanSummary>> {
-        return remoteDataSource.getMealPlansByDate(date.toString()).map { dtoList ->
+        return remoteDataSource.getMealPlans().map { dtoList ->
             dtoList.mapNotNull { it.toDailySummary(date) }
         }
     }

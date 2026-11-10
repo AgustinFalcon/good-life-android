@@ -65,7 +65,7 @@ class WorkoutDetailViewModelTest {
         val state = viewModel.uiState.value as WorkoutDetailUiState.Content
         assertEquals("Upper", state.workoutName)
         assertEquals("Día 1", state.dayLabel)
-        assertEquals("Respirar entre series", state.notes)
+        assertEquals("", state.notes)
         assertEquals(listOf("Press", "Row"), state.exercises.map { it.name })
         val firstSet = state.exercises.first().sets.first()
         assertEquals("Set 1", firstSet.label)
@@ -205,6 +205,35 @@ class WorkoutDetailViewModelTest {
         assertEquals(false, state.isFinishing)
     }
 
+    @Test fun `finish with empty sets stays on content with noExercises`() = runTest(dispatcher) {
+        repository.getActiveRoutineResult = Result.Success(routine(emptySetsOnly = true))
+        val viewModel = viewModel(workoutId = 40L)
+        advanceUntilIdle()
+
+        viewModel.onAction(WorkoutDetailUiAction.OnFinishWorkout)
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value as WorkoutDetailUiState.Content
+        assertEquals(Spanish.workoutTexts.noExercises, state.finishError)
+        assertEquals(0, workoutLogRepository.finishWorkoutCallCount)
+        assertEquals(false, state.isFinishing)
+    }
+
+    @Test fun `finish bad request stays on content with finishFailed`() = runTest(dispatcher) {
+        repository.getActiveRoutineResult = Result.Success(routine())
+        workoutLogRepository.finishWorkoutResult = Result.Error(ApiException.BadRequestException("invalid"))
+        val viewModel = viewModel(workoutId = 40L)
+        advanceUntilIdle()
+
+        viewModel.onAction(WorkoutDetailUiAction.OnFinishWorkout)
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value as WorkoutDetailUiState.Content
+        assertEquals(Spanish.workoutTexts.finishFailed, state.finishError)
+        assertEquals(false, state.finished)
+        assertEquals(false, state.isFinishing)
+    }
+
     @Test fun `finish not found stays on content with finishFailed`() = runTest(dispatcher) {
         repository.getActiveRoutineResult = Result.Success(routine())
         workoutLogRepository.finishWorkoutResult = Result.Error(ApiException.NotFoundException("missing"))
@@ -231,7 +260,7 @@ class WorkoutDetailViewModelTest {
         assertEquals(null, workoutLogRepository.lastDraft!!.exercises.first().sets.first().rpe)
     }
 
-    private fun routine(includeBodyweightSet: Boolean = false) = Routine(
+    private fun routine(includeBodyweightSet: Boolean = false, emptySetsOnly: Boolean = false) = Routine(
         id = 5L, name = "Strength", description = null, difficultyLevel = DifficultyLevel.ADVANCED,
         goalType = GoalType.STRENGTH, isActive = true, scheduledTime = null,
         daysOfWeek = setOf(DayOfWeek.MONDAY), startDate = null, endDate = null,
@@ -239,15 +268,19 @@ class WorkoutDetailViewModelTest {
             Workout(
                 id = 40L, name = "Upper", dayOfWeek = 1,
                 notes = "Respirar entre series",
-                exercises = listOf(
-                    WorkoutExercise(
-                        1L, 1L, "Row", null, 2, null,
-                        if (includeBodyweightSet) listOf(WorkoutSet(3L, 1, 12, null)) else emptyList(),
-                    ),
-                    WorkoutExercise(2L, 2L, "Press", null, 1, "Controlled tempo", listOf(
-                        WorkoutSet(2L, 2, 10, 70.5), WorkoutSet(1L, 1, 8, 80.0),
-                    )),
-                ),
+                exercises = if (emptySetsOnly) {
+                    listOf(WorkoutExercise(2L, 2L, "Press", null, 1, null, emptyList()))
+                } else {
+                    listOf(
+                        WorkoutExercise(
+                            1L, 1L, "Row", null, 2, null,
+                            if (includeBodyweightSet) listOf(WorkoutSet(3L, 1, 12, null)) else emptyList(),
+                        ),
+                        WorkoutExercise(2L, 2L, "Press", null, 1, "Controlled tempo", listOf(
+                            WorkoutSet(2L, 2, 10, 70.5), WorkoutSet(1L, 1, 8, 80.0),
+                        )),
+                    )
+                },
             ),
         ),
     )

@@ -15,16 +15,14 @@ import retrofit2.http.*
 interface MealPlanApiService {
 
     /**
-     * Obtiene los planes de comida del usuario para una fecha específica.
+     * Obtiene todos los planes de comida activos del usuario.
      *
-     * GET /api/v1/meal-plans?date=YYYY-MM-DD
+     * GET /api/v1/meal-plans
      *
-     * @param date Fecha en formato ISO-8601 (ej: "2026-05-15").
+     * El recorte al día pedido vive en el mapper de dominio, no en query `date`.
      */
     @GET("api/v1/meal-plans")
-    suspend fun getMealPlansByDate(
-        @Query("date") date: String
-    ): BaseResponse<List<DailyMealPlanResponseDto>>
+    suspend fun getMealPlans(): BaseResponse<List<DailyMealPlanResponseDto>>
 
     /**
      * Crear plan de comidas completo.

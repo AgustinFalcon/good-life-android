@@ -622,7 +622,7 @@ class CreateMealPlanViewModel(
 
         when (val result = createMealPlanUseCase.execute(mealPlanDraft = mealPlanDraft)) {
             is CreateMealPlanResult.Success -> _uiState.update { it.copy(isLoading = false, isSuccess = true) }
-            is CreateMealPlanResult.ServerError -> _uiState.update { it.copy(isLoading = false, errorMessage = result.message) }
+            is CreateMealPlanResult.ServerError -> _uiState.update { it.copy(isLoading = false, errorMessage = texts.errorServer) }
             CreateMealPlanResult.NetworkError -> _uiState.update { it.copy(isLoading = false, errorMessage = texts.errorNetwork) }
             CreateMealPlanResult.ValidationError -> _uiState.update { it.copy(isLoading = false, errorMessage = texts.errorMealNameEmpty) }
         }

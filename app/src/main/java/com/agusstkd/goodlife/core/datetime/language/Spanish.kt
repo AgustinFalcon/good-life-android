@@ -347,6 +347,9 @@ data object Spanish : AppLanguage {
         setWeightLabel = "Peso (kg)",
         setRepsLabel = "Reps",
         setRpeLabel = "RPE",
+        dailyRoutineFormat = "Rutina: {0}",
+        dailyExercisesFormat = "{0} ejercicios",
+        noRoutineName = "Sin rutina",
     )
     override val mealTypeTexts = MealTypeTexts(
         breakfast = "Desayuno",

@@ -20,18 +20,22 @@ class FinishWorkoutUseCase(
 ) {
 
     /**
-     * @param draft Sesión realizada. Si [FinishWorkoutDraft.exercises] está vacío
-     * no se llama al repositorio.
+     * @param draft Sesión realizada. Si no hay ejercicios o todas las series están
+     * vacías, no se llama al repositorio.
      */
     suspend operator fun invoke(draft: FinishWorkoutDraft): FinishWorkoutResult {
-        if (draft.exercises.isEmpty()) return FinishWorkoutResult.EmptyExercises
+        if (draft.exercises.isEmpty() || draft.exercises.all { it.sets.isEmpty() }) {
+            return FinishWorkoutResult.EmptyExercises
+        }
 
         return withContext(dispatcher.io) {
             when (val result = repository.finishWorkout(draft)) {
                 is Result.Success -> FinishWorkoutResult.Success(logId = result.data)
                 is Result.Error -> when (val ex = result.exception) {
                     is ApiException.NotFoundException -> FinishWorkoutResult.NotFound
-                    is ApiException.ServerException -> FinishWorkoutResult.ServerError(ex.message)
+                    is ApiException.BadRequestException,
+                    is ApiException.ServerException,
+                    is ApiException.UnknownApiException -> FinishWorkoutResult.ServerError(ex.message)
                     else -> FinishWorkoutResult.NetworkError
                 }
             }

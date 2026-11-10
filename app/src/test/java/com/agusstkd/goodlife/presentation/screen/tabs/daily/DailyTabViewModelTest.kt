@@ -91,6 +91,37 @@ class DailyTabViewModelTest {
     }
 
     @Test
+    fun `workout item description uses localized routine and day order`() = runTest(testDispatcher) {
+        repository.getDailyLogResult = Result.Success(
+            DailyLog(
+                id = 1,
+                date = fixedDate,
+                completionRate = 0.0,
+                items = listOf(
+                    DailyItem(
+                        id = 3,
+                        type = DailyItemType.WORKOUT,
+                        referenceId = 40,
+                        scheduledTime = null,
+                        status = DailyItemStatus.PENDING,
+                        title = "PushDay",
+                        description = null,
+                        workoutRoutineName = "SmokeRutina",
+                        workoutExerciseCount = null,
+                        workoutDayOrder = 1,
+                    ),
+                ),
+            ),
+        )
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val success = viewModel.uiState.value as DailyUiState.Success
+        assertEquals("Rutina: SmokeRutina • Día 1", success.items.single().description)
+    }
+
+    @Test
     fun `init with not found shows Empty state`() = runTest(testDispatcher) {
         repository.getDailyLogResult = Result.Error(
             ApiException.NotFoundException("Not found")

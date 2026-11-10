@@ -21,6 +21,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Workouts opens a typed detail with exercises, target sets and editable session notes loaded from the active routine; missing and failed loads are observable states.
 
 ### Security
+- El Authenticator no adjunta el throwable al log de refresh en release.
 - Se eliminan plantillas de backup inactivas y se mantiene explícita la política `android:allowBackup=false`.
 - El interceptor de autenticación ya no registra URL, headers, tokens ni cuerpos de request. El logging HTTP es `BASIC` solo en debug y `NONE` en release.
 - Se deshabilitó el backup de aplicación para impedir que datos de sesión o credenciales entren en backups del sistema.
@@ -32,6 +33,8 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Se eliminaron nueve strings legacy de Daily, tabs y registro tras verificar que el copy canónico vive en `UiTexts`; launcher y compatibilidad permanecen explícitamente retenidos en la issue #38 (PR #44 mergeada).
 
 ### Fixed
+- Finish Workout trata 400/API desconocida como error de servidor (copy `finishFailed`), no como “sin conexión”. Un workout sin series no se puede terminar. Las notas de sesión empiezan vacías (no copian la plantilla).
+- Diario formatea la card de workout con `AppLanguage` a partir de hechos de dominio (`routineName`/`exerciseCount`/`dayOrder`); Room v3 los cachea. `GET /api/v1/meal-plans` ya no manda query `date`. Un 500 de meal-plan no muestra el texto crudo del backend.
 - `MealType.fromWire` no convierte JSON desconocido en Snack; el puerto de meal-plans ya no expone DTOs; Workouts cancela cargas solapadas.
 - Diario recarga al volver de crear un item; el progreso se calcula con items completados / total; el calendario del header abre el bottomsheet de fecha reutilizable. Diario y Comidas tienen pull-to-refresh. Comidas y Entrenamientos recargan al volver.
 - `POST /api/v1/meal-plans` envía el contrato del backend (`mealId`, `mealType`, `daysOfWeek`) y un 400 deja de mostrarse como "Sin conexión". `MealType` coincide con el backend (incluye `AFTERNOON_SNACK`, sin pre/post entreno). El GET de Comida mapea `mealName`/`daysOfWeek` y filtra el día pedido. Los macros se redondean a 1 decimal.

@@ -11,15 +11,26 @@ import org.junit.Test
 class DailyItemResponseTest {
 
     @Test
-    fun `workout description uses day order when exercise count is missing`() {
-        val description = WorkoutSummaryDto(
+    fun `workout maps routine facts and leaves description unformatted`() {
+        val item = DailyItemResponse(
             id = 1L,
-            name = "PushDay",
-            routineName = "SmokeRutina",
-            dayOrder = 1,
-        ).toDailyDescription()
+            type = DailyItemType.WORKOUT,
+            referenceId = 40L,
+            scheduledTime = null,
+            status = DailyItemStatus.PENDING,
+            workout = WorkoutSummaryDto(
+                id = 1L,
+                name = "PushDay",
+                routineName = "SmokeRutina",
+                dayOrder = 1,
+            ),
+        ).toDomain()
 
-        assertEquals("Rutina: SmokeRutina • Día 1", description)
+        assertEquals("PushDay", item.title)
+        assertEquals(null, item.description)
+        assertEquals("SmokeRutina", item.workoutRoutineName)
+        assertEquals(null, item.workoutExerciseCount)
+        assertEquals(1, item.workoutDayOrder)
     }
 
     @Test

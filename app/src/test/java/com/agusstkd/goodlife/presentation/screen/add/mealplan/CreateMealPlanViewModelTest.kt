@@ -2,6 +2,7 @@ package com.agusstkd.goodlife.presentation.screen.add.mealplan
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.agusstkd.goodlife.core.datetime.language.Spanish
+import com.agusstkd.goodlife.core.network.ApiException
 import com.agusstkd.goodlife.core.dispatcher.TestDispatcherProvider
 import com.agusstkd.goodlife.core.pagination.PageResult
 import com.agusstkd.goodlife.core.result.Result
@@ -134,5 +135,17 @@ class CreateMealPlanViewModelTest {
         advanceUntilIdle()
         Assert.assertTrue(catalogRepo.searchMealsCallCount > 0)
         Assert.assertTrue(catalogRepo.searchIngredientsCallCount > 0)
+    }
+
+    @Test fun `server error shows localized copy not backend message`() = runTest(dispatcher) {
+        mealRepo.createResult = Result.Error(ApiException.ServerException("mealId es obligatorio"))
+        val vm = vm(); advanceUntilIdle()
+        vm.onAction(CreateMealPlanUiAction.OnSelectMeal(FakeNutritionCatalogRepository.defaultMeal()))
+        vm.onAction(CreateMealPlanUiAction.OnMealTypeSelected(MealType.LUNCH))
+        vm.onAction(CreateMealPlanUiAction.OnDayToggled(DayOfWeek.MONDAY))
+        vm.onAction(CreateMealPlanUiAction.OnSubmit)
+        advanceUntilIdle()
+        Assert.assertEquals(Spanish.createMealPlanTexts.errorServer, vm.uiState.value.errorMessage)
+        Assert.assertTrue(vm.uiState.value.errorMessage != "mealId es obligatorio")
     }
 }

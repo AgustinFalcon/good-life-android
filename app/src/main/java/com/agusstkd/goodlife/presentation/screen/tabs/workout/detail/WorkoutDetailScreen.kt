@@ -130,7 +130,7 @@ fun WorkoutDetailScreen(
         item {
             Button(
                 onClick = { onAction(WorkoutDetailUiAction.OnFinishWorkout) },
-                enabled = state.exercises.isNotEmpty() && fieldsEnabled,
+                enabled = state.exercises.any { it.sets.isNotEmpty() } && fieldsEnabled,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp, vertical = 8.dp),

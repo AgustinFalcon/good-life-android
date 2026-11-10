@@ -162,7 +162,7 @@ class WorkoutDetailViewModel(
                     },
                 )
             },
-            notes = workout.notes,
+            notes = "",
         )
 
     private fun formatWeight(set: WorkoutSet): String {
@@ -190,8 +190,9 @@ class WorkoutDetailViewModel(
                     startTime = toLocal(startInstant),
                     endTime = toLocal(endInstant),
                     notes = finishing.notes,
-                    exercises = finishing.exercises.map { exercise ->
-                        val domainExercise = workout.exercises.first { it.id == exercise.id }
+                    exercises = finishing.exercises.mapNotNull { exercise ->
+                        val domainExercise = workout.exercises.firstOrNull { it.id == exercise.id }
+                            ?: return@mapNotNull null
                         FinishExerciseDraft(
                             exerciseMasterId = exercise.exerciseMasterId,
                             notes = domainExercise.notes?.takeIf { it.isNotBlank() },

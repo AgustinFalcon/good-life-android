@@ -1,6 +1,7 @@
 package com.agusstkd.goodlife.core.network
 
 import android.util.Log
+import com.agusstkd.goodlife.BuildConfig
 import com.agusstkd.goodlife.core.session.SessionEventBus
 import com.agusstkd.goodlife.core.storage.TokenManager
 import com.agusstkd.goodlife.data.remote.api.auth.AuthApiService
@@ -117,7 +118,11 @@ class GoodLifeAuthenticator(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            Log.e(TAG, "❌ Error durante refresh token.", e)
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "Refresh token failed", e)
+            } else {
+                Log.e(TAG, "Refresh token failed")
+            }
             null
         }
     }

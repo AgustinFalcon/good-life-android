@@ -40,6 +40,20 @@ class FinishWorkoutUseCaseTest {
     }
 
     @Test
+    fun `exercises with empty sets return EmptyExercises without calling repository`() = runTest(testDispatcher) {
+        val result = useCase(
+            validDraft().copy(
+                exercises = listOf(
+                    FinishExerciseDraft(exerciseMasterId = 1L, notes = null, sets = emptyList()),
+                ),
+            ),
+        )
+
+        assertEquals(FinishWorkoutResult.EmptyExercises, result)
+        assertEquals(0, repository.finishWorkoutCallCount)
+    }
+
+    @Test
     fun `valid draft calls repository and returns Success`() = runTest(testDispatcher) {
         val draft = validDraft()
 
@@ -68,6 +82,26 @@ class FinishWorkoutUseCaseTest {
 
         assertTrue(result is FinishWorkoutResult.ServerError)
         assertEquals("db down", (result as FinishWorkoutResult.ServerError).message)
+    }
+
+    @Test
+    fun `BadRequestException maps to ServerError`() = runTest(testDispatcher) {
+        repository.finishWorkoutResult = Result.Error(ApiException.BadRequestException("invalid sets"))
+
+        val result = useCase(validDraft())
+
+        assertTrue(result is FinishWorkoutResult.ServerError)
+        assertEquals("invalid sets", (result as FinishWorkoutResult.ServerError).message)
+    }
+
+    @Test
+    fun `UnknownApiException maps to ServerError`() = runTest(testDispatcher) {
+        repository.finishWorkoutResult = Result.Error(ApiException.UnknownApiException("teapot", 418))
+
+        val result = useCase(validDraft())
+
+        assertTrue(result is FinishWorkoutResult.ServerError)
+        assertEquals("teapot", (result as FinishWorkoutResult.ServerError).message)
     }
 
     @Test

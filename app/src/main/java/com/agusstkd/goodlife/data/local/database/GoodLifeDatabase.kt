@@ -15,7 +15,7 @@ import com.agusstkd.goodlife.data.local.entity.UserEntity
  *
  * ## Entidades:
  * - [UserEntity]: Usuario autenticado (v1)
- * - [DailyLogEntity] + [DailyItemEntity]: Cache SWR de daily logs (v2)
+ * - [DailyLogEntity] + [DailyItemEntity]: Cache SWR de daily logs (v2, facts de workout en v3)
  *
  * Usa `fallbackToDestructiveMigration` porque estamos en desarrollo.
  * En producción, cada versión necesitará una `Migration` explícita.
@@ -26,7 +26,7 @@ import com.agusstkd.goodlife.data.local.entity.UserEntity
         DailyLogEntity::class,
         DailyItemEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class GoodLifeDatabase : RoomDatabase() {

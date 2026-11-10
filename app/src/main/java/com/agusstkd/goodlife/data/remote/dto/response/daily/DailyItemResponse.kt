@@ -56,7 +56,7 @@ data class DailyItemResponse(
  * Extrae el título y descripción del campo correcto según el tipo:
  * - TASK → task.title, task.description
  * - HABIT → habitLog.habitName, progreso formateado
- * - WORKOUT → workout.name, rutina formateada
+ * - WORKOUT → workout.name; hechos de rutina en el dominio (copy en la UI)
  * - MEAL → mealPlan.mealName, calorías formateadas
  *
  * @return DailyItem listo para usar en ViewModel/UseCases
@@ -71,21 +71,11 @@ fun DailyItemResponse.toDomain(): DailyItem {
         scheduledTime = scheduledTime,
         status = status,
         title = title,
-        description = description
+        description = description,
+        workoutRoutineName = workout?.routineName,
+        workoutExerciseCount = workout?.exerciseCount,
+        workoutDayOrder = workout?.dayOrder,
     )
-}
-
-/**
- * Extrae título y descripción según el tipo de item.
- */
-internal fun WorkoutSummaryDto.toDailyDescription(): String {
-    val routine = routineName ?: "Sin rutina"
-    val suffix = when {
-        exerciseCount != null && exerciseCount > 0 -> " • $exerciseCount ejercicios"
-        dayOrder != null -> " • Día $dayOrder"
-        else -> ""
-    }
-    return "Rutina: $routine$suffix"
 }
 
 private fun DailyItemResponse.extractTitleAndDescription(): Pair<String, String?> {
@@ -104,7 +94,7 @@ private fun DailyItemResponse.extractTitleAndDescription(): Pair<String, String?
         }
         DailyItemType.WORKOUT -> {
             val name = workout?.name ?: "Entrenamiento"
-            name to workout?.toDailyDescription()
+            name to null
         }
         DailyItemType.MEAL -> {
             val name = mealPlan?.mealName ?: "Comida"

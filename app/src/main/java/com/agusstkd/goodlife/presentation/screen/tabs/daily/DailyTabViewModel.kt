@@ -251,7 +251,8 @@ class DailyTabViewModel(
                         domainItem.status == DailyItemStatus.IN_PROGRESS -> DailyItemHighlight.IN_PROGRESS
                         domainItem.id == nextUpId -> DailyItemHighlight.NEXT_UP
                         else -> DailyItemHighlight.NONE
-                    }
+                    },
+                    workoutTexts = language.workoutTexts,
                 )
             }.toImmutableList(),
             isRefreshing = false,
