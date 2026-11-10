@@ -3,17 +3,23 @@ package com.agusstkd.goodlife.domain.model.nutrition
 /**
  * Tipo de comida según el momento del día.
  *
- * Define las categorías de comidas soportadas por el sistema de nutrición.
- * Los valores coinciden con el backend para serialización directa.
+ * Los valores de wire coinciden con el backend. Un valor desconocido
+ * entra por [fromWire] como [UNKNOWN]; la UI no lo trata como snack válido.
  */
 enum class MealType {
     BREAKFAST,
     LUNCH,
     DINNER,
     AFTERNOON_SNACK,
-    SNACK;
+    SNACK,
+    UNKNOWN;
 
     companion object {
+        val selectable: List<MealType> = entries.filter { it != UNKNOWN }
+
+        fun fromWire(raw: String?): MealType =
+            selectable.firstOrNull { it.name == raw } ?: UNKNOWN
+
         /**
          * Sugiere un tipo de comida basado en la hora del día.
          *

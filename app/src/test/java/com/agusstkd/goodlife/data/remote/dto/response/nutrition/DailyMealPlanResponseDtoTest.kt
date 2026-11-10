@@ -32,6 +32,11 @@ class DailyMealPlanResponseDtoTest {
         assertNull(backendPlan().copy(mealName = null).toDailySummary(monday))
     }
 
+    @Test
+    fun `unknown mealType is omitted instead of becoming snack`() {
+        assertNull(backendPlan().copy(mealType = "PRE_WORKOUT").toDailySummary(monday))
+    }
+
     private fun backendPlan() = DailyMealPlanResponseDto(
         id = 9L,
         mealId = 1L,

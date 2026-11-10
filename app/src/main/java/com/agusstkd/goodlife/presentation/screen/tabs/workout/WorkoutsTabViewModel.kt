@@ -14,6 +14,7 @@ import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutUiMod
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsNavigationEffect
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -71,6 +72,8 @@ class WorkoutsTabViewModel(
     val navigationEffects = navigationEffectsChannel.receiveAsFlow()
     private var workoutDetailNavigationInProgress = false
     private var hasResumedOnce = false
+    private var loadJob: Job? = null
+    private var latestLoadRequestId = 0L
 
     fun refresh() {
         loadData()
@@ -99,12 +102,17 @@ class WorkoutsTabViewModel(
      * Muestra [WorkoutsUiState.Loading] (skeleton) mientras se hace la request.
      */
     private fun loadData(retainContent: Boolean = false) {
-        viewModelScope.launch {
+        val requestId = ++latestLoadRequestId
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             if (!retainContent) {
                 _uiState.value = WorkoutsUiState.Loading
             }
 
-            when (val result = getActiveRoutineUseCase()) {
+            val result = getActiveRoutineUseCase()
+            if (requestId != latestLoadRequestId) return@launch
+
+            when (result) {
                 is GetActiveRoutineResult.Success ->
                     _uiState.value = buildSuccessState(result.routine)
 

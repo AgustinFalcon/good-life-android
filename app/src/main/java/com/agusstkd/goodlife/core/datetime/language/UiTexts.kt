@@ -304,6 +304,7 @@ data class MealTypeTexts(
     val dinner: String,
     val afternoonSnack: String,
     val snack: String,
+    val unknown: String,
 )
 
 /**

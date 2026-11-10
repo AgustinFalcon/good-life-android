@@ -99,6 +99,8 @@ inline fun <T, R> Result<T>.map(transform: (T) -> R): Result<R> = when (this) {
  */
 inline fun <T> resultOf(block: () -> T): Result<T> = try {
     Result.Success(block())
+} catch (e: CancellationException) {
+    throw e
 } catch (e: Exception) {
     Result.Error(e)
 }

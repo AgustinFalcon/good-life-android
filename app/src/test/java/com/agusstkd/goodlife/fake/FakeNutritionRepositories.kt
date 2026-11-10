@@ -4,9 +4,8 @@ import com.agusstkd.goodlife.core.pagination.PageResult
 import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateCustomIngredientRequestDto
 import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateCustomMealRequestDto
-import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateMealPlanRequestDto
-import com.agusstkd.goodlife.data.remote.dto.response.nutrition.MealPlanResponseDto
 import com.agusstkd.goodlife.domain.model.nutrition.DailyMealPlanSummary
+import com.agusstkd.goodlife.domain.model.nutrition.MealPlanDraft
 import com.agusstkd.goodlife.domain.model.nutrition.Ingredient
 import com.agusstkd.goodlife.domain.model.nutrition.MealSummary
 import com.agusstkd.goodlife.domain.repository.MealPlanRepository
@@ -15,20 +14,20 @@ import kotlinx.datetime.LocalDate
 
 class FakeMealPlanRepository : MealPlanRepository {
     var getResult: Result<List<DailyMealPlanSummary>> = Result.Success(emptyList())
-    var createResult: Result<MealPlanResponseDto> = Result.Success(MealPlanResponseDto(id = 1L, name = "Meal", totalCalories = 0.0, totalProtein = 0.0, totalCarbs = 0.0, totalFat = 0.0, isActive = true))
+    var createResult: Result<Long> = Result.Success(1L)
     var getHandler: (suspend (LocalDate) -> Result<List<DailyMealPlanSummary>>)? = null
     val requestedDates = mutableListOf<LocalDate>()
     var createCallCount = 0
-    var lastCreateRequest: CreateMealPlanRequestDto? = null
+    var lastCreateDraft: MealPlanDraft? = null
 
     override suspend fun getMealPlansByDate(date: LocalDate): Result<List<DailyMealPlanSummary>> {
         requestedDates.add(date)
         return getHandler?.invoke(date) ?: getResult
     }
 
-    override suspend fun createMealPlan(request: CreateMealPlanRequestDto): Result<MealPlanResponseDto> {
+    override suspend fun createMealPlan(draft: MealPlanDraft): Result<Long> {
         createCallCount++
-        lastCreateRequest = request
+        lastCreateDraft = draft
         return createResult
     }
 }

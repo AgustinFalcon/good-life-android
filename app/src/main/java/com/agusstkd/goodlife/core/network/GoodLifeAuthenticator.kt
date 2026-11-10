@@ -4,6 +4,7 @@ import android.util.Log
 import com.agusstkd.goodlife.core.session.SessionEventBus
 import com.agusstkd.goodlife.core.storage.TokenManager
 import com.agusstkd.goodlife.data.remote.api.auth.AuthApiService
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -113,6 +114,8 @@ class GoodLifeAuthenticator(
                         .build()
                 }
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Log.e(TAG, "❌ Error durante refresh token.", e)
             null

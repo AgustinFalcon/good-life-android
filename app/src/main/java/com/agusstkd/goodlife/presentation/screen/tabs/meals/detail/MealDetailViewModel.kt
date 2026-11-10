@@ -90,6 +90,7 @@ class MealDetailViewModel(
             MealType.DINNER -> dinner
             MealType.AFTERNOON_SNACK -> afternoonSnack
             MealType.SNACK -> snack
+            MealType.UNKNOWN -> unknown
         }
     }
 }

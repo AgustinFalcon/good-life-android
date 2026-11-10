@@ -29,13 +29,14 @@ class CreateMealPlanUseCaseTest {
         val result = useCase.execute(validDraft())
 
         assertTrue(result is CreateMealPlanResult.Success)
-        val request = repository.lastCreateRequest!!
-        assertEquals(1L, request.mealId)
-        assertEquals("LUNCH", request.mealType)
-        assertEquals("13:30:00", request.scheduledTime)
-        assertEquals(listOf(2), request.daysOfWeek)
-        assertEquals("2026-11-10", request.startDate)
-        assertEquals(null, request.endDate)
+        val draft = repository.lastCreateDraft!!
+        val scheduled = draft.scheduledMeals.single()
+        assertEquals(1L, scheduled.selectedMeal?.id)
+        assertEquals(MealType.LUNCH, scheduled.mealType)
+        assertEquals(LocalTime(13, 30), scheduled.scheduledTime)
+        assertEquals(setOf(DayOfWeek.TUESDAY), draft.daysOfWeek)
+        assertEquals(LocalDate(2026, 11, 10), draft.startDate)
+        assertEquals(null, draft.endDate)
     }
 
     @Test

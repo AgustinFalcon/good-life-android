@@ -10,7 +10,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 ### Added
 - Los inputs de set en Workout Detail muestran label AppLanguage (`WorkoutSetField.label`: peso/reps/RPE) en ES/EN/PT.
 - Workout Detail registra la sesión real al terminar: reloj `DateProvider`, `durationMinutes` ≥ 1, sets editables (peso/reps/RPE vía `PerceivedExertion`), anti doble tap y error de POST en Content (`finishFailed`). GET sigue en `Error`/`NotFound`.
-- Spec SDD `sdd/wip/20261106-android-finish-workout-session/`: sesión real al terminar workout (reloj, duración, RPE, sets editables). Reconfirma CU-19 y deja R-03 como contrato de carga/notes/Lottie hasta implementar. Sin cambio de código en este paso.
+- Spec SDD `sdd/wip/20261106-android-finish-workout-session/`: sesión real al terminar workout (reloj, duración, RPE, sets editables). Reconfirma CU-19.
 - Workout Detail declara `WorkoutDetailUiAction` (`OnRetry`, `OnFinishWorkout`, `OnNotesChange`) y muestra el botón “Terminar workout” (ES/EN/PT).
 - El detalle de workout permite feedback de sesión (`Content.notes` + campo multiline). `FinishWorkoutDraft.notes` es `String` no null (vacío si el usuario no escribió). El ViewModel arma el draft desde campos privados de dominio y lee `notes` desde UiState.
 - Tras `FinishWorkoutResult.Success`, `Content.finished` pasa a `true` y el detalle muestra `SuccessDialog` (Lottie `success_animation`). Al terminar la animación se vuelve atrás con `onNavigateUp`.
@@ -32,6 +32,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Se eliminaron nueve strings legacy de Daily, tabs y registro tras verificar que el copy canónico vive en `UiTexts`; launcher y compatibilidad permanecen explícitamente retenidos en la issue #38 (PR #44 mergeada).
 
 ### Fixed
+- `MealType.fromWire` no convierte JSON desconocido en Snack; el puerto de meal-plans ya no expone DTOs; Workouts cancela cargas solapadas.
 - Diario recarga al volver de crear un item; el progreso se calcula con items completados / total; el calendario del header abre el bottomsheet de fecha reutilizable. Diario y Comidas tienen pull-to-refresh. Comidas y Entrenamientos recargan al volver.
 - `POST /api/v1/meal-plans` envía el contrato del backend (`mealId`, `mealType`, `daysOfWeek`) y un 400 deja de mostrarse como "Sin conexión". `MealType` coincide con el backend (incluye `AFTERNOON_SNACK`, sin pre/post entreno). El GET de Comida mapea `mealName`/`daysOfWeek` y filtra el día pedido. Los macros se redondean a 1 decimal.
 - La card de workout en Diario usa `dayOrder` si no hay `exerciseCount`; un hábito completado con log en 0 muestra la meta.

@@ -99,9 +99,8 @@ class CreateMealPlanViewModelTest {
         advanceUntilIdle()
         Assert.assertTrue(vm.uiState.value.isSuccess)
         Assert.assertEquals(1, mealRepo.createCallCount)
-        Assert.assertEquals(1L, mealRepo.lastCreateRequest?.mealId)
-        Assert.assertEquals("LUNCH", mealRepo.lastCreateRequest?.mealType)
-        Assert.assertEquals(listOf(1), mealRepo.lastCreateRequest?.daysOfWeek)
+        Assert.assertEquals(1L, mealRepo.lastCreateDraft?.scheduledMeals?.single()?.selectedMeal?.id)
+        Assert.assertEquals(MealType.LUNCH, mealRepo.lastCreateDraft?.scheduledMeals?.single()?.mealType)
         vm.onAction(CreateMealPlanUiAction.OnSuccessAnimationFinished)
         Assert.assertTrue(nav.navigatedActions.isNotEmpty())
     }

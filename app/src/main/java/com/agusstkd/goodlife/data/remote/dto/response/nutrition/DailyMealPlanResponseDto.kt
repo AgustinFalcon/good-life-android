@@ -40,7 +40,8 @@ internal fun DailyMealPlanResponseDto.toDailySummary(date: LocalDate): DailyMeal
     val resolvedName = mealName ?: name ?: return null
     if (!appliesTo(date)) return null
 
-    val mealTypeEnum = runCatching { MealType.valueOf(mealType ?: "") }.getOrNull() ?: MealType.SNACK
+    val mealTypeEnum = MealType.fromWire(mealType)
+    if (mealTypeEnum == MealType.UNKNOWN) return null
     val scheduledTimeLocal = scheduledTime?.let { timeStr ->
         runCatching { LocalTime.parse(timeStr) }.getOrNull()
     }

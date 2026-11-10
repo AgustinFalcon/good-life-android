@@ -222,6 +222,7 @@ class MealsTabViewModel(
             MealType.DINNER -> texts.dinner
             MealType.AFTERNOON_SNACK -> texts.afternoonSnack
             MealType.SNACK -> texts.snack
+            MealType.UNKNOWN -> texts.unknown
         }
     }
 

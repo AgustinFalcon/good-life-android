@@ -354,6 +354,7 @@ data object English : AppLanguage {
         dinner = "Dinner",
         afternoonSnack = "Afternoon snack",
         snack = "Snack",
+        unknown = "Unknown type",
     )
 
     override val createMealPlanTexts = CreateMealPlanTexts(

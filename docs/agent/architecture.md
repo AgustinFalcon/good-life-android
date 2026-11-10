@@ -1,7 +1,7 @@
 ---
 type: Architecture
-version: recovery-audit-2026-09.2
-validated: 2026-09-14
+version: foundation-2026-11-10
+validated: 2026-11-10
 update_when: "Cambien capas, wiring, persistencia o entrypoints."
 scope:
   - README.md

@@ -1,7 +1,7 @@
 ---
 type: Contracts
-version: recovery-audit-2026-09
-validated: 2026-09-10
+version: foundation-2026-11-10
+validated: 2026-11-10
 update_when: "Cambien endpoints, DTOs, auth, estados o integraciones."
 scope:
   - README.md
