@@ -14,6 +14,8 @@ import com.agusstkd.goodlife.domain.repository.AuthRepository
 import com.agusstkd.goodlife.domain.storage.SecureCredentialsStorage
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 /**
@@ -88,6 +90,16 @@ class AuthRepositoryImpl(
         } else {
             Result.Error(NoSessionException("No hay usuario autenticado"))
         }
+    }
+
+    override fun observeCurrentUser(): Flow<User?> =
+        userDao.observeUser().map { it?.toDomain() }
+
+    override suspend fun updateProfileImageUrl(url: String): Result<Unit> {
+        val current = userDao.getUser()
+            ?: return Result.Error(NoSessionException())
+        userDao.insertUser(current.copy(profileImageUrl = url))
+        return Result.Success(Unit)
     }
 
     private suspend fun clearLocalSession() {

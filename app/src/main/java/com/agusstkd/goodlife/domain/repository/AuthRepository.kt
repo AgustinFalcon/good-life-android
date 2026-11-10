@@ -2,6 +2,7 @@ package com.agusstkd.goodlife.domain.repository
 
 import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.domain.model.auth.User
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Repositorio de autenticación.
@@ -55,4 +56,21 @@ interface AuthRepository {
      * @return Result<User> con el usuario o error si no hay sesión
      */
     suspend fun getCurrentUser(): Result<User>
+
+    /**
+     * Observa el usuario autenticado almacenado localmente.
+     *
+     * Emite `null` cuando no hay sesión persistida.
+     *
+     * @return Flow con el usuario actual o `null`.
+     */
+    fun observeCurrentUser(): Flow<User?>
+
+    /**
+     * Actualiza la URL de la foto de perfil del usuario persistido.
+     *
+     * @param url URL pública de la imagen ya subida.
+     * @return [Result.Success] si se persistió, o error si no hay sesión.
+     */
+    suspend fun updateProfileImageUrl(url: String): Result<Unit>
 }

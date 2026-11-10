@@ -6,6 +6,8 @@ import com.agusstkd.goodlife.data.remote.dto.response.workout.WorkoutSummaryDto
 import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 import com.agusstkd.goodlife.domain.model.daily.DailyItemType
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class DailyItemResponseTest {
@@ -14,10 +16,10 @@ class DailyItemResponseTest {
     fun `workout maps routine facts and leaves description unformatted`() {
         val item = DailyItemResponse(
             id = 1L,
-            type = DailyItemType.WORKOUT,
+            type = "WORKOUT",
             referenceId = 40L,
             scheduledTime = null,
-            status = DailyItemStatus.PENDING,
+            status = "PENDING",
             workout = WorkoutSummaryDto(
                 id = 1L,
                 name = "PushDay",
@@ -26,21 +28,24 @@ class DailyItemResponseTest {
             ),
         ).toDomain()
 
-        assertEquals("PushDay", item.title)
+        assertNotNull(item)
+        assertEquals("PushDay", item!!.title)
         assertEquals(null, item.description)
         assertEquals("SmokeRutina", item.workoutRoutineName)
         assertEquals(null, item.workoutExerciseCount)
         assertEquals(1, item.workoutDayOrder)
+        assertEquals(DailyItemType.WORKOUT, item.type)
+        assertEquals(DailyItemStatus.PENDING, item.status)
     }
 
     @Test
     fun `completed habit with zero log shows the target as current`() {
         val item = DailyItemResponse(
             id = 1L,
-            type = DailyItemType.HABIT,
+            type = "HABIT",
             referenceId = 30L,
             scheduledTime = null,
-            status = DailyItemStatus.COMPLETED,
+            status = "COMPLETED",
             habitLog = HabitLogSummaryDto(
                 id = 30L,
                 currentValue = 0.0,
@@ -56,6 +61,32 @@ class DailyItemResponseTest {
             ),
         )
 
-        assertEquals("8 / 8 vasos", item.toDomain().description)
+        assertEquals("8 / 8 vasos", item.toDomain()?.description)
+    }
+
+    @Test
+    fun `unknown type is discarded`() {
+        val item = DailyItemResponse(
+            id = 1L,
+            type = "NOTE",
+            referenceId = 1L,
+            scheduledTime = null,
+            status = "PENDING",
+        ).toDomain()
+
+        assertNull(item)
+    }
+
+    @Test
+    fun `unknown status is discarded`() {
+        val item = DailyItemResponse(
+            id = 1L,
+            type = "TASK",
+            referenceId = 1L,
+            scheduledTime = null,
+            status = "CANCELLED",
+        ).toDomain()
+
+        assertNull(item)
     }
 }

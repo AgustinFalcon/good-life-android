@@ -1,7 +1,5 @@
 package com.agusstkd.goodlife.domain.model.daily
 
-import kotlinx.serialization.Serializable
-
 /**
  * Estado de un item en el Daily Log.
  *
@@ -11,13 +9,28 @@ import kotlinx.serialization.Serializable
  * SKIPPED cuenta como procesado para el cálculo de completion rate,
  * permitiendo que decisiones conscientes no penalicen al usuario.
  *
- * @Serializable: kotlinx.serialization necesita esta anotación para deserializar
- * el campo "status" del JSON. Trade-off aceptado — el enum es simple y estable.
+ * El JSON entra solo por [fromWire]. Un valor desconocido es [UNKNOWN]
+ * y el mapper descarta el item; la UI no lo trata como un estado válido.
+ *
+ * @see DailyItem
  */
-@Serializable
 enum class DailyItemStatus {
     PENDING,
     IN_PROGRESS,
     COMPLETED,
-    SKIPPED
+    SKIPPED,
+    UNKNOWN;
+
+    companion object {
+        val selectable: List<DailyItemStatus> = entries.filter { it != UNKNOWN }
+
+        /**
+         * Traduce el valor de wire a un caso del tipo cerrado.
+         *
+         * @param raw Nombre exacto del enum, o nulo/vacío/desconocido.
+         * @return El caso conocido o [UNKNOWN].
+         */
+        fun fromWire(raw: String?): DailyItemStatus =
+            selectable.firstOrNull { it.name == raw } ?: UNKNOWN
+    }
 }

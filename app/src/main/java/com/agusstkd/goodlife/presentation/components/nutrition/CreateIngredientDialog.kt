@@ -154,7 +154,7 @@ fun CreateIngredientDialog(
                     keyboardType = KeyboardType.Decimal,
                 )
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    PortionUnit.entries.forEach { unit ->
+                    PortionUnit.selectable.forEach { unit ->
                         FilterChip(
                             selected = selectedUnit == unit,
                             onClick = { selectedUnit = unit },

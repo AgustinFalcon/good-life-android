@@ -9,6 +9,7 @@ import com.agusstkd.goodlife.core.datetime.language.HabitCategoryTexts
 import com.agusstkd.goodlife.domain.model.habit.HabitCategory
 import com.agusstkd.goodlife.domain.usecase.habit.CreateHabitUseCase
 import com.agusstkd.goodlife.domain.usecase.habit.result.CreateHabitResult
+import com.agusstkd.goodlife.presentation.components.common.label
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
 import com.agusstkd.goodlife.presentation.screen.add.habit.model.CreateHabitUiAction
 import com.agusstkd.goodlife.presentation.screen.add.habit.model.CreateHabitUiState
@@ -190,20 +191,6 @@ class CreateHabitViewModel(
     }
 
     private fun buildCategoryEntries(texts: HabitCategoryTexts): List<Pair<HabitCategory, String>> {
-        return listOf(
-            HabitCategory.HYDRATION to texts.hydration,
-            HabitCategory.MEDITATION to texts.meditation,
-            HabitCategory.READING to texts.reading,
-            HabitCategory.EXERCISE to texts.exercise,
-            HabitCategory.SLEEP to texts.sleep,
-            HabitCategory.NUTRITION to texts.nutrition,
-            HabitCategory.LEARNING to texts.learning,
-            HabitCategory.MINDFULNESS to texts.mindfulness,
-            HabitCategory.SOCIAL to texts.social,
-            HabitCategory.CREATIVITY to texts.creativity,
-            HabitCategory.PRODUCTIVITY to texts.productivity,
-            HabitCategory.HEALTH to texts.health,
-            HabitCategory.CUSTOM to texts.custom,
-        )
+        return HabitCategory.selectable.map { it to it.label(texts) }
     }
 }

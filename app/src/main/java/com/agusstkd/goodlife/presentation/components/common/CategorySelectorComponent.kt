@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Brush
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.HealthAndSafety
+import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.LocalDining
 import androidx.compose.material.icons.filled.SelfImprovement
@@ -39,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.agusstkd.goodlife.core.datetime.language.HabitCategoryTexts
 import com.agusstkd.goodlife.domain.model.habit.HabitCategory
 import com.agusstkd.goodlife.presentation.theme.BorderDefault
 import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
@@ -132,6 +134,7 @@ fun CategorySelectorComponent(
     }
 }
 
+/** Ícono Material de la categoría. [HabitCategory.UNKNOWN] no se ofrece en el picker. */
 fun HabitCategory.icon(): ImageVector = when (this) {
     HabitCategory.HYDRATION -> Icons.Default.WaterDrop
     HabitCategory.MEDITATION -> Icons.Default.SelfImprovement
@@ -146,6 +149,27 @@ fun HabitCategory.icon(): ImageVector = when (this) {
     HabitCategory.PRODUCTIVITY -> Icons.Default.Speed
     HabitCategory.HEALTH -> Icons.Default.HealthAndSafety
     HabitCategory.CUSTOM -> Icons.Default.Tune
+    HabitCategory.UNKNOWN -> Icons.Default.Help
+}
+
+/**
+ * Etiqueta localizada de la categoría. [HabitCategory.UNKNOWN] usa [HabitCategoryTexts.unknown].
+ */
+fun HabitCategory.label(texts: HabitCategoryTexts): String = when (this) {
+    HabitCategory.HYDRATION -> texts.hydration
+    HabitCategory.MEDITATION -> texts.meditation
+    HabitCategory.READING -> texts.reading
+    HabitCategory.EXERCISE -> texts.exercise
+    HabitCategory.SLEEP -> texts.sleep
+    HabitCategory.NUTRITION -> texts.nutrition
+    HabitCategory.LEARNING -> texts.learning
+    HabitCategory.MINDFULNESS -> texts.mindfulness
+    HabitCategory.SOCIAL -> texts.social
+    HabitCategory.CREATIVITY -> texts.creativity
+    HabitCategory.PRODUCTIVITY -> texts.productivity
+    HabitCategory.HEALTH -> texts.health
+    HabitCategory.CUSTOM -> texts.custom
+    HabitCategory.UNKNOWN -> texts.unknown
 }
 
 @Preview(showBackground = true)

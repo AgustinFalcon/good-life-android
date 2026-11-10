@@ -38,14 +38,15 @@ data class HabitResponse(
  *
  * Parsea strings ISO a tipos de kotlinx-datetime y mapea
  * los ints de días a [DayOfWeek] via `DayOfWeek(isoDay)`.
+ * La categoría entra por [HabitCategory.fromWire]; un valor desconocido
+ * se conserva como [HabitCategory.UNKNOWN], no como CUSTOM.
  */
 fun HabitResponse.toDomain(): Habit {
     return Habit(
         id = id,
         name = name,
         description = description,
-        category = runCatching { HabitCategory.valueOf(category) }
-            .getOrDefault(HabitCategory.CUSTOM),
+        category = HabitCategory.fromWire(category),
         targetValue = targetValue,
         unit = unit,
         isActive = isActive,

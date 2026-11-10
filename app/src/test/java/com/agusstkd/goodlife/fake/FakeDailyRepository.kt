@@ -18,6 +18,10 @@ class FakeDailyRepository : DailyRepository {
         private set
     var updateItemStatusCallCount = 0
         private set
+    var lastUpdatedItemId: Long? = null
+        private set
+    var lastUpdatedStatus: DailyItemStatus? = null
+        private set
     var lastRequestedDate: LocalDate? = null
         private set
 
@@ -29,6 +33,8 @@ class FakeDailyRepository : DailyRepository {
 
     override suspend fun updateItemStatus(itemId: Long, status: DailyItemStatus): Result<DailyLog> {
         updateItemStatusCallCount++
+        lastUpdatedItemId = itemId
+        lastUpdatedStatus = status
         return updateItemStatusHandler?.invoke(itemId, status) ?: updateItemStatusResult
     }
 

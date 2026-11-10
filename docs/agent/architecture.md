@@ -36,6 +36,8 @@ network success -> cache; offline read -> Room
 
 Koin modules registran APIs, datasources, repositories, use cases y ViewModels. Solo ScreenOwner obtiene ViewModel.
 
+Los puertos de dominio no importan DTOs Retrofit ni `android.net.Uri`. Meal/ingredient custom se crean con drafts; la foto de perfil usa `LocalImageRef` y `AuthRepository.observeCurrentUser`. Wire de enums entra por `fromWire` (`UNKNOWN` no se recablea a un caso válido). El toggle Daily PENDING↔COMPLETED vive en el ViewModel; Settings navega a Profile con un efecto one-shot.
+
 AppRoute navigation uses a bounded Channel exposed as a one-shot Flow: it bridges Splash-before-host without replaying an already consumed action after host recreation. GoodLifeNavHost collects it only while the host lifecycle is STARTED, so buffered actions wait while backgrounded and are consumed once on return. The controller owns no unmanaged coroutine scope; TabRoute effects remain local rendezvous events.
 
 ## Tab details

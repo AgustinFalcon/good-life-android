@@ -28,6 +28,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.agusstkd.goodlife.core.datetime.language.ProfileTexts
+import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
 
 /**
@@ -38,6 +40,7 @@ import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
 @Composable
 fun ProfileScreen(
     state: ProfileUiState,
+    profileTexts: ProfileTexts,
     onChangePhoto: () -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
@@ -57,7 +60,7 @@ fun ProfileScreen(
                 if (state.profileImageUrl != null) {
                     AsyncImage(
                         model = state.profileImageUrl,
-                        contentDescription = "Foto de perfil",
+                        contentDescription = profileTexts.profilePhoto,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .size(120.dp)
@@ -97,7 +100,7 @@ fun ProfileScreen(
                     } else {
                         Icon(
                             imageVector = Icons.Default.CameraAlt,
-                            contentDescription = "Cambiar foto",
+                            contentDescription = profileTexts.changePhoto,
                             tint = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.size(20.dp)
                         )
@@ -108,7 +111,7 @@ fun ProfileScreen(
             Spacer(Modifier.height(24.dp))
 
             Text(
-                text = state.name.ifBlank { "Usuario" },
+                text = state.name.ifBlank { profileTexts.fallbackName },
                 style = MaterialTheme.typography.headlineSmall
             )
             Spacer(Modifier.height(4.dp))
@@ -136,6 +139,7 @@ private fun ProfileScreenPreview() {
                 email = "agustin@goodlife.app",
                 profileImageUrl = null,
             ),
+            profileTexts = Spanish.profileTexts,
             onChangePhoto = {},
             snackbarHostState = remember { SnackbarHostState() },
         )
@@ -152,6 +156,7 @@ private fun ProfileScreenUploadingPreview() {
                 email = "agustin@goodlife.app",
                 isUploading = true,
             ),
+            profileTexts = Spanish.profileTexts,
             onChangePhoto = {},
             snackbarHostState = remember { SnackbarHostState() },
         )

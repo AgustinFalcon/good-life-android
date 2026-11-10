@@ -2,8 +2,8 @@ package com.agusstkd.goodlife.fake
 
 import com.agusstkd.goodlife.core.pagination.PageResult
 import com.agusstkd.goodlife.core.result.Result
-import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateCustomIngredientRequestDto
-import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateCustomMealRequestDto
+import com.agusstkd.goodlife.domain.model.nutrition.CustomIngredientDraft
+import com.agusstkd.goodlife.domain.model.nutrition.CustomMealDraft
 import com.agusstkd.goodlife.domain.model.nutrition.DailyMealPlanSummary
 import com.agusstkd.goodlife.domain.model.nutrition.MealPlanDraft
 import com.agusstkd.goodlife.domain.model.nutrition.Ingredient
@@ -39,6 +39,8 @@ class FakeNutritionCatalogRepository : NutritionCatalogRepository {
     var createMealResult: Result<MealSummary> = Result.Success(defaultMeal())
     var searchMealsCallCount = 0
     var searchIngredientsCallCount = 0
+    var lastCreateIngredientDraft: CustomIngredientDraft? = null
+    var lastCreateMealDraft: CustomMealDraft? = null
 
     override suspend fun searchIngredients(query: String, page: Int, pageSize: Int): Result<PageResult<Ingredient>> {
         searchIngredientsCallCount++
@@ -50,8 +52,15 @@ class FakeNutritionCatalogRepository : NutritionCatalogRepository {
         return mealResult
     }
 
-    override suspend fun createCustomIngredient(request: CreateCustomIngredientRequestDto): Result<Ingredient> = createIngredientResult
-    override suspend fun createCustomMeal(request: CreateCustomMealRequestDto): Result<MealSummary> = createMealResult
+    override suspend fun createCustomIngredient(draft: CustomIngredientDraft): Result<Ingredient> {
+        lastCreateIngredientDraft = draft
+        return createIngredientResult
+    }
+
+    override suspend fun createCustomMeal(draft: CustomMealDraft): Result<MealSummary> {
+        lastCreateMealDraft = draft
+        return createMealResult
+    }
 
     companion object {
         fun defaultIngredient() = Ingredient(1L, "Rice", null, 100.0, "g", 130.0, 2.7, 28.0, 0.3, true, null)

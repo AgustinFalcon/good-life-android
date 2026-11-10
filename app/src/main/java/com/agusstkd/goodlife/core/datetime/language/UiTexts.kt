@@ -150,6 +150,17 @@ data class SplashTexts(
 )
 
 /**
+ * Textos para la pantalla de perfil.
+ *
+ * Cubre las cadenas que la Screen muestra (content descriptions y fallback de nombre).
+ */
+data class ProfileTexts(
+    val profilePhoto: String,
+    val changePhoto: String,
+    val fallbackName: String,
+)
+
+/**
  * Wrapper de textos para pantallas de autenticación (Login + Register).
  *
  * Agrupa AuthTexts + AccessibilityTexts en un solo objeto para
@@ -246,10 +257,12 @@ data class CreateTaskTexts(
 )
 
 /**
- * Nombres localizados para las 13 categorías de hábito.
+ * Nombres localizados para las categorías de hábito.
  *
- * Cada propiedad corresponde a un valor del enum [HabitCategory].
- * Se usan en el selector de categoría de la pantalla Create Habit.
+ * Cada propiedad corresponde a un valor del enum [HabitCategory],
+ * incluido [HabitCategory.UNKNOWN] para no imprimir el wire crudo.
+ * Se usan en el selector de categoría de la pantalla Create Habit
+ * y al mostrar un hábito cargado con categoría desconocida.
  */
 data class HabitCategoryTexts(
     val hydration: String,
@@ -265,6 +278,7 @@ data class HabitCategoryTexts(
     val productivity: String,
     val health: String,
     val custom: String,
+    val unknown: String,
 )
 
 /**
@@ -446,6 +460,7 @@ data class CreateRoutineTexts(
     val difficultyBeginner: String,
     val difficultyIntermediate: String,
     val difficultyAdvanced: String,
+    val unknown: String,
     val goalSectionTitle: String,
     val goalPlaceholder: String,
     val goalMuscleGain: String,
@@ -487,12 +502,24 @@ data class CreateRoutineTexts(
     val loadingTitle: String,
 )
 
+/**
+ * Textos del tab Settings (cuenta, perfil y logout).
+ */
+data class SettingsTexts(
+    val accountSection: String,
+    val profileTitle: String,
+    val profileSubtitleFallback: String,
+    val logoutTitle: String,
+    val logoutSubtitle: String,
+)
+
 /** Copy shared by the read-only Daily and Meals details. */
 data class TabDetailTexts(
     val dailyTitle: String, val mealTitle: String, val back: String, val loading: String,
     val dailyNotFound: String, val mealNotFound: String, val invalidRoute: String, val retry: String,
     val typeLabel: String, val statusLabel: String, val scheduleLabel: String, val descriptionLabel: String,
     val pending: String, val inProgress: String, val completed: String, val skipped: String,
+    val unknown: String,
     val mealLabel: String, val proteinLabel: String, val carbsLabel: String, val fatLabel: String,
     val active: String, val inactive: String,
     val mealImageUnavailable: String, val emptyMealsTitle: String, val emptyMealsDescription: String,

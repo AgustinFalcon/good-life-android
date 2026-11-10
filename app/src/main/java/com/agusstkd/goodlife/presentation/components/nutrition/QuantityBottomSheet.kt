@@ -67,10 +67,10 @@ fun QuantityBottomSheet(
 
     // Key en remember para resetear los valores del bottom sheet
     var quantity by remember(ingredient.id) { mutableStateOf("") }
-    var selectedUnit by remember(ingredient.id) { mutableStateOf(PortionUnit.fromString(ingredient.servingUnit)) }
+    var selectedUnit by remember(ingredient.id) { mutableStateOf(PortionUnit.fromWire(ingredient.servingUnit)) }
 
     val availableUnits = remember(ingredient.servingUnit) {
-        PortionUnit.compatibleWith(PortionUnit.fromString(ingredient.servingUnit))
+        PortionUnit.compatibleWith(PortionUnit.fromWire(ingredient.servingUnit))
     }
 
     ModalBottomSheet(

@@ -5,6 +5,8 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 ## [Unreleased]
 
 ### Changed
+- El catálogo de nutrición entra al dominio como `CustomIngredientDraft` / `CustomMealDraft`; los DTOs quedan en data. Profile observa `AuthRepository` (no `UserDao`) y sube fotos con `LocalImageRef`. Settings, Profile y Daily/Meals Empty usan `AppLanguage` y Owners sin chrome.
+- `HabitCategory`, `DifficultyLevel`, `GoalType`, `DailyItemType`, `DailyItemStatus` y `PortionUnit` traducen wire con `fromWire` + `UNKNOWN`. Un daily item desconocido se omite; un hábito/rutina desconocido se conserva con copy “Otro”.
 - `CreateRoutineUseCase` valida con `CreateRoutineValidation` (tipo cerrado) y reglas strategy nombradas. El ViewModel traduce a `CreateRoutineTexts`; el dominio ya no emite copy.
 
 ### Added

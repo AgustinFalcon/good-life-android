@@ -28,7 +28,7 @@ data class DailyLogResponse(
 /**
  * Convierte DailyLogResponse a modelo de dominio DailyLog.
  *
- * Mapea también todos los items a modelos de dominio.
+ * Mapea los items a dominio y descarta los que tienen type o status desconocidos.
  *
  * @return DailyLog listo para usar en ViewModel/UseCases
  */
@@ -37,6 +37,6 @@ fun DailyLogResponse.toDomain(): DailyLog {
         id = id,
         date = date,
         completionRate = completionRate,
-        items = items.map { it.toDomain() }
+        items = items.mapNotNull { it.toDomain() }
     )
 }

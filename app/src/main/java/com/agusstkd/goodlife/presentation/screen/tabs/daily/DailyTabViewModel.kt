@@ -121,7 +121,7 @@ class DailyTabViewModel(
             is DailyUiAction.OnCalendarDateSelected -> selectDate(action.date)
             DailyUiAction.OnRefresh -> loadItems(retainContent = true)
             is DailyUiAction.OnItemClick -> navigateToDetail(action.itemId)
-            is DailyUiAction.OnItemStatusChange -> updateItemStatus(action.itemId, action.newStatus)
+            is DailyUiAction.OnItemStatusChange -> toggleItemStatus(action.itemId)
             is DailyUiAction.OnFilterChange -> filterItems(action.filter)
         }
     }
@@ -166,6 +166,26 @@ class DailyTabViewModel(
 
     private fun isCurrentLoadRequest(requestId: Long, requestedDate: LocalDate): Boolean {
         return requestId == latestLoadRequestId && requestedDate == currentDate
+    }
+
+    /**
+     * Alterna el status de un item: COMPLETED → PENDING, cualquier otro no SKIPPED → COMPLETED.
+     *
+     * SKIPPED no se modifica desde la card. El ViewModel es dueño de esta regla.
+     *
+     * @param itemId ID del item a actualizar
+     */
+    private fun toggleItemStatus(itemId: Long) {
+        val currentState = _uiState.value
+        if (currentState !is DailyUiState.Success) return
+        val item = currentState.items.firstOrNull { it.id == itemId } ?: return
+        if (item.status == DailyItemStatus.SKIPPED) return
+        val newStatus = if (item.status == DailyItemStatus.COMPLETED) {
+            DailyItemStatus.PENDING
+        } else {
+            DailyItemStatus.COMPLETED
+        }
+        updateItemStatus(itemId, newStatus)
     }
 
     /**
@@ -299,6 +319,7 @@ class DailyTabViewModel(
             DailyItemType.HABIT -> labels.habit
             DailyItemType.WORKOUT -> labels.workout
             DailyItemType.MEAL -> labels.meal
+            DailyItemType.UNKNOWN -> labels.unknown
         }
     }
 

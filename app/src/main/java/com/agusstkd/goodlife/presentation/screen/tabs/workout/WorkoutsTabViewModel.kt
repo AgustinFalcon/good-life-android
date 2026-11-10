@@ -159,6 +159,7 @@ class WorkoutsTabViewModel(
             DifficultyLevel.BEGINNER -> texts.difficultyBeginner
             DifficultyLevel.INTERMEDIATE -> texts.difficultyIntermediate
             DifficultyLevel.ADVANCED -> texts.difficultyAdvanced
+            DifficultyLevel.UNKNOWN -> texts.unknown
         }
     }
 
@@ -170,6 +171,7 @@ class WorkoutsTabViewModel(
             GoalType.STRENGTH -> texts.goalStrength
             GoalType.ENDURANCE -> texts.goalEndurance
             GoalType.FLEXIBILITY -> texts.goalFlexibility
+            GoalType.UNKNOWN -> texts.unknown
         }
     }
 

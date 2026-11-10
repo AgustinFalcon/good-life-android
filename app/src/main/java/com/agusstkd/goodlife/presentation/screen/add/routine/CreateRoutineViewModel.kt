@@ -50,22 +50,28 @@ class CreateRoutineViewModel(
 
     val difficultyEntries: List<Pair<DifficultyLevel, String>> by lazy {
         val t = routineTexts
-        listOf(
-            DifficultyLevel.BEGINNER to t.difficultyBeginner,
-            DifficultyLevel.INTERMEDIATE to t.difficultyIntermediate,
-            DifficultyLevel.ADVANCED to t.difficultyAdvanced,
-        )
+        DifficultyLevel.selectable.map { level ->
+            level to when (level) {
+                DifficultyLevel.BEGINNER -> t.difficultyBeginner
+                DifficultyLevel.INTERMEDIATE -> t.difficultyIntermediate
+                DifficultyLevel.ADVANCED -> t.difficultyAdvanced
+                DifficultyLevel.UNKNOWN -> t.unknown
+            }
+        }
     }
 
     val goalEntries: List<Pair<GoalType, String>> by lazy {
         val t = routineTexts
-        listOf(
-            GoalType.MUSCLE_GAIN to t.goalMuscleGain,
-            GoalType.WEIGHT_LOSS to t.goalWeightLoss,
-            GoalType.STRENGTH to t.goalStrength,
-            GoalType.ENDURANCE to t.goalEndurance,
-            GoalType.FLEXIBILITY to t.goalFlexibility,
-        )
+        GoalType.selectable.map { goal ->
+            goal to when (goal) {
+                GoalType.MUSCLE_GAIN -> t.goalMuscleGain
+                GoalType.WEIGHT_LOSS -> t.goalWeightLoss
+                GoalType.STRENGTH -> t.goalStrength
+                GoalType.ENDURANCE -> t.goalEndurance
+                GoalType.FLEXIBILITY -> t.goalFlexibility
+                GoalType.UNKNOWN -> t.unknown
+            }
+        }
     }
 
     private val _uiState = MutableStateFlow(CreateRoutineUiState())

@@ -219,7 +219,8 @@ class CreateHabitViewModelTest {
 
     @Test
     fun `categoryEntries has 13 entries matching HabitCategory values`() {
-        assertEquals(HabitCategory.entries.size, viewModel.categoryEntries.size)
+        assertEquals(HabitCategory.selectable.size, viewModel.categoryEntries.size)
+        assertFalse(viewModel.categoryEntries.any { it.first == HabitCategory.UNKNOWN })
     }
 
     @Test

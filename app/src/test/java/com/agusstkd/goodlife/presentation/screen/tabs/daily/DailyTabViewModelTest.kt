@@ -226,11 +226,54 @@ class DailyTabViewModelTest {
         )
         repository.updateItemStatusResult = Result.Success(updatedLog)
 
-        viewModel.onAction(DailyUiAction.OnItemStatusChange(1, DailyItemStatus.COMPLETED))
+        viewModel.onAction(DailyUiAction.OnItemStatusChange(1))
         advanceUntilIdle()
 
         val state = viewModel.uiState.value as DailyUiState.Success
         assertEquals(1.0, state.completionRate, 0.001)
+        assertEquals(DailyItemStatus.COMPLETED, repository.lastUpdatedStatus)
+    }
+
+    @Test
+    fun `toggling completed item sends PENDING`() = runTest(testDispatcher) {
+        val log = DailyLog(1, fixedDate, 1.0, listOf(
+            DailyItem(1, DailyItemType.TASK, 10, null, DailyItemStatus.COMPLETED, "Task", null)
+        ))
+        repository.getDailyLogResult = Result.Success(log)
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        repository.updateItemStatusResult = Result.Success(
+            log.copy(
+                completionRate = 0.0,
+                items = listOf(
+                    DailyItem(1, DailyItemType.TASK, 10, null, DailyItemStatus.PENDING, "Task", null)
+                ),
+            )
+        )
+
+        viewModel.onAction(DailyUiAction.OnItemStatusChange(1))
+        advanceUntilIdle()
+
+        assertEquals(DailyItemStatus.PENDING, repository.lastUpdatedStatus)
+        assertEquals(1L, repository.lastUpdatedItemId)
+    }
+
+    @Test
+    fun `toggling skipped item does not update status`() = runTest(testDispatcher) {
+        val log = DailyLog(1, fixedDate, 1.0, listOf(
+            DailyItem(1, DailyItemType.TASK, 10, null, DailyItemStatus.SKIPPED, "Task", null)
+        ))
+        repository.getDailyLogResult = Result.Success(log)
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onAction(DailyUiAction.OnItemStatusChange(1))
+        advanceUntilIdle()
+
+        assertEquals(0, repository.updateItemStatusCallCount)
     }
 
     @Test
@@ -240,7 +283,8 @@ class DailyTabViewModelTest {
             date = fixedDate,
             completionRate = 0.0,
             items = listOf(
-                DailyItem(1, DailyItemType.TASK, 10, null, DailyItemStatus.PENDING, "Task", null)
+                DailyItem(1, DailyItemType.TASK, 10, null, DailyItemStatus.PENDING, "Task", null),
+                DailyItem(2, DailyItemType.TASK, 20, null, DailyItemStatus.PENDING, "Task 2", null),
             )
         )
         repository.getDailyLogResult = Result.Success(log)
@@ -257,9 +301,9 @@ class DailyTabViewModelTest {
             }
         }
 
-        viewModel.onAction(DailyUiAction.OnItemStatusChange(1, DailyItemStatus.COMPLETED))
+        viewModel.onAction(DailyUiAction.OnItemStatusChange(1))
         runCurrent()
-        viewModel.onAction(DailyUiAction.OnItemStatusChange(2, DailyItemStatus.SKIPPED))
+        viewModel.onAction(DailyUiAction.OnItemStatusChange(2))
         runCurrent()
 
         assertEquals(1, repository.updateItemStatusCallCount)
@@ -284,7 +328,15 @@ class DailyTabViewModelTest {
 
     @Test
     fun `queued status update still reaches backend after date navigation`() = runTest(testDispatcher) {
-        val log = DailyLog(1, fixedDate, 0.0, emptyList())
+        val log = DailyLog(
+            1,
+            fixedDate,
+            0.0,
+            listOf(
+                DailyItem(1, DailyItemType.TASK, 10, null, DailyItemStatus.PENDING, "Task", null),
+                DailyItem(2, DailyItemType.TASK, 20, null, DailyItemStatus.PENDING, "Task 2", null),
+            ),
+        )
         repository.getDailyLogResult = Result.Success(log)
         viewModel = createViewModel()
         advanceUntilIdle()
@@ -294,9 +346,9 @@ class DailyTabViewModelTest {
         repository.updateItemStatusHandler = { itemId, _ ->
             if (itemId == 1L) firstResult.await() else secondResult.await()
         }
-        viewModel.onAction(DailyUiAction.OnItemStatusChange(1, DailyItemStatus.COMPLETED))
+        viewModel.onAction(DailyUiAction.OnItemStatusChange(1))
         runCurrent()
-        viewModel.onAction(DailyUiAction.OnItemStatusChange(2, DailyItemStatus.SKIPPED))
+        viewModel.onAction(DailyUiAction.OnItemStatusChange(2))
         runCurrent()
         viewModel.onAction(DailyUiAction.OnNextDay)
         runCurrent()
@@ -311,13 +363,20 @@ class DailyTabViewModelTest {
     }
     @Test
     fun `date navigation is not blocked by a pending status update`() = runTest(testDispatcher) {
-        repository.getDailyLogResult = Result.Success(DailyLog(1, fixedDate, 0.0, emptyList()))
+        repository.getDailyLogResult = Result.Success(
+            DailyLog(
+                1,
+                fixedDate,
+                0.0,
+                listOf(DailyItem(1, DailyItemType.TASK, 10, null, DailyItemStatus.PENDING, "Task", null)),
+            )
+        )
         viewModel = createViewModel()
         advanceUntilIdle()
 
         val pendingUpdate = CompletableDeferred<Result<DailyLog>>()
         repository.updateItemStatusHandler = { _, _ -> pendingUpdate.await() }
-        viewModel.onAction(DailyUiAction.OnItemStatusChange(1, DailyItemStatus.COMPLETED))
+        viewModel.onAction(DailyUiAction.OnItemStatusChange(1))
         runCurrent()
 
         viewModel.onAction(DailyUiAction.OnNextDay)

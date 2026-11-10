@@ -21,12 +21,13 @@ data class DailyDetailTexts(
     val inProgress: String,
     val completed: String,
     val skipped: String,
+    val unknown: String,
 ) {
     companion object {
         fun from(language: AppLanguage): DailyDetailTexts = language.tabDetailTexts.let {
             DailyDetailTexts(it.dailyTitle, it.back, it.loading, it.dailyNotFound, it.invalidRoute, it.retry,
                 it.typeLabel, it.statusLabel, it.scheduleLabel, it.descriptionLabel, it.pending, it.inProgress,
-                it.completed, it.skipped)
+                it.completed, it.skipped, it.unknown)
         }
     }
 }

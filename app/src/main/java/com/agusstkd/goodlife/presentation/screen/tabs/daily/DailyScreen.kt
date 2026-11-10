@@ -79,14 +79,9 @@ fun DailyScreen(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         item {
-            val onPreviousDay = remember(onAction) { { onAction(DailyUiAction.OnPreviousDay) } }
-            val onNextDay = remember(onAction) { { onAction(DailyUiAction.OnNextDay) } }
-            val onCalendarClick = remember(onAction) { { onAction(DailyUiAction.OnCalendarClick) } }
-            DateHeaderComponent(
-                params = dateHeaderParams,
-                onPreviousDay = onPreviousDay,
-                onNextDay = onNextDay,
-                onCalendarClick = onCalendarClick,
+            DailyDateHeader(
+                dateHeaderParams = dateHeaderParams,
+                onAction = onAction,
             )
         }
 
@@ -125,8 +120,8 @@ fun DailyScreen(
                 item = item,
                 dailyTexts = dailyTexts,
                 onClick = { itemId -> onAction(DailyUiAction.OnItemClick(itemId)) },
-                onStatusChange = { itemId, newStatus ->
-                    onAction(DailyUiAction.OnItemStatusChange(itemId, newStatus))
+                onStatusToggle = { itemId ->
+                    onAction(DailyUiAction.OnItemStatusChange(itemId))
                 },
                 modifier = Modifier.padding(horizontal = 12.dp)
             )
@@ -142,6 +137,22 @@ fun DailyScreen(
         }
     }
     }
+}
+
+@Composable
+private fun DailyDateHeader(
+    dateHeaderParams: DateHeaderParams,
+    onAction: (DailyUiAction) -> Unit,
+) {
+    val onPreviousDay = remember(onAction) { { onAction(DailyUiAction.OnPreviousDay) } }
+    val onNextDay = remember(onAction) { { onAction(DailyUiAction.OnNextDay) } }
+    val onCalendarClick = remember(onAction) { { onAction(DailyUiAction.OnCalendarClick) } }
+    DateHeaderComponent(
+        params = dateHeaderParams,
+        onPreviousDay = onPreviousDay,
+        onNextDay = onNextDay,
+        onCalendarClick = onCalendarClick,
+    )
 }
 
 @Composable
@@ -282,21 +293,35 @@ internal fun DailyLoadingState() {
     }
 }
 
+/**
+ * Empty chrome del tab Daily: [DateHeaderComponent] más el mensaje de reintento.
+ *
+ * Vive en el archivo de Screen para que el Owner no arme el header.
+ */
 @Composable
 internal fun DailyEmptyState(
     dailyTexts: DailyTexts,
-    onRetry: () -> Unit
+    dateHeaderParams: DateHeaderParams,
+    onAction: (DailyUiAction) -> Unit,
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "${dailyTexts.noData}\n${dailyTexts.tapToRetry}",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.clickable(onClick = onRetry)
+    Column(modifier = Modifier.fillMaxSize()) {
+        DailyDateHeader(
+            dateHeaderParams = dateHeaderParams,
+            onAction = onAction,
         )
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "${dailyTexts.noData}\n${dailyTexts.tapToRetry}",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.clickable(onClick = { onAction(DailyUiAction.OnRefresh) })
+            )
+        }
     }
 }
 
@@ -344,8 +369,17 @@ private fun DailyLoadingPreview() {
 @Preview(showBackground = true, name = "DailyScreen - Empty")
 @Composable
 private fun DailyEmptyPreview() {
+    val a = Spanish.accessibilityTexts
     GoodLifeTheme {
-        DailyEmptyState(dailyTexts = Spanish.dailyTexts, onRetry = {})
+        DailyEmptyState(
+            dailyTexts = Spanish.dailyTexts,
+            dateHeaderParams = DateHeaderParams(
+                dayNumber = 10, headerText = "Hoy", monthYear = null,
+                openCalendarLabel = a.openCalendar, previousDayLabel = a.previousDay,
+                nextDayLabel = a.nextDay, notificationsLabel = a.notifications
+            ),
+            onAction = {},
+        )
     }
 }
 

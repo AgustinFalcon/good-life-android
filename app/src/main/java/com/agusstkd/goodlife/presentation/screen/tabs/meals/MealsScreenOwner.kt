@@ -1,16 +1,13 @@
 package com.agusstkd.goodlife.presentation.screen.tabs.meals
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.agusstkd.goodlife.core.datetime.language.AccessibilityTexts
 import com.agusstkd.goodlife.presentation.components.bottom.datepicker.DatePickerBottomSheetComponent
-import com.agusstkd.goodlife.presentation.components.header.DateHeaderComponent
 import com.agusstkd.goodlife.presentation.components.header.DateHeaderParams
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsNavigationEffect
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiAction
@@ -55,43 +52,30 @@ fun MealsScreenOwner(
         }
 
         is MealsUiState.Empty -> {
-            val a = viewModel.accessibilityTexts
-            Column(modifier = Modifier.fillMaxSize()) {
-                DateHeaderComponent(
-                    params = DateHeaderParams(
-                        dayNumber = state.dayNumber,
-                        headerText = state.headerText,
-                        monthYear = if (state.showFullDate) state.monthYear else null,
-                        openCalendarLabel = a.openCalendar,
-                        previousDayLabel = a.previousDay,
-                        nextDayLabel = a.nextDay,
-                        notificationsLabel = a.notifications,
-                    ),
-                    onPreviousDay = { viewModel.onAction(MealsUiAction.OnPreviousDay) },
-                    onNextDay = { viewModel.onAction(MealsUiAction.OnNextDay) },
-                    onCalendarClick = { viewModel.onAction(MealsUiAction.OnCalendarClick) },
-                )
-                MealsEmptyState(
-                    texts = viewModel.tabDetailTexts,
-                    onCreateMealPlan = { viewModel.onAction(MealsUiAction.OnCreateMealPlan) }
-                )
-            }
+            MealsEmptyState(
+                texts = viewModel.tabDetailTexts,
+                dateHeaderParams = mealsHeaderParams(
+                    dayNumber = state.dayNumber,
+                    headerText = state.headerText,
+                    monthYear = state.monthYear,
+                    showFullDate = state.showFullDate,
+                    accessibility = viewModel.accessibilityTexts,
+                ),
+                onAction = viewModel::onAction,
+            )
         }
 
         is MealsUiState.Success -> {
-            val a = viewModel.accessibilityTexts
             MealsScreen(
                 uiState = state,
                 texts = viewModel.tabDetailTexts,
                 listState = listState,
-                dateHeaderParams = DateHeaderParams(
+                dateHeaderParams = mealsHeaderParams(
                     dayNumber = state.dayNumber,
                     headerText = state.headerText,
-                    monthYear = if (state.showFullDate) state.monthYear else null,
-                    openCalendarLabel = a.openCalendar,
-                    previousDayLabel = a.previousDay,
-                    nextDayLabel = a.nextDay,
-                    notificationsLabel = a.notifications,
+                    monthYear = state.monthYear,
+                    showFullDate = state.showFullDate,
+                    accessibility = viewModel.accessibilityTexts,
                 ),
                 onAction = viewModel::onAction,
             )
@@ -120,3 +104,19 @@ fun MealsScreenOwner(
         )
     }
 }
+
+private fun mealsHeaderParams(
+    dayNumber: Int,
+    headerText: String,
+    monthYear: String,
+    showFullDate: Boolean,
+    accessibility: AccessibilityTexts,
+) = DateHeaderParams(
+    dayNumber = dayNumber,
+    headerText = headerText,
+    monthYear = if (showFullDate) monthYear else null,
+    openCalendarLabel = accessibility.openCalendar,
+    previousDayLabel = accessibility.previousDay,
+    nextDayLabel = accessibility.nextDay,
+    notificationsLabel = accessibility.notifications,
+)

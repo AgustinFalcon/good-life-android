@@ -6,9 +6,9 @@ import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.core.datetime.language.CreateItemSharedTexts
 import com.agusstkd.goodlife.core.datetime.language.CreateMealPlanTexts
 import com.agusstkd.goodlife.core.extensions.toggleDay
-import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateCustomIngredientRequestDto
-import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateCustomMealRequestDto
-import com.agusstkd.goodlife.data.remote.dto.request.nutrition.MealIngredientRequestDto
+import com.agusstkd.goodlife.domain.model.nutrition.CustomIngredientDraft
+import com.agusstkd.goodlife.domain.model.nutrition.CustomMealDraft
+import com.agusstkd.goodlife.domain.model.nutrition.CustomMealIngredientDraft
 import com.agusstkd.goodlife.domain.model.nutrition.MealIngredientDraft
 import com.agusstkd.goodlife.domain.model.nutrition.MealPlanDraft
 import com.agusstkd.goodlife.domain.model.nutrition.MealSummary
@@ -178,7 +178,7 @@ class CreateMealPlanViewModel(
                 it.copy(isLoadingIngredients = false, errorMessage = texts.errorNetwork)
             }
             is SearchIngredientsResult.ServerError -> _uiState.update {
-                it.copy(isLoadingIngredients = false, errorMessage = result.message)
+                it.copy(isLoadingIngredients = false, errorMessage = texts.errorServer)
             }
         }
     }
@@ -203,7 +203,7 @@ class CreateMealPlanViewModel(
                 )
             }
             is SearchMealsResult.ServerError -> _uiState.update {
-                it.copy(isLoadingMeals = false, errorMessage = result.message)
+                it.copy(isLoadingMeals = false, errorMessage = texts.errorServer)
             }
             SearchMealsResult.NetworkError -> _uiState.update {
                 it.copy(isLoadingMeals = false, errorMessage = texts.errorNetwork)
@@ -417,7 +417,7 @@ class CreateMealPlanViewModel(
 
             is CreateMealPlanUiAction.OnCreateCustomIngredient -> {
                 _uiState.update { it.copy(isLoading = true) }
-                val dto = CreateCustomIngredientRequestDto(
+                val draft = CustomIngredientDraft(
                     name = action.name,
                     brand = action.brand,
                     servingSize = action.servingSize,
@@ -428,7 +428,7 @@ class CreateMealPlanViewModel(
                     fat = action.fat,
                 )
                 viewModelScope.launch {
-                    when (val result = createCustomIngredientUseCase.execute(request = dto)) {
+                    when (val result = createCustomIngredientUseCase.execute(draft = draft)) {
                         is CreateCustomIngredientResult.Success -> _uiState.update {
                             it.copy(
                                 isLoading = false,
@@ -438,7 +438,7 @@ class CreateMealPlanViewModel(
                         }
 
                         is CreateCustomIngredientResult.ServerError -> _uiState.update {
-                            it.copy(isLoading = false, errorMessage = result.message)
+                            it.copy(isLoading = false, errorMessage = texts.errorServer)
                         }
 
                         CreateCustomIngredientResult.NetworkError -> _uiState.update {
@@ -572,22 +572,22 @@ class CreateMealPlanViewModel(
 
         // Fase 1 — Si es meal nueva la persistimos para obtener su ID
         val mealForPlan: MealSummary? = if (state.isCreatingNewMeal) {
-            val dto = CreateCustomMealRequestDto(
+            val draft = CustomMealDraft(
                 name = state.newMealName,
                 description = state.newMealDescription.ifBlank { null },
                 tags = state.newMealType?.name?.lowercase()?.let { listOf(it) } ?: emptyList(),
-                ingredients = state.ingredients.map { draft ->
-                    MealIngredientRequestDto(
-                        ingredientId = draft.ingredient.id,
-                        quantity = draft.quantity,
-                        unit = draft.unit,
+                ingredients = state.ingredients.map { ingredientDraft ->
+                    CustomMealIngredientDraft(
+                        ingredientId = ingredientDraft.ingredient.id,
+                        quantity = ingredientDraft.quantity,
+                        unit = ingredientDraft.unit,
                     )
                 },
             )
-            when (val result = createCustomMealUseCase.execute(request = dto)) {
+            when (val result = createCustomMealUseCase.execute(draft = draft)) {
                 is CreateCustomMealResult.Success -> result.meal
                 is CreateCustomMealResult.ServerError -> {
-                    _uiState.update { it.copy(isLoading = false, errorMessage = result.message) }
+                    _uiState.update { it.copy(isLoading = false, errorMessage = texts.errorServer) }
                     return
                 }
                 CreateCustomMealResult.NetworkError -> {

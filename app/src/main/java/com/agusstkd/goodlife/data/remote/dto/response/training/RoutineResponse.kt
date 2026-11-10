@@ -57,14 +57,18 @@ data class WorkoutSetResponse(
 
 // ── Mappers DTO → Domain ──
 
+/**
+ * Convierte el DTO a [Routine].
+ *
+ * Dificultad y objetivo entran por [DifficultyLevel.fromWire] y [GoalType.fromWire].
+ * Un valor desconocido se conserva; no se mapea a BEGINNER ni STRENGTH.
+ */
 fun RoutineResponse.toDomain(): Routine = Routine(
     id = id,
     name = name.orEmpty(),
     description = description,
-    difficultyLevel = runCatching { DifficultyLevel.valueOf(difficultyLevel.orEmpty()) }
-        .getOrDefault(DifficultyLevel.BEGINNER),
-    goalType = runCatching { GoalType.valueOf(goalType.orEmpty()) }
-        .getOrDefault(GoalType.STRENGTH),
+    difficultyLevel = DifficultyLevel.fromWire(difficultyLevel),
+    goalType = GoalType.fromWire(goalType),
     isActive = isActive,
     scheduledTime = scheduledTime?.let { runCatching { LocalTime.parse(it) }.getOrNull() },
     daysOfWeek = daysOfWeek?.map { DayOfWeek(it) }?.toSet() ?: emptySet(),

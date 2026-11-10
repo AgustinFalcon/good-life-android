@@ -1,8 +1,8 @@
 package com.agusstkd.goodlife.domain.usecase.nutrition
 
+import com.agusstkd.goodlife.domain.model.nutrition.CustomIngredientDraft
 import com.agusstkd.goodlife.domain.repository.NutritionCatalogRepository
 import com.agusstkd.goodlife.domain.usecase.nutrition.result.CreateCustomIngredientResult
-import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateCustomIngredientRequestDto
 import com.agusstkd.goodlife.core.network.ApiException
 import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.core.dispatcher.DispatcherProvider
@@ -13,16 +13,19 @@ class CreateCustomIngredientUseCase(
     private val dispatcher: DispatcherProvider,
 ) {
     suspend fun execute(
-        request: CreateCustomIngredientRequestDto
+        draft: CustomIngredientDraft
     ): CreateCustomIngredientResult = withContext(dispatcher.io) {
-        if (request.name.isBlank()) {
+        if (draft.name.isBlank()) {
             return@withContext CreateCustomIngredientResult.ValidationError
         }
 
-        return@withContext when (val result = repository.createCustomIngredient(request)) {
+        return@withContext when (val result = repository.createCustomIngredient(draft)) {
             is Result.Success -> CreateCustomIngredientResult.Success(result.data)
             is Result.Error -> when (val ex = result.exception) {
-                is ApiException.ServerException -> CreateCustomIngredientResult.ServerError(ex.message)
+                is ApiException.BadRequestException,
+                is ApiException.ServerException,
+                is ApiException.NotFoundException,
+                is ApiException.UnknownApiException -> CreateCustomIngredientResult.ServerError(ex.message)
                 else -> CreateCustomIngredientResult.NetworkError
             }
         }

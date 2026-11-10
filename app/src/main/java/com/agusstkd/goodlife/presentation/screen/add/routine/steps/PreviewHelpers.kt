@@ -16,6 +16,7 @@ internal fun previewRoutineTexts() = CreateRoutineTexts(
     difficultyBeginner = "Principiante",
     difficultyIntermediate = "Intermedio",
     difficultyAdvanced = "Avanzado",
+    unknown = "Otro",
     goalSectionTitle = "Objetivo principal",
     goalPlaceholder = "Seleccionar objetivo",
     goalMuscleGain = "Ganar músculo",

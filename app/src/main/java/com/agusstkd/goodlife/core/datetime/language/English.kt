@@ -26,7 +26,8 @@ data object English : AppLanguage {
         task = "Task",
         habit = "Habit",
         workout = "Workout",
-        meal = "Meal"
+        meal = "Meal",
+        unknown = "Other",
     )
 
     override val validationTexts = ValidationTexts(
@@ -244,6 +245,7 @@ data object English : AppLanguage {
         productivity = "Productivity",
         health = "Health",
         custom = "Custom",
+        unknown = "Other",
     )
 
     override val createHabitTexts = CreateHabitTexts(
@@ -281,6 +283,7 @@ data object English : AppLanguage {
         difficultyBeginner = "Beginner",
         difficultyIntermediate = "Intermediate",
         difficultyAdvanced = "Advanced",
+        unknown = "Other",
         goalSectionTitle = "Main goal",
         goalPlaceholder = "Select a goal",
         goalMuscleGain = "Muscle gain",
@@ -429,16 +432,29 @@ data object English : AppLanguage {
     override val splashTexts = SplashTexts(
         tapToContinue = "Tap to continue",
     )
+    override val profileTexts = ProfileTexts(
+        profilePhoto = "Profile photo",
+        changePhoto = "Change photo",
+        fallbackName = "User",
+    )
     override val tabDetailTexts = TabDetailTexts(
         dailyTitle = "Daily detail", mealTitle = "Meal detail", back = "Back", loading = "Loading detail…",
         dailyNotFound = "We could not find this daily item", mealNotFound = "We could not find this meal plan", invalidRoute = "This detail route is invalid", retry = "Retry",
         typeLabel = "Type", statusLabel = "Status", scheduleLabel = "Schedule", descriptionLabel = "Description",
         pending = "Pending", inProgress = "In progress", completed = "Completed", skipped = "Skipped",
+        unknown = "Other",
         mealLabel = "Meal", proteinLabel = "Protein", carbsLabel = "Carbs", fatLabel = "Fat",
         active = "Active", inactive = "Inactive", mealImageUnavailable = "Meal image unavailable",
         emptyMealsTitle = "No meal plans for this day", emptyMealsDescription = "Create your first meal plan to track your daily nutrition.",
         createMealPlan = "Create meal plan", tapToRetry = "Tap to retry", mealPlanSingular = "meal plan", mealPlanPlural = "meal plans",
         calorieUnit = "kcal", gramUnit = "g", decimalSeparator = '.',
+    )
+    override val settingsTexts = SettingsTexts(
+        accountSection = "My account",
+        profileTitle = "My Profile",
+        profileSubtitleFallback = "View profile",
+        logoutTitle = "Log out",
+        logoutSubtitle = "Sign out of your account",
     )
 
 }

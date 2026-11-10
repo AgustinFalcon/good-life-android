@@ -5,8 +5,8 @@ import com.agusstkd.goodlife.data.remote.dto.response.nutrition.MealSummaryDto
 import com.agusstkd.goodlife.data.remote.dto.response.task.TaskSummaryDto
 import com.agusstkd.goodlife.data.remote.dto.response.workout.WorkoutSummaryDto
 import com.agusstkd.goodlife.domain.model.daily.DailyItem
-import com.agusstkd.goodlife.domain.model.daily.DailyItemType
 import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
+import com.agusstkd.goodlife.domain.model.daily.DailyItemType
 import kotlinx.datetime.LocalTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -16,8 +16,11 @@ import kotlinx.serialization.Serializable
  *
  * Representa un item individual del daily log: task, habit, workout o meal.
  *
+ * [type] y [status] llegan como String de wire. El traductor [toDomain]
+ * los convierte con [DailyItemType.fromWire] y [DailyItemStatus.fromWire].
+ *
  * ## Campos opcionales:
- * Dependiendo del tipo ([itemType]), solo uno de los siguientes será no-null:
+ * Dependiendo del tipo, solo uno de los siguientes será no-null:
  * - [task]: Si itemType == TASK
  * - [habitLog]: Si itemType == HABIT
  * - [workout]: Si itemType == WORKOUT
@@ -37,11 +40,11 @@ data class DailyItemResponse(
     val id: Long,
 
     @SerialName("itemType")
-    val type: DailyItemType,
+    val type: String,
 
     val referenceId: Long,
     val scheduledTime: LocalTime?,
-    val status: DailyItemStatus,
+    val status: String,
 
     // Solo uno de estos será no-null según el tipo
     val task: TaskSummaryDto? = null,
@@ -59,17 +62,25 @@ data class DailyItemResponse(
  * - WORKOUT → workout.name; hechos de rutina en el dominio (copy en la UI)
  * - MEAL → mealPlan.mealName, calorías formateadas
  *
- * @return DailyItem listo para usar en ViewModel/UseCases
+ * Si [type] o [status] no pertenecen al conjunto cerrado, el item se descarta.
+ *
+ * @return DailyItem listo para usar en ViewModel/UseCases, o null si el wire es desconocido.
  */
-fun DailyItemResponse.toDomain(): DailyItem {
-    val (title, description) = extractTitleAndDescription()
+fun DailyItemResponse.toDomain(): DailyItem? {
+    val itemType = DailyItemType.fromWire(type)
+    val itemStatus = DailyItemStatus.fromWire(status)
+    if (itemType == DailyItemType.UNKNOWN || itemStatus == DailyItemStatus.UNKNOWN) {
+        return null
+    }
+
+    val (title, description) = extractTitleAndDescription(itemType, itemStatus)
 
     return DailyItem(
         id = id,
-        type = type,
+        type = itemType,
         referenceId = referenceId,
         scheduledTime = scheduledTime,
-        status = status,
+        status = itemStatus,
         title = title,
         description = description,
         workoutRoutineName = workout?.routineName,
@@ -78,8 +89,11 @@ fun DailyItemResponse.toDomain(): DailyItem {
     )
 }
 
-private fun DailyItemResponse.extractTitleAndDescription(): Pair<String, String?> {
-    return when (type) {
+private fun DailyItemResponse.extractTitleAndDescription(
+    itemType: DailyItemType,
+    itemStatus: DailyItemStatus,
+): Pair<String, String?> {
+    return when (itemType) {
         DailyItemType.TASK -> {
             (task?.title ?: "Tarea sin título") to task?.description
         }
@@ -88,7 +102,7 @@ private fun DailyItemResponse.extractTitleAndDescription(): Pair<String, String?
             val unit = habitLog?.habit?.unit ?: ""
             val target = habitLog?.targetValue?.toInt() ?: habitLog?.habit?.targetValue ?: 0
             val logged = habitLog?.currentValue?.toInt() ?: 0
-            val current = if (status == DailyItemStatus.COMPLETED && logged < target) target else logged
+            val current = if (itemStatus == DailyItemStatus.COMPLETED && logged < target) target else logged
             val description = "$current / $target $unit".trimEnd()
             habitName to description
         }
@@ -105,5 +119,6 @@ private fun DailyItemResponse.extractTitleAndDescription(): Pair<String, String?
             }
             name to description
         }
+        DailyItemType.UNKNOWN -> "" to null
     }
 }

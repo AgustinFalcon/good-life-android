@@ -1,11 +1,11 @@
 package com.agusstkd.goodlife.domain.repository
 
+import com.agusstkd.goodlife.domain.model.nutrition.CustomIngredientDraft
+import com.agusstkd.goodlife.domain.model.nutrition.CustomMealDraft
 import com.agusstkd.goodlife.domain.model.nutrition.Ingredient
 import com.agusstkd.goodlife.domain.model.nutrition.MealSummary
 import com.agusstkd.goodlife.core.pagination.PageResult
 import com.agusstkd.goodlife.core.result.Result
-import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateCustomIngredientRequestDto
-import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateCustomMealRequestDto
 
 /**
  * Repositorio del catálogo de nutrición.
@@ -47,20 +47,20 @@ interface NutritionCatalogRepository {
     /**
      * Crea un ingrediente custom del usuario.
      *
-     * @param request Datos del ingrediente a crear.
+     * @param draft Datos del ingrediente a crear.
      * @return El ingrediente creado con ID asignado por el backend.
      */
     suspend fun createCustomIngredient(
-        request: CreateCustomIngredientRequestDto
+        draft: CustomIngredientDraft
     ): Result<Ingredient>
 
     /**
      * Crea una comida custom del usuario.
      *
-     * @param request Datos de la comida a crear.
+     * @param draft Datos de la comida a crear.
      * @return La comida creada con ID asignado por el backend.
      */
     suspend fun createCustomMeal(
-        request: CreateCustomMealRequestDto
+        draft: CustomMealDraft
     ): Result<MealSummary>
 }

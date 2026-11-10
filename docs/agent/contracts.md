@@ -35,7 +35,8 @@ scope:
 - Un finish exitoso no navega desde el ViewModel: `Content.finished` dispara `SuccessDialog` y el Owner resuelve el pop con `onNavigateUp`. Un fallo de POST no usa `UiState.Error` ni `dataLoadError`; queda en Content con `WorkoutTexts.finishFailed` (servidor/404) o `connectionError` (red).
 - `POST /api/v1/meal-plans` envía un plan por comida: `mealId`, `mealType`, `scheduledTime`, `daysOfWeek`, `startDate`, `endDate`. `MealType` de wire: `BREAKFAST`, `LUNCH`, `DINNER`, `AFTERNOON_SNACK`, `SNACK`.
 - `GET /api/v1/meal-plans` devuelve todos los planes activos (`mealName`, `daysOfWeek`, `startDate`, `endDate`) y no filtra por query `date`. El cliente mapea `mealName` (fallback `name`) y recorta al día pedido.
-- En Diario, la card de workout usa `AppLanguage` (`WorkoutTexts.dailyRoutineFormat` + `dailyExercisesFormat` o `dayFormat`). El DTO no arma copy en español. Un hábito `COMPLETED` con log menor a la meta muestra la meta.
+- En Diario, la card de workout usa `AppLanguage` (`WorkoutTexts.dailyRoutineFormat` + `dailyExercisesFormat` o `dayFormat`). El DTO no arma copy en español. Un hábito `COMPLETED` con log menor a la meta muestra la meta. Type/status de daily desconocidos se descartan; categoría/dificultad/objetivo/unidad desconocidos son `UNKNOWN` (copy “Otro”), nunca CUSTOM/BEGINNER/STRENGTH/GRAM.
+- `POST /api/v1/meals` y `POST /api/v1/ingredients` se arman en data desde drafts de dominio. Profile sube con `LocalImageRef`; el ViewModel no toca `UserDao`.
 - Owners manejan DI/side effects; screens son puros.
 - Textos via AppLanguage y fecha via DateProvider.
 - No exponer JWT/credenciales en logs; refresh 401 está implementado y requiere validación en dispositivo.

@@ -97,13 +97,9 @@ fun MealsScreen(
     ) {
         // ── Header de fecha (mismo patrón que DailyScreen) ────────────────
         item {
-            val onPreviousDay = remember(onAction) { { onAction(MealsUiAction.OnPreviousDay) } }
-            val onNextDay = remember(onAction) { { onAction(MealsUiAction.OnNextDay) } }
-            DateHeaderComponent(
-                params = dateHeaderParams,
-                onPreviousDay = onPreviousDay,
-                onNextDay = onNextDay,
-                onCalendarClick = remember(onAction) { { onAction(MealsUiAction.OnCalendarClick) } },
+            MealsDateHeader(
+                dateHeaderParams = dateHeaderParams,
+                onAction = onAction,
             )
         }
 
@@ -148,6 +144,21 @@ fun MealsScreen(
         }
     }
     }
+}
+
+@Composable
+private fun MealsDateHeader(
+    dateHeaderParams: DateHeaderParams,
+    onAction: (MealsUiAction) -> Unit,
+) {
+    val onPreviousDay = remember(onAction) { { onAction(MealsUiAction.OnPreviousDay) } }
+    val onNextDay = remember(onAction) { { onAction(MealsUiAction.OnNextDay) } }
+    DateHeaderComponent(
+        params = dateHeaderParams,
+        onPreviousDay = onPreviousDay,
+        onNextDay = onNextDay,
+        onCalendarClick = remember(onAction) { { onAction(MealsUiAction.OnCalendarClick) } },
+    )
 }
 
 /**
@@ -360,37 +371,51 @@ internal fun MealsLoadingState() {
     }
 }
 
+/**
+ * Empty chrome del tab Meals: [DateHeaderComponent] más el CTA de crear plan.
+ *
+ * Vive en el archivo de Screen para que el Owner no arme el header.
+ */
 @Composable
 internal fun MealsEmptyState(
     texts: TabDetailTexts,
-    onCreateMealPlan: () -> Unit,
+    dateHeaderParams: DateHeaderParams,
+    onAction: (MealsUiAction) -> Unit,
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.padding(32.dp),
+    Column(modifier = Modifier.fillMaxSize()) {
+        MealsDateHeader(
+            dateHeaderParams = dateHeaderParams,
+            onAction = onAction,
+        )
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center,
         ) {
-            Text(
-                text = texts.emptyMealsTitle,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-            )
-            Text(
-                text = texts.emptyMealsDescription,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-            )
-            Button(
-                onClick = onCreateMealPlan,
-                colors = ButtonDefaults.buttonColors(containerColor = NutritionAccent),
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.padding(32.dp),
             ) {
-                Text(text = texts.createMealPlan)
+                Text(
+                    text = texts.emptyMealsTitle,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                )
+                Text(
+                    text = texts.emptyMealsDescription,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                )
+                Button(
+                    onClick = { onAction(MealsUiAction.OnCreateMealPlan) },
+                    colors = ButtonDefaults.buttonColors(containerColor = NutritionAccent),
+                ) {
+                    Text(text = texts.createMealPlan)
+                }
             }
         }
     }
@@ -445,7 +470,15 @@ private fun MealsLoadingPreview() {
 @Composable
 private fun MealsEmptyPreview() {
     GoodLifeTheme {
-        MealsEmptyState(texts = Spanish.tabDetailTexts, onCreateMealPlan = {})
+        MealsEmptyState(
+            texts = Spanish.tabDetailTexts,
+            dateHeaderParams = DateHeaderParams(
+                dayNumber = 15,
+                headerText = "Hoy",
+                monthYear = null,
+            ),
+            onAction = {},
+        )
     }
 }
 
