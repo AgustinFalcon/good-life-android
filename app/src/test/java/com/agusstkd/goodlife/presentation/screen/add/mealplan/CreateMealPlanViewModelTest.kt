@@ -7,6 +7,7 @@ import com.agusstkd.goodlife.core.dispatcher.TestDispatcherProvider
 import com.agusstkd.goodlife.core.pagination.PageResult
 import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.domain.model.nutrition.MealType
+import com.agusstkd.goodlife.domain.model.nutrition.PortionUnit
 import com.agusstkd.goodlife.domain.usecase.nutrition.*
 import com.agusstkd.goodlife.fake.FakeMealPlanRepository
 import com.agusstkd.goodlife.fake.FakeNavigationController
@@ -72,7 +73,7 @@ class CreateMealPlanViewModelTest {
         Assert.assertEquals(1, vm.uiState.value.ingredientCatalog.size)
         vm.onAction(CreateMealPlanUiAction.OnOpenQuantityBottomSheet(1L))
         Assert.assertTrue(vm.uiState.value.showQuantityBottomSheet)
-        vm.onAction(CreateMealPlanUiAction.OnConfirmIngredientQuantity(1L, 200.0, "g"))
+        vm.onAction(CreateMealPlanUiAction.OnConfirmIngredientQuantity(1L, 200.0, PortionUnit.GRAM))
         Assert.assertEquals(260.0, vm.uiState.value.previewCalories, 0.01)
         vm.onAction(CreateMealPlanUiAction.OnRemoveIngredient(1L))
         Assert.assertEquals(0.0, vm.uiState.value.previewCalories, 0.01)
@@ -125,7 +126,7 @@ class CreateMealPlanViewModelTest {
         val vm = vm(); advanceUntilIdle()
         vm.onAction(CreateMealPlanUiAction.OnShowCreateIngredientDialog)
         Assert.assertTrue(vm.uiState.value.showCreateIngredientDialog)
-        vm.onAction(CreateMealPlanUiAction.OnCreateCustomIngredient("Oats", null, 100.0, "g", 380.0, 12.0, 60.0, 7.0))
+        vm.onAction(CreateMealPlanUiAction.OnCreateCustomIngredient("Oats", null, 100.0, PortionUnit.GRAM, 380.0, 12.0, 60.0, 7.0))
         advanceUntilIdle()
         Assert.assertFalse(vm.uiState.value.showCreateIngredientDialog)
         Assert.assertEquals(1, vm.uiState.value.ingredientCatalog.size)

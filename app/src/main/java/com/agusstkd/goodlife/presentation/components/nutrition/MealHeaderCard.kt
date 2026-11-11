@@ -26,6 +26,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.agusstkd.goodlife.core.datetime.language.CreateMealPlanTexts
+import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.presentation.theme.CaloriesColor
 import com.agusstkd.goodlife.presentation.theme.CarbsColor
 import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
@@ -67,6 +69,7 @@ data class MealHeaderCardParams(
 fun MealHeaderCard(
     params: MealHeaderCardParams,
     onClick: () -> Unit,
+    texts: CreateMealPlanTexts,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -92,19 +95,19 @@ fun MealHeaderCard(
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        text = "🔥 ${params.calories.toInt()} kcal",
+                        text = "🔥 ${params.calories.toInt()} ${texts.calorieUnit}",
                         style = MaterialTheme.typography.labelSmall,
                         color = CaloriesColor,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        text = "${params.protein.toInt()}g P",
+                        text = "${params.protein.toInt()}${texts.gramUnit} ${texts.macroProteinAbbrev}",
                         style = MaterialTheme.typography.labelSmall,
                         color = ProteinColor,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        text = "${params.carbs.toInt()}g C",
+                        text = "${params.carbs.toInt()}${texts.gramUnit} ${texts.macroCarbsAbbrev}",
                         style = MaterialTheme.typography.labelSmall,
                         color = CarbsColor,
                         fontWeight = FontWeight.Bold,
@@ -162,6 +165,7 @@ private fun MealHeaderCardWithImagePreview() {
                 carbs = 45.0,
             ),
             onClick = {},
+            texts = Spanish.createMealPlanTexts,
             modifier = androidx.compose.ui.Modifier.padding(16.dp),
         )
     }
@@ -180,6 +184,7 @@ private fun MealHeaderCardNoImagePreview() {
                 carbs = 28.0,
             ),
             onClick = {},
+            texts = Spanish.createMealPlanTexts,
             modifier = androidx.compose.ui.Modifier.padding(16.dp),
         )
     }

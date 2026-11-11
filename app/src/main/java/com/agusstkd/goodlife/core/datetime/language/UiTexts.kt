@@ -94,6 +94,7 @@ data class HomeTexts(
  * Textos para pantallas de autenticación (Login + Register).
  */
 data class AuthTexts(
+    val appName: String,
     val loginSubtitle: String,
     val emailOrUsername: String,
     val password: String,
@@ -140,6 +141,7 @@ data class AccessibilityTexts(
     val goToMore: String,
     val close: String,
     val appLogo: String,
+    val enableBiometric: String,
 )
 
 /**
@@ -147,6 +149,7 @@ data class AccessibilityTexts(
  */
 data class SplashTexts(
     val tapToContinue: String,
+    val appName: String,
 )
 
 /**
@@ -250,6 +253,7 @@ data class CreateTaskTexts(
     val errorTitleEmpty: String,
     val errorNoDate: String,
     val errorNoDays: String,
+    val errorOnceAndRecurrent: String,
     val errorEndBeforeStart: String,
     val errorServer: String,
     val errorNetwork: String,
@@ -346,6 +350,7 @@ data class CreateMealPlanTexts(
     val searchMealPlaceholder: String,
     val filterAll: String,
     val chooseMealButton: String,
+    val customMealBadge: String,
     val createNewMealButton: String,
 
     // ── Paso 1B: Crear nueva meal ──
@@ -404,6 +409,16 @@ data class CreateMealPlanTexts(
     val errorNetwork: String,
 
     val loadingTitle: String,
+    val gramUnit: String = "g",
+    val calorieUnit: String = "kcal",
+    val catalogCountUnit: String = "unidades",
+    val minutesUnit: String = "min",
+    val macroProteinAbbrev: String = "P",
+    val macroCarbsAbbrev: String = "C",
+    val macroFatAbbrev: String = "G",
+    val caloriesAbbrev: String = "KCAL",
+    val proteinAbbrev: String = "PROT",
+    val carbsAbbrev: String = "CARB",
 )
 
 /**

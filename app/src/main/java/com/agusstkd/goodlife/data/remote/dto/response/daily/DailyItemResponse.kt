@@ -86,6 +86,8 @@ fun DailyItemResponse.toDomain(): DailyItem? {
         workoutRoutineName = workout?.routineName,
         workoutExerciseCount = workout?.exerciseCount,
         workoutDayOrder = workout?.dayOrder,
+        mealCalories = mealPlan?.calories,
+        mealProtein = mealPlan?.protein,
     )
 }
 
@@ -95,11 +97,11 @@ private fun DailyItemResponse.extractTitleAndDescription(
 ): Pair<String, String?> {
     return when (itemType) {
         DailyItemType.TASK -> {
-            (task?.title ?: "Tarea sin título") to task?.description
+            (task?.title.orEmpty()) to task?.description
         }
         DailyItemType.HABIT -> {
-            val habitName = habitLog?.habit?.name ?: "Hábito sin nombre"
-            val unit = habitLog?.habit?.unit ?: ""
+            val habitName = habitLog?.habit?.name.orEmpty()
+            val unit = habitLog?.habit?.unit.orEmpty()
             val target = habitLog?.targetValue?.toInt() ?: habitLog?.habit?.targetValue ?: 0
             val logged = habitLog?.currentValue?.toInt() ?: 0
             val current = if (itemStatus == DailyItemStatus.COMPLETED && logged < target) target else logged
@@ -107,17 +109,10 @@ private fun DailyItemResponse.extractTitleAndDescription(
             habitName to description
         }
         DailyItemType.WORKOUT -> {
-            val name = workout?.name ?: "Entrenamiento"
-            name to null
+            workout?.name.orEmpty() to null
         }
         DailyItemType.MEAL -> {
-            val name = mealPlan?.mealName ?: "Comida"
-            val description = mealPlan?.let {
-                val cal = it.calories ?: 0
-                val prot = it.protein ?: 0
-                "$cal kcal • ${prot}g proteína"
-            }
-            name to description
+            mealPlan?.mealName.orEmpty() to null
         }
         DailyItemType.UNKNOWN -> "" to null
     }

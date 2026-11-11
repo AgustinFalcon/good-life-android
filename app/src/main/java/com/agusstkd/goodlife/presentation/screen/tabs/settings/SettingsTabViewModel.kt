@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.core.datetime.language.SettingsTexts
-import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.domain.usecase.home.GetCurrentUserUseCase
 import com.agusstkd.goodlife.domain.usecase.home.LogoutUseCase
+import com.agusstkd.goodlife.domain.usecase.home.result.GetCurrentUserResult
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
 import com.agusstkd.goodlife.presentation.navigation.route.navigateToLoginFromMain
 import com.agusstkd.goodlife.presentation.screen.tabs.settings.model.SettingsNavigationEffect
@@ -63,8 +63,8 @@ class SettingsTabViewModel(
     private fun loadCurrentUser() {
         viewModelScope.launch {
             when (val result = getCurrentUserUseCase()) {
-                is Result.Success -> _uiState.update { it.copy(username = result.data.name) }
-                is Result.Error -> { /* mantener username vacío — no bloquear la pantalla */ }
+                is GetCurrentUserResult.Success -> _uiState.update { it.copy(username = result.user.name) }
+                GetCurrentUserResult.Unavailable -> { /* mantener username vacío — no bloquear la pantalla */ }
             }
         }
     }

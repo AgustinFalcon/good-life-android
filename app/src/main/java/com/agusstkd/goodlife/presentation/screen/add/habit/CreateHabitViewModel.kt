@@ -146,17 +146,24 @@ class CreateHabitViewModel(
         val state = _uiState.value
         val parsedTarget = state.targetValue.toIntOrNull() ?: 0
 
+        val startDate = state.startDate
+        val category = state.selectedCategory
+        if (startDate == null || category == null || category == HabitCategory.UNKNOWN) {
+            _uiState.update { it.copy(hasAttemptedSubmit = true, isLoading = false) }
+            return
+        }
+
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, hasAttemptedSubmit = true) }
 
             val result = createHabitUseCase(
                 name = state.name,
                 description = state.description.takeIf { it.isNotBlank() },
-                category = state.selectedCategory ?: HabitCategory.CUSTOM,
+                category = category,
                 targetValue = parsedTarget,
                 unit = state.unit,
                 daysOfWeek = state.selectedDays,
-                startDate = state.startDate ?: return@launch,
+                startDate = startDate,
                 endDate = if (state.hasEndDate) state.endDate else null,
                 scheduledTime = if (state.hasTime) state.scheduledTime else null,
             )
@@ -174,7 +181,7 @@ class CreateHabitViewModel(
 
                 is CreateHabitResult.ServerError -> {
                     _uiState.update {
-                        it.copy(isLoading = false, errorMessage = result.message)
+                        it.copy(isLoading = false, errorMessage = createHabitTexts.errorServer)
                     }
                 }
 

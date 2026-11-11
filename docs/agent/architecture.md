@@ -1,6 +1,6 @@
 ---
 type: Architecture
-version: foundation-2026-11-10
+version: foundation-2026-11-11c
 validated: 2026-11-10
 update_when: "Cambien capas, wiring, persistencia o entrypoints."
 scope:
@@ -14,8 +14,8 @@ scope:
 
 | Ruta | Rol |
 |---|---|
-| `core/` | Networking, storage, datetime y Result |
-| `data/local/` | Room DAOs/entities |
+| `core/` | Networking, storage, datetime, Result y `SessionCleanup` |
+| `data/local/` | Room DAOs/entities y `LocalSessionCleanup` |
 | `data/remote/` | Retrofit APIs/DTOs |
 | `data/repository/` | Implementaciones |
 | `domain/` | Modelos, ports y use cases |
@@ -36,7 +36,7 @@ network success -> cache; offline read -> Room
 
 Koin modules registran APIs, datasources, repositories, use cases y ViewModels. Solo ScreenOwner obtiene ViewModel.
 
-Los puertos de dominio no importan DTOs Retrofit ni `android.net.Uri`. Meal/ingredient custom se crean con drafts; la foto de perfil usa `LocalImageRef` y `AuthRepository.observeCurrentUser`. Wire de enums entra por `fromWire` (`UNKNOWN` no se recablea a un caso válido). El toggle Daily PENDING↔COMPLETED vive en el ViewModel; Settings navega a Profile con un efecto one-shot.
+Los puertos de dominio no importan DTOs Retrofit ni `android.net.Uri`. Meal/ingredient custom se crean con drafts; la foto de perfil usa `LocalImageRef` y `ObserveCurrentUserUseCase`. Wire de enums entra por `fromWire` (`UNKNOWN` no se recablea a un caso válido). El toggle Daily PENDING↔COMPLETED vive en el ViewModel; un GET en vuelo no pisa un PATCH más nuevo. Settings navega a Profile con un efecto one-shot. El Authenticator usa `SessionCleanup` en 401 terminal y `TokenRefresher` (no `AuthApiService`). Un 401 de `/token` con `grantType=password` no emite `SessionExpired`. `CheckSessionUseCase` usa `AuthRepository.isLoggedIn` (tokens + usuario). `ActivateRoutineResult.ServerError` no lleva copy de API; Create Habit/Task validan el submit en UiState.
 
 AppRoute navigation uses a bounded Channel exposed as a one-shot Flow: it bridges Splash-before-host without replaying an already consumed action after host recreation. GoodLifeNavHost collects it only while the host lifecycle is STARTED, so buffered actions wait while backgrounded and are consumed once on return. The controller owns no unmanaged coroutine scope; TabRoute effects remain local rendezvous events.
 

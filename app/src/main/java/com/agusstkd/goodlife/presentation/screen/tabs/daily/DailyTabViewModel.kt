@@ -94,6 +94,7 @@ class DailyTabViewModel(
     private var latestLoadRequestId: Long = 0L
     private var loadJob: Job? = null
     private val statusUpdateMutex = Mutex()
+    private var dataGeneration: Long = 0L
 
     private val _uiState = MutableStateFlow<DailyUiState>(DailyUiState.Loading)
     val uiState: StateFlow<DailyUiState> = _uiState
@@ -152,8 +153,10 @@ class DailyTabViewModel(
                 else -> DailyUiState.Loading
             }
 
+            val generationAtStart = dataGeneration
             val result = getDailyItemsUseCase(requestedDate)
             if (!isCurrentLoadRequest(requestId, requestedDate)) return@launch
+            if (dataGeneration != generationAtStart) return@launch
 
             when (result) {
                     is GetDailyItemsResult.Success -> _uiState.value = buildSuccessState(result.dailyLog, requestedDate)
@@ -208,11 +211,18 @@ class DailyTabViewModel(
 
                 when (val result = updateItemStatusUseCase(itemId, newStatus)) {
                     is UpdateItemStatusResult.Success -> if (requestedDate == currentDate) {
+                        dataGeneration++
                         _uiState.value = buildSuccessState(result.dailyLog, requestedDate)
                     }
                     is UpdateItemStatusResult.NotFound -> if (requestedDate == currentDate) loadItems()
-                    is UpdateItemStatusResult.ServerError -> if (requestedDate == currentDate) showServerError()
-                    is UpdateItemStatusResult.NetworkError -> if (requestedDate == currentDate) showNetworkError()
+                    is UpdateItemStatusResult.ServerError -> keepListWithStatusError(
+                        requestedDate,
+                        language.errorTexts.dataLoadError,
+                    )
+                    is UpdateItemStatusResult.NetworkError -> keepListWithStatusError(
+                        requestedDate,
+                        language.errorTexts.connectionError,
+                    )
                 }
             }
         }
@@ -252,18 +262,17 @@ class DailyTabViewModel(
     private fun buildSuccessState(dailyLog: DailyLog, date: LocalDate): DailyUiState.Success {
         val nextUpId: Long? =
             dailyLog.items.firstOrNull { it.status == DailyItemStatus.PENDING }?.id
+        val completedCount = dailyLog.items.count { it.status.countsTowardCompletion }
+        val totalCount = dailyLog.items.size
         return DailyUiState.Success(
             date = date,
             dayNumber = date.day,
             headerText = formatHeaderText(date),
             monthYear = formatMonthYear(date),
             showFullDate = !isRelativeDate(date),
-            completionRate = if (dailyLog.items.isEmpty()) {
-                0.0
-            } else {
-                dailyLog.items.count { it.status == DailyItemStatus.COMPLETED }.toDouble() /
-                    dailyLog.items.size
-            },
+            completionRate = if (totalCount == 0) 0.0 else completedCount.toDouble() / totalCount,
+            completedCount = completedCount,
+            totalCount = totalCount,
             items = dailyLog.items.map { domainItem ->
                 domainItem.toUiModel(
                     typeLabel = resolveTypeLabel(domainItem.type),
@@ -273,11 +282,24 @@ class DailyTabViewModel(
                         else -> DailyItemHighlight.NONE
                     },
                     workoutTexts = language.workoutTexts,
+                    calorieUnit = language.tabDetailTexts.calorieUnit,
+                    gramUnit = language.tabDetailTexts.gramUnit,
                 )
             }.toImmutableList(),
             isRefreshing = false,
             activeFilter = activeFilter,
+            statusError = null,
         )
+    }
+
+    private fun keepListWithStatusError(requestedDate: LocalDate, message: String) {
+        if (requestedDate != currentDate) return
+        val current = _uiState.value
+        _uiState.value = if (current is DailyUiState.Success) {
+            current.copy(isRefreshing = false, statusError = message)
+        } else {
+            DailyUiState.Error(message = message)
+        }
     }
 
     private fun showEmptyState(date: LocalDate) {

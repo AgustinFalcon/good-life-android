@@ -2,7 +2,9 @@ package com.agusstkd.goodlife.data.remote.dto.response.training
 
 import com.agusstkd.goodlife.domain.model.training.DifficultyLevel
 import com.agusstkd.goodlife.domain.model.training.GoalType
+import kotlinx.datetime.DayOfWeek
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class RoutineResponseTest {
@@ -21,6 +23,22 @@ class RoutineResponseTest {
         assertEquals(DifficultyLevel.UNKNOWN, routine.difficultyLevel)
         assertEquals(GoalType.UNKNOWN, routine.goalType)
         assertEquals("Fuerza", routine.name)
+    }
+
+    @Test
+    fun `iso weekday maps to DayOfWeek`() {
+        val routine = sampleRoutine("BEGINNER", "STRENGTH").copy(
+            workouts = listOf(WorkoutResponse(id = 1L, name = "Push", dayOfWeek = 1)),
+        ).toDomain()
+        assertEquals(DayOfWeek.MONDAY, routine.workouts.single().dayOfWeek)
+    }
+
+    @Test
+    fun `out of range workout weekday is omitted`() {
+        val routine = sampleRoutine("BEGINNER", "STRENGTH").copy(
+            workouts = listOf(WorkoutResponse(id = 1L, name = "Push", dayOfWeek = 9)),
+        ).toDomain()
+        assertNull(routine.workouts.single().dayOfWeek)
     }
 
     private fun sampleRoutine(difficultyLevel: String?, goalType: String?) = RoutineResponse(

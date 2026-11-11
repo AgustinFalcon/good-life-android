@@ -1,6 +1,8 @@
 package com.agusstkd.goodlife.domain.usecase.home
 
+import com.agusstkd.goodlife.core.dispatcher.TestDispatcherProvider
 import com.agusstkd.goodlife.core.result.Result
+import com.agusstkd.goodlife.domain.usecase.home.result.LogoutResult
 import com.agusstkd.goodlife.fake.FakeAuthRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -10,7 +12,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -25,7 +26,7 @@ class LogoutUseCaseTest {
     fun setUp() {
         Dispatchers.setMain(dispatcher)
         repository = FakeAuthRepository()
-        useCase = LogoutUseCase(repository)
+        useCase = LogoutUseCase(repository, TestDispatcherProvider(dispatcher))
     }
 
     @After
@@ -39,7 +40,7 @@ class LogoutUseCaseTest {
 
         val result = useCase()
 
-        assertTrue(result is Result.Success)
+        assertEquals(LogoutResult.Success, result)
         assertEquals(1, repository.logoutCallCount)
     }
 
@@ -50,8 +51,7 @@ class LogoutUseCaseTest {
 
         val result = useCase()
 
-        assertEquals(failure, result)
-        assertTrue(result is Result.Error)
+        assertEquals(LogoutResult.Failed, result)
         assertEquals(1, repository.logoutCallCount)
     }
 }

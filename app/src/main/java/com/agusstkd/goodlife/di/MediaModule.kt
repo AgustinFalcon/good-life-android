@@ -17,10 +17,10 @@ val mediaModule = module {
             context = androidContext()
         )
     }
-    factory { UploadProfilePhotoUseCase(get(), get()) }
+    factory { UploadProfilePhotoUseCase(get(), get(), get()) }
     viewModel {
         ProfileViewModel(
-            authRepository = get(),
+            observeCurrentUser = get(),
             uploadProfilePhotoUseCase = get(),
             language = get(),
         )

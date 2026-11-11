@@ -252,13 +252,7 @@ fun CreateHabitScreen(
             modifier = Modifier.fillMaxWidth(),
             params = ButtonParams(
                 text = createHabitTexts.saveButton,
-                enabled = uiState.name.isNotBlank()
-                        && uiState.selectedCategory != null
-                        && uiState.selectedDays.isNotEmpty()
-                        && uiState.targetValue.isNotBlank()
-                        && uiState.unit.isNotBlank()
-                        && uiState.startDate != null
-                        && !uiState.isLoading,
+                enabled = uiState.isFormValid,
                 isLoading = uiState.isLoading,
                 variant = ButtonVariant.PRIMARY,
                 colorScheme = ButtonColorScheme.Habit,

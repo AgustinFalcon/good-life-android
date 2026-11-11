@@ -62,7 +62,17 @@ data class CreateTaskUiState(
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
     val errorMessage: String? = null,
-)
+) {
+    val isFormValid: Boolean
+        get() {
+            if (title.isBlank() || isLoading) return false
+            return when (schedulingMode) {
+                SchedulingMode.ONCE -> scheduledDate != null
+                SchedulingMode.RECURRENT ->
+                    recurrentDays.isNotEmpty() && startDate != null
+            }
+        }
+}
 
 enum class SchedulingMode { ONCE, RECURRENT }
 

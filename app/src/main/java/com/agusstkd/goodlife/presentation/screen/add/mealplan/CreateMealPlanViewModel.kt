@@ -13,6 +13,7 @@ import com.agusstkd.goodlife.domain.model.nutrition.MealIngredientDraft
 import com.agusstkd.goodlife.domain.model.nutrition.MealPlanDraft
 import com.agusstkd.goodlife.domain.model.nutrition.MealSummary
 import com.agusstkd.goodlife.domain.model.nutrition.MealType
+import com.agusstkd.goodlife.domain.model.nutrition.PortionUnit
 import com.agusstkd.goodlife.domain.model.nutrition.ScheduledMealDraft
 import com.agusstkd.goodlife.domain.usecase.nutrition.CreateCustomIngredientUseCase
 import com.agusstkd.goodlife.domain.usecase.nutrition.CreateCustomMealUseCase
@@ -659,7 +660,7 @@ class CreateMealPlanViewModel(
      * y recalcula los macros del preview en consecuencia.
      * Si el ingrediente no existe en el catálogo cargado, la función retorna sin efecto.
      */
-    private fun updateIngredientQuantity(ingredientId: Long, quantity: Double, unit: String) {
+    private fun updateIngredientQuantity(ingredientId: Long, quantity: Double, unit: PortionUnit) {
         val ingredient = _uiState.value.ingredientCatalog.find { it.id == ingredientId } ?: return
         val draft = MealIngredientDraft(ingredient = ingredient, quantity = quantity, unit = unit)
 

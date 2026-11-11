@@ -3,6 +3,7 @@ package com.agusstkd.goodlife.domain.usecase.nutrition
 import com.agusstkd.goodlife.core.dispatcher.TestDispatcherProvider
 import com.agusstkd.goodlife.domain.model.nutrition.CustomMealDraft
 import com.agusstkd.goodlife.domain.model.nutrition.CustomMealIngredientDraft
+import com.agusstkd.goodlife.domain.model.nutrition.PortionUnit
 import com.agusstkd.goodlife.domain.usecase.nutrition.result.CreateCustomMealResult
 import com.agusstkd.goodlife.fake.FakeNutritionCatalogRepository
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -27,6 +28,20 @@ class CreateCustomMealUseCaseTest {
     }
 
     @Test
+    fun `unknown unit is ValidationError and does not hit repository`() = runTest(dispatcher) {
+        val result = useCase.execute(
+            validDraft().copy(
+                ingredients = listOf(
+                    CustomMealIngredientDraft(ingredientId = 1L, quantity = 200.0, unit = PortionUnit.UNKNOWN),
+                ),
+            ),
+        )
+
+        assertEquals(CreateCustomMealResult.ValidationError, result)
+        assertNull(repository.lastCreateMealDraft)
+    }
+
+    @Test
     fun `success returns created meal`() = runTest(dispatcher) {
         val draft = validDraft()
 
@@ -45,7 +60,7 @@ class CreateCustomMealUseCaseTest {
         description = "Lunch",
         tags = listOf("lunch"),
         ingredients = listOf(
-            CustomMealIngredientDraft(ingredientId = 1L, quantity = 200.0, unit = "g"),
+            CustomMealIngredientDraft(ingredientId = 1L, quantity = 200.0, unit = PortionUnit.GRAM),
         ),
     )
 }

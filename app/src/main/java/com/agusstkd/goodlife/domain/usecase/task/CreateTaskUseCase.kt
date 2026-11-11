@@ -1,5 +1,6 @@
 package com.agusstkd.goodlife.domain.usecase.task
 
+import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.core.dispatcher.DispatcherProvider
 import com.agusstkd.goodlife.core.network.ApiException
 import com.agusstkd.goodlife.domain.repository.TaskRepository
@@ -16,6 +17,7 @@ import kotlinx.datetime.LocalTime
  * ## Responsabilidades
  * 1. **Validar** la coherencia de los datos antes de ir a red:
  *    - Título no vacío.
+ *    - Hay fecha única **o** días recurrentes (no ambos vacíos).
  *    - [scheduledDate] y [recurrentDays] son mutuamente excluyentes (XOR).
  *    - Si [recurrentDays] no está vacío, [startDate] es obligatorio.
  * 2. Cambiar al dispatcher IO para no bloquear el hilo principal.
@@ -35,7 +37,8 @@ import kotlinx.datetime.LocalTime
  */
 class CreateTaskUseCase(
     private val repository: TaskRepository,
-    private val dispatcher: DispatcherProvider
+    private val dispatcher: DispatcherProvider,
+    private val language: AppLanguage,
 ) {
 
     /**
@@ -63,20 +66,26 @@ class CreateTaskUseCase(
         scheduledTime: LocalTime?,
     ): CreateTaskResult {
 
+        val texts = language.createTaskTexts
+
         if (title.isBlank()) {
-            return CreateTaskResult.ValidationError("El título no puede estar vacío")
+            return CreateTaskResult.ValidationError(texts.errorTitleEmpty)
+        }
+
+        if (scheduleDate == null && recurrentDays.isEmpty()) {
+            return CreateTaskResult.ValidationError(texts.errorNoDate)
         }
 
         if (scheduleDate != null && recurrentDays.isNotEmpty()) {
-            return CreateTaskResult.ValidationError("No puedes seleccionar una fecha y crear dias recurrentes")
+            return CreateTaskResult.ValidationError(texts.errorOnceAndRecurrent)
         }
 
         if (recurrentDays.isNotEmpty() && startDate == null) {
-            return CreateTaskResult.ValidationError("Debes seleccionar una fecha de inicio para tareas recurrentes")
+            return CreateTaskResult.ValidationError(texts.errorNoDate)
         }
 
         if (endDate != null && startDate != null && endDate < startDate) {
-            return CreateTaskResult.ValidationError("La fecha de fin no puede ser anterior al inicio")
+            return CreateTaskResult.ValidationError(texts.errorEndBeforeStart)
         }
 
         return withContext(dispatcher.io) {
@@ -92,9 +101,11 @@ class CreateTaskUseCase(
 
             when (result) {
                 is Result.Success -> CreateTaskResult.Success
-                is Result.Error -> when (val ex = result.exception) {
-                    is ApiException.BadRequestException -> CreateTaskResult.ValidationError(ex.message)
-                    is ApiException.ServerException -> CreateTaskResult.ServerError(ex.message)
+                is Result.Error -> when (result.exception) {
+                    is ApiException.BadRequestException,
+                    is ApiException.ServerException,
+                    is ApiException.NotFoundException,
+                    is ApiException.UnknownApiException -> CreateTaskResult.ServerError(texts.errorServer)
                     else -> CreateTaskResult.NetworkError
                 }
             }

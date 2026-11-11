@@ -44,10 +44,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.agusstkd.goodlife.core.datetime.language.AccessibilityTexts
 import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.core.datetime.language.TabDetailTexts
 import com.agusstkd.goodlife.presentation.components.header.DateHeaderParams
 import com.agusstkd.goodlife.presentation.components.header.DateHeaderComponent
+import com.agusstkd.goodlife.presentation.components.header.dateHeaderParams
 import com.agusstkd.goodlife.presentation.components.nutrition.MacrosSummaryCard
 import com.agusstkd.goodlife.presentation.components.nutrition.formatNutritionValue
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealPlanUiModel
@@ -73,7 +75,7 @@ import kotlinx.datetime.LocalDate
  * para mostrar el resumen diario de macros.
  *
  * @param uiState Estado de éxito con los datos del día.
- * @param dateHeaderParams Parámetros del header de fecha para accesibilidad.
+ * @param accessibilityTexts Copy de accesibilidad del header de fecha.
  * @param onAction Callback de acciones del usuario.
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -81,10 +83,17 @@ import kotlinx.datetime.LocalDate
 fun MealsScreen(
     uiState: MealsUiState.Success,
     texts: TabDetailTexts,
-    dateHeaderParams: DateHeaderParams,
+    accessibilityTexts: AccessibilityTexts,
     listState: LazyListState = rememberLazyListState(),
     onAction: (MealsUiAction) -> Unit,
 ) {
+    val headerParams = dateHeaderParams(
+        dayNumber = uiState.dayNumber,
+        headerText = uiState.headerText,
+        monthYear = uiState.monthYear,
+        showFullDate = uiState.showFullDate,
+        accessibility = accessibilityTexts,
+    )
     PullToRefreshBox(
         isRefreshing = uiState.isRefreshing,
         onRefresh = { onAction(MealsUiAction.OnRefresh) },
@@ -98,7 +107,7 @@ fun MealsScreen(
         // ── Header de fecha (mismo patrón que DailyScreen) ────────────────
         item {
             MealsDateHeader(
-                dateHeaderParams = dateHeaderParams,
+                dateHeaderParams = headerParams,
                 onAction = onAction,
             )
         }
@@ -346,11 +355,7 @@ private fun MealsScreenWithPlansPreview() {
                 totalFat = 24.0,
             ),
             texts = Spanish.tabDetailTexts,
-            dateHeaderParams = DateHeaderParams(
-                dayNumber = 15,
-                headerText = "Hoy",
-                monthYear = null,
-            ),
+            accessibilityTexts = Spanish.accessibilityTexts,
             onAction = {},
         )
     }
@@ -378,13 +383,21 @@ internal fun MealsLoadingState() {
  */
 @Composable
 internal fun MealsEmptyState(
+    state: MealsUiState.Empty,
     texts: TabDetailTexts,
-    dateHeaderParams: DateHeaderParams,
+    accessibilityTexts: AccessibilityTexts,
     onAction: (MealsUiAction) -> Unit,
 ) {
+    val headerParams = dateHeaderParams(
+        dayNumber = state.dayNumber,
+        headerText = state.headerText,
+        monthYear = state.monthYear,
+        showFullDate = state.showFullDate,
+        accessibility = accessibilityTexts,
+    )
     Column(modifier = Modifier.fillMaxSize()) {
         MealsDateHeader(
-            dateHeaderParams = dateHeaderParams,
+            dateHeaderParams = headerParams,
             onAction = onAction,
         )
         Box(
@@ -471,12 +484,15 @@ private fun MealsLoadingPreview() {
 private fun MealsEmptyPreview() {
     GoodLifeTheme {
         MealsEmptyState(
-            texts = Spanish.tabDetailTexts,
-            dateHeaderParams = DateHeaderParams(
+            state = MealsUiState.Empty(
+                date = LocalDate(2026, 5, 15),
                 dayNumber = 15,
                 headerText = "Hoy",
-                monthYear = null,
+                monthYear = "Mayo 2026",
+                showFullDate = false,
             ),
+            texts = Spanish.tabDetailTexts,
+            accessibilityTexts = Spanish.accessibilityTexts,
             onAction = {},
         )
     }

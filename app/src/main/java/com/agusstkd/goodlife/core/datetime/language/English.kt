@@ -119,6 +119,7 @@ data object English : AppLanguage {
     )
 
     override val authTexts = AuthTexts(
+        appName = "GoodLife",
         loginSubtitle = "Your wellness, your pace",
         emailOrUsername = "Email or username",
         password = "Password",
@@ -162,6 +163,7 @@ data object English : AppLanguage {
         goToMore = "More options and settings",
         close = "Close",
         appLogo = "GoodLife logo",
+        enableBiometric = "Enable fingerprint",
     )
 
     override val formats = DateFormats(
@@ -225,6 +227,7 @@ data object English : AppLanguage {
         errorTitleEmpty = "Title can't be empty",
         errorNoDate = "Select a date",
         errorNoDays = "Select at least one day",
+        errorOnceAndRecurrent = "You can't pick a single date and recurrent days at the same time",
         errorEndBeforeStart = "End date can't be before start date",
         errorServer = "Server error, please try again",
         errorNetwork = "No connection, check your internet",
@@ -376,6 +379,7 @@ data object English : AppLanguage {
         searchMealPlaceholder = "Search meals...",
         filterAll = "All",
         chooseMealButton = "Choose",
+        customMealBadge = "Custom",
         createNewMealButton = "Create new meal",
         // ── Step 1B: New meal ──
         newMealNameLabel = "Meal name",
@@ -427,10 +431,21 @@ data object English : AppLanguage {
         errorServer = "Server error, please try again",
         errorNetwork = "No connection, check your internet",
         loadingTitle = "Saving meal plan...",
+        gramUnit = "g",
+        calorieUnit = "kcal",
+        catalogCountUnit = "units",
+        minutesUnit = "min",
+        macroProteinAbbrev = "P",
+        macroCarbsAbbrev = "C",
+        macroFatAbbrev = "F",
+        caloriesAbbrev = "KCAL",
+        proteinAbbrev = "PROT",
+        carbsAbbrev = "CARB",
     )
 
     override val splashTexts = SplashTexts(
         tapToContinue = "Tap to continue",
+        appName = "GoodLife",
     )
     override val profileTexts = ProfileTexts(
         profilePhoto = "Profile photo",

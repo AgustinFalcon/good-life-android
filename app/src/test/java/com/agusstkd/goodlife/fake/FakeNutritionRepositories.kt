@@ -8,6 +8,7 @@ import com.agusstkd.goodlife.domain.model.nutrition.DailyMealPlanSummary
 import com.agusstkd.goodlife.domain.model.nutrition.MealPlanDraft
 import com.agusstkd.goodlife.domain.model.nutrition.Ingredient
 import com.agusstkd.goodlife.domain.model.nutrition.MealSummary
+import com.agusstkd.goodlife.domain.model.nutrition.PortionUnit
 import com.agusstkd.goodlife.domain.repository.MealPlanRepository
 import com.agusstkd.goodlife.domain.repository.NutritionCatalogRepository
 import kotlinx.datetime.LocalDate
@@ -63,7 +64,7 @@ class FakeNutritionCatalogRepository : NutritionCatalogRepository {
     }
 
     companion object {
-        fun defaultIngredient() = Ingredient(1L, "Rice", null, 100.0, "g", 130.0, 2.7, 28.0, 0.3, true, null)
-        fun defaultMeal() = MealSummary(1L, "Bowl", null, null, null, 1.0, "unit", 500.0, 30.0, 60.0, 10.0, true)
+        fun defaultIngredient() = Ingredient(1L, "Rice", null, 100.0, PortionUnit.GRAM, 130.0, 2.7, 28.0, 0.3, true, null)
+        fun defaultMeal() = MealSummary(1L, "Bowl", null, null, null, 1.0, PortionUnit.PIECE, 500.0, 30.0, 60.0, 10.0, true)
     }
 }

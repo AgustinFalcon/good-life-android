@@ -23,6 +23,14 @@ class DailyItemStatusTest {
     }
 
     @Test
+    fun `skipped and completed count toward completion`() {
+        assertEquals(true, DailyItemStatus.COMPLETED.countsTowardCompletion)
+        assertEquals(true, DailyItemStatus.SKIPPED.countsTowardCompletion)
+        assertEquals(false, DailyItemStatus.PENDING.countsTowardCompletion)
+        assertEquals(false, DailyItemStatus.IN_PROGRESS.countsTowardCompletion)
+    }
+
+    @Test
     fun `selectable excludes Unknown`() {
         assertFalse(DailyItemStatus.UNKNOWN in DailyItemStatus.selectable)
         assertEquals(4, DailyItemStatus.selectable.size)

@@ -6,6 +6,7 @@ import com.agusstkd.goodlife.core.dispatcher.TestDispatcherProvider
 import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.domain.model.auth.User
 import com.agusstkd.goodlife.domain.model.media.LocalImageRef
+import com.agusstkd.goodlife.domain.usecase.home.ObserveCurrentUserUseCase
 import com.agusstkd.goodlife.domain.usecase.media.UploadProfilePhotoUseCase
 import com.agusstkd.goodlife.fake.FakeAuthRepository
 import com.agusstkd.goodlife.fake.FakeMediaRepository
@@ -49,9 +50,10 @@ class ProfileViewModelTest {
     }
 
     private fun vm() = ProfileViewModel(
-        authRepository = authRepository,
+        observeCurrentUser = ObserveCurrentUserUseCase(authRepository),
         uploadProfilePhotoUseCase = UploadProfilePhotoUseCase(
             mediaRepository = mediaRepository,
+            authRepository = authRepository,
             dispatcher = TestDispatcherProvider(dispatcher),
         ),
         language = Spanish,

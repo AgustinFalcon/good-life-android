@@ -6,9 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.agusstkd.goodlife.core.datetime.language.AccessibilityTexts
 import com.agusstkd.goodlife.presentation.components.bottom.datepicker.DatePickerBottomSheetComponent
-import com.agusstkd.goodlife.presentation.components.header.DateHeaderParams
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyNavigationEffect
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.DailyUiState
@@ -52,14 +50,9 @@ fun DailyScreenOwner(
 
         is DailyUiState.Empty -> {
             DailyEmptyState(
+                state = state,
                 dailyTexts = viewModel.dailyTexts,
-                dateHeaderParams = dailyHeaderParams(
-                    dayNumber = state.dayNumber,
-                    headerText = state.headerText,
-                    monthYear = state.monthYear,
-                    showFullDate = state.showFullDate,
-                    accessibility = viewModel.accessibilityTexts,
-                ),
+                accessibilityTexts = viewModel.accessibilityTexts,
                 onAction = viewModel::onAction,
             )
         }
@@ -69,13 +62,7 @@ fun DailyScreenOwner(
                 uiState = state,
                 dailyTexts = viewModel.dailyTexts,
                 listState = listState,
-                dateHeaderParams = dailyHeaderParams(
-                    dayNumber = state.dayNumber,
-                    headerText = state.headerText,
-                    monthYear = state.monthYear,
-                    showFullDate = state.showFullDate,
-                    accessibility = viewModel.accessibilityTexts,
-                ),
+                accessibilityTexts = viewModel.accessibilityTexts,
                 onAction = viewModel::onAction
             )
         }
@@ -103,19 +90,3 @@ fun DailyScreenOwner(
         )
     }
 }
-
-private fun dailyHeaderParams(
-    dayNumber: Int,
-    headerText: String,
-    monthYear: String,
-    showFullDate: Boolean,
-    accessibility: AccessibilityTexts,
-) = DateHeaderParams(
-    dayNumber = dayNumber,
-    headerText = headerText,
-    monthYear = if (showFullDate) monthYear else null,
-    openCalendarLabel = accessibility.openCalendar,
-    previousDayLabel = accessibility.previousDay,
-    nextDayLabel = accessibility.nextDay,
-    notificationsLabel = accessibility.notifications,
-)

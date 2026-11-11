@@ -26,10 +26,9 @@ sealed interface GetMealPlansResult {
 
     /**
      * Error del servidor (5xx, 4xx no semántico).
-     *
-     * @property message Mensaje de error del servidor.
+     * El ViewModel traduce a copy de [com.agusstkd.goodlife.core.datetime.language.AppLanguage].
      */
-    data class ServerError(val message: String) : GetMealPlansResult
+    data object ServerError : GetMealPlansResult
 
     /**
      * Error de red (sin conexión, timeout).

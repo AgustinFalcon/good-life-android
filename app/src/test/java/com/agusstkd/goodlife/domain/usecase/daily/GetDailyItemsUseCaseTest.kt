@@ -69,7 +69,17 @@ class GetDailyItemsUseCaseTest {
         val result = useCase(LocalDate(2026, 3, 9))
 
         assertTrue(result is GetDailyItemsResult.ServerError)
-        assertEquals("500 Internal Server Error", (result as GetDailyItemsResult.ServerError).message)
+    }
+
+    @Test
+    fun `502 maps to ServerError not NetworkError`() = runTest(testDispatcher) {
+        repository.getDailyLogResult = Result.Error(
+            ApiException.fromCode(502, "Bad Gateway")
+        )
+
+        val result = useCase(LocalDate(2026, 3, 9))
+
+        assertTrue(result is GetDailyItemsResult.ServerError)
     }
 
     @Test

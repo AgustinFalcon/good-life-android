@@ -259,8 +259,10 @@ class CreateRoutineViewModel(
             when (val result = getMuscleGroupsUseCase()) {
                 is GetMuscleGroupsResult.Success ->
                     _uiState.update { it.copy(muscleGroups = result.muscleGroups) }
-                is GetMuscleGroupsResult.ServerError -> { /* silently fail, catalog still works */ }
-                GetMuscleGroupsResult.NetworkError -> { /* silently fail */ }
+                is GetMuscleGroupsResult.ServerError ->
+                    _uiState.update { it.copy(errorMessage = routineTexts.errorServer) }
+                GetMuscleGroupsResult.NetworkError ->
+                    _uiState.update { it.copy(errorMessage = language.errorTexts.connectionError) }
             }
         }
     }
@@ -288,7 +290,7 @@ class CreateRoutineViewModel(
                     )
                 }
                 is SearchExercisesResult.ServerError ->
-                    _uiState.update { it.copy(isLoadingCatalog = false, errorMessage = result.message) }
+                    _uiState.update { it.copy(isLoadingCatalog = false, errorMessage = routineTexts.errorServer) }
                 SearchExercisesResult.NetworkError ->
                     _uiState.update { it.copy(isLoadingCatalog = false, errorMessage = language.errorTexts.connectionError) }
             }
@@ -400,8 +402,10 @@ class CreateRoutineViewModel(
                             is ActivateRoutineResult.Success -> {
                                 _uiState.update { it.copy(isLoading = false, isSuccess = true) }
                             }
-                            is ActivateRoutineResult.ServerError -> {
-                                _uiState.update { it.copy(isLoading = false, errorMessage = activateResult.message) }
+                            ActivateRoutineResult.ServerError -> {
+                                _uiState.update {
+                                    it.copy(isLoading = false, errorMessage = routineTexts.errorServer)
+                                }
                             }
                             ActivateRoutineResult.NetworkError -> {
                                 _uiState.update {

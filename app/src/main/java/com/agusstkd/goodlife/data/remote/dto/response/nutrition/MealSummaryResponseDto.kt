@@ -1,6 +1,7 @@
 package com.agusstkd.goodlife.data.remote.dto.response.nutrition
 
 import com.agusstkd.goodlife.domain.model.nutrition.MealSummary
+import com.agusstkd.goodlife.domain.model.nutrition.PortionUnit
 import kotlinx.serialization.Serializable
 
 /**
@@ -30,12 +31,12 @@ data class MealSummaryResponseDto(
  */
 fun MealSummaryResponseDto.toMealSummary() = MealSummary(
     id = id ?: 0L,
-    name = name ?: "Sin nombre",
+    name = name.orEmpty(),
     description = description,
     imageUrl = imageUrl,
     prepTimeMinutes = prepTimeMinutes,
     servingSize = servingSize ?: 1.0,
-    servingUnit = servingUnit ?: "porción",
+    servingUnit = PortionUnit.fromWire(servingUnit),
     calories = totalCalories ?: 0.0,
     protein = totalProtein ?: 0.0,
     carbs = totalCarbs ?: 0.0,

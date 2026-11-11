@@ -35,7 +35,11 @@ fun ProfileScreenOwner(viewModel: ProfileViewModel = koinViewModel()) {
     ProfileScreen(
         state = state,
         profileTexts = viewModel.profileTexts,
-        onChangePhoto = { imagePicker.launch("image/*") },
+        onAction = { action ->
+            when (action) {
+                ProfileUiAction.OnChangePhoto -> imagePicker.launch("image/*")
+            }
+        },
         snackbarHostState = snackbarHostState,
     )
 }

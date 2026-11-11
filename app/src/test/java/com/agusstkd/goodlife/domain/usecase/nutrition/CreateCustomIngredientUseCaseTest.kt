@@ -4,6 +4,7 @@ import com.agusstkd.goodlife.core.dispatcher.TestDispatcherProvider
 import com.agusstkd.goodlife.core.network.ApiException
 import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.domain.model.nutrition.CustomIngredientDraft
+import com.agusstkd.goodlife.domain.model.nutrition.PortionUnit
 import com.agusstkd.goodlife.domain.usecase.nutrition.result.CreateCustomIngredientResult
 import com.agusstkd.goodlife.fake.FakeNutritionCatalogRepository
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -22,6 +23,14 @@ class CreateCustomIngredientUseCaseTest {
     @Test
     fun `blank name is ValidationError`() = runTest(dispatcher) {
         val result = useCase.execute(validDraft().copy(name = "  "))
+
+        assertEquals(CreateCustomIngredientResult.ValidationError, result)
+        assertNull(repository.lastCreateIngredientDraft)
+    }
+
+    @Test
+    fun `unknown serving unit is ValidationError without calling repository`() = runTest(dispatcher) {
+        val result = useCase.execute(validDraft().copy(servingUnit = PortionUnit.UNKNOWN))
 
         assertEquals(CreateCustomIngredientResult.ValidationError, result)
         assertNull(repository.lastCreateIngredientDraft)
@@ -54,7 +63,7 @@ class CreateCustomIngredientUseCaseTest {
         name = "Oats",
         brand = null,
         servingSize = 100.0,
-        servingUnit = "g",
+        servingUnit = PortionUnit.GRAM,
         calories = 380.0,
         protein = 12.0,
         carbs = 60.0,

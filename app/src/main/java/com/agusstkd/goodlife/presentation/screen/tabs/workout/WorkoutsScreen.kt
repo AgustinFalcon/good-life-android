@@ -182,9 +182,9 @@ private fun WorkoutCard(
                 )
             }
 
-            workout.dayOfWeek?.let { day ->
+            workout.dayLabel?.let { day ->
                 Text(
-                    text = texts.dayFormat.formatArgs(day),
+                    text = day,
                     style = MaterialTheme.typography.labelSmall,
                     color = WorkoutsTabAccent,
                     fontWeight = FontWeight.Bold
@@ -214,21 +214,21 @@ private fun WorkoutsScreenPreview() {
                     WorkoutUiModel(
                         id = 1L,
                         name = "Pecho + Tríceps",
-                        dayOfWeek = 1,
+                        dayLabel = "Día 1",
                         exerciseCount = 5,
                         totalSets = 20,
                     ),
                     WorkoutUiModel(
                         id = 2L,
                         name = "Espalda + Bíceps",
-                        dayOfWeek = 3,
+                        dayLabel = "Día 3",
                         exerciseCount = 6,
                         totalSets = 24,
                     ),
                     WorkoutUiModel(
                         id = 3L,
                         name = "Piernas",
-                        dayOfWeek = 5,
+                        dayLabel = "Día 5",
                         exerciseCount = 4,
                         totalSets = 16,
                     ),

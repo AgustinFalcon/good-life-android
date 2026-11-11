@@ -14,6 +14,12 @@ class HabitResponseTest {
     }
 
     @Test
+    fun `invalid iso day is dropped instead of crashing`() {
+        val habit = sampleHabit(category = "HYDRATION").copy(daysOfWeek = listOf(1, 99)).toDomain()
+        assertEquals(setOf(kotlinx.datetime.DayOfWeek.MONDAY), habit.daysOfWeek)
+    }
+
+    @Test
     fun `unknown category is kept as Unknown not Custom`() {
         val habit = sampleHabit(category = "CUSTOM_V2").toDomain()
         assertEquals(HabitCategory.UNKNOWN, habit.category)

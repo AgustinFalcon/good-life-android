@@ -2,11 +2,14 @@ package com.agusstkd.goodlife.di
 
 import com.agusstkd.goodlife.data.remote.api.auth.AuthApiService
 import com.agusstkd.goodlife.data.remote.datasource.remote.AuthRemoteDataSource
+import com.agusstkd.goodlife.core.session.SessionCleanup
+import com.agusstkd.goodlife.data.local.session.LocalSessionCleanup
 import com.agusstkd.goodlife.data.repository.AuthRepositoryImpl
 import com.agusstkd.goodlife.domain.auth.BiometricLoginHandler
 import com.agusstkd.goodlife.domain.repository.AuthRepository
 import com.agusstkd.goodlife.domain.usecase.home.GetCurrentUserUseCase
 import com.agusstkd.goodlife.domain.usecase.home.LogoutUseCase
+import com.agusstkd.goodlife.domain.usecase.home.ObserveCurrentUserUseCase
 import com.agusstkd.goodlife.domain.usecase.login.LoginUseCase
 import com.agusstkd.goodlife.domain.usecase.register.RegisterUseCase
 import com.agusstkd.goodlife.domain.usecase.session.CheckSessionUseCase
@@ -56,13 +59,21 @@ val authModule = module {
     /**
      * Singleton porque maneja el estado del usuario autenticado actualmente.
      */
+    single<SessionCleanup> {
+        LocalSessionCleanup(
+            tokenManager = get(),
+            secureCredentialsStorage = get(),
+            userDao = get(),
+            dailyDao = get(),
+        )
+    }
+
     single<AuthRepository> {
         AuthRepositoryImpl(
             remoteDataSource = get(),
             tokenManager = get(),
             userDao = get(),
-            dailyDao = get(),
-            secureCredentialsStorage = get()
+            sessionCleanup = get(),
         )
     }
 
@@ -103,9 +114,10 @@ val authModule = module {
         )
     }
 
-    factory { CheckSessionUseCase(tokenManager = get()) }
-    factory { GetCurrentUserUseCase(authRepository = get()) }
-    factory { LogoutUseCase(authRepository = get()) }
+    factory { CheckSessionUseCase(authRepository = get()) }
+    factory { GetCurrentUserUseCase(authRepository = get(), dispatcher = get()) }
+    factory { ObserveCurrentUserUseCase(authRepository = get()) }
+    factory { LogoutUseCase(authRepository = get(), dispatcher = get()) }
 
     // ═══════════════════════════════════════════════════════════════════════════════════════════
     // HANDLERS

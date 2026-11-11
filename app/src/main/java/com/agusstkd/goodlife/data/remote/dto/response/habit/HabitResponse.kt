@@ -1,8 +1,8 @@
 package com.agusstkd.goodlife.data.remote.dto.response.habit
 
+import com.agusstkd.goodlife.data.remote.dto.response.toDayOfWeekSet
 import com.agusstkd.goodlife.domain.model.habit.Habit
 import com.agusstkd.goodlife.domain.model.habit.HabitCategory
-import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.serialization.Serializable
@@ -50,9 +50,9 @@ fun HabitResponse.toDomain(): Habit {
         targetValue = targetValue,
         unit = unit,
         isActive = isActive,
-        daysOfWeek = daysOfWeek?.map { DayOfWeek(it) }?.toSet() ?: emptySet(),
-        startDate = startDate?.let { LocalDate.parse(it) },
-        endDate = endDate?.let { LocalDate.parse(it) },
-        scheduledTime = scheduledTime?.let { LocalTime.parse(it) },
+        daysOfWeek = daysOfWeek.toDayOfWeekSet(),
+        startDate = startDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() },
+        endDate = endDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() },
+        scheduledTime = scheduledTime?.let { runCatching { LocalTime.parse(it) }.getOrNull() },
     )
 }

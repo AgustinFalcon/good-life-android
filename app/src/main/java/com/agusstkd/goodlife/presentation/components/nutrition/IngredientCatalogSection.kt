@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.agusstkd.goodlife.core.datetime.language.CreateMealPlanTexts
 import com.agusstkd.goodlife.domain.model.nutrition.Ingredient
+import com.agusstkd.goodlife.domain.model.nutrition.PortionUnit
 import com.agusstkd.goodlife.presentation.components.common.ButtonColorScheme
 import com.agusstkd.goodlife.presentation.components.common.ButtonComponent
 import com.agusstkd.goodlife.presentation.components.common.ButtonParams
@@ -107,7 +108,7 @@ fun IngredientCatalogSection(
 
             // ── Label de sección ──────────────────────────────────────────
             Text(
-                text = "${ingredients.size} unidades",
+                text = "${ingredients.size} ${texts.catalogCountUnit}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -132,7 +133,8 @@ fun IngredientCatalogSection(
                 IngredientItem(
                     ingredient = ingredient,
                     isAdded = ingredient.id in addedIngredientIds,
-                    onAddClick = onAddClick
+                    onAddClick = onAddClick,
+                    texts = texts,
                 )
             }
 
@@ -163,6 +165,7 @@ fun IngredientItem(
     ingredient: Ingredient,
     isAdded: Boolean,
     onAddClick: (Ingredient) -> Unit,
+    texts: CreateMealPlanTexts,
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -214,7 +217,7 @@ fun IngredientItem(
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = "${ingredient.servingSize.toInt()}${ingredient.servingUnit} • ${ingredient.calories.toInt()} kcal",
+                    text = "${ingredient.servingSize.toInt()}${ingredient.servingUnit.label} • ${ingredient.calories.toInt()} ${texts.ingredientCaloriesLabel}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -223,6 +226,7 @@ fun IngredientItem(
                     protein = ingredient.protein,
                     carbs = ingredient.carbs,
                     fat = ingredient.fat,
+                    texts = texts,
                 )
             }
 
@@ -259,6 +263,7 @@ private fun MacroBar(
     protein: Double,
     carbs: Double,
     fat: Double,
+    texts: CreateMealPlanTexts,
     modifier: Modifier = Modifier,
 ) {
     val total = protein + carbs + fat
@@ -281,9 +286,9 @@ private fun MacroBar(
 
         // Texto de valores
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(text = "P ${protein.toInt()}g", style = MaterialTheme.typography.labelSmall, color = ProteinColor, fontWeight = FontWeight.Bold)
-            Text(text = "C ${carbs.toInt()}g",   style = MaterialTheme.typography.labelSmall, color = CarbsColor,   fontWeight = FontWeight.Bold)
-            Text(text = "G ${fat.toInt()}g",      style = MaterialTheme.typography.labelSmall, color = FatColor,     fontWeight = FontWeight.Bold)
+            Text(text = "${texts.macroProteinAbbrev} ${protein.toInt()}${texts.gramUnit}", style = MaterialTheme.typography.labelSmall, color = ProteinColor, fontWeight = FontWeight.Bold)
+            Text(text = "${texts.macroCarbsAbbrev} ${carbs.toInt()}${texts.gramUnit}",   style = MaterialTheme.typography.labelSmall, color = CarbsColor,   fontWeight = FontWeight.Bold)
+            Text(text = "${texts.macroFatAbbrev} ${fat.toInt()}${texts.gramUnit}",      style = MaterialTheme.typography.labelSmall, color = FatColor,     fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -303,7 +308,7 @@ private fun IngredientCatalogSectionPreview() {
                     name = "Pechuga de pollo",
                     brand = "Acme Foods",
                     servingSize = 100.0,
-                    servingUnit = "g",
+                    servingUnit = PortionUnit.GRAM,
                     calories = 165.0,
                     protein = 31.0,
                     carbs = 0.0,
@@ -316,7 +321,7 @@ private fun IngredientCatalogSectionPreview() {
                     name = "Arroz integral",
                     brand = null,  // ← Test de brand null
                     servingSize = 100.0,
-                    servingUnit = "g",
+                    servingUnit = PortionUnit.GRAM,
                     calories = 123.0,
                     protein = 2.6,
                     carbs = 23.0,
@@ -342,7 +347,7 @@ private fun IngredientCatalogSectionPreview() {
 private fun previewTexts() = CreateMealPlanTexts(
     screenTitle = "", typeBadge = "", stepOf = "", nextButton = "", backButton = "",
     createPlanButton = "", successTitle = "", searchMealPlaceholder = "", filterAll = "",
-    chooseMealButton = "", createNewMealButton = "", newMealNameLabel = "",
+    chooseMealButton = "", customMealBadge = "", createNewMealButton = "", newMealNameLabel = "",
     newMealNamePlaceholder = "", newMealDescriptionLabel = "", newMealDescriptionPlaceholder = "",
     newMealTypeLabel = "",
     macrosSummaryTitle = "", myIngredientsSectionTitle = "",

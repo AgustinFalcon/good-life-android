@@ -41,7 +41,7 @@ import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
 fun ProfileScreen(
     state: ProfileUiState,
     profileTexts: ProfileTexts,
-    onChangePhoto: () -> Unit,
+    onAction: (ProfileUiAction) -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -88,7 +88,10 @@ fun ProfileScreen(
                         .size(36.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.primary)
-                        .clickable(enabled = !state.isUploading, onClick = onChangePhoto),
+                        .clickable(
+                            enabled = !state.isUploading,
+                            onClick = { onAction(ProfileUiAction.OnChangePhoto) },
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     if (state.isUploading) {
@@ -140,7 +143,7 @@ private fun ProfileScreenPreview() {
                 profileImageUrl = null,
             ),
             profileTexts = Spanish.profileTexts,
-            onChangePhoto = {},
+            onAction = {},
             snackbarHostState = remember { SnackbarHostState() },
         )
     }
@@ -157,7 +160,7 @@ private fun ProfileScreenUploadingPreview() {
                 isUploading = true,
             ),
             profileTexts = Spanish.profileTexts,
-            onChangePhoto = {},
+            onAction = {},
             snackbarHostState = remember { SnackbarHostState() },
         )
     }

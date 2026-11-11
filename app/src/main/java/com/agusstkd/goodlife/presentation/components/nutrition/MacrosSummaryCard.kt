@@ -66,9 +66,9 @@ fun MacrosSummaryCard(
     proteinLabel: String,
     carbsLabel: String,
     fatLabel: String,
-    calorieUnit: String = "kcal",
-    gramUnit: String = "g",
-    decimalSeparator: Char = '.',
+    calorieUnit: String,
+    gramUnit: String,
+    decimalSeparator: Char,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -202,6 +202,9 @@ private fun MacrosSummaryCardPreview() {
             proteinLabel = "PROTEÍNA",
             carbsLabel = "CARBOS",
             fatLabel = "GRASAS",
+            calorieUnit = "kcal",
+            gramUnit = "g",
+            decimalSeparator = ',',
             modifier = androidx.compose.ui.Modifier.padding(16.dp),
         )
     }
@@ -219,6 +222,9 @@ private fun MacrosSummaryCardEmptyPreview() {
             proteinLabel = "PROTEÍNA",
             carbsLabel = "CARBOS",
             fatLabel = "GRASAS",
+            calorieUnit = "kcal",
+            gramUnit = "g",
+            decimalSeparator = ',',
             modifier = androidx.compose.ui.Modifier.padding(16.dp),
         )
     }

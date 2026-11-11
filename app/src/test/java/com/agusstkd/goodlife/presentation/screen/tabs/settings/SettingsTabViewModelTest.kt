@@ -2,6 +2,7 @@ package com.agusstkd.goodlife.presentation.screen.tabs.settings
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.agusstkd.goodlife.core.datetime.language.Spanish
+import com.agusstkd.goodlife.core.dispatcher.TestDispatcherProvider
 import com.agusstkd.goodlife.domain.usecase.home.GetCurrentUserUseCase
 import com.agusstkd.goodlife.domain.usecase.home.LogoutUseCase
 import com.agusstkd.goodlife.fake.FakeAuthRepository
@@ -39,8 +40,8 @@ class SettingsTabViewModelTest {
     private fun createViewModel(
         navigation: FakeNavigationController = FakeNavigationController(),
     ) = SettingsTabViewModel(
-        logoutUseCase = LogoutUseCase(repo),
-        getCurrentUserUseCase = GetCurrentUserUseCase(repo),
+        logoutUseCase = LogoutUseCase(repo, TestDispatcherProvider(dispatcher)),
+        getCurrentUserUseCase = GetCurrentUserUseCase(repo, TestDispatcherProvider(dispatcher)),
         navigationController = navigation,
         language = Spanish,
     )

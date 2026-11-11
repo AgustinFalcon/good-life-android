@@ -1,7 +1,7 @@
 package com.agusstkd.goodlife.data.remote.dto.response.task
 
+import com.agusstkd.goodlife.data.remote.dto.response.toDayOfWeekSet
 import com.agusstkd.goodlife.domain.model.task.Task
-import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.serialization.Serializable
@@ -62,11 +62,11 @@ fun TaskResponse.toDomain(): Task {
         id = id,
         title = title,
         description = description,
-        scheduledDate = scheduledDate?.let { LocalDate.parse(it) },
-        scheduledTime = scheduledTime?.let { LocalTime.parse(it) },
-        recurrentDays = daysOfWeek?.map { DayOfWeek(it) }?.toSet() ?: emptySet(),
-        startDate = startDate?.let { LocalDate.parse(it) },
-        endDate = endDate?.let { LocalDate.parse(it) },
+        scheduledDate = scheduledDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() },
+        scheduledTime = scheduledTime?.let { runCatching { LocalTime.parse(it) }.getOrNull() },
+        recurrentDays = daysOfWeek.toDayOfWeekSet(),
+        startDate = startDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() },
+        endDate = endDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() },
         reminderEnabled = false,
     )
 }

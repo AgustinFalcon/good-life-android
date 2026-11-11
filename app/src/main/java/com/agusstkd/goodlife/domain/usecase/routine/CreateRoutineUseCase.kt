@@ -102,14 +102,20 @@ class CreateRoutineUseCase(
 
         data object DifficultyPresent : CreateRoutineRule {
             override fun check(draft: CreateRoutineDraft): CreateRoutineValidation? {
-                if (draft.difficultyLevel == null) return CreateRoutineValidation.MissingDifficulty
+                val level = draft.difficultyLevel
+                if (level == null || level == DifficultyLevel.UNKNOWN) {
+                    return CreateRoutineValidation.MissingDifficulty
+                }
                 return null
             }
         }
 
         data object GoalPresent : CreateRoutineRule {
             override fun check(draft: CreateRoutineDraft): CreateRoutineValidation? {
-                if (draft.goalType == null) return CreateRoutineValidation.MissingGoal
+                val goal = draft.goalType
+                if (goal == null || goal == GoalType.UNKNOWN) {
+                    return CreateRoutineValidation.MissingGoal
+                }
                 return null
             }
         }

@@ -11,10 +11,12 @@ class FakeWorkoutLogRepository : WorkoutLogRepository {
         private set
     var lastDraft: FinishWorkoutDraft? = null
         private set
+    var finishWorkoutException: Throwable? = null
 
     override suspend fun finishWorkout(draft: FinishWorkoutDraft): Result<Long> {
         finishWorkoutCallCount++
         lastDraft = draft
+        finishWorkoutException?.let { throw it }
         return finishWorkoutResult
     }
 }

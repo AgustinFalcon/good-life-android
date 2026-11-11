@@ -91,6 +91,7 @@ fun LoginScreen(
                 isBiometricAvailable = uiState.isBiometricAvailable,
                 errorMessage = uiState.errorMessage,
                 isBiometricEnabled = uiState.isBiometricEnabled,
+                isFormValid = uiState.isFormValid,
                 onAction = onAction,
                 auth = auth,
                 accessibility = accessibility
@@ -105,6 +106,7 @@ fun LoginScreen(
                 isBiometricAvailable = false,
                 errorMessage = null,
                 isBiometricEnabled = false,
+                isFormValid = false,
                 onAction = onAction,
                 auth = auth,
                 accessibility = accessibility
@@ -155,11 +157,11 @@ private fun LoginContent(
     isBiometricAvailable: Boolean,
     errorMessage: String?,
     isBiometricEnabled: Boolean,
+    isFormValid: Boolean,
     onAction: (LoginUiAction) -> Unit,
     auth: AuthTexts,
     accessibility: AccessibilityTexts
 ) {
-    val isFormValid = email.isNotBlank() && password.isNotBlank()
     val scrollState = rememberScrollState()
 
     Column(
@@ -172,7 +174,7 @@ private fun LoginContent(
     ) {
         Spacer(modifier = Modifier.height(48.dp))
 
-        LoginHeader(auth = auth)
+        LoginHeader(auth = auth, accessibility = accessibility)
 
         Spacer(modifier = Modifier.height(40.dp))
 
@@ -197,6 +199,7 @@ private fun LoginContent(
                     checked = isBiometricEnabled,
                     id = CheckboxParamsId.ENABLE_FINGER_PRINT,
                     endIcon = Icons.Default.Fingerprint,
+                    endIconContentDescription = accessibility.enableBiometric,
                     enabled = !isLoading,
                 ),
                 onClick = { onAction(LoginUiAction.OnBiometricToggle) },
@@ -221,14 +224,14 @@ private fun LoginContent(
 }
 
 @Composable
-private fun LoginHeader(auth: AuthTexts) {
+private fun LoginHeader(auth: AuthTexts, accessibility: AccessibilityTexts) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
         Image(
             painter = painterResource(R.drawable.good_life_logo),
-            contentDescription = "Logo GoodLife",
+            contentDescription = accessibility.appLogo,
             modifier = Modifier
                 .size(120.dp)
                 .clip(MaterialTheme.shapes.large),
@@ -237,7 +240,7 @@ private fun LoginHeader(auth: AuthTexts) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TitleComponent(text = "GoodLife")
+        TitleComponent(text = auth.appName)
 
         Spacer(modifier = Modifier.height(4.dp))
 

@@ -20,6 +20,8 @@ import com.agusstkd.goodlife.presentation.screen.tabs.workout.detail.model.Worko
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.detail.model.WorkoutExerciseUiModel
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.detail.model.WorkoutSetField
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.detail.model.WorkoutSetUiModel
+import kotlinx.datetime.isoDayNumber
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -143,7 +145,7 @@ class WorkoutDetailViewModel(
     private fun content(workout: Workout): WorkoutDetailUiState.Content =
         WorkoutDetailUiState.Content(
             workoutName = workout.name,
-            dayLabel = workout.dayOfWeek?.let { texts.dayFormat.formatArgs(it) },
+            dayLabel = workout.dayOfWeek?.let { texts.dayFormat.formatArgs(it.isoDayNumber) },
             exercises = workout.exercises.sortedBy { it.orderIndex }.map { exercise ->
                 WorkoutExerciseUiModel(
                     id = exercise.id,
@@ -178,46 +180,61 @@ class WorkoutDetailViewModel(
         val finishing = content.copy(isFinishing = true, finishError = null)
         _uiState.value = finishing
         viewModelScope.launch {
-            val startInstant = sessionStart ?: dateProvider.now()
-            val endInstant = dateProvider.now()
-            val durationMinutes = (endInstant - startInstant).inWholeMinutes.toInt().coerceAtLeast(1)
-            val result = finishWorkoutUseCase(
-                draft = FinishWorkoutDraft(
-                    routineId = loadedRoutineId,
-                    workoutId = workoutId,
-                    name = workout.name,
-                    durationMinutes = durationMinutes,
-                    startTime = toLocal(startInstant),
-                    endTime = toLocal(endInstant),
-                    notes = finishing.notes,
-                    exercises = finishing.exercises.mapNotNull { exercise ->
-                        val domainExercise = workout.exercises.firstOrNull { it.id == exercise.id }
-                            ?: return@mapNotNull null
-                        FinishExerciseDraft(
-                            exerciseMasterId = exercise.exerciseMasterId,
-                            notes = domainExercise.notes?.takeIf { it.isNotBlank() },
-                            sets = exercise.sets.map { set ->
-                                FinishSetDraft(
-                                    setNumber = set.setNumber,
-                                    weight = set.weightInput.toDoubleOrNull() ?: 0.0,
-                                    reps = set.repsInput.toIntOrNull() ?: 0,
-                                    rpe = PerceivedExertion.fromWire(set.rpeInput).toDraftRpe(),
-                                )
-                            },
-                        )
-                    },
+            try {
+                val startInstant = sessionStart ?: dateProvider.now()
+                val endInstant = dateProvider.now()
+                val durationMinutes = (endInstant - startInstant).inWholeMinutes.toInt().coerceAtLeast(1)
+                val result = finishWorkoutUseCase(
+                    draft = FinishWorkoutDraft(
+                        routineId = loadedRoutineId,
+                        workoutId = workoutId,
+                        name = workout.name,
+                        durationMinutes = durationMinutes,
+                        startTime = toLocal(startInstant),
+                        endTime = toLocal(endInstant),
+                        notes = finishing.notes,
+                        exercises = finishing.exercises.mapNotNull { exercise ->
+                            val domainExercise = workout.exercises.firstOrNull { it.id == exercise.id }
+                                ?: return@mapNotNull null
+                            FinishExerciseDraft(
+                                exerciseMasterId = exercise.exerciseMasterId,
+                                notes = domainExercise.notes?.takeIf { it.isNotBlank() },
+                                sets = exercise.sets.map { set ->
+                                    FinishSetDraft(
+                                        setNumber = set.setNumber,
+                                        weight = set.weightInput.toDoubleOrNull() ?: 0.0,
+                                        reps = set.repsInput.toIntOrNull() ?: 0,
+                                        rpe = PerceivedExertion.fromWire(set.rpeInput).toDraftRpe(),
+                                    )
+                                },
+                            )
+                        },
+                    )
                 )
-            )
-            val latest = _uiState.value as? WorkoutDetailUiState.Content ?: return@launch
-            _uiState.value = when (result) {
-                is FinishWorkoutResult.Success -> latest.copy(finished = true, isFinishing = false)
-                FinishWorkoutResult.EmptyExercises ->
-                    latest.copy(isFinishing = false, finishError = texts.noExercises)
-                FinishWorkoutResult.NetworkError ->
-                    latest.copy(isFinishing = false, finishError = language.errorTexts.connectionError)
-                is FinishWorkoutResult.ServerError,
-                FinishWorkoutResult.NotFound ->
-                    latest.copy(isFinishing = false, finishError = texts.finishFailed)
+                val latest = _uiState.value as? WorkoutDetailUiState.Content ?: return@launch
+                _uiState.value = when (result) {
+                    is FinishWorkoutResult.Success -> latest.copy(finished = true, isFinishing = false)
+                    FinishWorkoutResult.EmptyExercises ->
+                        latest.copy(isFinishing = false, finishError = texts.noExercises)
+                    FinishWorkoutResult.NetworkError ->
+                        latest.copy(isFinishing = false, finishError = language.errorTexts.connectionError)
+                    is FinishWorkoutResult.ServerError,
+                    FinishWorkoutResult.NotFound ->
+                        latest.copy(isFinishing = false, finishError = texts.finishFailed)
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                val latest = _uiState.value as? WorkoutDetailUiState.Content ?: return@launch
+                _uiState.value = latest.copy(
+                    isFinishing = false,
+                    finishError = language.errorTexts.connectionError,
+                )
+            } finally {
+                val latest = _uiState.value as? WorkoutDetailUiState.Content
+                if (latest != null && latest.isFinishing) {
+                    _uiState.value = latest.copy(isFinishing = false)
+                }
             }
         }
     }

@@ -45,11 +45,11 @@ class GetDailyItemsUseCase(
         return withContext(dispatcher.io) {
             when (val result = repository.getDailyLog(date)) {
                 is Result.Success -> GetDailyItemsResult.Success(dailyLog = result.data)
-                is Result.Error   -> when (val ex = result.exception) {
+                is Result.Error -> when (result.exception) {
                     is ApiException.NotFoundException -> GetDailyItemsResult.NotFound
-                    is ApiException.ServerException   -> GetDailyItemsResult.ServerError(
-                        message = ex.message ?: "Error de servidor"
-                    )
+                    is ApiException.ServerException,
+                    is ApiException.BadRequestException,
+                    is ApiException.UnknownApiException -> GetDailyItemsResult.ServerError
                     else -> GetDailyItemsResult.NetworkError
                 }
             }

@@ -1,6 +1,7 @@
 package com.agusstkd.goodlife.domain.usecase.nutrition
 
 import com.agusstkd.goodlife.domain.model.nutrition.CustomMealDraft
+import com.agusstkd.goodlife.domain.model.nutrition.PortionUnit
 import com.agusstkd.goodlife.domain.repository.NutritionCatalogRepository
 import com.agusstkd.goodlife.domain.usecase.nutrition.result.CreateCustomMealResult
 import com.agusstkd.goodlife.core.network.ApiException
@@ -15,7 +16,7 @@ class CreateCustomMealUseCase(
     suspend fun execute(
         draft: CustomMealDraft
     ): CreateCustomMealResult = withContext(dispatcher.io) {
-        if (draft.name.isBlank()) {
+        if (draft.name.isBlank() || draft.ingredients.any { it.unit == PortionUnit.UNKNOWN }) {
             return@withContext CreateCustomMealResult.ValidationError
         }
 

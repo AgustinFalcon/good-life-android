@@ -1,26 +1,20 @@
 package com.agusstkd.goodlife.domain.usecase.session
 
-import com.agusstkd.goodlife.core.storage.TokenManager
+import com.agusstkd.goodlife.domain.repository.AuthRepository
 
 /**
- * Verifica si existe una sesión válida (access o refresh token vigentes).
+ * Verifica si hay sesión usable: tokens vigentes **y** usuario local.
  *
  * Se usa en el Splash para decidir la ruta inicial:
  * - true  → navegar directo a Main (auto-login)
  * - false → navegar a Login
  *
- * El constructor de tests recibe un lambda para no depender de [TokenManager]
- * (Android) en JVM unit tests.
- *
- * @param hasValidSession Comprueba si hay tokens vigentes.
+ * El constructor de tests recibe un lambda para no depender de Android.
  */
 class CheckSessionUseCase(
-    private val hasValidSession: () -> Boolean,
+    private val hasActiveSession: suspend () -> Boolean,
 ) {
-    constructor(tokenManager: TokenManager) : this({ tokenManager.hasValidToken() })
+    constructor(authRepository: AuthRepository) : this(authRepository::isLoggedIn)
 
-    /**
-     * @return `true` si hay sesión activa, `false` si no.
-     */
-    operator fun invoke(): Boolean = hasValidSession()
+    suspend operator fun invoke(): Boolean = hasActiveSession()
 }

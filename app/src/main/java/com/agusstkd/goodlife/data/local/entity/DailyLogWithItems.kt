@@ -53,6 +53,8 @@ fun DailyItemEntity.toDomain(): DailyItem? {
         workoutRoutineName = workoutRoutineName,
         workoutExerciseCount = workoutExerciseCount,
         workoutDayOrder = workoutDayOrder,
+        mealCalories = mealCalories,
+        mealProtein = mealProtein,
     )
 }
 
@@ -74,4 +76,6 @@ fun DailyItem.toItemEntity(dailyLogId: Long): DailyItemEntity = DailyItemEntity(
     workoutRoutineName = workoutRoutineName,
     workoutExerciseCount = workoutExerciseCount,
     workoutDayOrder = workoutDayOrder,
+    mealCalories = mealCalories,
+    mealProtein = mealProtein,
 )

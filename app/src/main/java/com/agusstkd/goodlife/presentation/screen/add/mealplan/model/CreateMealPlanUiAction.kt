@@ -2,6 +2,7 @@ package com.agusstkd.goodlife.presentation.screen.add.mealplan.model
 
 import com.agusstkd.goodlife.domain.model.nutrition.MealSummary
 import com.agusstkd.goodlife.domain.model.nutrition.MealType
+import com.agusstkd.goodlife.domain.model.nutrition.PortionUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -105,12 +106,12 @@ sealed interface CreateMealPlanUiAction {
      * Recalcula los macros totales del preview.
      * @param ingredientId ID del ingrediente confirmado.
      * @param quantity Cantidad ingresada por el usuario (> 0).
-     * @param unit Unidad seleccionada (ej: "g", "ml").
+     * @param unit Unidad cerrada seleccionada.
      */
     data class OnConfirmIngredientQuantity(
         val ingredientId: Long,
         val quantity: Double,
-        val unit: String,
+        val unit: PortionUnit,
     ) : CreateMealPlanUiAction
 
     /**
@@ -132,7 +133,7 @@ sealed interface CreateMealPlanUiAction {
      * @param name Nombre del ingrediente.
      * @param brand Marca opcional.
      * @param servingSize Tamaño de la porción de referencia.
-     * @param servingUnit Unidad de la porción (ej: "g", "ml").
+     * @param servingUnit Unidad de la porción.
      * @param calories Calorías por porción.
      * @param protein Proteínas en gramos por porción.
      * @param carbs Carbohidratos en gramos por porción.
@@ -142,7 +143,7 @@ sealed interface CreateMealPlanUiAction {
         val name: String,
         val brand: String?,
         val servingSize: Double,
-        val servingUnit: String,
+        val servingUnit: PortionUnit,
         val calories: Double,
         val protein: Double,
         val carbs: Double,

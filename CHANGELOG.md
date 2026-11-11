@@ -5,7 +5,11 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 ## [Unreleased]
 
 ### Changed
-- El catálogo de nutrición entra al dominio como `CustomIngredientDraft` / `CustomMealDraft`; los DTOs quedan en data. Profile observa `AuthRepository` (no `UserDao`) y sube fotos con `LocalImageRef`. Settings, Profile y Daily/Meals Empty usan `AppLanguage` y Owners sin chrome.
+- El Splash exige tokens **y** usuario Room (`AuthRepository.isLoggedIn`). Create Task `isFormValid` pide fecha (ONCE) o días+inicio (RECURRENT); el submit manda solo el modo activo.
+- ActivateRoutine `ServerError` es un caso cerrado sin payload; Create Habit/Task exponen `isFormValid` en UiState. Macros y unidades del wizard de comida salen de `CreateMealPlanTexts`.
+- Profile observa el usuario con `ObserveCurrentUserUseCase` y sube la foto con resultado cerrado; GetCurrentUser/Logout ya no exponen `Result.Error` al ViewModel. `CustomMealIngredientDraft.unit` es `PortionUnit`. El día del workout es `DayOfWeek`. Un 401 de `/token` con `grantType=password` no limpia sesión, aunque quede refresh residual.
+- El Authenticator refresca vía `TokenRefresher` (core); no importa `AuthApiService`. Login/Register/Splash y nutrición usan copy de `AppLanguage` (logo, nombre, macros).
+- El catálogo de nutrición entra al dominio como `CustomIngredientDraft` / `CustomMealDraft`; los DTOs quedan en data. Profile observa el usuario con use case (no `UserDao`) y sube fotos con `LocalImageRef`. Settings, Profile y Daily/Meals Empty usan `AppLanguage` y Owners sin chrome.
 - `HabitCategory`, `DifficultyLevel`, `GoalType`, `DailyItemType`, `DailyItemStatus` y `PortionUnit` traducen wire con `fromWire` + `UNKNOWN`. Un daily item desconocido se omite; un hábito/rutina desconocido se conserva con copy “Otro”.
 - `CreateRoutineUseCase` valida con `CreateRoutineValidation` (tipo cerrado) y reglas strategy nombradas. El ViewModel traduce a `CreateRoutineTexts`; el dominio ya no emite copy.
 
@@ -23,6 +27,8 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Workouts opens a typed detail with exercises, target sets and editable session notes loaded from the active routine; missing and failed loads are observable states.
 
 ### Security
+- Un 401 de login (`grantType=password`) en `/token` no dispara `SessionExpired` ni borra tokens, aunque exista un refresh residual. Solo el grant de refresh (o body ilegible con refresh persistido) limpia la sesión.
+- El logger HTTP redacta `Authorization`/`refreshToken` y degrada `HEADERS`/`BODY` a `BASIC`. El cleanup de sesión aísla cada paso y el login borra usuario/cache Daily antes de persistir el perfil nuevo, para no heredar PII de otra cuenta si el 401 falló a medias.
 - El Authenticator no adjunta el throwable al log de refresh en release.
 - Se eliminan plantillas de backup inactivas y se mantiene explícita la política `android:allowBackup=false`.
 - El interceptor de autenticación ya no registra URL, headers, tokens ni cuerpos de request. El logging HTTP es `BASIC` solo en debug y `NONE` en release.
@@ -35,6 +41,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Se eliminaron nueve strings legacy de Daily, tabs y registro tras verificar que el copy canónico vive en `UiTexts`; launcher y compatibilidad permanecen explícitamente retenidos en la issue #38 (PR #44 mergeada).
 
 ### Fixed
+- Si `GET /me` o persistir el usuario falla tras `saveTokens`, el login hace rollback de sesión local. Create Task no pega a red sin fecha (ONCE) ni sin días (RECURRENT).
+- Un PATCH fallido del Diario deja la lista y muestra el error en Success; no reemplaza por Error full-screen. SKIPPED cuenta en el completion rate. Macros de comida del Daily se formatean en el VM. El bus de sesión y la navegación no tiran el evento ni crashean si el buffer está lleno.
+- Diario descarta un GET anterior a un toggle (`dataGeneration`) sin bloquear la navegación de fecha; el Authenticator limpia tokens, biométrica, usuario y cache Daily al expirar la sesión. Create Habit no cae a `CUSTOM` si falta categoría. Finish Workout libera `isFinishing` si el use case lanza. Daily/Meals Screen arman el `DateHeader` y leen `completionRate`/`completedCount` del ViewModel.
+- `MealSummary.servingUnit` y `MealIngredientDraft.unit` son `PortionUnit`; un wire nulo es `UNKNOWN`, no “porción”. Room omite type/status desconocidos con test. El DTO Daily ya no inventa títulos en español.
+- Create Habit/Task, catálogo de rutina, Login y Register muestran copy de `AppLanguage` ante 4xx/5xx; ya no imprimen el texto crudo del backend. Daily/Meals `ServerError` es un caso cerrado sin payload de API. Logout y GetCurrentUser usan `DispatcherProvider`.
+- `POST/GET` ingredientes usa `baseQuantity`/`baseUnit`; unidad desconocida es `PortionUnit.UNKNOWN`, no gramos. Un 5xx distinto de 500 deja de mostrarse como “sin conexión”. Create Habit no queda en loading si falta fecha. Días ISO inválidos no tumban el parseo.
 - Finish Workout trata 400/API desconocida como error de servidor (copy `finishFailed`), no como “sin conexión”. Un workout sin series no se puede terminar. Las notas de sesión empiezan vacías (no copian la plantilla).
 - Diario formatea la card de workout con `AppLanguage` a partir de hechos de dominio (`routineName`/`exerciseCount`/`dayOrder`); Room v3 los cachea. `GET /api/v1/meal-plans` ya no manda query `date`. Un 500 de meal-plan no muestra el texto crudo del backend.
 - `MealType.fromWire` no convierte JSON desconocido en Snack; el puerto de meal-plans ya no expone DTOs; Workouts cancela cargas solapadas.

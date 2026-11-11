@@ -46,6 +46,7 @@ class CreateHabitViewModelTest {
         val useCase = CreateHabitUseCase(
             repository = repository,
             dispatcher = TestDispatcherProvider(testDispatcher),
+            language = Spanish,
         )
 
         viewModel = CreateHabitViewModel(
@@ -175,7 +176,29 @@ class CreateHabitViewModelTest {
         advanceUntilIdle()
 
         assertFalse(viewModel.uiState.value.isSuccess)
-        assertNotNull(viewModel.uiState.value.errorMessage)
+        assertEquals(Spanish.createHabitTexts.errorServer, viewModel.uiState.value.errorMessage)
+    }
+
+    @Test
+    fun `submit without category does not fallback to custom`() = runTest(testDispatcher) {
+        viewModel.onAction(CreateHabitUiAction.OnNameChange("Beber agua"))
+        viewModel.onAction(CreateHabitUiAction.OnTargetValueChange("8"))
+        viewModel.onAction(CreateHabitUiAction.OnUnitChange("vasos"))
+        viewModel.onAction(CreateHabitUiAction.OnDayToggled(DayOfWeek.MONDAY))
+        viewModel.onAction(
+            CreateHabitUiAction.OnDateSelected(
+                com.agusstkd.goodlife.presentation.screen.add.habit.model.HabitDatePickerField.START_DATE,
+                LocalDate(2026, 3, 9),
+            )
+        )
+
+        viewModel.onAction(CreateHabitUiAction.OnSubmit)
+        advanceUntilIdle()
+
+        assertEquals(0, repository.createHabitCallCount)
+        assertTrue(viewModel.uiState.value.hasAttemptedSubmit)
+        assertFalse(viewModel.uiState.value.isLoading)
+        assertNull(viewModel.uiState.value.selectedCategory)
     }
 
     @Test

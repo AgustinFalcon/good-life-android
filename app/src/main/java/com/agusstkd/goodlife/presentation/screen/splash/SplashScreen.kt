@@ -36,6 +36,7 @@ fun SplashScreen(
     onAction: (SplashUiAction) -> Unit,
     tapToContinueText: String,
     logoContentDescription: String,
+    appName: String,
     modifier: Modifier = Modifier,
 ) {
     BackgroundGradientComponent(modifier = modifier) {
@@ -54,7 +55,7 @@ fun SplashScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = APP_NAME,
+                text = appName,
                 style = AppTitleStyle,
                 color = DarkGreen,
                 textAlign = TextAlign.Center,
@@ -86,8 +87,6 @@ fun SplashScreen(
     }
 }
 
-private const val APP_NAME = "GoodLife"
-
 @Preview(showBackground = true, name = "Loading")
 @Composable
 fun SplashScreenLoadingPreview() {
@@ -97,6 +96,7 @@ fun SplashScreenLoadingPreview() {
             onAction = {},
             tapToContinueText = "Toca para continuar",
             logoContentDescription = "Logo GoodLife",
+            appName = "GoodLife",
         )
     }
 }
@@ -110,6 +110,7 @@ fun SplashScreenReadyPreview() {
             onAction = {},
             tapToContinueText = "Toca para continuar",
             logoContentDescription = "Logo GoodLife",
+            appName = "GoodLife",
         )
     }
 }

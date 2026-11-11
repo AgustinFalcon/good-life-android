@@ -46,7 +46,7 @@ class SplashViewModelTest {
         navigation: FakeNavigationController = FakeNavigationController(),
     ) = SplashViewModel(
         navigationController = navigation,
-        checkSessionUseCase = CheckSessionUseCase(hasValidSession = { hasSession }),
+        checkSessionUseCase = CheckSessionUseCase(hasActiveSession = { hasSession }),
         language = Spanish,
     )
 

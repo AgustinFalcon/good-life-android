@@ -64,8 +64,8 @@ class NutritionCatalogRepositoryImpl(
 private fun CustomIngredientDraft.toRequestDto() = CreateCustomIngredientRequestDto(
     name = name,
     brand = brand,
-    servingSize = servingSize,
-    servingUnit = servingUnit,
+    baseQuantity = servingSize,
+    baseUnit = servingUnit.name,
     calories = calories,
     protein = protein,
     carbs = carbs,
@@ -82,5 +82,5 @@ private fun CustomMealDraft.toRequestDto() = CreateCustomMealRequestDto(
 private fun CustomMealIngredientDraft.toRequestDto() = MealIngredientRequestDto(
     ingredientId = ingredientId,
     quantity = quantity,
-    unit = unit,
+    unit = unit.name,
 )

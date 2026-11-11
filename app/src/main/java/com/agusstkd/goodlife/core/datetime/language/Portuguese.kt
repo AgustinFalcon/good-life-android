@@ -118,6 +118,7 @@ data object Portuguese : AppLanguage {
     )
 
     override val authTexts = AuthTexts(
+        appName = "GoodLife",
         loginSubtitle = "Seu bem-estar, seu ritmo",
         emailOrUsername = "Email ou nome de usuário",
         password = "Senha",
@@ -161,6 +162,7 @@ data object Portuguese : AppLanguage {
         goToMore = "Mais opções e configurações",
         close = "Fechar",
         appLogo = "Logo GoodLife",
+        enableBiometric = "Ativar com digital",
     )
 
     override val formats = DateFormats(
@@ -224,6 +226,7 @@ data object Portuguese : AppLanguage {
         errorTitleEmpty = "O título não pode estar vazio",
         errorNoDate = "Selecione uma data",
         errorNoDays = "Selecione pelo menos um dia",
+        errorOnceAndRecurrent = "Não é possível escolher uma data única e dias recorrentes ao mesmo tempo",
         errorEndBeforeStart = "A data de fim não pode ser anterior ao início",
         errorServer = "Erro do servidor, tente novamente",
         errorNetwork = "Sem conexão, verifique sua internet",
@@ -375,6 +378,7 @@ data object Portuguese : AppLanguage {
         searchMealPlaceholder = "Buscar refeições...",
         filterAll = "Todos",
         chooseMealButton = "Escolher",
+        customMealBadge = "Personalizado",
         createNewMealButton = "Criar nova refeição",
         // ── Passo 1B: Nova refeição ──
         newMealNameLabel = "Nome da refeição",
@@ -426,10 +430,21 @@ data object Portuguese : AppLanguage {
         errorServer = "Erro do servidor, tente novamente",
         errorNetwork = "Sem conexão, verifique sua internet",
         loadingTitle = "Salvando plano de refeição...",
+        gramUnit = "g",
+        calorieUnit = "kcal",
+        catalogCountUnit = "unidades",
+        minutesUnit = "min",
+        macroProteinAbbrev = "P",
+        macroCarbsAbbrev = "C",
+        macroFatAbbrev = "G",
+        caloriesAbbrev = "KCAL",
+        proteinAbbrev = "PROT",
+        carbsAbbrev = "CARB",
     )
 
     override val splashTexts = SplashTexts(
         tapToContinue = "Toque para continuar",
+        appName = "GoodLife",
     )
     override val profileTexts = ProfileTexts(
         profilePhoto = "Foto de perfil",

@@ -46,6 +46,7 @@ import com.agusstkd.goodlife.presentation.theme.ErrorRed
 import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
 import com.agusstkd.goodlife.presentation.theme.LightGreen
 import com.agusstkd.goodlife.presentation.theme.PlaceholderStyle
+import com.agusstkd.goodlife.presentation.theme.TextPrimary
 import com.agusstkd.goodlife.presentation.theme.TextTertiary
 
 /**
@@ -93,14 +94,14 @@ data class TextFieldVisualState(
         val Normal = TextFieldVisualState(
             borderColors = listOf(DarkGreen, LightGreen, DegradeBackground5),
             iconColor = DarkGreen,
-            textColor = Color.Black,
+            textColor = TextPrimary,
             placeholderColor = TextTertiary,
             cursorColor = DarkGreen
         )
         val Focused = TextFieldVisualState(
             borderColors = listOf(LightGreen, LightGreen.copy(alpha = 0.9f), LightGreen.copy(alpha = 0.7f)),
             iconColor = LightGreen,
-            textColor = Color.Black,
+            textColor = TextPrimary,
             placeholderColor = LightGreen.copy(alpha = 0.7f),
             cursorColor = LightGreen
         )
@@ -114,7 +115,7 @@ data class TextFieldVisualState(
         val Error = TextFieldVisualState(
             borderColors = listOf(ErrorRed, ErrorRed.copy(alpha = 0.9f), ErrorRed.copy(alpha = 0.7f)),
             iconColor = ErrorRed,
-            textColor = Color.Black,
+            textColor = TextPrimary,
             placeholderColor = ErrorRed.copy(alpha = 0.7f),
             cursorColor = ErrorRed
         )

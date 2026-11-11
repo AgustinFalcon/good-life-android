@@ -2,7 +2,6 @@ package com.agusstkd.goodlife.presentation.screen.tabs.daily
 
 import com.agusstkd.goodlife.core.extensions.formatArgs
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -34,9 +33,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.agusstkd.goodlife.core.datetime.language.AccessibilityTexts
 import com.agusstkd.goodlife.core.datetime.language.DailyTexts
 import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.presentation.components.header.DateHeaderParams
+import com.agusstkd.goodlife.presentation.components.header.dateHeaderParams
 import com.agusstkd.goodlife.domain.model.daily.DailyItemType
 import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 import com.agusstkd.goodlife.presentation.components.header.DateHeaderComponent
@@ -59,14 +60,21 @@ import kotlinx.datetime.LocalDate
 fun DailyScreen(
     uiState: DailyUiState.Success,
     dailyTexts: DailyTexts,
-    dateHeaderParams: DateHeaderParams,
+    accessibilityTexts: AccessibilityTexts,
     listState: LazyListState = rememberLazyListState(),
     onAction: (DailyUiAction) -> Unit
 ) {
-    val totalItems = uiState.items.size
-    val completedItems = uiState.items.count { it.status == DailyItemStatus.COMPLETED }
-    val progress = if (totalItems == 0) 0f else completedItems.toFloat() / totalItems
+    val totalItems = uiState.totalCount
+    val completedItems = uiState.completedCount
+    val progress = uiState.completionRate.toFloat().coerceIn(0f, 1f)
     val percentage = (progress * 100).toInt()
+    val headerParams = dateHeaderParams(
+        dayNumber = uiState.dayNumber,
+        headerText = uiState.headerText,
+        monthYear = uiState.monthYear,
+        showFullDate = uiState.showFullDate,
+        accessibility = accessibilityTexts,
+    )
 
     PullToRefreshBox(
         isRefreshing = uiState.isRefreshing,
@@ -80,9 +88,20 @@ fun DailyScreen(
     ) {
         item {
             DailyDateHeader(
-                dateHeaderParams = dateHeaderParams,
+                dateHeaderParams = headerParams,
                 onAction = onAction,
             )
+        }
+
+        uiState.statusError?.let { error ->
+            item {
+                Text(
+                    text = error,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
+            }
         }
 
         item {
@@ -196,11 +215,7 @@ private fun DailyScreenWithItemsPreview() {
     GoodLifeTheme {
         DailyScreen(
             dailyTexts = Spanish.dailyTexts,
-            dateHeaderParams = DateHeaderParams(
-                dayNumber = 10, headerText = "Hoy", monthYear = null,
-                openCalendarLabel = a.openCalendar, previousDayLabel = a.previousDay,
-                nextDayLabel = a.nextDay, notificationsLabel = a.notifications
-            ),
+            accessibilityTexts = a,
             uiState = DailyUiState.Success(
                 date = LocalDate(2026, 2, 10),
                 dayNumber = 10,
@@ -208,6 +223,8 @@ private fun DailyScreenWithItemsPreview() {
                 monthYear = "Febrero 2026",
                 showFullDate = false,
                 completionRate = 0.5,
+                completedCount = 1,
+                totalCount = 4,
                 items = persistentListOf(
                     DailyItemUiModel(
                         id = 1L,
@@ -259,11 +276,7 @@ private fun DailyScreenEmptyPreview() {
     GoodLifeTheme {
         DailyScreen(
             dailyTexts = Spanish.dailyTexts,
-            dateHeaderParams = DateHeaderParams(
-                dayNumber = 9, headerText = "Lun, 09 de feb", monthYear = "Febrero 2026",
-                openCalendarLabel = a.openCalendar, previousDayLabel = a.previousDay,
-                nextDayLabel = a.nextDay, notificationsLabel = a.notifications
-            ),
+            accessibilityTexts = a,
             uiState = DailyUiState.Success(
                 date = LocalDate(2026, 2, 9),
                 dayNumber = 9,
@@ -300,13 +313,21 @@ internal fun DailyLoadingState() {
  */
 @Composable
 internal fun DailyEmptyState(
+    state: DailyUiState.Empty,
     dailyTexts: DailyTexts,
-    dateHeaderParams: DateHeaderParams,
+    accessibilityTexts: AccessibilityTexts,
     onAction: (DailyUiAction) -> Unit,
 ) {
+    val headerParams = dateHeaderParams(
+        dayNumber = state.dayNumber,
+        headerText = state.headerText,
+        monthYear = state.monthYear,
+        showFullDate = state.showFullDate,
+        accessibility = accessibilityTexts,
+    )
     Column(modifier = Modifier.fillMaxSize()) {
         DailyDateHeader(
-            dateHeaderParams = dateHeaderParams,
+            dateHeaderParams = headerParams,
             onAction = onAction,
         )
         Box(
@@ -372,12 +393,15 @@ private fun DailyEmptyPreview() {
     val a = Spanish.accessibilityTexts
     GoodLifeTheme {
         DailyEmptyState(
-            dailyTexts = Spanish.dailyTexts,
-            dateHeaderParams = DateHeaderParams(
-                dayNumber = 10, headerText = "Hoy", monthYear = null,
-                openCalendarLabel = a.openCalendar, previousDayLabel = a.previousDay,
-                nextDayLabel = a.nextDay, notificationsLabel = a.notifications
+            state = DailyUiState.Empty(
+                date = LocalDate(2026, 2, 10),
+                dayNumber = 10,
+                headerText = "Hoy",
+                monthYear = "Febrero 2026",
+                showFullDate = false,
             ),
+            dailyTexts = Spanish.dailyTexts,
+            accessibilityTexts = a,
             onAction = {},
         )
     }

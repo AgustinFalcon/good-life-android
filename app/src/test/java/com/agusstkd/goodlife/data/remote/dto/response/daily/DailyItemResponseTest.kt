@@ -1,5 +1,6 @@
 package com.agusstkd.goodlife.data.remote.dto.response.daily
 
+import com.agusstkd.goodlife.data.remote.dto.response.nutrition.MealSummaryDto
 import com.agusstkd.goodlife.data.remote.dto.response.habit.HabitLogSummaryDto
 import com.agusstkd.goodlife.data.remote.dto.response.habit.HabitSummaryDto
 import com.agusstkd.goodlife.data.remote.dto.response.workout.WorkoutSummaryDto
@@ -62,6 +63,24 @@ class DailyItemResponseTest {
         )
 
         assertEquals("8 / 8 vasos", item.toDomain()?.description)
+    }
+
+    @Test
+    fun `meal stores macros as facts without copy`() {
+        val item = DailyItemResponse(
+            id = 1L,
+            type = "MEAL",
+            referenceId = 50L,
+            scheduledTime = null,
+            status = "PENDING",
+            mealPlan = MealSummaryDto(id = 1L, mealName = "Almuerzo", calories = 700, protein = 42),
+        ).toDomain()
+
+        assertNotNull(item)
+        assertEquals("Almuerzo", item!!.title)
+        assertEquals(null, item.description)
+        assertEquals(700, item.mealCalories)
+        assertEquals(42, item.mealProtein)
     }
 
     @Test

@@ -21,6 +21,10 @@ enum class DailyItemStatus {
     SKIPPED,
     UNKNOWN;
 
+    /** SKIPPED y COMPLETED cuentan para el completion rate; el resto no. */
+    val countsTowardCompletion: Boolean
+        get() = this == COMPLETED || this == SKIPPED
+
     companion object {
         val selectable: List<DailyItemStatus> = entries.filter { it != UNKNOWN }
 

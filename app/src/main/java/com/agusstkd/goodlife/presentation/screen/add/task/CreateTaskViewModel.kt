@@ -75,17 +75,20 @@ class CreateTaskViewModel(
     }
 
     private fun submitTask() {
+        val state = uiState.value
+        if (!state.isFormValid) return
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, hasAttemptedSubmit = true) }
 
+            val once = state.schedulingMode == SchedulingMode.ONCE
             when (val result = createTaskUseCase(
-                title = uiState.value.title,
-                description = uiState.value.description.takeIf { it.isNotBlank() },
-                scheduleDate = uiState.value.scheduledDate,
-                recurrentDays = uiState.value.recurrentDays,
-                startDate = uiState.value.startDate,
-                endDate = uiState.value.endDate,
-                scheduledTime = uiState.value.scheduledTime
+                title = state.title,
+                description = state.description.takeIf { it.isNotBlank() },
+                scheduleDate = state.scheduledDate.takeIf { once },
+                recurrentDays = if (once) emptySet() else state.recurrentDays,
+                startDate = state.startDate.takeIf { !once },
+                endDate = state.endDate.takeIf { !once && state.hasEndDate },
+                scheduledTime = state.scheduledTime.takeIf { state.hasTime },
             )) {
                 is CreateTaskResult.Success -> {
                     _uiState.update {
@@ -110,7 +113,7 @@ class CreateTaskViewModel(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = result.message,
+                            errorMessage = createTaskTexts.errorServer,
                             isSuccess = false
                         )
                     }
@@ -171,7 +174,24 @@ class CreateTaskViewModel(
     }
 
     private fun schedulingModeChange(mode: SchedulingMode) {
-        _uiState.update { it.copy(schedulingMode = mode) }
+        _uiState.update { current ->
+            when (mode) {
+                SchedulingMode.ONCE -> current.copy(
+                    schedulingMode = mode,
+                    recurrentDays = emptySet(),
+                    startDate = null,
+                    startDateDisplay = "",
+                    endDate = null,
+                    endDateDisplay = "",
+                    hasEndDate = false,
+                )
+                SchedulingMode.RECURRENT -> current.copy(
+                    schedulingMode = mode,
+                    scheduledDate = null,
+                    scheduledDateDisplay = "",
+                )
+            }
+        }
     }
 
     private fun changeDaySelected(day: DayOfWeek) {

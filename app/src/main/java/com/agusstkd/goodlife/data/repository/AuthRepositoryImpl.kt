@@ -2,21 +2,18 @@ package com.agusstkd.goodlife.data.repository
 
 import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.core.storage.TokenManager
-import com.agusstkd.goodlife.data.local.dao.DailyDao
 import com.agusstkd.goodlife.data.local.dao.UserDao
 import com.agusstkd.goodlife.data.local.entity.toDomain
 import com.agusstkd.goodlife.data.local.entity.toEntity
+import com.agusstkd.goodlife.core.session.SessionCleanup
 import com.agusstkd.goodlife.data.remote.datasource.remote.AuthRemoteDataSource
 import com.agusstkd.goodlife.data.remote.dto.response.toDomain
 import com.agusstkd.goodlife.domain.exception.NoSessionException
 import com.agusstkd.goodlife.domain.model.auth.User
 import com.agusstkd.goodlife.domain.repository.AuthRepository
-import com.agusstkd.goodlife.domain.storage.SecureCredentialsStorage
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 
 /**
  * Implementación del repositorio de autenticación.
@@ -30,8 +27,7 @@ class AuthRepositoryImpl(
     private val remoteDataSource: AuthRemoteDataSource,
     private val tokenManager: TokenManager,
     private val userDao: UserDao,
-    private val dailyDao: DailyDao,
-    private val secureCredentialsStorage: SecureCredentialsStorage
+    private val sessionCleanup: SessionCleanup,
 ) : AuthRepository {
 
     override suspend fun login(email: String, password: String): Result<User> {
@@ -39,11 +35,7 @@ class AuthRepositoryImpl(
             is Result.Success -> {
                 tokenManager.saveTokens(loginResult.data.toDomain())
                 when (val profileResult = remoteDataSource.getMe()) {
-                    is Result.Success -> {
-                        val user = profileResult.data.toDomain()
-                        userDao.insertUser(user.toEntity())
-                        Result.Success(user)
-                    }
+                    is Result.Success -> persistProfileOrRollback(profileResult.data.toDomain())
                     is Result.Error -> {
                         clearLocalSession()
                         profileResult
@@ -102,19 +94,20 @@ class AuthRepositoryImpl(
         return Result.Success(Unit)
     }
 
-    private suspend fun clearLocalSession() {
-        tokenManager.clearTokens()
-        secureCredentialsStorage.clearCredentials()
-        dailyDao.clearCache()
-        userDao.deleteUser()
-    }
-
-    /** Clears locally persisted session data even when the caller cancels an explicit logout. */
-    private suspend fun clearLocalSessionBestEffort() = withContext(NonCancellable) {
-        try {
-            clearLocalSession()
-        } catch (_: Exception) {
-            // Preserve the original logout failure or cancellation; never mask it with cleanup.
+    private suspend fun persistProfileOrRollback(user: User): Result<User> {
+        return try {
+            sessionCleanup.discardLocalAccountBestEffort()
+            userDao.insertUser(user.toEntity())
+            Result.Success(user)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            clearLocalSessionBestEffort()
+            Result.Error(e)
         }
     }
+
+    private suspend fun clearLocalSession() = sessionCleanup.clear()
+
+    private suspend fun clearLocalSessionBestEffort() = sessionCleanup.clearBestEffort()
 }

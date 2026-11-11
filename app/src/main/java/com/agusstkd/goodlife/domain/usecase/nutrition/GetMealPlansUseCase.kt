@@ -39,11 +39,11 @@ class GetMealPlansUseCase(
                     }
                 }
 
-                is Result.Error -> when (val ex = result.exception) {
+                is Result.Error -> when (result.exception) {
                     is ApiException.NotFoundException -> GetMealPlansResult.NotFound
-                    is ApiException.ServerException -> GetMealPlansResult.ServerError(
-                        ex.message ?: "Error del servidor"
-                    )
+                    is ApiException.ServerException,
+                    is ApiException.BadRequestException,
+                    is ApiException.UnknownApiException -> GetMealPlansResult.ServerError
                     else -> GetMealPlansResult.NetworkError
                 }
             }

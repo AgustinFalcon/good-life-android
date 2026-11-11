@@ -6,9 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.agusstkd.goodlife.core.datetime.language.AccessibilityTexts
 import com.agusstkd.goodlife.presentation.components.bottom.datepicker.DatePickerBottomSheetComponent
-import com.agusstkd.goodlife.presentation.components.header.DateHeaderParams
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsNavigationEffect
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealsUiState
@@ -53,14 +51,9 @@ fun MealsScreenOwner(
 
         is MealsUiState.Empty -> {
             MealsEmptyState(
+                state = state,
                 texts = viewModel.tabDetailTexts,
-                dateHeaderParams = mealsHeaderParams(
-                    dayNumber = state.dayNumber,
-                    headerText = state.headerText,
-                    monthYear = state.monthYear,
-                    showFullDate = state.showFullDate,
-                    accessibility = viewModel.accessibilityTexts,
-                ),
+                accessibilityTexts = viewModel.accessibilityTexts,
                 onAction = viewModel::onAction,
             )
         }
@@ -70,13 +63,7 @@ fun MealsScreenOwner(
                 uiState = state,
                 texts = viewModel.tabDetailTexts,
                 listState = listState,
-                dateHeaderParams = mealsHeaderParams(
-                    dayNumber = state.dayNumber,
-                    headerText = state.headerText,
-                    monthYear = state.monthYear,
-                    showFullDate = state.showFullDate,
-                    accessibility = viewModel.accessibilityTexts,
-                ),
+                accessibilityTexts = viewModel.accessibilityTexts,
                 onAction = viewModel::onAction,
             )
         }
@@ -104,19 +91,3 @@ fun MealsScreenOwner(
         )
     }
 }
-
-private fun mealsHeaderParams(
-    dayNumber: Int,
-    headerText: String,
-    monthYear: String,
-    showFullDate: Boolean,
-    accessibility: AccessibilityTexts,
-) = DateHeaderParams(
-    dayNumber = dayNumber,
-    headerText = headerText,
-    monthYear = if (showFullDate) monthYear else null,
-    openCalendarLabel = accessibility.openCalendar,
-    previousDayLabel = accessibility.previousDay,
-    nextDayLabel = accessibility.nextDay,
-    notificationsLabel = accessibility.notifications,
-)

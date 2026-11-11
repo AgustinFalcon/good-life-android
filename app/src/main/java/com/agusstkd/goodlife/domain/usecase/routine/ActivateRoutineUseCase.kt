@@ -17,7 +17,7 @@ class ActivateRoutineUseCase(
             when (val result = repository.activateRoutine(routineId)) {
                 is Result.Success -> ActivateRoutineResult.Success
                 is Result.Error -> when (val ex = result.exception) {
-                    is ApiException.ServerException -> ActivateRoutineResult.ServerError(ex.message)
+                    is ApiException.ServerException -> ActivateRoutineResult.ServerError
                     else -> ActivateRoutineResult.NetworkError
                 }
             }

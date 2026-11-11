@@ -80,6 +80,7 @@ class LoginUseCaseTest {
         val result = useCase(email = "test@mail.com", password = "password123")
 
         assertTrue(result is LoginResult.Error)
+        assertEquals(Spanish.errorTexts.loginError, (result as LoginResult.Error).message)
         assertEquals(1, repository.loginCallCount)
     }
 

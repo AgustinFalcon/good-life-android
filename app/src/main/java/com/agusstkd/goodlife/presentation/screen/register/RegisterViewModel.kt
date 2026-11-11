@@ -136,7 +136,10 @@ class RegisterViewModel(
                     _uiState.value = handleValidationError(current, result)
                 }
                 is RegisterResult.ServerError -> {
-                    _uiState.value = current.copy(isLoading = false, errorMessage = result.message)
+                    _uiState.value = current.copy(
+                        isLoading = false,
+                        errorMessage = language.errorTexts.registerError,
+                    )
                 }
             }
         }

@@ -5,11 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.core.datetime.language.ProfileTexts
-import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.domain.model.media.LocalImageRef
-import com.agusstkd.goodlife.domain.repository.AuthRepository
+import com.agusstkd.goodlife.domain.usecase.home.ObserveCurrentUserUseCase
 import com.agusstkd.goodlife.domain.usecase.media.UploadProfilePhotoUseCase
-import java.io.IOException
+import com.agusstkd.goodlife.domain.usecase.media.result.UploadProfilePhotoResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -38,14 +37,10 @@ data class ProfileUiState(
 /**
  * ViewModel de perfil: observa el usuario autenticado y sube la foto de perfil.
  *
- * No accede a DAOs. El usuario llega por [AuthRepository.observeCurrentUser].
- *
- * @param authRepository Fuente del usuario persistido y de la URL de foto.
- * @param uploadProfilePhotoUseCase Subida de la imagen al backend.
- * @param language Textos localizados.
+ * No accede a repositorios. El usuario llega por [ObserveCurrentUserUseCase].
  */
 class ProfileViewModel(
-    private val authRepository: AuthRepository,
+    private val observeCurrentUser: ObserveCurrentUserUseCase,
     private val uploadProfilePhotoUseCase: UploadProfilePhotoUseCase,
     private val language: AppLanguage,
 ) : ViewModel() {
@@ -56,7 +51,7 @@ class ProfileViewModel(
     private val _uploadState = MutableStateFlow(ProfileUploadState())
 
     /** Estado combinado del usuario persistido y de la subida de foto. */
-    val uiState = combine(authRepository.observeCurrentUser(), _uploadState) { user, upload ->
+    val uiState = combine(observeCurrentUser(), _uploadState) { user, upload ->
         ProfileUiState(
             name = user?.name ?: "",
             email = user?.email ?: "",
@@ -74,20 +69,14 @@ class ProfileViewModel(
     fun uploadPhoto(image: LocalImageRef) {
         viewModelScope.launch {
             _uploadState.value = ProfileUploadState(isUploading = true)
-            when (val result = uploadProfilePhotoUseCase(image)) {
-                is Result.Success -> {
-                    when (val persist = authRepository.updateProfileImageUrl(result.data)) {
-                        is Result.Success -> _uploadState.value = ProfileUploadState()
-                        is Result.Error -> _uploadState.value = ProfileUploadState(
-                            error = uploadErrorCopy(persist.exception)
-                        )
-                    }
-                }
-                is Result.Error -> {
-                    _uploadState.value = ProfileUploadState(
-                        error = uploadErrorCopy(result.exception)
-                    )
-                }
+            _uploadState.value = when (uploadProfilePhotoUseCase(image)) {
+                UploadProfilePhotoResult.Success -> ProfileUploadState()
+                UploadProfilePhotoResult.NetworkError -> ProfileUploadState(
+                    error = language.errorTexts.connectionError,
+                )
+                UploadProfilePhotoResult.ServerError -> ProfileUploadState(
+                    error = language.errorTexts.dataLoadError,
+                )
             }
         }
     }
@@ -96,10 +85,6 @@ class ProfileViewModel(
      * Limpia el error de subida después de mostrarlo.
      */
     fun clearError() { _uploadState.update { it.copy(error = null) } }
-
-    private fun uploadErrorCopy(exception: Throwable): String =
-        if (exception is IOException) language.errorTexts.connectionError
-        else language.errorTexts.dataLoadError
 
     private data class ProfileUploadState(
         val isUploading: Boolean = false,

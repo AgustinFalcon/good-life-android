@@ -55,12 +55,12 @@ sealed class ApiException(
          */
         fun fromCode(code: Int, message: String?): ApiException {
             val errorMessage = message ?: "Error desconocido"
-            return when (code) {
-                HttpCode.BAD_REQUEST.code -> BadRequestException(errorMessage)
-                HttpCode.UNAUTHORIZED.code -> UnauthorizedException(errorMessage)
-                HttpCode.FORBIDDEN.code -> ForbiddenException(errorMessage)
-                HttpCode.NOT_FOUND.code -> NotFoundException(errorMessage)
-                HttpCode.INTERNAL_SERVER_ERROR.code -> ServerException(errorMessage)
+            return when {
+                code == HttpCode.BAD_REQUEST.code -> BadRequestException(errorMessage)
+                code == HttpCode.UNAUTHORIZED.code -> UnauthorizedException(errorMessage)
+                code == HttpCode.FORBIDDEN.code -> ForbiddenException(errorMessage)
+                code == HttpCode.NOT_FOUND.code -> NotFoundException(errorMessage)
+                HttpCode.isServerError(code) -> ServerException(errorMessage)
                 else -> UnknownApiException(errorMessage, code)
             }
         }
