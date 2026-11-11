@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.agusstkd.goodlife.domain.model.media.LocalImageRef
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -21,7 +22,7 @@ fun ProfileScreenOwner(viewModel: ProfileViewModel = koinViewModel()) {
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
-        uri?.let { viewModel.uploadPhoto(it) }
+        uri?.let { viewModel.uploadPhoto(LocalImageRef(it.toString())) }
     }
 
     LaunchedEffect(state.uploadError) {
@@ -33,7 +34,12 @@ fun ProfileScreenOwner(viewModel: ProfileViewModel = koinViewModel()) {
 
     ProfileScreen(
         state = state,
-        onChangePhoto = { imagePicker.launch("image/*") },
+        profileTexts = viewModel.profileTexts,
+        onAction = { action ->
+            when (action) {
+                ProfileUiAction.OnChangePhoto -> imagePicker.launch("image/*")
+            }
+        },
         snackbarHostState = snackbarHostState,
     )
 }

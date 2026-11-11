@@ -94,6 +94,7 @@ data class HomeTexts(
  * Textos para pantallas de autenticación (Login + Register).
  */
 data class AuthTexts(
+    val appName: String,
     val loginSubtitle: String,
     val emailOrUsername: String,
     val password: String,
@@ -140,6 +141,7 @@ data class AccessibilityTexts(
     val goToMore: String,
     val close: String,
     val appLogo: String,
+    val enableBiometric: String,
 )
 
 /**
@@ -147,6 +149,18 @@ data class AccessibilityTexts(
  */
 data class SplashTexts(
     val tapToContinue: String,
+    val appName: String,
+)
+
+/**
+ * Textos para la pantalla de perfil.
+ *
+ * Cubre las cadenas que la Screen muestra (content descriptions y fallback de nombre).
+ */
+data class ProfileTexts(
+    val profilePhoto: String,
+    val changePhoto: String,
+    val fallbackName: String,
 )
 
 /**
@@ -239,6 +253,7 @@ data class CreateTaskTexts(
     val errorTitleEmpty: String,
     val errorNoDate: String,
     val errorNoDays: String,
+    val errorOnceAndRecurrent: String,
     val errorEndBeforeStart: String,
     val errorServer: String,
     val errorNetwork: String,
@@ -246,10 +261,12 @@ data class CreateTaskTexts(
 )
 
 /**
- * Nombres localizados para las 13 categorías de hábito.
+ * Nombres localizados para las categorías de hábito.
  *
- * Cada propiedad corresponde a un valor del enum [HabitCategory].
- * Se usan en el selector de categoría de la pantalla Create Habit.
+ * Cada propiedad corresponde a un valor del enum [HabitCategory],
+ * incluido [HabitCategory.UNKNOWN] para no imprimir el wire crudo.
+ * Se usan en el selector de categoría de la pantalla Create Habit
+ * y al mostrar un hábito cargado con categoría desconocida.
  */
 data class HabitCategoryTexts(
     val hydration: String,
@@ -265,6 +282,7 @@ data class HabitCategoryTexts(
     val productivity: String,
     val health: String,
     val custom: String,
+    val unknown: String,
 )
 
 /**
@@ -332,6 +350,7 @@ data class CreateMealPlanTexts(
     val searchMealPlaceholder: String,
     val filterAll: String,
     val chooseMealButton: String,
+    val customMealBadge: String,
     val createNewMealButton: String,
 
     // ── Paso 1B: Crear nueva meal ──
@@ -390,6 +409,16 @@ data class CreateMealPlanTexts(
     val errorNetwork: String,
 
     val loadingTitle: String,
+    val gramUnit: String = "g",
+    val calorieUnit: String = "kcal",
+    val catalogCountUnit: String = "unidades",
+    val minutesUnit: String = "min",
+    val macroProteinAbbrev: String = "P",
+    val macroCarbsAbbrev: String = "C",
+    val macroFatAbbrev: String = "G",
+    val caloriesAbbrev: String = "KCAL",
+    val proteinAbbrev: String = "PROT",
+    val carbsAbbrev: String = "CARB",
 )
 
 /**
@@ -446,6 +475,7 @@ data class CreateRoutineTexts(
     val difficultyBeginner: String,
     val difficultyIntermediate: String,
     val difficultyAdvanced: String,
+    val unknown: String,
     val goalSectionTitle: String,
     val goalPlaceholder: String,
     val goalMuscleGain: String,
@@ -487,12 +517,24 @@ data class CreateRoutineTexts(
     val loadingTitle: String,
 )
 
+/**
+ * Textos del tab Settings (cuenta, perfil y logout).
+ */
+data class SettingsTexts(
+    val accountSection: String,
+    val profileTitle: String,
+    val profileSubtitleFallback: String,
+    val logoutTitle: String,
+    val logoutSubtitle: String,
+)
+
 /** Copy shared by the read-only Daily and Meals details. */
 data class TabDetailTexts(
     val dailyTitle: String, val mealTitle: String, val back: String, val loading: String,
     val dailyNotFound: String, val mealNotFound: String, val invalidRoute: String, val retry: String,
     val typeLabel: String, val statusLabel: String, val scheduleLabel: String, val descriptionLabel: String,
     val pending: String, val inProgress: String, val completed: String, val skipped: String,
+    val unknown: String,
     val mealLabel: String, val proteinLabel: String, val carbsLabel: String, val fatLabel: String,
     val active: String, val inactive: String,
     val mealImageUnavailable: String, val emptyMealsTitle: String, val emptyMealsDescription: String,

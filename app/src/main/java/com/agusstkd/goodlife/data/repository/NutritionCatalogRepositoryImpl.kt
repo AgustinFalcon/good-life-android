@@ -2,14 +2,18 @@ package com.agusstkd.goodlife.data.repository
 
 import com.agusstkd.goodlife.core.pagination.PageResult
 import com.agusstkd.goodlife.data.remote.datasource.remote.NutritionCatalogRemoteDataSource
+import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateCustomIngredientRequestDto
+import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateCustomMealRequestDto
+import com.agusstkd.goodlife.data.remote.dto.request.nutrition.MealIngredientRequestDto
 import com.agusstkd.goodlife.data.remote.dto.response.nutrition.toIngredient
 import com.agusstkd.goodlife.data.remote.dto.response.nutrition.toMealSummary
 import com.agusstkd.goodlife.data.remote.dto.response.toDomain
+import com.agusstkd.goodlife.domain.model.nutrition.CustomIngredientDraft
+import com.agusstkd.goodlife.domain.model.nutrition.CustomMealDraft
+import com.agusstkd.goodlife.domain.model.nutrition.CustomMealIngredientDraft
 import com.agusstkd.goodlife.domain.model.nutrition.Ingredient
 import com.agusstkd.goodlife.domain.model.nutrition.MealSummary
 import com.agusstkd.goodlife.domain.repository.NutritionCatalogRepository
-import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateCustomIngredientRequestDto
-import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateCustomMealRequestDto
 import com.agusstkd.goodlife.core.result.Result
 
 class NutritionCatalogRepositoryImpl(
@@ -39,20 +43,44 @@ class NutritionCatalogRepositoryImpl(
     }
 
     override suspend fun createCustomIngredient(
-        request: CreateCustomIngredientRequestDto
+        draft: CustomIngredientDraft
     ): Result<Ingredient> {
-        return when (val result = remoteDataSource.createCustomIngredient(request)) {
+        return when (val result = remoteDataSource.createCustomIngredient(draft.toRequestDto())) {
             is Result.Success -> Result.Success(result.data.toIngredient())
             is Result.Error -> result
         }
     }
 
     override suspend fun createCustomMeal(
-        request: CreateCustomMealRequestDto
+        draft: CustomMealDraft
     ): Result<MealSummary> {
-        return when (val result = remoteDataSource.createCustomMeal(request)) {
+        return when (val result = remoteDataSource.createCustomMeal(draft.toRequestDto())) {
             is Result.Success -> Result.Success(result.data.toMealSummary())
             is Result.Error -> result
         }
     }
 }
+
+private fun CustomIngredientDraft.toRequestDto() = CreateCustomIngredientRequestDto(
+    name = name,
+    brand = brand,
+    baseQuantity = servingSize,
+    baseUnit = servingUnit.name,
+    calories = calories,
+    protein = protein,
+    carbs = carbs,
+    fat = fat,
+)
+
+private fun CustomMealDraft.toRequestDto() = CreateCustomMealRequestDto(
+    name = name,
+    description = description,
+    tags = tags,
+    ingredients = ingredients.map { it.toRequestDto() },
+)
+
+private fun CustomMealIngredientDraft.toRequestDto() = MealIngredientRequestDto(
+    ingredientId = ingredientId,
+    quantity = quantity,
+    unit = unit.name,
+)

@@ -1,5 +1,6 @@
 package com.agusstkd.goodlife.domain.usecase.habit
 
+import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.core.dispatcher.DispatcherProvider
 import com.agusstkd.goodlife.core.network.ApiException
 import com.agusstkd.goodlife.core.result.Result
@@ -38,6 +39,7 @@ import kotlinx.datetime.LocalTime
 class CreateHabitUseCase(
     private val repository: HabitRepository,
     private val dispatcher: DispatcherProvider,
+    private val language: AppLanguage,
 ) {
 
     /**
@@ -66,24 +68,30 @@ class CreateHabitUseCase(
         scheduledTime: LocalTime?,
     ): CreateHabitResult {
 
+        val texts = language.createHabitTexts
+
         if (name.isBlank()) {
-            return CreateHabitResult.ValidationError("El nombre no puede estar vacío")
+            return CreateHabitResult.ValidationError(texts.errorNameEmpty)
+        }
+
+        if (category == HabitCategory.UNKNOWN) {
+            return CreateHabitResult.ValidationError(texts.errorNoCategory)
         }
 
         if (daysOfWeek.isEmpty()) {
-            return CreateHabitResult.ValidationError("Debes seleccionar al menos un día")
+            return CreateHabitResult.ValidationError(texts.errorNoDays)
         }
 
         if (targetValue <= 0) {
-            return CreateHabitResult.ValidationError("La meta debe ser mayor a 0")
+            return CreateHabitResult.ValidationError(texts.errorInvalidGoal)
         }
 
         if (unit.isBlank()) {
-            return CreateHabitResult.ValidationError("La unidad no puede estar vacía")
+            return CreateHabitResult.ValidationError(texts.errorUnitEmpty)
         }
 
         if (endDate != null && endDate < startDate) {
-            return CreateHabitResult.ValidationError("La fecha de fin no puede ser anterior al inicio")
+            return CreateHabitResult.ValidationError(texts.errorEndBeforeStart)
         }
 
         return withContext(dispatcher.io) {
@@ -101,9 +109,11 @@ class CreateHabitUseCase(
 
             when (result) {
                 is Result.Success -> CreateHabitResult.Success
-                is Result.Error -> when (val ex = result.exception) {
-                    is ApiException.BadRequestException -> CreateHabitResult.ValidationError(ex.message)
-                    is ApiException.ServerException -> CreateHabitResult.ServerError(ex.message)
+                is Result.Error -> when (result.exception) {
+                    is ApiException.BadRequestException,
+                    is ApiException.ServerException,
+                    is ApiException.NotFoundException,
+                    is ApiException.UnknownApiException -> CreateHabitResult.ServerError(texts.errorServer)
                     else -> CreateHabitResult.NetworkError
                 }
             }

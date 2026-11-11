@@ -85,7 +85,7 @@ fun CreateIngredientDialog(
         name: String,
         brand: String?,
         servingSize: Double,
-        servingUnit: String,
+        servingUnit: PortionUnit,
         calories: Double,
         protein: Double,
         carbs: Double,
@@ -154,7 +154,7 @@ fun CreateIngredientDialog(
                     keyboardType = KeyboardType.Decimal,
                 )
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    PortionUnit.entries.forEach { unit ->
+                    PortionUnit.selectable.forEach { unit ->
                         FilterChip(
                             selected = selectedUnit == unit,
                             onClick = { selectedUnit = unit },
@@ -247,7 +247,7 @@ fun CreateIngredientDialog(
                             name,
                             brand.takeIf { it.isNotBlank() },
                             servingSize.toDoubleOrNull() ?: 0.0,
-                            selectedUnit.label,
+                            selectedUnit,
                             calories.toDoubleOrNull() ?: 0.0,
                             protein.toDoubleOrNull() ?: 0.0,
                             carbs.toDoubleOrNull() ?: 0.0,
@@ -375,7 +375,7 @@ private fun CreateIngredientDialogPreview() {
 private fun previewTexts() = CreateMealPlanTexts(
     screenTitle = "", typeBadge = "", stepOf = "", nextButton = "",
     backButton = "", createPlanButton = "", successTitle = "",
-    searchMealPlaceholder = "", filterAll = "", chooseMealButton = "",
+    searchMealPlaceholder = "", filterAll = "", chooseMealButton = "", customMealBadge = "",
     createNewMealButton = "", newMealNameLabel = "", newMealNamePlaceholder = "",
     newMealDescriptionLabel = "", newMealDescriptionPlaceholder = "",
     newMealTypeLabel = "", macrosSummaryTitle = "", macroProteinLabel = "",

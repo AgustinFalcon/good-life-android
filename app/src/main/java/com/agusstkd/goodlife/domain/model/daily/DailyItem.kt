@@ -22,6 +22,8 @@ import kotlinx.datetime.LocalTime
  * @property workoutRoutineName Nombre de rutina del workout, si el item es WORKOUT
  * @property workoutExerciseCount Cantidad de ejercicios del workout, si viene en el wire
  * @property workoutDayOrder Día de la rutina del workout, si no hay exerciseCount
+ * @property mealCalories Kilocalorías del meal, si el item es MEAL
+ * @property mealProtein Gramos de proteína del meal, si el item es MEAL
  *
  * @see DailyItemType
  * @see DailyItemStatus
@@ -38,4 +40,6 @@ data class DailyItem(
     val workoutRoutineName: String? = null,
     val workoutExerciseCount: Int? = null,
     val workoutDayOrder: Int? = null,
+    val mealCalories: Int? = null,
+    val mealProtein: Int? = null,
 )

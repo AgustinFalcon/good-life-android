@@ -60,7 +60,17 @@ sealed interface RegisterUiState {
         val confirmPasswordErrorMessage: String? = null,
         val isLoading: Boolean = false,
         val errorMessage: String? = null
-    ) : RegisterUiState
+    ) : RegisterUiState {
+        val isFormValid: Boolean
+            get() = fullName.isNotBlank() &&
+                userName.isNotBlank() &&
+                email.isNotBlank() &&
+                password.isNotBlank() &&
+                confirmPassword.isNotBlank() &&
+                password == confirmPassword &&
+                acceptedTerms &&
+                !isConfirmPasswordError
+    }
 
     /**
      * Estado de registro exitoso.

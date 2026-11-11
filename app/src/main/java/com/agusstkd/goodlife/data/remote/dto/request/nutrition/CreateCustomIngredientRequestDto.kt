@@ -4,15 +4,15 @@ import kotlinx.serialization.Serializable
 
 /**
  * DTO de request para crear ingrediente custom.
- * 
- * Basado en POST /api/v1/ingredients del backend spec.
+ *
+ * Contrato backend [CreateFoodRequest]: `baseQuantity` / `baseUnit`.
  */
 @Serializable
 data class CreateCustomIngredientRequestDto(
     val name: String,
     val brand: String?,
-    val servingSize: Double,
-    val servingUnit: String,
+    val baseQuantity: Double,
+    val baseUnit: String,
     val calories: Double,
     val protein: Double,
     val carbs: Double,

@@ -58,6 +58,7 @@ val taskModule = module {
         CreateTaskUseCase(
             repository = get(),
             dispatcher = get(),
+            language = get(),
         )
     }
 

@@ -16,7 +16,7 @@ package com.agusstkd.goodlife.domain.model.nutrition
  * @property name Nombre del ingrediente (ej: "Pechuga de pollo").
  * @property brand Marca comercial opcional (ej: "Acme Foods").
  * @property servingSize Tamaño de la porción de referencia (ej: 100.0).
- * @property servingUnit Unidad de la porción (ej: "g", "ml", "unidad").
+ * @property servingUnit Unidad de la porción; wire entra por [PortionUnit.fromWire].
  * @property calories Kilocalorías por porción de referencia.
  * @property protein Gramos de proteína por porción de referencia.
  * @property carbs Gramos de carbohidratos por porción de referencia.
@@ -31,12 +31,35 @@ data class Ingredient(
     val name: String,
     val brand: String?,
     val servingSize: Double,
-    val servingUnit: String,
+    val servingUnit: PortionUnit,
     val calories: Double,
     val protein: Double,
     val carbs: Double,
     val fat: Double,
     val isGlobal: Boolean,
     val imageUrl: String?,
-    val availableUnits: List<String> = listOf("g", "ml", "unit")
+    val availableUnits: List<PortionUnit> = emptyList(),
+) {
+    /**
+     * Escala macros y calorías a [quantity] respecto de [servingSize].
+     */
+    fun scaledNutrition(quantity: Double): ScaledNutrition {
+        val factor = if (servingSize > 0.0) quantity / servingSize else 0.0
+        return ScaledNutrition(
+            calories = calories * factor,
+            protein = protein * factor,
+            carbs = carbs * factor,
+            fat = fat * factor,
+        )
+    }
+}
+
+/**
+ * Macros y calorías ya escalados a una cantidad concreta.
+ */
+data class ScaledNutrition(
+    val calories: Double,
+    val protein: Double,
+    val carbs: Double,
+    val fat: Double,
 )

@@ -21,7 +21,9 @@ sealed interface WorkoutDetailUiState {
         val finished: Boolean = false,
         val isFinishing: Boolean = false,
         val finishError: String? = null,
-    ) : WorkoutDetailUiState
+    ) : WorkoutDetailUiState {
+        val canFinish: Boolean get() = exercises.any { it.sets.isNotEmpty() }
+    }
     @Immutable data object NotFound : WorkoutDetailUiState
     @Immutable data class Error(val message: String) : WorkoutDetailUiState
 }

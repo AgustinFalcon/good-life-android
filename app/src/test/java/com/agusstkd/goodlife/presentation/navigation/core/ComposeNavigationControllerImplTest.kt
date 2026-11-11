@@ -36,6 +36,12 @@ class ComposeNavigationControllerImplTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    @Test fun `dispatch never throws when the buffer is under pressure`() = runTest {
+        val controller = ComposeNavigationControllerImpl()
+        repeat(100) { controller.navigateUp() }
+        assertEquals(NavigationAction.NavigateUp, controller.navigationAction.first())
+    }
+
     @Test fun `navigation emitted before collection is delivered in order`() = runTest {
         val controller = ComposeNavigationControllerImpl()
 

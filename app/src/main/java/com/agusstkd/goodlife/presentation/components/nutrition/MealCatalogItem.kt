@@ -26,7 +26,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.agusstkd.goodlife.core.datetime.language.CreateMealPlanTexts
+import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.domain.model.nutrition.MealSummary
+import com.agusstkd.goodlife.domain.model.nutrition.PortionUnit
 import com.agusstkd.goodlife.presentation.components.common.ButtonComponent
 import com.agusstkd.goodlife.presentation.components.common.ButtonParams
 import com.agusstkd.goodlife.presentation.components.common.ButtonVariant
@@ -52,6 +55,9 @@ import com.agusstkd.goodlife.presentation.theme.ProteinColor
 fun MealCatalogItem(
     meal: MealSummary,
     onChoose: () -> Unit,
+    customBadgeLabel: String,
+    chooseButtonLabel: String,
+    texts: CreateMealPlanTexts,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -83,7 +89,7 @@ fun MealCatalogItem(
                     containerColor = NutritionAccent,
                 ) {
                     Text(
-                        text = "Custom",
+                        text = customBadgeLabel,
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.White,
                         modifier = Modifier.padding(horizontal = 4.dp),
@@ -99,7 +105,7 @@ fun MealCatalogItem(
                 containerColor = MealBackground,
             ) {
                 Text(
-                    text = "${meal.calories.toInt()} kcal",
+                    text = "${meal.calories.toInt()} ${texts.ingredientCaloriesLabel}",
                     style = MaterialTheme.typography.labelSmall,
                     modifier = Modifier.padding(horizontal = 4.dp),
                 )
@@ -135,19 +141,19 @@ fun MealCatalogItem(
             // Macros con colores diferenciados por nutriente
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    text = "P ${meal.protein.toInt()}g",
+                    text = "${texts.macroProteinAbbrev} ${meal.protein.toInt()}${texts.gramUnit}",
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = ProteinColor,
                 )
                 Text(
-                    text = "C ${meal.carbs.toInt()}g",
+                    text = "${texts.macroCarbsAbbrev} ${meal.carbs.toInt()}${texts.gramUnit}",
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = CarbsColor,
                 )
                 Text(
-                    text = "G ${meal.fat.toInt()}g",
+                    text = "${texts.macroFatAbbrev} ${meal.fat.toInt()}${texts.gramUnit}",
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = FatColor,
@@ -173,7 +179,7 @@ fun MealCatalogItem(
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Text(
-                            text = "$minutes min",
+                            text = "$minutes ${texts.minutesUnit}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -182,7 +188,7 @@ fun MealCatalogItem(
 
                 ButtonComponent(
                     params = ButtonParams(
-                        text = "Elegir",
+                        text = chooseButtonLabel,
                         variant = ButtonVariant.OUTLINE,
                     ),
                     onClick = onChoose,
@@ -208,7 +214,7 @@ private fun PreviewMealCatalogItemFull() {
                 imageUrl = null,
                 prepTimeMinutes = 25,
                 servingSize = 1.0,
-                servingUnit = "porción",
+                servingUnit = PortionUnit.PIECE,
                 calories = 420.0,
                 protein = 35.0,
                 carbs = 10.0,
@@ -216,6 +222,9 @@ private fun PreviewMealCatalogItemFull() {
                 isGlobal = true,
             ),
             onChoose = {},
+            customBadgeLabel = "Personalizado",
+            chooseButtonLabel = "Elegir",
+            texts = Spanish.createMealPlanTexts,
         )
     }
 }
@@ -232,7 +241,7 @@ private fun PreviewMealCatalogItemEdge() {
                 imageUrl = null,
                 prepTimeMinutes = null,
                 servingSize = 1.0,
-                servingUnit = "vaso",
+                servingUnit = PortionUnit.UNKNOWN,
                 calories = 310.0,
                 protein = 40.0,
                 carbs = 20.0,
@@ -240,6 +249,9 @@ private fun PreviewMealCatalogItemEdge() {
                 isGlobal = false,
             ),
             onChoose = {},
+            customBadgeLabel = "Personalizado",
+            chooseButtonLabel = "Elegir",
+            texts = Spanish.createMealPlanTexts,
         )
     }
 }

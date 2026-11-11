@@ -74,7 +74,7 @@ fun DailyItemCard(
     item: DailyItemUiModel,
     dailyTexts: DailyTexts,
     onClick: (Long) -> Unit,
-    onStatusChange: (Long, DailyItemStatus) -> Unit,
+    onStatusToggle: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val style = item.type.toDailyItemStyle()
@@ -188,13 +188,11 @@ fun DailyItemCard(
                         }
                     }
 
-                    // Botón de status — toggle PENDING ↔ COMPLETED
+                    // Botón de status — el ViewModel decide PENDING ↔ COMPLETED
                     val isCompleted = item.status == DailyItemStatus.COMPLETED
-                    val newStatus = if (isCompleted)
-                        DailyItemStatus.PENDING else DailyItemStatus.COMPLETED
 
                     Surface(
-                        onClick = { onStatusChange(item.id, newStatus) },
+                        onClick = { onStatusToggle(item.id) },
                         modifier = Modifier.size(48.dp),
                         shape = CircleShape,
                         color = if (isCompleted) CompletionGreen else Color.Transparent,
@@ -281,7 +279,7 @@ private fun PreviewMealNextUp() {
                 scheduledTime = "08:30 AM", status = DailyItemStatus.PENDING,
                 highlight = DailyItemHighlight.NEXT_UP
             ),
-            dailyTexts = Spanish.dailyTexts, onClick = {}, onStatusChange = { _, _ -> },
+            dailyTexts = Spanish.dailyTexts, onClick = {}, onStatusToggle = {},
             modifier = Modifier.padding(16.dp)
         )
     }
@@ -298,7 +296,7 @@ private fun PreviewHabitCompleted() {
                 scheduledTime = "07:00 AM", status = DailyItemStatus.COMPLETED,
                 highlight = DailyItemHighlight.NONE
             ),
-            dailyTexts = Spanish.dailyTexts, onClick = {}, onStatusChange = { _, _ -> },
+            dailyTexts = Spanish.dailyTexts, onClick = {}, onStatusToggle = {},
             modifier = Modifier.padding(16.dp)
         )
     }
@@ -315,7 +313,7 @@ private fun PreviewWorkoutInProgress() {
                 scheduledTime = "07:30 AM", status = DailyItemStatus.IN_PROGRESS,
                 highlight = DailyItemHighlight.IN_PROGRESS
             ),
-            dailyTexts = Spanish.dailyTexts, onClick = {}, onStatusChange = { _, _ -> },
+            dailyTexts = Spanish.dailyTexts, onClick = {}, onStatusToggle = {},
             modifier = Modifier.padding(16.dp)
         )
     }
@@ -332,7 +330,7 @@ private fun PreviewTaskNoTime() {
                 scheduledTime = null, status = DailyItemStatus.PENDING,
                 highlight = DailyItemHighlight.NONE
             ),
-            dailyTexts = Spanish.dailyTexts, onClick = {}, onStatusChange = { _, _ -> },
+            dailyTexts = Spanish.dailyTexts, onClick = {}, onStatusToggle = {},
             modifier = Modifier.padding(16.dp)
         )
     }

@@ -116,15 +116,6 @@ private fun RegisterContent(
     auth: AuthTexts,
     accessibility: AccessibilityTexts
 ) {
-    val isFormValid = state.fullName.isNotBlank() &&
-            state.userName.isNotBlank() &&
-            state.email.isNotBlank() &&
-            state.password.isNotBlank() &&
-            state.confirmPassword.isNotBlank() &&
-            state.password == state.confirmPassword &&
-            state.acceptedTerms &&
-            !state.isConfirmPasswordError
-
     val scrollState = rememberScrollState()
 
     Column(
@@ -137,7 +128,7 @@ private fun RegisterContent(
     ) {
         Spacer(modifier = Modifier.height(32.dp))
 
-        RegisterHeader(auth = auth)
+        RegisterHeader(auth = auth, accessibility = accessibility)
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -152,7 +143,7 @@ private fun RegisterContent(
         ButtonComponent(
             params = ButtonParams(
                 text = auth.register,
-                enabled = isFormValid,
+                enabled = state.isFormValid,
                 isLoading = state.isLoading,
                 variant = ButtonVariant.PRIMARY,
                 showTrailingIcon = !state.isLoading
@@ -178,14 +169,14 @@ private fun RegisterContent(
 }
 
 @Composable
-private fun RegisterHeader(auth: AuthTexts) {
+private fun RegisterHeader(auth: AuthTexts, accessibility: AccessibilityTexts) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
         Image(
             painter = painterResource(R.drawable.good_life_logo),
-            contentDescription = "Logo GoodLife",
+            contentDescription = accessibility.appLogo,
             modifier = Modifier
                 .size(100.dp)
                 .clip(MaterialTheme.shapes.large),

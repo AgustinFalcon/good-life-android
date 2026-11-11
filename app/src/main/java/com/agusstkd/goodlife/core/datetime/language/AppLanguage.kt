@@ -32,6 +32,8 @@ import kotlinx.datetime.format.MonthNames
  * @see HomeTexts
  * @see AuthTexts
  * @see AccessibilityTexts
+ * @see ProfileTexts
+ * @see SettingsTexts
  */
 sealed interface AppLanguage {
     val monthNames: MonthNames
@@ -56,5 +58,7 @@ sealed interface AppLanguage {
     val mealTypeTexts: MealTypeTexts
     val createMealPlanTexts: CreateMealPlanTexts
     val splashTexts: SplashTexts
+    val profileTexts: ProfileTexts
     val tabDetailTexts: TabDetailTexts
+    val settingsTexts: SettingsTexts
 }

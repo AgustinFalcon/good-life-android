@@ -2,7 +2,6 @@ package com.agusstkd.goodlife.presentation.screen.tabs.daily
 
 import com.agusstkd.goodlife.core.extensions.formatArgs
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -34,9 +33,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.agusstkd.goodlife.core.datetime.language.AccessibilityTexts
 import com.agusstkd.goodlife.core.datetime.language.DailyTexts
 import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.presentation.components.header.DateHeaderParams
+import com.agusstkd.goodlife.presentation.components.header.dateHeaderParams
 import com.agusstkd.goodlife.domain.model.daily.DailyItemType
 import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 import com.agusstkd.goodlife.presentation.components.header.DateHeaderComponent
@@ -59,14 +60,21 @@ import kotlinx.datetime.LocalDate
 fun DailyScreen(
     uiState: DailyUiState.Success,
     dailyTexts: DailyTexts,
-    dateHeaderParams: DateHeaderParams,
+    accessibilityTexts: AccessibilityTexts,
     listState: LazyListState = rememberLazyListState(),
     onAction: (DailyUiAction) -> Unit
 ) {
-    val totalItems = uiState.items.size
-    val completedItems = uiState.items.count { it.status == DailyItemStatus.COMPLETED }
-    val progress = if (totalItems == 0) 0f else completedItems.toFloat() / totalItems
+    val totalItems = uiState.totalCount
+    val completedItems = uiState.completedCount
+    val progress = uiState.completionRate.toFloat().coerceIn(0f, 1f)
     val percentage = (progress * 100).toInt()
+    val headerParams = dateHeaderParams(
+        dayNumber = uiState.dayNumber,
+        headerText = uiState.headerText,
+        monthYear = uiState.monthYear,
+        showFullDate = uiState.showFullDate,
+        accessibility = accessibilityTexts,
+    )
 
     PullToRefreshBox(
         isRefreshing = uiState.isRefreshing,
@@ -79,15 +87,21 @@ fun DailyScreen(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         item {
-            val onPreviousDay = remember(onAction) { { onAction(DailyUiAction.OnPreviousDay) } }
-            val onNextDay = remember(onAction) { { onAction(DailyUiAction.OnNextDay) } }
-            val onCalendarClick = remember(onAction) { { onAction(DailyUiAction.OnCalendarClick) } }
-            DateHeaderComponent(
-                params = dateHeaderParams,
-                onPreviousDay = onPreviousDay,
-                onNextDay = onNextDay,
-                onCalendarClick = onCalendarClick,
+            DailyDateHeader(
+                dateHeaderParams = headerParams,
+                onAction = onAction,
             )
+        }
+
+        uiState.statusError?.let { error ->
+            item {
+                Text(
+                    text = error,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
+            }
         }
 
         item {
@@ -125,8 +139,8 @@ fun DailyScreen(
                 item = item,
                 dailyTexts = dailyTexts,
                 onClick = { itemId -> onAction(DailyUiAction.OnItemClick(itemId)) },
-                onStatusChange = { itemId, newStatus ->
-                    onAction(DailyUiAction.OnItemStatusChange(itemId, newStatus))
+                onStatusToggle = { itemId ->
+                    onAction(DailyUiAction.OnItemStatusChange(itemId))
                 },
                 modifier = Modifier.padding(horizontal = 12.dp)
             )
@@ -142,6 +156,22 @@ fun DailyScreen(
         }
     }
     }
+}
+
+@Composable
+private fun DailyDateHeader(
+    dateHeaderParams: DateHeaderParams,
+    onAction: (DailyUiAction) -> Unit,
+) {
+    val onPreviousDay = remember(onAction) { { onAction(DailyUiAction.OnPreviousDay) } }
+    val onNextDay = remember(onAction) { { onAction(DailyUiAction.OnNextDay) } }
+    val onCalendarClick = remember(onAction) { { onAction(DailyUiAction.OnCalendarClick) } }
+    DateHeaderComponent(
+        params = dateHeaderParams,
+        onPreviousDay = onPreviousDay,
+        onNextDay = onNextDay,
+        onCalendarClick = onCalendarClick,
+    )
 }
 
 @Composable
@@ -185,11 +215,7 @@ private fun DailyScreenWithItemsPreview() {
     GoodLifeTheme {
         DailyScreen(
             dailyTexts = Spanish.dailyTexts,
-            dateHeaderParams = DateHeaderParams(
-                dayNumber = 10, headerText = "Hoy", monthYear = null,
-                openCalendarLabel = a.openCalendar, previousDayLabel = a.previousDay,
-                nextDayLabel = a.nextDay, notificationsLabel = a.notifications
-            ),
+            accessibilityTexts = a,
             uiState = DailyUiState.Success(
                 date = LocalDate(2026, 2, 10),
                 dayNumber = 10,
@@ -197,6 +223,8 @@ private fun DailyScreenWithItemsPreview() {
                 monthYear = "Febrero 2026",
                 showFullDate = false,
                 completionRate = 0.5,
+                completedCount = 1,
+                totalCount = 4,
                 items = persistentListOf(
                     DailyItemUiModel(
                         id = 1L,
@@ -248,11 +276,7 @@ private fun DailyScreenEmptyPreview() {
     GoodLifeTheme {
         DailyScreen(
             dailyTexts = Spanish.dailyTexts,
-            dateHeaderParams = DateHeaderParams(
-                dayNumber = 9, headerText = "Lun, 09 de feb", monthYear = "Febrero 2026",
-                openCalendarLabel = a.openCalendar, previousDayLabel = a.previousDay,
-                nextDayLabel = a.nextDay, notificationsLabel = a.notifications
-            ),
+            accessibilityTexts = a,
             uiState = DailyUiState.Success(
                 date = LocalDate(2026, 2, 9),
                 dayNumber = 9,
@@ -282,21 +306,43 @@ internal fun DailyLoadingState() {
     }
 }
 
+/**
+ * Empty chrome del tab Daily: [DateHeaderComponent] más el mensaje de reintento.
+ *
+ * Vive en el archivo de Screen para que el Owner no arme el header.
+ */
 @Composable
 internal fun DailyEmptyState(
+    state: DailyUiState.Empty,
     dailyTexts: DailyTexts,
-    onRetry: () -> Unit
+    accessibilityTexts: AccessibilityTexts,
+    onAction: (DailyUiAction) -> Unit,
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "${dailyTexts.noData}\n${dailyTexts.tapToRetry}",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.clickable(onClick = onRetry)
+    val headerParams = dateHeaderParams(
+        dayNumber = state.dayNumber,
+        headerText = state.headerText,
+        monthYear = state.monthYear,
+        showFullDate = state.showFullDate,
+        accessibility = accessibilityTexts,
+    )
+    Column(modifier = Modifier.fillMaxSize()) {
+        DailyDateHeader(
+            dateHeaderParams = headerParams,
+            onAction = onAction,
         )
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "${dailyTexts.noData}\n${dailyTexts.tapToRetry}",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.clickable(onClick = { onAction(DailyUiAction.OnRefresh) })
+            )
+        }
     }
 }
 
@@ -344,8 +390,20 @@ private fun DailyLoadingPreview() {
 @Preview(showBackground = true, name = "DailyScreen - Empty")
 @Composable
 private fun DailyEmptyPreview() {
+    val a = Spanish.accessibilityTexts
     GoodLifeTheme {
-        DailyEmptyState(dailyTexts = Spanish.dailyTexts, onRetry = {})
+        DailyEmptyState(
+            state = DailyUiState.Empty(
+                date = LocalDate(2026, 2, 10),
+                dayNumber = 10,
+                headerText = "Hoy",
+                monthYear = "Febrero 2026",
+                showFullDate = false,
+            ),
+            dailyTexts = Spanish.dailyTexts,
+            accessibilityTexts = a,
+            onAction = {},
+        )
     }
 }
 

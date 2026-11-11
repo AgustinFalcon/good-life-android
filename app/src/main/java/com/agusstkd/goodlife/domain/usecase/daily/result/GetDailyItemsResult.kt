@@ -48,10 +48,9 @@ sealed interface GetDailyItemsResult {
 
     /**
      * El servidor respondió con un error 5xx.
-     *
-     * @param message Detalle técnico del servidor; no debe cruzar sin sanitizar a `UiState`.
+     * El ViewModel traduce a copy de [com.agusstkd.goodlife.core.datetime.language.AppLanguage].
      */
-    data class ServerError(val message: String) : GetDailyItemsResult
+    data object ServerError : GetDailyItemsResult
 
     /**
      * La request falló antes de llegar al servidor (sin conexión, timeout, etc.).

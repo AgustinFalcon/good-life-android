@@ -92,9 +92,12 @@ sealed interface DailyUiState {
         val monthYear: String,
         val showFullDate: Boolean,
         val completionRate: Double,
+        val completedCount: Int = 0,
+        val totalCount: Int = 0,
         val items: ImmutableList<DailyItemUiModel>,
         val isRefreshing: Boolean = false,
         val activeFilter: DailyFilter = DailyFilter.ALL,
+        val statusError: String? = null,
     ) : DailyUiState
 
     /**
@@ -152,12 +155,14 @@ fun DailyItem.toUiModel(
     typeLabel: String,
     highlight: DailyItemHighlight = DailyItemHighlight.NONE,
     workoutTexts: WorkoutTexts,
+    calorieUnit: String = "",
+    gramUnit: String = "",
 ): DailyItemUiModel {
     return DailyItemUiModel(
         id = id,
         type = type,
-        title = title,
-        description = formattedDescription(workoutTexts),
+        title = title.ifBlank { typeLabel },
+        description = formattedDescription(workoutTexts, calorieUnit, gramUnit),
         scheduledTime = scheduledTime?.toDisplayString(),
         status = status,
         typeLabel = typeLabel,
@@ -165,7 +170,16 @@ fun DailyItem.toUiModel(
     )
 }
 
-fun DailyItem.formattedDescription(texts: WorkoutTexts): String? {
+fun DailyItem.formattedDescription(
+    texts: WorkoutTexts,
+    calorieUnit: String = "",
+    gramUnit: String = "",
+): String? {
+    if (type == DailyItemType.MEAL) {
+        val calories = mealCalories ?: return description
+        val protein = mealProtein ?: return description
+        return "$calories $calorieUnit • $protein$gramUnit"
+    }
     if (type != DailyItemType.WORKOUT) return description
     val routine = workoutRoutineName?.takeIf { it.isNotBlank() } ?: texts.noRoutineName
     val suffix = when {

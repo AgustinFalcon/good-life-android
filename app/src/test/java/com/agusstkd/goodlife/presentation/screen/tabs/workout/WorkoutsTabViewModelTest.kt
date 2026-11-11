@@ -152,6 +152,6 @@ class WorkoutsTabViewModelTest {
         id = 5L, name = "Strength Plan", description = "desc", difficultyLevel = DifficultyLevel.ADVANCED,
         goalType = GoalType.STRENGTH, isActive = true, scheduledTime = null,
         daysOfWeek = setOf(DayOfWeek.MONDAY), startDate = null, endDate = null,
-        workouts = listOf(Workout(1L, "Upper", 1, listOf(WorkoutExercise(1L, 10L, "Bench", null, 0, null, listOf(WorkoutSet(1L, 1, 8, 80.0), WorkoutSet(2L, 2, 8, 80.0))))))
+        workouts = listOf(Workout(1L, "Upper", DayOfWeek.MONDAY, listOf(WorkoutExercise(1L, 10L, "Bench", null, 0, null, listOf(WorkoutSet(1L, 1, 8, 80.0), WorkoutSet(2L, 2, 8, 80.0))))))
     )
 }

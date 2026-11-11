@@ -48,6 +48,7 @@ val habitModule = module {
         CreateHabitUseCase(
             repository = get(),
             dispatcher = get(),
+            language = get(),
         )
     }
 

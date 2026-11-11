@@ -1,5 +1,6 @@
 package com.agusstkd.goodlife.domain.usecase.task
 
+import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.core.dispatcher.TestDispatcherProvider
 import com.agusstkd.goodlife.core.network.ApiException
 import com.agusstkd.goodlife.core.result.Result
@@ -26,7 +27,8 @@ class CreateTaskUseCaseTest {
         repository = FakeTaskRepository()
         useCase = CreateTaskUseCase(
             repository = repository,
-            dispatcher = TestDispatcherProvider(testDispatcher)
+            dispatcher = TestDispatcherProvider(testDispatcher),
+            language = Spanish,
         )
     }
 
@@ -63,6 +65,23 @@ class CreateTaskUseCaseTest {
         )
 
         assertTrue(result is CreateTaskResult.ValidationError)
+        assertEquals(0, repository.createTaskCallCount)
+    }
+
+    @Test
+    fun `title without schedule or days returns ValidationError`() = runTest(testDispatcher) {
+        val result = useCase(
+            title = "Valid title",
+            description = null,
+            scheduleDate = null,
+            recurrentDays = emptySet(),
+            startDate = null,
+            endDate = null,
+            scheduledTime = null,
+        )
+
+        assertTrue(result is CreateTaskResult.ValidationError)
+        assertEquals(Spanish.createTaskTexts.errorNoDate, (result as CreateTaskResult.ValidationError).message)
         assertEquals(0, repository.createTaskCallCount)
     }
 
@@ -124,7 +143,7 @@ class CreateTaskUseCaseTest {
     // ═══════════════════════════════════════════════════════════════════════════════════════════
 
     @Test
-    fun `repository BadRequest maps to ValidationError`() = runTest(testDispatcher) {
+    fun `repository BadRequest maps to ServerError without backend copy`() = runTest(testDispatcher) {
         repository.createTaskResult = Result.Error(
             ApiException.BadRequestException("title already exists")
         )
@@ -139,8 +158,8 @@ class CreateTaskUseCaseTest {
             scheduledTime = null
         )
 
-        assertTrue(result is CreateTaskResult.ValidationError)
-        assertEquals("title already exists", (result as CreateTaskResult.ValidationError).message)
+        assertTrue(result is CreateTaskResult.ServerError)
+        assertEquals(Spanish.createTaskTexts.errorServer, (result as CreateTaskResult.ServerError).message)
     }
 
     @Test
@@ -160,6 +179,7 @@ class CreateTaskUseCaseTest {
         )
 
         assertTrue(result is CreateTaskResult.ServerError)
+        assertEquals(Spanish.createTaskTexts.errorServer, (result as CreateTaskResult.ServerError).message)
     }
 
     @Test

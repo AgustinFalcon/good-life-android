@@ -7,6 +7,8 @@ import com.agusstkd.goodlife.core.network.GoodLifeInterceptor
 import com.agusstkd.goodlife.core.network.JsonSerializerFactory
 import com.agusstkd.goodlife.core.network.OkHttpClientFactory
 import com.agusstkd.goodlife.core.network.RetrofitFactory
+import com.agusstkd.goodlife.core.network.TokenRefresher
+import com.agusstkd.goodlife.data.remote.auth.AuthApiTokenRefresher
 import com.agusstkd.goodlife.core.storage.TokenManager
 import com.agusstkd.goodlife.data.remote.api.auth.AuthApiService
 import com.agusstkd.goodlife.data.remote.api.daily.DailyApiService
@@ -90,7 +92,8 @@ val networkModule = module {
     }
 
     /**
-     * Interceptor de logging (solo para debug).
+     * Logging HTTP: `BASIC` en debug (método/URL/status, sin headers).
+     * `HEADERS`/`BODY` se degradan a `BASIC` y el logger redacta Authorization.
      */
     single<HttpLoggingInterceptor> {
         OkHttpClientFactory.createLoggingInterceptor(
@@ -105,13 +108,14 @@ val networkModule = module {
     /**
      * GoodLifeAuthenticator — refresh automático de access token en 401.
      *
-     * Usa inject() (Lazy<AuthApiService>) para romper la dependencia circular:
-     * OkHttpClient → Authenticator → AuthApiService → Retrofit → OkHttpClient
+     * Usa inject() (Lazy<TokenRefresher>) para romper la dependencia circular:
+     * OkHttpClient → Authenticator → TokenRefresher → AuthApiService → Retrofit → OkHttpClient
      */
     single<Authenticator> {
         GoodLifeAuthenticator(
             tokenManager = get(),
-            authApiService = inject()
+            tokenRefresher = inject(),
+            sessionCleanup = get(),
         )
     }
 
@@ -145,10 +149,14 @@ val networkModule = module {
     /**
      * AuthApiService — endpoints de autenticación.
      * Usado por [com.agusstkd.goodlife.data.remote.datasource.remote.AuthRemoteDataSource]
-     * y por [GoodLifeAuthenticator] (via Lazy para el refresh token).
+     * y por [AuthApiTokenRefresher] (via Lazy en el Authenticator).
      */
     single<AuthApiService> {
         get<Retrofit>().create(AuthApiService::class.java)
+    }
+
+    single<TokenRefresher> {
+        AuthApiTokenRefresher(authApiService = get())
     }
 
     /**

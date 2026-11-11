@@ -9,14 +9,14 @@ package com.agusstkd.goodlife.domain.model.nutrition
  *
  * @property ingredient Ingrediente base del catálogo de nutrición.
  * @property quantity Cantidad personalizada seleccionada (ej: 150.0).
- * @property unit Unidad de la cantidad (ej: "g", "ml"). Puede diferir del [Ingredient.servingUnit].
+ * @property unit Unidad de la cantidad; nunca un label suelto.
  *
  * @see Ingredient
  */
 data class MealIngredientDraft(
     val ingredient: Ingredient,
     val quantity: Double,
-    val unit: String,
+    val unit: PortionUnit,
 ) {
 
     /**

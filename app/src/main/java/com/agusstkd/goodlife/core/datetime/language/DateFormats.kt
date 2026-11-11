@@ -42,10 +42,12 @@ data class RelativeDateTexts(
  * @property habit Etiqueta para HABIT
  * @property workout Etiqueta para WORKOUT
  * @property meal Etiqueta para MEAL
+ * @property unknown Etiqueta para un tipo de wire desconocido
  */
 data class DailyItemLabels(
     val task: String,
     val habit: String,
     val workout: String,
-    val meal: String
+    val meal: String,
+    val unknown: String,
 )

@@ -36,4 +36,6 @@ data class DailyItemEntity(
     val workoutRoutineName: String? = null,
     val workoutExerciseCount: Int? = null,
     val workoutDayOrder: Int? = null,
+    val mealCalories: Int? = null,
+    val mealProtein: Int? = null,
 )

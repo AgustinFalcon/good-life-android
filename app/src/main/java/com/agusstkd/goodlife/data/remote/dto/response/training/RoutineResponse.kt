@@ -1,12 +1,13 @@
 package com.agusstkd.goodlife.data.remote.dto.response.training
 
+import com.agusstkd.goodlife.data.remote.dto.response.toDayOfWeekOrNull
+import com.agusstkd.goodlife.data.remote.dto.response.toDayOfWeekSet
 import com.agusstkd.goodlife.domain.model.training.DifficultyLevel
 import com.agusstkd.goodlife.domain.model.training.GoalType
 import com.agusstkd.goodlife.domain.model.training.Routine
 import com.agusstkd.goodlife.domain.model.training.Workout
 import com.agusstkd.goodlife.domain.model.training.WorkoutExercise
 import com.agusstkd.goodlife.domain.model.training.WorkoutSet
-import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.serialization.Serializable
@@ -57,17 +58,21 @@ data class WorkoutSetResponse(
 
 // ── Mappers DTO → Domain ──
 
+/**
+ * Convierte el DTO a [Routine].
+ *
+ * Dificultad y objetivo entran por [DifficultyLevel.fromWire] y [GoalType.fromWire].
+ * Un valor desconocido se conserva; no se mapea a BEGINNER ni STRENGTH.
+ */
 fun RoutineResponse.toDomain(): Routine = Routine(
     id = id,
     name = name.orEmpty(),
     description = description,
-    difficultyLevel = runCatching { DifficultyLevel.valueOf(difficultyLevel.orEmpty()) }
-        .getOrDefault(DifficultyLevel.BEGINNER),
-    goalType = runCatching { GoalType.valueOf(goalType.orEmpty()) }
-        .getOrDefault(GoalType.STRENGTH),
+    difficultyLevel = DifficultyLevel.fromWire(difficultyLevel),
+    goalType = GoalType.fromWire(goalType),
     isActive = isActive,
     scheduledTime = scheduledTime?.let { runCatching { LocalTime.parse(it) }.getOrNull() },
-    daysOfWeek = daysOfWeek?.map { DayOfWeek(it) }?.toSet() ?: emptySet(),
+    daysOfWeek = daysOfWeek.toDayOfWeekSet(),
     startDate = startDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() },
     endDate = endDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() },
     workouts = workouts?.map { it.toDomain() } ?: emptyList(),
@@ -76,7 +81,7 @@ fun RoutineResponse.toDomain(): Routine = Routine(
 fun WorkoutResponse.toDomain(): Workout = Workout(
     id = id,
     name = name.orEmpty(),
-    dayOfWeek = dayOfWeek,
+    dayOfWeek = dayOfWeek.toDayOfWeekOrNull(),
     exercises = exercises?.map { it.toDomain() } ?: emptyList(),
     notes = notes?.takeIf { it.isNotBlank() } ?: description.orEmpty(),
 )

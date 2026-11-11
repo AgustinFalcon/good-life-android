@@ -92,12 +92,48 @@ class CreateRoutineUseCaseTest {
     }
 
     @Test
+    fun `unknown difficultyLevel returns ValidationError`() = runTest(testDispatcher) {
+        val result = useCase(
+            name = "PPL",
+            description = null,
+            difficultyLevel = DifficultyLevel.UNKNOWN,
+            goalType = GoalType.MUSCLE_GAIN,
+            scheduledTime = null,
+            daysOfWeek = setOf(DayOfWeek.MONDAY),
+            startDate = null,
+            endDate = null,
+            workouts = validWorkouts(),
+        )
+
+        assertEquals(CreateRoutineResult.Invalid(CreateRoutineValidation.MissingDifficulty), result)
+        assertEquals(0, repository.createRoutineCallCount)
+    }
+
+    @Test
     fun `null goalType returns ValidationError`() = runTest(testDispatcher) {
         val result = useCase(
             name = "PPL",
             description = null,
             difficultyLevel = DifficultyLevel.INTERMEDIATE,
             goalType = null,
+            scheduledTime = null,
+            daysOfWeek = setOf(DayOfWeek.MONDAY),
+            startDate = null,
+            endDate = null,
+            workouts = validWorkouts(),
+        )
+
+        assertEquals(CreateRoutineResult.Invalid(CreateRoutineValidation.MissingGoal), result)
+        assertEquals(0, repository.createRoutineCallCount)
+    }
+
+    @Test
+    fun `unknown goalType returns ValidationError`() = runTest(testDispatcher) {
+        val result = useCase(
+            name = "PPL",
+            description = null,
+            difficultyLevel = DifficultyLevel.INTERMEDIATE,
+            goalType = GoalType.UNKNOWN,
             scheduledTime = null,
             daysOfWeek = setOf(DayOfWeek.MONDAY),
             startDate = null,

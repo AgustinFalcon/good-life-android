@@ -5,21 +5,30 @@ import android.net.Uri
 import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.data.remote.api.executeApiCall
 import com.agusstkd.goodlife.data.remote.api.media.MediaApiService
+import com.agusstkd.goodlife.domain.model.media.LocalImageRef
 import com.agusstkd.goodlife.domain.repository.MediaRepository
 import kotlinx.coroutines.CancellationException
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
+/**
+ * Implementación de [MediaRepository] que lee bytes locales vía ContentResolver
+ * y sube el archivo al backend.
+ *
+ * @param mediaApiService API de subida de imágenes.
+ * @param context Contexto para leer el content URI.
+ */
 class MediaRepositoryImpl(
     private val mediaApiService: MediaApiService,
     private val context: Context
 ) : MediaRepository {
 
-    override suspend fun uploadImage(imageUri: Uri, folder: String): Result<String> {
+    override suspend fun uploadImage(image: LocalImageRef, folder: String): Result<String> {
         return try {
+            val imageUri = Uri.parse(image.value)
             val bytes = context.contentResolver.openInputStream(imageUri)?.use { it.readBytes() }
-                ?: return Result.Error(Exception("No se pudo leer el archivo"))
+                ?: return Result.Error(Exception("Unable to read image"))
 
             val mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
             val fileName = "upload.${mimeType.substringAfter("/")}"

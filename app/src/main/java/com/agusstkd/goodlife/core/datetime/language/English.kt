@@ -26,7 +26,8 @@ data object English : AppLanguage {
         task = "Task",
         habit = "Habit",
         workout = "Workout",
-        meal = "Meal"
+        meal = "Meal",
+        unknown = "Other",
     )
 
     override val validationTexts = ValidationTexts(
@@ -118,6 +119,7 @@ data object English : AppLanguage {
     )
 
     override val authTexts = AuthTexts(
+        appName = "GoodLife",
         loginSubtitle = "Your wellness, your pace",
         emailOrUsername = "Email or username",
         password = "Password",
@@ -161,6 +163,7 @@ data object English : AppLanguage {
         goToMore = "More options and settings",
         close = "Close",
         appLogo = "GoodLife logo",
+        enableBiometric = "Enable fingerprint",
     )
 
     override val formats = DateFormats(
@@ -224,6 +227,7 @@ data object English : AppLanguage {
         errorTitleEmpty = "Title can't be empty",
         errorNoDate = "Select a date",
         errorNoDays = "Select at least one day",
+        errorOnceAndRecurrent = "You can't pick a single date and recurrent days at the same time",
         errorEndBeforeStart = "End date can't be before start date",
         errorServer = "Server error, please try again",
         errorNetwork = "No connection, check your internet",
@@ -244,6 +248,7 @@ data object English : AppLanguage {
         productivity = "Productivity",
         health = "Health",
         custom = "Custom",
+        unknown = "Other",
     )
 
     override val createHabitTexts = CreateHabitTexts(
@@ -281,6 +286,7 @@ data object English : AppLanguage {
         difficultyBeginner = "Beginner",
         difficultyIntermediate = "Intermediate",
         difficultyAdvanced = "Advanced",
+        unknown = "Other",
         goalSectionTitle = "Main goal",
         goalPlaceholder = "Select a goal",
         goalMuscleGain = "Muscle gain",
@@ -373,6 +379,7 @@ data object English : AppLanguage {
         searchMealPlaceholder = "Search meals...",
         filterAll = "All",
         chooseMealButton = "Choose",
+        customMealBadge = "Custom",
         createNewMealButton = "Create new meal",
         // ── Step 1B: New meal ──
         newMealNameLabel = "Meal name",
@@ -424,21 +431,45 @@ data object English : AppLanguage {
         errorServer = "Server error, please try again",
         errorNetwork = "No connection, check your internet",
         loadingTitle = "Saving meal plan...",
+        gramUnit = "g",
+        calorieUnit = "kcal",
+        catalogCountUnit = "units",
+        minutesUnit = "min",
+        macroProteinAbbrev = "P",
+        macroCarbsAbbrev = "C",
+        macroFatAbbrev = "F",
+        caloriesAbbrev = "KCAL",
+        proteinAbbrev = "PROT",
+        carbsAbbrev = "CARB",
     )
 
     override val splashTexts = SplashTexts(
         tapToContinue = "Tap to continue",
+        appName = "GoodLife",
+    )
+    override val profileTexts = ProfileTexts(
+        profilePhoto = "Profile photo",
+        changePhoto = "Change photo",
+        fallbackName = "User",
     )
     override val tabDetailTexts = TabDetailTexts(
         dailyTitle = "Daily detail", mealTitle = "Meal detail", back = "Back", loading = "Loading detail…",
         dailyNotFound = "We could not find this daily item", mealNotFound = "We could not find this meal plan", invalidRoute = "This detail route is invalid", retry = "Retry",
         typeLabel = "Type", statusLabel = "Status", scheduleLabel = "Schedule", descriptionLabel = "Description",
         pending = "Pending", inProgress = "In progress", completed = "Completed", skipped = "Skipped",
+        unknown = "Other",
         mealLabel = "Meal", proteinLabel = "Protein", carbsLabel = "Carbs", fatLabel = "Fat",
         active = "Active", inactive = "Inactive", mealImageUnavailable = "Meal image unavailable",
         emptyMealsTitle = "No meal plans for this day", emptyMealsDescription = "Create your first meal plan to track your daily nutrition.",
         createMealPlan = "Create meal plan", tapToRetry = "Tap to retry", mealPlanSingular = "meal plan", mealPlanPlural = "meal plans",
         calorieUnit = "kcal", gramUnit = "g", decimalSeparator = '.',
+    )
+    override val settingsTexts = SettingsTexts(
+        accountSection = "My account",
+        profileTitle = "My Profile",
+        profileSubtitleFallback = "View profile",
+        logoutTitle = "Log out",
+        logoutSubtitle = "Sign out of your account",
     )
 
 }

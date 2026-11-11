@@ -248,6 +248,20 @@ class WorkoutDetailViewModelTest {
         assertTrue(viewModel.uiState.value !is WorkoutDetailUiState.NotFound)
     }
 
+    @Test fun `finish unexpected throw clears isFinishing`() = runTest(dispatcher) {
+        repository.getActiveRoutineResult = Result.Success(routine())
+        workoutLogRepository.finishWorkoutException = IllegalStateException("boom")
+        val viewModel = viewModel(workoutId = 40L)
+        advanceUntilIdle()
+
+        viewModel.onAction(WorkoutDetailUiAction.OnFinishWorkout)
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value as WorkoutDetailUiState.Content
+        assertEquals(false, state.isFinishing)
+        assertEquals(Spanish.errorTexts.connectionError, state.finishError)
+    }
+
     @Test fun `invalid rpe is null on draft`() = runTest(dispatcher) {
         repository.getActiveRoutineResult = Result.Success(routine())
         val viewModel = viewModel(workoutId = 40L)
@@ -266,7 +280,7 @@ class WorkoutDetailViewModelTest {
         daysOfWeek = setOf(DayOfWeek.MONDAY), startDate = null, endDate = null,
         workouts = listOf(
             Workout(
-                id = 40L, name = "Upper", dayOfWeek = 1,
+                id = 40L, name = "Upper", dayOfWeek = DayOfWeek.MONDAY,
                 notes = "Respirar entre series",
                 exercises = if (emptySetsOnly) {
                     listOf(WorkoutExercise(2L, 2L, "Press", null, 1, null, emptyList()))

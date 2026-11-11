@@ -53,7 +53,17 @@ data class CreateHabitUiState(
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
     val errorMessage: String? = null,
-)
+) {
+    val isFormValid: Boolean
+        get() = name.isNotBlank()
+                && selectedCategory != null
+                && selectedCategory != HabitCategory.UNKNOWN
+                && selectedDays.isNotEmpty()
+                && targetValue.isNotBlank()
+                && unit.isNotBlank()
+                && startDate != null
+                && !isLoading
+}
 
 /**
  * Campos de fecha editables en el formulario de hábito.

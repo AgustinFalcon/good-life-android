@@ -43,6 +43,38 @@ class DailyItemFormattedDescriptionTest {
     }
 
     @Test
+    fun `meal macros use AppLanguage units`() {
+        val item = DailyItem(
+            id = 4L,
+            type = DailyItemType.MEAL,
+            referenceId = 50L,
+            scheduledTime = null,
+            status = DailyItemStatus.PENDING,
+            title = "Almuerzo",
+            description = null,
+            mealCalories = 700,
+            mealProtein = 42,
+        )
+
+        assertEquals(
+            "700 kcal • 42g",
+            item.formattedDescription(
+                Spanish.workoutTexts,
+                calorieUnit = Spanish.tabDetailTexts.calorieUnit,
+                gramUnit = Spanish.tabDetailTexts.gramUnit,
+            ),
+        )
+        assertEquals(
+            "700 kcal • 42g",
+            item.formattedDescription(
+                English.workoutTexts,
+                calorieUnit = English.tabDetailTexts.calorieUnit,
+                gramUnit = English.tabDetailTexts.gramUnit,
+            ),
+        )
+    }
+
+    @Test
     fun `habit description stays as domain value`() {
         val item = DailyItem(
             id = 2L,

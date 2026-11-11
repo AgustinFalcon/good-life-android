@@ -71,7 +71,7 @@ sealed interface WorkoutsUiState {
  *
  * @property id ID del workout
  * @property name Nombre del workout (ej: "Piernas", "Push")
- * @property dayOfWeek Día de la semana asignado (1=Lun … 7=Dom), o null si no tiene día fijo
+ * @property dayLabel Día de la semana ya formateado, o null si no tiene día fijo
  * @property exerciseCount Cantidad de ejercicios en el workout
  * @property totalSets Cantidad total de series del workout
  */
@@ -79,7 +79,7 @@ sealed interface WorkoutsUiState {
 data class WorkoutUiModel(
     val id: Long,
     val name: String,
-    val dayOfWeek: Int?,
+    val dayLabel: String?,
     val exerciseCount: Int,
     val totalSets: Int,
 )

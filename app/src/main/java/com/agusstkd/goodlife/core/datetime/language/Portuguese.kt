@@ -25,7 +25,8 @@ data object Portuguese : AppLanguage {
         task = "Tarefa",
         habit = "Hábito",
         workout = "Treino",
-        meal = "Refeição"
+        meal = "Refeição",
+        unknown = "Outro",
     )
 
     override val validationTexts = ValidationTexts(
@@ -117,6 +118,7 @@ data object Portuguese : AppLanguage {
     )
 
     override val authTexts = AuthTexts(
+        appName = "GoodLife",
         loginSubtitle = "Seu bem-estar, seu ritmo",
         emailOrUsername = "Email ou nome de usuário",
         password = "Senha",
@@ -160,6 +162,7 @@ data object Portuguese : AppLanguage {
         goToMore = "Mais opções e configurações",
         close = "Fechar",
         appLogo = "Logo GoodLife",
+        enableBiometric = "Ativar com digital",
     )
 
     override val formats = DateFormats(
@@ -223,6 +226,7 @@ data object Portuguese : AppLanguage {
         errorTitleEmpty = "O título não pode estar vazio",
         errorNoDate = "Selecione uma data",
         errorNoDays = "Selecione pelo menos um dia",
+        errorOnceAndRecurrent = "Não é possível escolher uma data única e dias recorrentes ao mesmo tempo",
         errorEndBeforeStart = "A data de fim não pode ser anterior ao início",
         errorServer = "Erro do servidor, tente novamente",
         errorNetwork = "Sem conexão, verifique sua internet",
@@ -243,6 +247,7 @@ data object Portuguese : AppLanguage {
         productivity = "Produtividade",
         health = "Saúde",
         custom = "Personalizado",
+        unknown = "Outro",
     )
 
     override val createHabitTexts = CreateHabitTexts(
@@ -280,6 +285,7 @@ data object Portuguese : AppLanguage {
         difficultyBeginner = "Iniciante",
         difficultyIntermediate = "Intermediário",
         difficultyAdvanced = "Avançado",
+        unknown = "Outro",
         goalSectionTitle = "Objetivo principal",
         goalPlaceholder = "Selecionar objetivo",
         goalMuscleGain = "Ganho muscular",
@@ -372,6 +378,7 @@ data object Portuguese : AppLanguage {
         searchMealPlaceholder = "Buscar refeições...",
         filterAll = "Todos",
         chooseMealButton = "Escolher",
+        customMealBadge = "Personalizado",
         createNewMealButton = "Criar nova refeição",
         // ── Passo 1B: Nova refeição ──
         newMealNameLabel = "Nome da refeição",
@@ -423,21 +430,45 @@ data object Portuguese : AppLanguage {
         errorServer = "Erro do servidor, tente novamente",
         errorNetwork = "Sem conexão, verifique sua internet",
         loadingTitle = "Salvando plano de refeição...",
+        gramUnit = "g",
+        calorieUnit = "kcal",
+        catalogCountUnit = "unidades",
+        minutesUnit = "min",
+        macroProteinAbbrev = "P",
+        macroCarbsAbbrev = "C",
+        macroFatAbbrev = "G",
+        caloriesAbbrev = "KCAL",
+        proteinAbbrev = "PROT",
+        carbsAbbrev = "CARB",
     )
 
     override val splashTexts = SplashTexts(
         tapToContinue = "Toque para continuar",
+        appName = "GoodLife",
+    )
+    override val profileTexts = ProfileTexts(
+        profilePhoto = "Foto de perfil",
+        changePhoto = "Alterar foto",
+        fallbackName = "Usuário",
     )
     override val tabDetailTexts = TabDetailTexts(
         dailyTitle = "Detalhe diário", mealTitle = "Detalhe da refeição", back = "Voltar", loading = "Carregando detalhe…",
         dailyNotFound = "Não encontramos este item diário", mealNotFound = "Não encontramos este plano de refeição", invalidRoute = "A rota do detalhe não é válida", retry = "Tentar novamente",
         typeLabel = "Tipo", statusLabel = "Status", scheduleLabel = "Horário", descriptionLabel = "Descrição",
         pending = "Pendente", inProgress = "Em andamento", completed = "Concluído", skipped = "Ignorado",
+        unknown = "Outro",
         mealLabel = "Refeição", proteinLabel = "Proteína", carbsLabel = "Carboidratos", fatLabel = "Gorduras",
         active = "Ativo", inactive = "Inativo", mealImageUnavailable = "Imagem da refeição indisponível",
         emptyMealsTitle = "Nenhum plano de refeições para este dia", emptyMealsDescription = "Crie seu primeiro plano de refeições para acompanhar sua nutrição diária.",
         createMealPlan = "Criar plano de refeições", tapToRetry = "Toque para tentar novamente", mealPlanSingular = "plano de refeições", mealPlanPlural = "planos de refeições",
         calorieUnit = "kcal", gramUnit = "g", decimalSeparator = ',',
+    )
+    override val settingsTexts = SettingsTexts(
+        accountSection = "Minha conta",
+        profileTitle = "Meu Perfil",
+        profileSubtitleFallback = "Ver perfil",
+        logoutTitle = "Encerrar sessão",
+        logoutSubtitle = "Sair da sua conta",
     )
 
 }

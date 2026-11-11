@@ -1,8 +1,8 @@
 package com.agusstkd.goodlife.data.remote.dto.response.habit
 
+import com.agusstkd.goodlife.data.remote.dto.response.toDayOfWeekSet
 import com.agusstkd.goodlife.domain.model.habit.Habit
 import com.agusstkd.goodlife.domain.model.habit.HabitCategory
-import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.serialization.Serializable
@@ -38,20 +38,21 @@ data class HabitResponse(
  *
  * Parsea strings ISO a tipos de kotlinx-datetime y mapea
  * los ints de días a [DayOfWeek] via `DayOfWeek(isoDay)`.
+ * La categoría entra por [HabitCategory.fromWire]; un valor desconocido
+ * se conserva como [HabitCategory.UNKNOWN], no como CUSTOM.
  */
 fun HabitResponse.toDomain(): Habit {
     return Habit(
         id = id,
         name = name,
         description = description,
-        category = runCatching { HabitCategory.valueOf(category) }
-            .getOrDefault(HabitCategory.CUSTOM),
+        category = HabitCategory.fromWire(category),
         targetValue = targetValue,
         unit = unit,
         isActive = isActive,
-        daysOfWeek = daysOfWeek?.map { DayOfWeek(it) }?.toSet() ?: emptySet(),
-        startDate = startDate?.let { LocalDate.parse(it) },
-        endDate = endDate?.let { LocalDate.parse(it) },
-        scheduledTime = scheduledTime?.let { LocalTime.parse(it) },
+        daysOfWeek = daysOfWeek.toDayOfWeekSet(),
+        startDate = startDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() },
+        endDate = endDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() },
+        scheduledTime = scheduledTime?.let { runCatching { LocalTime.parse(it) }.getOrNull() },
     )
 }

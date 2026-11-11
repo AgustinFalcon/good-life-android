@@ -1,6 +1,5 @@
 package com.agusstkd.goodlife.di
 
-import com.agusstkd.goodlife.data.local.dao.UserDao
 import com.agusstkd.goodlife.data.remote.api.media.MediaApiService
 import com.agusstkd.goodlife.data.repository.MediaRepositoryImpl
 import com.agusstkd.goodlife.domain.repository.MediaRepository
@@ -18,6 +17,12 @@ val mediaModule = module {
             context = androidContext()
         )
     }
-    factory { UploadProfilePhotoUseCase(get(), get()) }
-    viewModel { ProfileViewModel(userDao = get<UserDao>(), uploadProfilePhotoUseCase = get()) }
+    factory { UploadProfilePhotoUseCase(get(), get(), get()) }
+    viewModel {
+        ProfileViewModel(
+            observeCurrentUser = get(),
+            uploadProfilePhotoUseCase = get(),
+            language = get(),
+        )
+    }
 }

@@ -49,6 +49,15 @@ class CreateMealPlanUseCaseTest {
     }
 
     @Test
+    fun `unknown meal type is ValidationError and does not call API`() = runTest(dispatcher) {
+        val scheduled = validDraft().scheduledMeals.single().copy(mealType = MealType.UNKNOWN)
+        val result = useCase.execute(validDraft().copy(scheduledMeals = listOf(scheduled)))
+
+        assertEquals(CreateMealPlanResult.ValidationError, result)
+        assertEquals(0, repository.createCallCount)
+    }
+
+    @Test
     fun `empty days is ValidationError and does not call API`() = runTest(dispatcher) {
         val result = useCase.execute(validDraft().copy(daysOfWeek = emptySet()))
 

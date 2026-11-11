@@ -375,7 +375,7 @@ class CreateRoutineViewModelTest {
         advanceUntilIdle()
 
         assertFalse(viewModel.uiState.value.isSuccess)
-        assertEquals("No se pudo activar la rutina", viewModel.uiState.value.errorMessage)
+        assertEquals(Spanish.createRoutineTexts.errorServer, viewModel.uiState.value.errorMessage)
         assertEquals(1, routineRepository.createRoutineCallCount)
         assertEquals(1, routineRepository.activateRoutineCallCount)
     }

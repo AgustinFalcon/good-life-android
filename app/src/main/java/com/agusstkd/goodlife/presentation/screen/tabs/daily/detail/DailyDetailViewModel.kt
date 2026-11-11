@@ -84,6 +84,7 @@ class DailyDetailViewModel(
         DailyItemType.HABIT -> language.dailyTexts.habit
         DailyItemType.WORKOUT -> language.dailyTexts.workout
         DailyItemType.MEAL -> language.dailyTexts.meal
+        DailyItemType.UNKNOWN -> language.dailyItemLabels.unknown
     }
 
     private fun statusLabel(status: DailyItemStatus): String = when (status) {
@@ -91,6 +92,7 @@ class DailyDetailViewModel(
         DailyItemStatus.IN_PROGRESS -> texts.inProgress
         DailyItemStatus.COMPLETED -> texts.completed
         DailyItemStatus.SKIPPED -> texts.skipped
+        DailyItemStatus.UNKNOWN -> texts.unknown
     }
 }
 

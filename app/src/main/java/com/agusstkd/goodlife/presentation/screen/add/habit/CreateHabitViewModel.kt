@@ -9,6 +9,7 @@ import com.agusstkd.goodlife.core.datetime.language.HabitCategoryTexts
 import com.agusstkd.goodlife.domain.model.habit.HabitCategory
 import com.agusstkd.goodlife.domain.usecase.habit.CreateHabitUseCase
 import com.agusstkd.goodlife.domain.usecase.habit.result.CreateHabitResult
+import com.agusstkd.goodlife.presentation.components.common.label
 import com.agusstkd.goodlife.presentation.navigation.core.ComposeNavigationController
 import com.agusstkd.goodlife.presentation.screen.add.habit.model.CreateHabitUiAction
 import com.agusstkd.goodlife.presentation.screen.add.habit.model.CreateHabitUiState
@@ -145,17 +146,24 @@ class CreateHabitViewModel(
         val state = _uiState.value
         val parsedTarget = state.targetValue.toIntOrNull() ?: 0
 
+        val startDate = state.startDate
+        val category = state.selectedCategory
+        if (startDate == null || category == null || category == HabitCategory.UNKNOWN) {
+            _uiState.update { it.copy(hasAttemptedSubmit = true, isLoading = false) }
+            return
+        }
+
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, hasAttemptedSubmit = true) }
 
             val result = createHabitUseCase(
                 name = state.name,
                 description = state.description.takeIf { it.isNotBlank() },
-                category = state.selectedCategory ?: HabitCategory.CUSTOM,
+                category = category,
                 targetValue = parsedTarget,
                 unit = state.unit,
                 daysOfWeek = state.selectedDays,
-                startDate = state.startDate ?: return@launch,
+                startDate = startDate,
                 endDate = if (state.hasEndDate) state.endDate else null,
                 scheduledTime = if (state.hasTime) state.scheduledTime else null,
             )
@@ -173,7 +181,7 @@ class CreateHabitViewModel(
 
                 is CreateHabitResult.ServerError -> {
                     _uiState.update {
-                        it.copy(isLoading = false, errorMessage = result.message)
+                        it.copy(isLoading = false, errorMessage = createHabitTexts.errorServer)
                     }
                 }
 
@@ -190,20 +198,6 @@ class CreateHabitViewModel(
     }
 
     private fun buildCategoryEntries(texts: HabitCategoryTexts): List<Pair<HabitCategory, String>> {
-        return listOf(
-            HabitCategory.HYDRATION to texts.hydration,
-            HabitCategory.MEDITATION to texts.meditation,
-            HabitCategory.READING to texts.reading,
-            HabitCategory.EXERCISE to texts.exercise,
-            HabitCategory.SLEEP to texts.sleep,
-            HabitCategory.NUTRITION to texts.nutrition,
-            HabitCategory.LEARNING to texts.learning,
-            HabitCategory.MINDFULNESS to texts.mindfulness,
-            HabitCategory.SOCIAL to texts.social,
-            HabitCategory.CREATIVITY to texts.creativity,
-            HabitCategory.PRODUCTIVITY to texts.productivity,
-            HabitCategory.HEALTH to texts.health,
-            HabitCategory.CUSTOM to texts.custom,
-        )
+        return HabitCategory.selectable.map { it to it.label(texts) }
     }
 }

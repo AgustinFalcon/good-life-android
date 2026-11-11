@@ -27,7 +27,7 @@ data class Routine(
 data class Workout(
     val id: Long,
     val name: String,
-    val dayOfWeek: Int?,
+    val dayOfWeek: DayOfWeek?,
     val exercises: List<WorkoutExercise>,
     val notes: String = "",
 )

@@ -61,16 +61,16 @@ fun QuantityBottomSheet(
     ingredient: Ingredient,
     texts: CreateMealPlanTexts,
     onDismiss: () -> Unit,
-    onConfirm: (quantity: Double, unit: String) -> Unit,
+    onConfirm: (quantity: Double, unit: PortionUnit) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     // Key en remember para resetear los valores del bottom sheet
     var quantity by remember(ingredient.id) { mutableStateOf("") }
-    var selectedUnit by remember(ingredient.id) { mutableStateOf(PortionUnit.fromString(ingredient.servingUnit)) }
+    var selectedUnit by remember(ingredient.id) { mutableStateOf(ingredient.servingUnit) }
 
-    val availableUnits = remember(ingredient.servingUnit) {
-        PortionUnit.compatibleWith(PortionUnit.fromString(ingredient.servingUnit))
+    val availableUnits = remember(ingredient.servingUnit, ingredient.availableUnits) {
+        ingredient.availableUnits.ifEmpty { PortionUnit.compatibleWith(ingredient.servingUnit) }
     }
 
     ModalBottomSheet(
@@ -119,7 +119,7 @@ fun QuantityBottomSheet(
 
             // Subtítulo: referencia calórica por porción
             Text(
-                text = "${ingredient.calories.toInt()} kcal / ${ingredient.servingSize.toInt()}${ingredient.servingUnit}",
+                text = "${ingredient.calories.toInt()} ${texts.ingredientCaloriesLabel} / ${ingredient.servingSize.toInt()}${ingredient.servingUnit.label}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = NutritionAccent,
             )
@@ -154,12 +154,7 @@ fun QuantityBottomSheet(
             }
 
             val qty = quantity.toDoubleOrNull() ?: 0.0
-            val factor = if (ingredient.servingSize > 0) qty / ingredient.servingSize else 0.0
-
-            val previewKcal = ingredient.calories * factor
-            val previewProtein = ingredient.protein * factor
-            val previewCarbs = ingredient.carbs * factor
-            val previewFat = ingredient.fat * factor
+            val preview = ingredient.scaledNutrition(qty)
 
             Row(
                 modifier = Modifier
@@ -168,10 +163,10 @@ fun QuantityBottomSheet(
                     .padding(vertical = 12.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                MacroPreviewItem("${previewKcal.toInt()}", "KCAL", CaloriesColor)
-                MacroPreviewItem("${previewProtein.toInt()}", "PROT", ProteinColor)
-                MacroPreviewItem("${previewCarbs.toInt()}", "CARB", CarbsColor)
-                MacroPreviewItem("${previewFat.toInt()}", texts.macroFatLabel.uppercase(), FatColor)
+                MacroPreviewItem("${preview.calories.toInt()}", texts.caloriesAbbrev, CaloriesColor)
+                MacroPreviewItem("${preview.protein.toInt()}", texts.proteinAbbrev, ProteinColor)
+                MacroPreviewItem("${preview.carbs.toInt()}", texts.carbsAbbrev, CarbsColor)
+                MacroPreviewItem("${preview.fat.toInt()}", texts.macroFatLabel.uppercase(), FatColor)
             }
 
 
@@ -195,9 +190,9 @@ fun QuantityBottomSheet(
                         text = texts.quantitySheetConfirmButton,
                         variant = ButtonVariant.PRIMARY,
                         colorScheme = ButtonColorScheme.Meal,
-                        enabled = quantity.isNotEmpty() && quantity != "0",
+                        enabled = quantity.isNotEmpty() && quantity != "0" && selectedUnit != PortionUnit.UNKNOWN,
                     ),
-                    onClick = { onConfirm(qty, selectedUnit.label) },
+                    onClick = { onConfirm(qty, selectedUnit) },
                     modifier = Modifier.weight(1f),
                 )
             }

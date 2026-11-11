@@ -28,6 +28,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.agusstkd.goodlife.core.datetime.language.ProfileTexts
+import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
 
 /**
@@ -38,7 +40,8 @@ import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
 @Composable
 fun ProfileScreen(
     state: ProfileUiState,
-    onChangePhoto: () -> Unit,
+    profileTexts: ProfileTexts,
+    onAction: (ProfileUiAction) -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -57,7 +60,7 @@ fun ProfileScreen(
                 if (state.profileImageUrl != null) {
                     AsyncImage(
                         model = state.profileImageUrl,
-                        contentDescription = "Foto de perfil",
+                        contentDescription = profileTexts.profilePhoto,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .size(120.dp)
@@ -85,7 +88,10 @@ fun ProfileScreen(
                         .size(36.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.primary)
-                        .clickable(enabled = !state.isUploading, onClick = onChangePhoto),
+                        .clickable(
+                            enabled = !state.isUploading,
+                            onClick = { onAction(ProfileUiAction.OnChangePhoto) },
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     if (state.isUploading) {
@@ -97,7 +103,7 @@ fun ProfileScreen(
                     } else {
                         Icon(
                             imageVector = Icons.Default.CameraAlt,
-                            contentDescription = "Cambiar foto",
+                            contentDescription = profileTexts.changePhoto,
                             tint = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.size(20.dp)
                         )
@@ -108,7 +114,7 @@ fun ProfileScreen(
             Spacer(Modifier.height(24.dp))
 
             Text(
-                text = state.name.ifBlank { "Usuario" },
+                text = state.name.ifBlank { profileTexts.fallbackName },
                 style = MaterialTheme.typography.headlineSmall
             )
             Spacer(Modifier.height(4.dp))
@@ -136,7 +142,8 @@ private fun ProfileScreenPreview() {
                 email = "agustin@goodlife.app",
                 profileImageUrl = null,
             ),
-            onChangePhoto = {},
+            profileTexts = Spanish.profileTexts,
+            onAction = {},
             snackbarHostState = remember { SnackbarHostState() },
         )
     }
@@ -152,7 +159,8 @@ private fun ProfileScreenUploadingPreview() {
                 email = "agustin@goodlife.app",
                 isUploading = true,
             ),
-            onChangePhoto = {},
+            profileTexts = Spanish.profileTexts,
+            onAction = {},
             snackbarHostState = remember { SnackbarHostState() },
         )
     }

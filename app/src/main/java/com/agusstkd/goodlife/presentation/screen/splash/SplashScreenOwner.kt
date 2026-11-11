@@ -16,5 +16,6 @@ fun SplashScreenOwner(
         onAction = viewModel::onAction,
         tapToContinueText = viewModel.splashTexts.tapToContinue,
         logoContentDescription = viewModel.accessibilityTexts.appLogo,
+        appName = viewModel.splashTexts.appName,
     )
 }

@@ -48,7 +48,8 @@ class CreateTaskViewModelTest {
             language = Spanish,
             createTaskUseCase = CreateTaskUseCase(
                 repository = repository,
-                dispatcher = TestDispatcherProvider(testDispatcher)
+                dispatcher = TestDispatcherProvider(testDispatcher),
+                language = Spanish,
             )
         )
     }
@@ -86,9 +87,14 @@ class CreateTaskViewModelTest {
     }
 
     @Test
-    fun `OnSchedulingModeChange toggles mode`() {
+    fun `OnSchedulingModeChange to recurrent clears once date`() {
+        viewModel.onAction(
+            CreateTaskUiAction.OnDateSelected(DatePickerField.SCHEDULED_DATE, LocalDate(2026, 4, 15)),
+        )
         viewModel.onAction(CreateTaskUiAction.OnSchedulingModeChange(SchedulingMode.RECURRENT))
+
         assertEquals(SchedulingMode.RECURRENT, viewModel.uiState.value.schedulingMode)
+        assertNull(viewModel.uiState.value.scheduledDate)
     }
 
     @Test
@@ -145,6 +151,17 @@ class CreateTaskViewModelTest {
     // ═══════════════════════════════════════════════════════════════════════════════════════════
     // Submit
     // ═══════════════════════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `OnSubmit with title only does not call repository`() = runTest(testDispatcher) {
+        viewModel.onAction(CreateTaskUiAction.OnTitleChange("Test task"))
+
+        viewModel.onAction(CreateTaskUiAction.OnSubmit)
+        advanceUntilIdle()
+
+        assertEquals(0, repository.createTaskCallCount)
+        assertFalse(viewModel.uiState.value.isSuccess)
+    }
 
     @Test
     fun `OnSubmit with valid data sets isSuccess true`() = runTest(testDispatcher) {
