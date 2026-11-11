@@ -26,7 +26,8 @@ data object English : AppLanguage {
         task = "Task",
         habit = "Habit",
         workout = "Workout",
-        meal = "Meal"
+        meal = "Meal",
+        unknown = "Other",
     )
 
     override val validationTexts = ValidationTexts(
@@ -99,8 +100,7 @@ data object English : AppLanguage {
         lunch = "Lunch",
         dinner = "Dinner",
         snack = "Snack",
-        preWorkout = "Pre-workout",
-        postWorkout = "Post-workout",
+        afternoonSnack = "Afternoon snack",
         tabDaily = "Daily",
         tabWorkouts = "Workouts",
         tabFood = "Food",
@@ -119,6 +119,7 @@ data object English : AppLanguage {
     )
 
     override val authTexts = AuthTexts(
+        appName = "GoodLife",
         loginSubtitle = "Your wellness, your pace",
         emailOrUsername = "Email or username",
         password = "Password",
@@ -162,6 +163,7 @@ data object English : AppLanguage {
         goToMore = "More options and settings",
         close = "Close",
         appLogo = "GoodLife logo",
+        enableBiometric = "Enable fingerprint",
     )
 
     override val formats = DateFormats(
@@ -225,6 +227,7 @@ data object English : AppLanguage {
         errorTitleEmpty = "Title can't be empty",
         errorNoDate = "Select a date",
         errorNoDays = "Select at least one day",
+        errorOnceAndRecurrent = "You can't pick a single date and recurrent days at the same time",
         errorEndBeforeStart = "End date can't be before start date",
         errorServer = "Server error, please try again",
         errorNetwork = "No connection, check your internet",
@@ -245,11 +248,13 @@ data object English : AppLanguage {
         productivity = "Productivity",
         health = "Health",
         custom = "Custom",
+        unknown = "Other",
     )
 
     override val createHabitTexts = CreateHabitTexts(
         screenTitle = "New habit",
         typeBadge = "HABIT",
+        namePlaceholder = "E.g. Drink water",
         saveButton = "Save habit",
         successTitle = "Habit created successfully",
         categorySectionTitle = "Category",
@@ -271,6 +276,7 @@ data object English : AppLanguage {
     override val createRoutineTexts = CreateRoutineTexts(
         screenTitle = "New routine",
         typeBadge = "ROUTINE",
+        namePlaceholder = "E.g. Strength routine",
         stepOf = "Step %d of %d",
         nextButton = "Next",
         backButton = "Back",
@@ -280,6 +286,7 @@ data object English : AppLanguage {
         difficultyBeginner = "Beginner",
         difficultyIntermediate = "Intermediate",
         difficultyAdvanced = "Advanced",
+        unknown = "Other",
         goalSectionTitle = "Main goal",
         goalPlaceholder = "Select a goal",
         goalMuscleGain = "Muscle gain",
@@ -314,6 +321,7 @@ data object English : AppLanguage {
         errorNoDays = "Select at least one day",
         errorNoWorkouts = "Add at least one workout",
         errorWorkoutNoExercises = "Each workout needs at least one exercise",
+        errorExerciseNoSets = "\"{0}\" has no configured sets",
         errorEndBeforeStart = "End date cannot be before start date",
         errorServer = "Server error, please try again",
         errorNetwork = "No connection, check your internet",
@@ -333,19 +341,29 @@ data object English : AppLanguage {
         exercisesTitle = "Exercises",
         noExercises = "This workout has no configured exercises.",
         notesLabel = "Notes",
+        notesPlaceholder = "How did you feel (optional)",
         noSets = "No configured sets.",
         setFormat = "Set {0}",
         repsFormat = "{0} reps",
         repsAndWeightFormat = "{0} reps · {1} kg",
         workoutNotFound = "We could not find this workout in your active routine.",
+        finishWorkout = "Finish workout",
+        workoutFinishedTitle = "Workout finished!",
+        finishFailed = "Server error, please try again",
+        setWeightLabel = "Weight (kg)",
+        setRepsLabel = "Reps",
+        setRpeLabel = "RPE",
+        dailyRoutineFormat = "Routine: {0}",
+        dailyExercisesFormat = "{0} exercises",
+        noRoutineName = "No routine",
     )
     override val mealTypeTexts = MealTypeTexts(
         breakfast = "Breakfast",
         lunch = "Lunch",
         dinner = "Dinner",
+        afternoonSnack = "Afternoon snack",
         snack = "Snack",
-        preWorkout = "Pre-workout",
-        postWorkout = "Post-workout",
+        unknown = "Unknown type",
     )
 
     override val createMealPlanTexts = CreateMealPlanTexts(
@@ -361,6 +379,7 @@ data object English : AppLanguage {
         searchMealPlaceholder = "Search meals...",
         filterAll = "All",
         chooseMealButton = "Choose",
+        customMealBadge = "Custom",
         createNewMealButton = "Create new meal",
         // ── Step 1B: New meal ──
         newMealNameLabel = "Meal name",
@@ -412,21 +431,45 @@ data object English : AppLanguage {
         errorServer = "Server error, please try again",
         errorNetwork = "No connection, check your internet",
         loadingTitle = "Saving meal plan...",
+        gramUnit = "g",
+        calorieUnit = "kcal",
+        catalogCountUnit = "units",
+        minutesUnit = "min",
+        macroProteinAbbrev = "P",
+        macroCarbsAbbrev = "C",
+        macroFatAbbrev = "F",
+        caloriesAbbrev = "KCAL",
+        proteinAbbrev = "PROT",
+        carbsAbbrev = "CARB",
     )
 
     override val splashTexts = SplashTexts(
         tapToContinue = "Tap to continue",
+        appName = "GoodLife",
+    )
+    override val profileTexts = ProfileTexts(
+        profilePhoto = "Profile photo",
+        changePhoto = "Change photo",
+        fallbackName = "User",
     )
     override val tabDetailTexts = TabDetailTexts(
         dailyTitle = "Daily detail", mealTitle = "Meal detail", back = "Back", loading = "Loading detail…",
         dailyNotFound = "We could not find this daily item", mealNotFound = "We could not find this meal plan", invalidRoute = "This detail route is invalid", retry = "Retry",
         typeLabel = "Type", statusLabel = "Status", scheduleLabel = "Schedule", descriptionLabel = "Description",
         pending = "Pending", inProgress = "In progress", completed = "Completed", skipped = "Skipped",
+        unknown = "Other",
         mealLabel = "Meal", proteinLabel = "Protein", carbsLabel = "Carbs", fatLabel = "Fat",
         active = "Active", inactive = "Inactive", mealImageUnavailable = "Meal image unavailable",
-        emptyMealsTitle = "No meal plans for today", emptyMealsDescription = "Create your first meal plan to track your daily nutrition.",
+        emptyMealsTitle = "No meal plans for this day", emptyMealsDescription = "Create your first meal plan to track your daily nutrition.",
         createMealPlan = "Create meal plan", tapToRetry = "Tap to retry", mealPlanSingular = "meal plan", mealPlanPlural = "meal plans",
         calorieUnit = "kcal", gramUnit = "g", decimalSeparator = '.',
+    )
+    override val settingsTexts = SettingsTexts(
+        accountSection = "My account",
+        profileTitle = "My Profile",
+        profileSubtitleFallback = "View profile",
+        logoutTitle = "Log out",
+        logoutSubtitle = "Sign out of your account",
     )
 
 }

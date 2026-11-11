@@ -7,6 +7,6 @@ sealed class SettingsUiAction {
     /** El usuario quiere cerrar sesión. */
     data object Logout : SettingsUiAction()
 
-    /** El usuario quiere ver su perfil. Navegación delegada al Owner. */
+    /** El usuario quiere ver su perfil. El ViewModel emite [SettingsNavigationEffect]. */
     data object NavigateToProfile : SettingsUiAction()
 }

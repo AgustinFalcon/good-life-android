@@ -2,9 +2,9 @@ package com.agusstkd.goodlife.presentation.theme
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DirectionsRun
-import androidx.compose.material.icons.outlined.DirectionsRun
 import androidx.compose.material.icons.outlined.Assignment
 import androidx.compose.material.icons.outlined.DinnerDining
+import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -83,9 +83,23 @@ val TaskStyle = DailyItemStyle(
     icon                 = Icons.Outlined.Assignment
 )
 
+val UnknownItemStyle = DailyItemStyle(
+    background           = Color(0xFFF5F5F5),
+    accentColor          = Color(0xFF9E9E9E),
+    badgeBackground      = Color.White,
+    badgeText            = Color(0xFF616161),
+    titleColor           = Color(0xFF424242),
+    descriptionColor     = Color(0xFF757575),
+    timeColor            = Color(0xFF9E9E9E),
+    iconCircleBackground = Color(0xFFE0E0E0),
+    icon                 = Icons.Outlined.HelpOutline
+)
+
+/** Paleta e ícono del tipo. [DailyItemType.UNKNOWN] usa un estilo neutro. */
 fun DailyItemType.toDailyItemStyle(): DailyItemStyle = when (this) {
     DailyItemType.HABIT   -> HabitStyle
     DailyItemType.WORKOUT -> WorkoutStyle
     DailyItemType.MEAL    -> MealStyle
     DailyItemType.TASK    -> TaskStyle
+    DailyItemType.UNKNOWN -> UnknownItemStyle
 }

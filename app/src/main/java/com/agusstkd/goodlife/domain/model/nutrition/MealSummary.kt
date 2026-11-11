@@ -19,7 +19,7 @@ package com.agusstkd.goodlife.domain.model.nutrition
  * @property imageUrl URL de la imagen de la comida.
  * @property prepTimeMinutes Tiempo de preparación en minutos.
  * @property servingSize Tamaño de la porción de referencia (ej: 1.0).
- * @property servingUnit Unidad de la porción (ej: "porción", "taza").
+ * @property servingUnit Unidad de la porción; wire entra por [PortionUnit.fromWire].
  * @property calories Kilocalorías por porción de referencia.
  * @property protein Gramos de proteína por porción de referencia.
  * @property carbs Gramos de carbohidratos por porción de referencia.
@@ -35,7 +35,7 @@ data class MealSummary(
     val imageUrl: String?,
     val prepTimeMinutes: Int?,
     val servingSize: Double,
-    val servingUnit: String,
+    val servingUnit: PortionUnit,
     val calories: Double,
     val protein: Double,
     val carbs: Double,

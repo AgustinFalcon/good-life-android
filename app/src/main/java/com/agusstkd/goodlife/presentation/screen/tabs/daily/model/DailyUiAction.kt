@@ -2,7 +2,7 @@ package com.agusstkd.goodlife.presentation.screen.tabs.daily.model
 
 import androidx.compose.runtime.Stable
 
-import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
+import kotlinx.datetime.LocalDate
 
 /**
  * Acciones del usuario en la pantalla Daily.
@@ -42,6 +42,19 @@ sealed interface DailyUiAction {
      */
     data object OnNextDay : DailyUiAction
 
+    /** Abre el bottomsheet de calendario para saltar a una fecha. */
+    data object OnCalendarClick : DailyUiAction
+
+    /** Cierra el bottomsheet de calendario sin cambiar la fecha. */
+    data object OnCalendarDismiss : DailyUiAction
+
+    /**
+     * Usuario eligió una fecha en el calendario.
+     *
+     * @property date Día al que debe saltar el Daily.
+     */
+    data class OnCalendarDateSelected(val date: LocalDate) : DailyUiAction
+
     /**
      * Usuario pull-to-refresh para recargar datos.
      */
@@ -62,13 +75,13 @@ sealed interface DailyUiAction {
     data class OnFilterChange(val filter: DailyFilter): DailyUiAction
 
     /**
-     * Usuario cambia el status de un item (checkmark, skip, etc).
+     * Usuario toca el checkmark de un item.
+     *
+     * El ViewModel decide el nuevo status (COMPLETED ↔ PENDING; SKIPPED se ignora).
      *
      * @property itemId ID del item
-     * @property newStatus Nuevo status (COMPLETED, SKIPPED, PENDING)
      */
     data class OnItemStatusChange(
         val itemId: Long,
-        val newStatus: DailyItemStatus
     ) : DailyUiAction
 }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.agusstkd.goodlife.core.datetime.DateProvider
 import com.agusstkd.goodlife.core.datetime.language.AccessibilityTexts
+import com.agusstkd.goodlife.core.datetime.language.DatePickerTexts
 import com.agusstkd.goodlife.core.datetime.language.AppLanguage
 import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 import com.agusstkd.goodlife.domain.model.daily.DailyItemType
@@ -24,6 +25,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -79,15 +81,20 @@ class DailyTabViewModel(
 
     val dailyTexts get() = language.dailyTexts
     val accessibilityTexts: AccessibilityTexts get() = language.accessibilityTexts
+    val datePickerTexts: DatePickerTexts get() = language.datePickerTexts
 
     private var currentDate: LocalDate = dateProvider.today()
+    private var hasResumedOnce = false
     private var activeFilter: DailyFilter = DailyFilter.ALL
+    private val _isCalendarVisible = MutableStateFlow(false)
+    val isCalendarVisible: StateFlow<Boolean> = _isCalendarVisible.asStateFlow()
     private val navigationEffectsChannel = Channel<DailyNavigationEffect>(Channel.RENDEZVOUS)
     val navigationEffects = navigationEffectsChannel.receiveAsFlow()
     private var detailNavigationInProgress = false
     private var latestLoadRequestId: Long = 0L
     private var loadJob: Job? = null
     private val statusUpdateMutex = Mutex()
+    private var dataGeneration: Long = 0L
 
     private val _uiState = MutableStateFlow<DailyUiState>(DailyUiState.Loading)
     val uiState: StateFlow<DailyUiState> = _uiState
@@ -95,20 +102,27 @@ class DailyTabViewModel(
         .stateIn(viewModelScope, SharingStarted.Eagerly, DailyUiState.Loading)
 
     fun refresh() {
-        loadItems()
+        loadItems(retainContent = true)
     }
 
     fun onDailyListResumed() {
         detailNavigationInProgress = false
+        if (hasResumedOnce) {
+            loadItems(retainContent = true)
+        }
+        hasResumedOnce = true
     }
 
     fun onAction(action: DailyUiAction) {
         when (action) {
             DailyUiAction.OnPreviousDay -> navigateToPreviousDay()
             DailyUiAction.OnNextDay -> navigateToNextDay()
-            DailyUiAction.OnRefresh -> loadItems()
+            DailyUiAction.OnCalendarClick -> _isCalendarVisible.value = true
+            DailyUiAction.OnCalendarDismiss -> _isCalendarVisible.value = false
+            is DailyUiAction.OnCalendarDateSelected -> selectDate(action.date)
+            DailyUiAction.OnRefresh -> loadItems(retainContent = true)
             is DailyUiAction.OnItemClick -> navigateToDetail(action.itemId)
-            is DailyUiAction.OnItemStatusChange -> updateItemStatus(action.itemId, action.newStatus)
+            is DailyUiAction.OnItemStatusChange -> toggleItemStatus(action.itemId)
             is DailyUiAction.OnFilterChange -> filterItems(action.filter)
         }
     }
@@ -126,20 +140,27 @@ class DailyTabViewModel(
      *
      * Muestra [DailyUiState.Loading] (skeleton) mientras se hace la request.
      */
-    private fun loadItems() {
+    private fun loadItems(retainContent: Boolean = false) {
         val requestedDate = currentDate
         val requestId = ++latestLoadRequestId
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
             if (!isCurrentLoadRequest(requestId, requestedDate)) return@launch
-            _uiState.value = DailyUiState.Loading
+            val current = _uiState.value
+            _uiState.value = when {
+                retainContent && current is DailyUiState.Success -> current.copy(isRefreshing = true)
+                retainContent -> current
+                else -> DailyUiState.Loading
+            }
 
+            val generationAtStart = dataGeneration
             val result = getDailyItemsUseCase(requestedDate)
             if (!isCurrentLoadRequest(requestId, requestedDate)) return@launch
+            if (dataGeneration != generationAtStart) return@launch
 
             when (result) {
                     is GetDailyItemsResult.Success -> _uiState.value = buildSuccessState(result.dailyLog, requestedDate)
-                    is GetDailyItemsResult.NotFound -> showEmptyState()
+                    is GetDailyItemsResult.NotFound -> showEmptyState(requestedDate)
                     is GetDailyItemsResult.ServerError -> showServerError()
                     is GetDailyItemsResult.NetworkError -> showNetworkError()
             }
@@ -148,6 +169,26 @@ class DailyTabViewModel(
 
     private fun isCurrentLoadRequest(requestId: Long, requestedDate: LocalDate): Boolean {
         return requestId == latestLoadRequestId && requestedDate == currentDate
+    }
+
+    /**
+     * Alterna el status de un item: COMPLETED → PENDING, cualquier otro no SKIPPED → COMPLETED.
+     *
+     * SKIPPED no se modifica desde la card. El ViewModel es dueño de esta regla.
+     *
+     * @param itemId ID del item a actualizar
+     */
+    private fun toggleItemStatus(itemId: Long) {
+        val currentState = _uiState.value
+        if (currentState !is DailyUiState.Success) return
+        val item = currentState.items.firstOrNull { it.id == itemId } ?: return
+        if (item.status == DailyItemStatus.SKIPPED) return
+        val newStatus = if (item.status == DailyItemStatus.COMPLETED) {
+            DailyItemStatus.PENDING
+        } else {
+            DailyItemStatus.COMPLETED
+        }
+        updateItemStatus(itemId, newStatus)
     }
 
     /**
@@ -170,11 +211,18 @@ class DailyTabViewModel(
 
                 when (val result = updateItemStatusUseCase(itemId, newStatus)) {
                     is UpdateItemStatusResult.Success -> if (requestedDate == currentDate) {
+                        dataGeneration++
                         _uiState.value = buildSuccessState(result.dailyLog, requestedDate)
                     }
                     is UpdateItemStatusResult.NotFound -> if (requestedDate == currentDate) loadItems()
-                    is UpdateItemStatusResult.ServerError -> if (requestedDate == currentDate) showServerError()
-                    is UpdateItemStatusResult.NetworkError -> if (requestedDate == currentDate) showNetworkError()
+                    is UpdateItemStatusResult.ServerError -> keepListWithStatusError(
+                        requestedDate,
+                        language.errorTexts.dataLoadError,
+                    )
+                    is UpdateItemStatusResult.NetworkError -> keepListWithStatusError(
+                        requestedDate,
+                        language.errorTexts.connectionError,
+                    )
                 }
             }
         }
@@ -187,6 +235,13 @@ class DailyTabViewModel(
 
     private fun navigateToNextDay() {
         currentDate = currentDate.plus(1, DateTimeUnit.DAY)
+        loadItems()
+    }
+
+    private fun selectDate(date: LocalDate) {
+        _isCalendarVisible.value = false
+        if (date == currentDate) return
+        currentDate = date
         loadItems()
     }
 
@@ -207,13 +262,17 @@ class DailyTabViewModel(
     private fun buildSuccessState(dailyLog: DailyLog, date: LocalDate): DailyUiState.Success {
         val nextUpId: Long? =
             dailyLog.items.firstOrNull { it.status == DailyItemStatus.PENDING }?.id
+        val completedCount = dailyLog.items.count { it.status.countsTowardCompletion }
+        val totalCount = dailyLog.items.size
         return DailyUiState.Success(
             date = date,
             dayNumber = date.day,
             headerText = formatHeaderText(date),
             monthYear = formatMonthYear(date),
             showFullDate = !isRelativeDate(date),
-            completionRate = dailyLog.completionRate,
+            completionRate = if (totalCount == 0) 0.0 else completedCount.toDouble() / totalCount,
+            completedCount = completedCount,
+            totalCount = totalCount,
             items = dailyLog.items.map { domainItem ->
                 domainItem.toUiModel(
                     typeLabel = resolveTypeLabel(domainItem.type),
@@ -221,16 +280,36 @@ class DailyTabViewModel(
                         domainItem.status == DailyItemStatus.IN_PROGRESS -> DailyItemHighlight.IN_PROGRESS
                         domainItem.id == nextUpId -> DailyItemHighlight.NEXT_UP
                         else -> DailyItemHighlight.NONE
-                    }
+                    },
+                    workoutTexts = language.workoutTexts,
+                    calorieUnit = language.tabDetailTexts.calorieUnit,
+                    gramUnit = language.tabDetailTexts.gramUnit,
                 )
             }.toImmutableList(),
             isRefreshing = false,
             activeFilter = activeFilter,
+            statusError = null,
         )
     }
 
-    private fun showEmptyState() {
-        _uiState.value = DailyUiState.Empty
+    private fun keepListWithStatusError(requestedDate: LocalDate, message: String) {
+        if (requestedDate != currentDate) return
+        val current = _uiState.value
+        _uiState.value = if (current is DailyUiState.Success) {
+            current.copy(isRefreshing = false, statusError = message)
+        } else {
+            DailyUiState.Error(message = message)
+        }
+    }
+
+    private fun showEmptyState(date: LocalDate) {
+        _uiState.value = DailyUiState.Empty(
+            date = date,
+            dayNumber = date.day,
+            headerText = formatHeaderText(date),
+            monthYear = formatMonthYear(date),
+            showFullDate = !isRelativeDate(date),
+        )
     }
 
     private fun showServerError() {
@@ -262,6 +341,7 @@ class DailyTabViewModel(
             DailyItemType.HABIT -> labels.habit
             DailyItemType.WORKOUT -> labels.workout
             DailyItemType.MEAL -> labels.meal
+            DailyItemType.UNKNOWN -> labels.unknown
         }
     }
 

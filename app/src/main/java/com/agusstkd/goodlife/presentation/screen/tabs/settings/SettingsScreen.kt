@@ -23,9 +23,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.agusstkd.goodlife.core.datetime.language.SettingsTexts
+import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.presentation.screen.tabs.settings.model.SettingsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.settings.model.SettingsUiState
+import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
 
 /**
  * Pantalla de Settings (UI pura).
@@ -36,6 +40,7 @@ import com.agusstkd.goodlife.presentation.screen.tabs.settings.model.SettingsUiS
 @Composable
 fun SettingsScreen(
     uiState: SettingsUiState,
+    texts: SettingsTexts,
     onAction: (SettingsUiAction) -> Unit
 ) {
     LazyColumn(
@@ -44,7 +49,7 @@ fun SettingsScreen(
     ) {
         item {
             Text(
-                text = "Mi cuenta",
+                text = texts.accountSection,
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
@@ -53,8 +58,8 @@ fun SettingsScreen(
         item {
             SettingsOptionCard(
                 icon = Icons.Default.Person,
-                title = "Mi Perfil",
-                subtitle = uiState.username.ifBlank { "Ver perfil" },
+                title = texts.profileTitle,
+                subtitle = uiState.username.ifBlank { texts.profileSubtitleFallback },
                 onClick = { onAction(SettingsUiAction.NavigateToProfile) }
             )
         }
@@ -66,8 +71,8 @@ fun SettingsScreen(
         item {
             SettingsOptionCard(
                 icon = Icons.AutoMirrored.Filled.ExitToApp,
-                title = "Cerrar sesión",
-                subtitle = "Salir de tu cuenta",
+                title = texts.logoutTitle,
+                subtitle = texts.logoutSubtitle,
                 onClick = { onAction(SettingsUiAction.Logout) },
                 tint = MaterialTheme.colorScheme.error
             )
@@ -113,5 +118,29 @@ private fun SettingsOptionCard(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true, name = "SettingsScreen - con usuario")
+@Composable
+private fun SettingsScreenPreview() {
+    GoodLifeTheme {
+        SettingsScreen(
+            uiState = SettingsUiState(username = "agustin"),
+            texts = Spanish.settingsTexts,
+            onAction = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "SettingsScreen - sin usuario")
+@Composable
+private fun SettingsScreenEmptyUsernamePreview() {
+    GoodLifeTheme {
+        SettingsScreen(
+            uiState = SettingsUiState(username = ""),
+            texts = Spanish.settingsTexts,
+            onAction = {},
+        )
     }
 }

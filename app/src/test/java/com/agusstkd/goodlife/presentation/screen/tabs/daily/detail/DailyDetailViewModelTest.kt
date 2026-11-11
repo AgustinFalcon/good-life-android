@@ -103,6 +103,38 @@ class DailyDetailViewModelTest {
     }
 
     @Test
+    fun `workout description uses localized routine copy`() = runTest(testDispatcher) {
+        repository.getDailyLogResult = Result.Success(
+            DailyLog(
+                id = 1L,
+                date = date,
+                completionRate = 0.0,
+                items = listOf(
+                    DailyItem(
+                        id = 10L,
+                        type = DailyItemType.WORKOUT,
+                        referenceId = 40L,
+                        scheduledTime = null,
+                        status = DailyItemStatus.PENDING,
+                        title = "PushDay",
+                        description = null,
+                        workoutRoutineName = "SmokeRutina",
+                        workoutExerciseCount = 3,
+                        workoutDayOrder = 1,
+                    ),
+                ),
+            ),
+        )
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val content = viewModel.uiState.value as DailyDetailUiState.Content
+        assertEquals("PushDay", content.title)
+        assertEquals("Rutina: SmokeRutina • 3 ejercicios", content.description)
+    }
+
+    @Test
     fun `missing item becomes NotFound`() = runTest(testDispatcher) {
         repository.getDailyLogResult = Result.Success(
             DailyLog(id = 1L, date = date, completionRate = 0.0, items = emptyList()),

@@ -61,9 +61,7 @@ class LoginUseCase(
 
             when (val result = authRepository.login(email, password)) {
                 is Result.Success -> LoginResult.Success(result.data)
-                is Result.Error   -> LoginResult.Error(
-                    result.message ?: language.errorTexts.loginError
-                )
+                is Result.Error -> LoginResult.Error(language.errorTexts.loginError)
             }
         }
     }

@@ -3,6 +3,7 @@ package com.agusstkd.goodlife.presentation.screen.add.mealplan.steps
 import com.agusstkd.goodlife.core.datetime.language.CreateItemSharedTexts
 import com.agusstkd.goodlife.core.datetime.language.CreateMealPlanTexts
 import com.agusstkd.goodlife.domain.model.nutrition.Ingredient
+import com.agusstkd.goodlife.domain.model.nutrition.PortionUnit
 import com.agusstkd.goodlife.domain.model.nutrition.MealSummary
 import com.agusstkd.goodlife.domain.model.nutrition.MealType
 import com.agusstkd.goodlife.presentation.screen.add.mealplan.model.CreateMealPlanUiState
@@ -20,6 +21,7 @@ internal fun previewMealPlanTexts() = CreateMealPlanTexts(
     searchMealPlaceholder = "Buscar comida...",
     filterAll = "Todos",
     chooseMealButton = "Elegir",
+    customMealBadge = "Personalizado",
     createNewMealButton = "Crear nueva comida",
     newMealNameLabel = "Nombre",
     newMealNamePlaceholder = "Ej: Ensalada de pollo",
@@ -94,7 +96,8 @@ internal fun previewMealTypeEntries() = listOf(
     MealType.BREAKFAST to "Desayuno",
     MealType.LUNCH to "Almuerzo",
     MealType.DINNER to "Cena",
-    MealType.SNACK to "Merienda",
+    MealType.AFTERNOON_SNACK to "Merienda",
+    MealType.SNACK to "Snack",
 )
 
 internal fun previewMealCatalog() = listOf(
@@ -105,7 +108,7 @@ internal fun previewMealCatalog() = listOf(
         imageUrl = null,
         prepTimeMinutes = 15,
         servingSize = 1.0,
-        servingUnit = "porción",
+        servingUnit = PortionUnit.PIECE,
         calories = 320.0,
         protein = 18.0,
         carbs = 22.0,
@@ -119,7 +122,7 @@ internal fun previewMealCatalog() = listOf(
         imageUrl = null,
         prepTimeMinutes = 30,
         servingSize = 1.0,
-        servingUnit = "porción",
+        servingUnit = PortionUnit.PIECE,
         calories = 480.0,
         protein = 42.0,
         carbs = 38.0,
@@ -134,7 +137,7 @@ internal fun previewIngredientCatalog() = listOf(
         name = "Pechuga de pollo",
         brand = "Acme Foods",
         servingSize = 100.0,
-        servingUnit = "g",
+        servingUnit = PortionUnit.GRAM,
         calories = 165.0,
         protein = 31.0,
         carbs = 0.0,
@@ -147,7 +150,7 @@ internal fun previewIngredientCatalog() = listOf(
         name = "Arroz integral",
         brand = null,
         servingSize = 100.0,
-        servingUnit = "g",
+        servingUnit = PortionUnit.GRAM,
         calories = 123.0,
         protein = 2.6,
         carbs = 23.0,
@@ -160,7 +163,7 @@ internal fun previewIngredientCatalog() = listOf(
         name = "Brócoli",
         brand = null,
         servingSize = 100.0,
-        servingUnit = "g",
+        servingUnit = PortionUnit.GRAM,
         calories = 34.0,
         protein = 2.8,
         carbs = 7.0,

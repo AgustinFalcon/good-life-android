@@ -91,6 +91,7 @@ fun ScheduleStep(
                     protein = meal.protein,
                     carbs = meal.carbs,
                 ),
+                texts = texts,
                 onClick = { /* TODO: abrir sheet de detalle de meal */ },
             )
         }

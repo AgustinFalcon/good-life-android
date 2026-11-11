@@ -129,6 +129,9 @@ fun SelectMealStep(
                 MealCatalogItem(
                     meal = meal,
                     onChoose = { onAction(CreateMealPlanUiAction.OnSelectMeal(meal)) },
+                    customBadgeLabel = texts.customMealBadge,
+                    chooseButtonLabel = texts.chooseMealButton,
+                    texts = texts,
                 )
             }
 

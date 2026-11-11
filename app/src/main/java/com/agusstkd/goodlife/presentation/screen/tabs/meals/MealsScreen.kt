@@ -5,7 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,26 +22,34 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material.icons.outlined.Schedule
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.agusstkd.goodlife.core.datetime.language.AccessibilityTexts
 import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.core.datetime.language.TabDetailTexts
 import com.agusstkd.goodlife.presentation.components.header.DateHeaderParams
 import com.agusstkd.goodlife.presentation.components.header.DateHeaderComponent
+import com.agusstkd.goodlife.presentation.components.header.dateHeaderParams
 import com.agusstkd.goodlife.presentation.components.nutrition.MacrosSummaryCard
 import com.agusstkd.goodlife.presentation.components.nutrition.formatNutritionValue
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.model.MealPlanUiModel
@@ -64,17 +75,30 @@ import kotlinx.datetime.LocalDate
  * para mostrar el resumen diario de macros.
  *
  * @param uiState Estado de éxito con los datos del día.
- * @param dateHeaderParams Parámetros del header de fecha para accesibilidad.
+ * @param accessibilityTexts Copy de accesibilidad del header de fecha.
  * @param onAction Callback de acciones del usuario.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MealsScreen(
     uiState: MealsUiState.Success,
     texts: TabDetailTexts,
-    dateHeaderParams: DateHeaderParams,
+    accessibilityTexts: AccessibilityTexts,
     listState: LazyListState = rememberLazyListState(),
     onAction: (MealsUiAction) -> Unit,
 ) {
+    val headerParams = dateHeaderParams(
+        dayNumber = uiState.dayNumber,
+        headerText = uiState.headerText,
+        monthYear = uiState.monthYear,
+        showFullDate = uiState.showFullDate,
+        accessibility = accessibilityTexts,
+    )
+    PullToRefreshBox(
+        isRefreshing = uiState.isRefreshing,
+        onRefresh = { onAction(MealsUiAction.OnRefresh) },
+        modifier = Modifier.fillMaxSize(),
+    ) {
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize(),
@@ -82,12 +106,9 @@ fun MealsScreen(
     ) {
         // ── Header de fecha (mismo patrón que DailyScreen) ────────────────
         item {
-            val onPreviousDay = remember(onAction) { { onAction(MealsUiAction.OnPreviousDay) } }
-            val onNextDay = remember(onAction) { { onAction(MealsUiAction.OnNextDay) } }
-            DateHeaderComponent(
-                params = dateHeaderParams,
-                onPreviousDay = onPreviousDay,
-                onNextDay = onNextDay,
+            MealsDateHeader(
+                dateHeaderParams = headerParams,
+                onAction = onAction,
             )
         }
 
@@ -131,6 +152,22 @@ fun MealsScreen(
             )
         }
     }
+    }
+}
+
+@Composable
+private fun MealsDateHeader(
+    dateHeaderParams: DateHeaderParams,
+    onAction: (MealsUiAction) -> Unit,
+) {
+    val onPreviousDay = remember(onAction) { { onAction(MealsUiAction.OnPreviousDay) } }
+    val onNextDay = remember(onAction) { { onAction(MealsUiAction.OnNextDay) } }
+    DateHeaderComponent(
+        params = dateHeaderParams,
+        onPreviousDay = onPreviousDay,
+        onNextDay = onNextDay,
+        onCalendarClick = remember(onAction) { { onAction(MealsUiAction.OnCalendarClick) } },
+    )
 }
 
 /**
@@ -143,6 +180,7 @@ fun MealsScreen(
  * @param onClick Callback al presionar la card.
  * @param modifier Modificador externo.
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun MealPlanCard(
     plan: MealPlanUiModel,
@@ -159,7 +197,7 @@ private fun MealPlanCard(
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             // ── Imagen o ícono fallback ──────────────────────────────────
@@ -208,27 +246,27 @@ private fun MealPlanCard(
                 }
 
                 // Macros con colores diferenciados por nutriente
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        text = "${formatNutritionValue(plan.totalCalories)} ${texts.calorieUnit}",
+                        text = "${formatNutritionValue(plan.totalCalories, texts.decimalSeparator)} ${texts.calorieUnit}",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = CaloriesColor,
                     )
                     Text(
-                        text = "${texts.proteinLabel} ${formatNutritionValue(plan.totalProtein)}${texts.gramUnit}",
+                        text = "${texts.proteinLabel} ${formatNutritionValue(plan.totalProtein, texts.decimalSeparator)}${texts.gramUnit}",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = ProteinColor,
                     )
                     Text(
-                        text = "${texts.carbsLabel} ${formatNutritionValue(plan.totalCarbs)}${texts.gramUnit}",
+                        text = "${texts.carbsLabel} ${formatNutritionValue(plan.totalCarbs, texts.decimalSeparator)}${texts.gramUnit}",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = CarbsColor,
                     )
                     Text(
-                        text = "${texts.fatLabel} ${formatNutritionValue(plan.totalFat)}${texts.gramUnit}",
+                        text = "${texts.fatLabel} ${formatNutritionValue(plan.totalFat, texts.decimalSeparator)}${texts.gramUnit}",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = FatColor,
@@ -252,7 +290,7 @@ private fun MealThumbnail(imageUrl: String?, name: String) {
             .clip(RoundedCornerShape(10.dp))
             .background(NutritionBackground),
     ) {
-        if (imageUrl != null) {
+        if (!imageUrl.isNullOrBlank()) {
             AsyncImage(
                 model = imageUrl,
                 contentDescription = name,
@@ -317,12 +355,157 @@ private fun MealsScreenWithPlansPreview() {
                 totalFat = 24.0,
             ),
             texts = Spanish.tabDetailTexts,
-            dateHeaderParams = DateHeaderParams(
+            accessibilityTexts = Spanish.accessibilityTexts,
+            onAction = {},
+        )
+    }
+}
+
+@Composable
+internal fun MealsLoadingState() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        MealsSkeletonBlock(height = 64.dp, alpha = 0.35f)
+        MealsSkeletonBlock(height = 110.dp, alpha = 0.30f)
+        MealsSkeletonBlock(height = 80.dp, alpha = 0.25f)
+        MealsSkeletonBlock(height = 80.dp, alpha = 0.20f)
+    }
+}
+
+/**
+ * Empty chrome del tab Meals: [DateHeaderComponent] más el CTA de crear plan.
+ *
+ * Vive en el archivo de Screen para que el Owner no arme el header.
+ */
+@Composable
+internal fun MealsEmptyState(
+    state: MealsUiState.Empty,
+    texts: TabDetailTexts,
+    accessibilityTexts: AccessibilityTexts,
+    onAction: (MealsUiAction) -> Unit,
+) {
+    val headerParams = dateHeaderParams(
+        dayNumber = state.dayNumber,
+        headerText = state.headerText,
+        monthYear = state.monthYear,
+        showFullDate = state.showFullDate,
+        accessibility = accessibilityTexts,
+    )
+    Column(modifier = Modifier.fillMaxSize()) {
+        MealsDateHeader(
+            dateHeaderParams = headerParams,
+            onAction = onAction,
+        )
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.padding(32.dp),
+            ) {
+                Text(
+                    text = texts.emptyMealsTitle,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                )
+                Text(
+                    text = texts.emptyMealsDescription,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                )
+                Button(
+                    onClick = { onAction(MealsUiAction.OnCreateMealPlan) },
+                    colors = ButtonDefaults.buttonColors(containerColor = NutritionAccent),
+                ) {
+                    Text(text = texts.createMealPlan)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+internal fun MealsErrorState(
+    message: String,
+    retryText: String,
+    onRetry: () -> Unit,
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = "$message\n$retryText",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.error,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .padding(32.dp)
+                .clickable(onClick = onRetry),
+        )
+    }
+}
+
+@Composable
+private fun MealsSkeletonBlock(
+    height: androidx.compose.ui.unit.Dp,
+    alpha: Float,
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(height)
+            .alpha(alpha),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        ),
+    ) {}
+}
+
+@Preview(showBackground = true, name = "MealsScreen - Loading")
+@Composable
+private fun MealsLoadingPreview() {
+    GoodLifeTheme { MealsLoadingState() }
+}
+
+@Preview(showBackground = true, name = "MealsScreen - Empty")
+@Composable
+private fun MealsEmptyPreview() {
+    GoodLifeTheme {
+        MealsEmptyState(
+            state = MealsUiState.Empty(
+                date = LocalDate(2026, 5, 15),
                 dayNumber = 15,
                 headerText = "Hoy",
-                monthYear = null,
+                monthYear = "Mayo 2026",
+                showFullDate = false,
             ),
+            texts = Spanish.tabDetailTexts,
+            accessibilityTexts = Spanish.accessibilityTexts,
             onAction = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "MealsScreen - Error")
+@Composable
+private fun MealsErrorPreview() {
+    GoodLifeTheme {
+        MealsErrorState(
+            message = Spanish.errorTexts.connectionError,
+            retryText = Spanish.tabDetailTexts.tapToRetry,
+            onRetry = {},
         )
     }
 }

@@ -2,6 +2,7 @@ package com.agusstkd.goodlife.presentation.components.nutrition
 
 import androidx.compose.foundation.layout.Arrangement
 import java.math.BigDecimal
+import java.math.RoundingMode
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -65,9 +66,9 @@ fun MacrosSummaryCard(
     proteinLabel: String,
     carbsLabel: String,
     fatLabel: String,
-    calorieUnit: String = "kcal",
-    gramUnit: String = "g",
-    decimalSeparator: Char = '.',
+    calorieUnit: String,
+    gramUnit: String,
+    decimalSeparator: Char,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -179,7 +180,11 @@ private fun MacroCard(
 }
 
 internal fun formatNutritionValue(value: Double, decimalSeparator: Char = '.'): String =
-    BigDecimal.valueOf(value).stripTrailingZeros().toPlainString().replace('.', decimalSeparator)
+    BigDecimal.valueOf(value)
+        .setScale(1, RoundingMode.HALF_UP)
+        .stripTrailingZeros()
+        .toPlainString()
+        .replace('.', decimalSeparator)
 
 // ════════════════════════════════════════════════════════════
 // PREVIEW
@@ -197,6 +202,9 @@ private fun MacrosSummaryCardPreview() {
             proteinLabel = "PROTEÍNA",
             carbsLabel = "CARBOS",
             fatLabel = "GRASAS",
+            calorieUnit = "kcal",
+            gramUnit = "g",
+            decimalSeparator = ',',
             modifier = androidx.compose.ui.Modifier.padding(16.dp),
         )
     }
@@ -214,6 +222,9 @@ private fun MacrosSummaryCardEmptyPreview() {
             proteinLabel = "PROTEÍNA",
             carbsLabel = "CARBOS",
             fatLabel = "GRASAS",
+            calorieUnit = "kcal",
+            gramUnit = "g",
+            decimalSeparator = ',',
             modifier = androidx.compose.ui.Modifier.padding(16.dp),
         )
     }

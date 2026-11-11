@@ -3,6 +3,7 @@ package com.agusstkd.goodlife.presentation.screen.tabs.workout
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.agusstkd.goodlife.core.datetime.language.AppLanguage
+import com.agusstkd.goodlife.core.extensions.formatArgs
 import com.agusstkd.goodlife.domain.model.training.DifficultyLevel
 import com.agusstkd.goodlife.domain.model.training.GoalType
 import com.agusstkd.goodlife.domain.model.training.Routine
@@ -14,6 +15,8 @@ import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutUiMod
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsNavigationEffect
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiAction
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.model.WorkoutsUiState
+import kotlinx.datetime.isoDayNumber
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -70,6 +73,9 @@ class WorkoutsTabViewModel(
     private val navigationEffectsChannel = Channel<WorkoutsNavigationEffect>(Channel.RENDEZVOUS)
     val navigationEffects = navigationEffectsChannel.receiveAsFlow()
     private var workoutDetailNavigationInProgress = false
+    private var hasResumedOnce = false
+    private var loadJob: Job? = null
+    private var latestLoadRequestId = 0L
 
     fun refresh() {
         loadData()
@@ -78,6 +84,10 @@ class WorkoutsTabViewModel(
     /** Clears the one-shot detail-navigation guard when this list becomes visible again. */
     fun onWorkoutListResumed() {
         workoutDetailNavigationInProgress = false
+        if (hasResumedOnce) {
+            loadData(retainContent = true)
+        }
+        hasResumedOnce = true
     }
 
     fun onAction(action: WorkoutsUiAction) {
@@ -93,11 +103,18 @@ class WorkoutsTabViewModel(
      *
      * Muestra [WorkoutsUiState.Loading] (skeleton) mientras se hace la request.
      */
-    private fun loadData() {
-        viewModelScope.launch {
-            _uiState.value = WorkoutsUiState.Loading
+    private fun loadData(retainContent: Boolean = false) {
+        val requestId = ++latestLoadRequestId
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
+            if (!retainContent) {
+                _uiState.value = WorkoutsUiState.Loading
+            }
 
-            when (val result = getActiveRoutineUseCase()) {
+            val result = getActiveRoutineUseCase()
+            if (requestId != latestLoadRequestId) return@launch
+
+            when (result) {
                 is GetActiveRoutineResult.Success ->
                     _uiState.value = buildSuccessState(result.routine)
 
@@ -130,7 +147,7 @@ class WorkoutsTabViewModel(
                 WorkoutUiModel(
                     id = workout.id,
                     name = workout.name,
-                    dayOfWeek = workout.dayOfWeek,
+                    dayLabel = workout.dayOfWeek?.let { language.workoutTexts.dayFormat.formatArgs(it.isoDayNumber) },
                     exerciseCount = workout.exercises.size,
                     totalSets = workout.exercises.sumOf { it.sets.size },
                 )
@@ -144,6 +161,7 @@ class WorkoutsTabViewModel(
             DifficultyLevel.BEGINNER -> texts.difficultyBeginner
             DifficultyLevel.INTERMEDIATE -> texts.difficultyIntermediate
             DifficultyLevel.ADVANCED -> texts.difficultyAdvanced
+            DifficultyLevel.UNKNOWN -> texts.unknown
         }
     }
 
@@ -155,6 +173,7 @@ class WorkoutsTabViewModel(
             GoalType.STRENGTH -> texts.goalStrength
             GoalType.ENDURANCE -> texts.goalEndurance
             GoalType.FLEXIBILITY -> texts.goalFlexibility
+            GoalType.UNKNOWN -> texts.unknown
         }
     }
 

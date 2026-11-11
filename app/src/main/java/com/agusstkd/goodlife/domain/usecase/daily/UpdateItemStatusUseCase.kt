@@ -46,11 +46,11 @@ class UpdateItemStatusUseCase(
         return withContext(dispatcher.io) {
             when (val result = repository.updateItemStatus(itemId, status)) {
                 is Result.Success -> UpdateItemStatusResult.Success(dailyLog = result.data)
-                is Result.Error   -> when (val ex = result.exception) {
+                is Result.Error -> when (result.exception) {
                     is ApiException.NotFoundException -> UpdateItemStatusResult.NotFound
-                    is ApiException.ServerException   -> UpdateItemStatusResult.ServerError(
-                        message = ex.message ?: "Error de servidor"
-                    )
+                    is ApiException.ServerException,
+                    is ApiException.BadRequestException,
+                    is ApiException.UnknownApiException -> UpdateItemStatusResult.ServerError
                     else -> UpdateItemStatusResult.NetworkError
                 }
             }

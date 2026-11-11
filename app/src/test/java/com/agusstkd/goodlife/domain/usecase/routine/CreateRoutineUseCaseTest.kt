@@ -9,6 +9,7 @@ import com.agusstkd.goodlife.domain.model.training.GoalType
 import com.agusstkd.goodlife.domain.model.training.SetDraft
 import com.agusstkd.goodlife.domain.model.training.WorkoutDraft
 import com.agusstkd.goodlife.domain.usecase.routine.result.CreateRoutineResult
+import com.agusstkd.goodlife.domain.usecase.routine.result.CreateRoutineValidation
 import com.agusstkd.goodlife.fake.FakeRoutineRepository
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -68,7 +69,7 @@ class CreateRoutineUseCaseTest {
             workouts = validWorkouts(),
         )
 
-        assertTrue(result is CreateRoutineResult.ValidationError)
+        assertEquals(CreateRoutineResult.Invalid(CreateRoutineValidation.EmptyName), result)
         assertEquals(0, repository.createRoutineCallCount)
     }
 
@@ -86,7 +87,25 @@ class CreateRoutineUseCaseTest {
             workouts = validWorkouts(),
         )
 
-        assertTrue(result is CreateRoutineResult.ValidationError)
+        assertEquals(CreateRoutineResult.Invalid(CreateRoutineValidation.MissingDifficulty), result)
+        assertEquals(0, repository.createRoutineCallCount)
+    }
+
+    @Test
+    fun `unknown difficultyLevel returns ValidationError`() = runTest(testDispatcher) {
+        val result = useCase(
+            name = "PPL",
+            description = null,
+            difficultyLevel = DifficultyLevel.UNKNOWN,
+            goalType = GoalType.MUSCLE_GAIN,
+            scheduledTime = null,
+            daysOfWeek = setOf(DayOfWeek.MONDAY),
+            startDate = null,
+            endDate = null,
+            workouts = validWorkouts(),
+        )
+
+        assertEquals(CreateRoutineResult.Invalid(CreateRoutineValidation.MissingDifficulty), result)
         assertEquals(0, repository.createRoutineCallCount)
     }
 
@@ -104,7 +123,25 @@ class CreateRoutineUseCaseTest {
             workouts = validWorkouts(),
         )
 
-        assertTrue(result is CreateRoutineResult.ValidationError)
+        assertEquals(CreateRoutineResult.Invalid(CreateRoutineValidation.MissingGoal), result)
+        assertEquals(0, repository.createRoutineCallCount)
+    }
+
+    @Test
+    fun `unknown goalType returns ValidationError`() = runTest(testDispatcher) {
+        val result = useCase(
+            name = "PPL",
+            description = null,
+            difficultyLevel = DifficultyLevel.INTERMEDIATE,
+            goalType = GoalType.UNKNOWN,
+            scheduledTime = null,
+            daysOfWeek = setOf(DayOfWeek.MONDAY),
+            startDate = null,
+            endDate = null,
+            workouts = validWorkouts(),
+        )
+
+        assertEquals(CreateRoutineResult.Invalid(CreateRoutineValidation.MissingGoal), result)
         assertEquals(0, repository.createRoutineCallCount)
     }
 
@@ -122,7 +159,7 @@ class CreateRoutineUseCaseTest {
             workouts = validWorkouts(),
         )
 
-        assertTrue(result is CreateRoutineResult.ValidationError)
+        assertEquals(CreateRoutineResult.Invalid(CreateRoutineValidation.EmptyDays), result)
         assertEquals(0, repository.createRoutineCallCount)
     }
 
@@ -140,7 +177,7 @@ class CreateRoutineUseCaseTest {
             workouts = emptyList(),
         )
 
-        assertTrue(result is CreateRoutineResult.ValidationError)
+        assertEquals(CreateRoutineResult.Invalid(CreateRoutineValidation.EmptyWorkouts), result)
         assertEquals(0, repository.createRoutineCallCount)
     }
 
@@ -158,7 +195,10 @@ class CreateRoutineUseCaseTest {
             workouts = listOf(WorkoutDraft(name = "Push Day")),
         )
 
-        assertTrue(result is CreateRoutineResult.ValidationError)
+        assertEquals(
+            CreateRoutineResult.Invalid(CreateRoutineValidation.WorkoutWithoutExercises("Push Day")),
+            result,
+        )
         assertEquals(0, repository.createRoutineCallCount)
     }
 
@@ -183,7 +223,10 @@ class CreateRoutineUseCaseTest {
             ),
         )
 
-        assertTrue(result is CreateRoutineResult.ValidationError)
+        assertEquals(
+            CreateRoutineResult.Invalid(CreateRoutineValidation.ExerciseWithoutSets("Bench Press")),
+            result,
+        )
         assertEquals(0, repository.createRoutineCallCount)
     }
 
@@ -201,7 +244,7 @@ class CreateRoutineUseCaseTest {
             workouts = validWorkouts(),
         )
 
-        assertTrue(result is CreateRoutineResult.ValidationError)
+        assertEquals(CreateRoutineResult.Invalid(CreateRoutineValidation.EndBeforeStart), result)
         assertEquals(0, repository.createRoutineCallCount)
     }
 
@@ -251,8 +294,7 @@ class CreateRoutineUseCaseTest {
             workouts = validWorkouts(),
         )
 
-        assertTrue(result is CreateRoutineResult.ValidationError)
-        assertEquals("Invalid data", (result as CreateRoutineResult.ValidationError).message)
+        assertEquals(CreateRoutineResult.Invalid(CreateRoutineValidation.RemoteRejected), result)
     }
 
     @Test

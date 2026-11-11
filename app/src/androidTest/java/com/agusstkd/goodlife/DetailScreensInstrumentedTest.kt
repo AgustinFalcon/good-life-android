@@ -19,7 +19,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 import com.agusstkd.goodlife.domain.model.daily.DailyItemType
-import com.agusstkd.goodlife.presentation.components.header.DateHeaderParams
 import com.agusstkd.goodlife.presentation.navigation.route.TabGraphRoute
 import com.agusstkd.goodlife.presentation.navigation.route.addDailyTabGraph
 import com.agusstkd.goodlife.presentation.navigation.route.addMealsTabGraph
@@ -138,10 +137,12 @@ class DetailScreensInstrumentedTest {
                                     monthYear = "Septiembre 2026",
                                     showFullDate = false,
                                     completionRate = 0.0,
+                                    completedCount = 0,
+                                    totalCount = dailyItems.size,
                                     items = dailyItems,
                                 ),
                                 dailyTexts = Spanish.dailyTexts,
-                                dateHeaderParams = DateHeaderParams(14, "Hoy", null),
+                                accessibilityTexts = Spanish.accessibilityTexts,
                                 listState = listState,
                                 onAction = { action ->
                                     if (action is DailyUiAction.OnItemClick) {
@@ -221,7 +222,7 @@ class DetailScreensInstrumentedTest {
                                     totalFat = 200.0,
                                 ),
                                 texts = Spanish.tabDetailTexts,
-                                dateHeaderParams = DateHeaderParams(14, "Hoy", null),
+                                accessibilityTexts = Spanish.accessibilityTexts,
                                 listState = listState,
                                 onAction = { action ->
                                     if (action is MealsUiAction.OnMealPlanClick) {

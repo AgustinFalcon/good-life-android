@@ -1,5 +1,6 @@
 package com.agusstkd.goodlife.domain.usecase.habit
 
+import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.core.dispatcher.TestDispatcherProvider
 import com.agusstkd.goodlife.core.network.ApiException
 import com.agusstkd.goodlife.core.result.Result
@@ -27,6 +28,7 @@ class CreateHabitUseCaseTest {
         useCase = CreateHabitUseCase(
             repository = repository,
             dispatcher = TestDispatcherProvider(testDispatcher),
+            language = Spanish,
         )
     }
 
@@ -49,6 +51,25 @@ class CreateHabitUseCaseTest {
         )
 
         assertTrue(result is CreateHabitResult.ValidationError)
+        assertEquals(0, repository.createHabitCallCount)
+    }
+
+    @Test
+    fun `unknown category returns ValidationError without calling repository`() = runTest(testDispatcher) {
+        val result = useCase(
+            name = "Beber agua",
+            description = null,
+            category = HabitCategory.UNKNOWN,
+            targetValue = 8,
+            unit = "vasos",
+            daysOfWeek = setOf(DayOfWeek.MONDAY),
+            startDate = LocalDate(2026, 3, 9),
+            endDate = null,
+            scheduledTime = null,
+        )
+
+        assertTrue(result is CreateHabitResult.ValidationError)
+        assertEquals(Spanish.createHabitTexts.errorNoCategory, (result as CreateHabitResult.ValidationError).message)
         assertEquals(0, repository.createHabitCallCount)
     }
 
@@ -152,7 +173,7 @@ class CreateHabitUseCaseTest {
     // ═══════════════════════════════════════════════════════════════════
 
     @Test
-    fun `BadRequestException maps to ValidationError`() = runTest(testDispatcher) {
+    fun `BadRequestException maps to ServerError without backend copy`() = runTest(testDispatcher) {
         repository.createHabitResult = Result.Error(
             ApiException.BadRequestException("Invalid data")
         )
@@ -169,8 +190,8 @@ class CreateHabitUseCaseTest {
             scheduledTime = null,
         )
 
-        assertTrue(result is CreateHabitResult.ValidationError)
-        assertEquals("Invalid data", (result as CreateHabitResult.ValidationError).message)
+        assertTrue(result is CreateHabitResult.ServerError)
+        assertEquals(Spanish.createHabitTexts.errorServer, (result as CreateHabitResult.ServerError).message)
     }
 
     @Test
@@ -192,7 +213,7 @@ class CreateHabitUseCaseTest {
         )
 
         assertTrue(result is CreateHabitResult.ServerError)
-        assertEquals("Internal server error", (result as CreateHabitResult.ServerError).message)
+        assertEquals(Spanish.createHabitTexts.errorServer, (result as CreateHabitResult.ServerError).message)
     }
 
     @Test

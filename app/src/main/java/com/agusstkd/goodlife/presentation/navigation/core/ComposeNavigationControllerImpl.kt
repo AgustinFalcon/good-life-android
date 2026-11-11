@@ -1,6 +1,7 @@
 package com.agusstkd.goodlife.presentation.navigation.core
 
 import androidx.navigation.NavOptions
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -15,7 +16,10 @@ import kotlinx.coroutines.flow.receiveAsFlow
  */
 class ComposeNavigationControllerImpl : ComposeNavigationController {
 
-    private val navigationActions = Channel<NavigationAction>(Channel.BUFFERED)
+    private val navigationActions = Channel<NavigationAction>(
+        capacity = 64,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
 
     override val navigationAction: Flow<NavigationAction> = navigationActions.receiveAsFlow()
 
@@ -32,8 +36,6 @@ class ComposeNavigationControllerImpl : ComposeNavigationController {
     }
 
     private fun dispatch(action: NavigationAction) {
-        check(navigationActions.trySend(action).isSuccess) {
-            "Navigation action could not be dispatched."
-        }
+        navigationActions.trySend(action)
     }
 }

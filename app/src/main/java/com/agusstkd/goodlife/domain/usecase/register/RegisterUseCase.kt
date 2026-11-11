@@ -110,9 +110,7 @@ class RegisterUseCase(
                 password = password
             )) {
                 is Result.Success -> RegisterResult.Success(result.data)
-                is Result.Error   -> RegisterResult.ServerError(
-                    result.message ?: e.registerError
-                )
+                is Result.Error -> RegisterResult.ServerError(e.registerError)
             }
         }
     }

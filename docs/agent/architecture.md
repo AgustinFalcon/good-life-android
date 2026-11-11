@@ -1,7 +1,7 @@
 ---
 type: Architecture
-version: recovery-audit-2026-09.2
-validated: 2026-09-14
+version: foundation-2026-11-11c
+validated: 2026-11-10
 update_when: "Cambien capas, wiring, persistencia o entrypoints."
 scope:
   - README.md
@@ -14,8 +14,8 @@ scope:
 
 | Ruta | Rol |
 |---|---|
-| `core/` | Networking, storage, datetime y Result |
-| `data/local/` | Room DAOs/entities |
+| `core/` | Networking, storage, datetime, Result y `SessionCleanup` |
+| `data/local/` | Room DAOs/entities y `LocalSessionCleanup` |
 | `data/remote/` | Retrofit APIs/DTOs |
 | `data/repository/` | Implementaciones |
 | `domain/` | Modelos, ports y use cases |
@@ -36,6 +36,8 @@ network success -> cache; offline read -> Room
 
 Koin modules registran APIs, datasources, repositories, use cases y ViewModels. Solo ScreenOwner obtiene ViewModel.
 
+Los puertos de dominio no importan DTOs Retrofit ni `android.net.Uri`. Meal/ingredient custom se crean con drafts; la foto de perfil usa `LocalImageRef` y `ObserveCurrentUserUseCase`. Wire de enums entra por `fromWire` (`UNKNOWN` no se recablea a un caso válido). El toggle Daily PENDING↔COMPLETED vive en el ViewModel; un GET en vuelo no pisa un PATCH más nuevo. Settings navega a Profile con un efecto one-shot. El Authenticator usa `SessionCleanup` en 401 terminal y `TokenRefresher` (no `AuthApiService`). Un 401 de `/token` con `grantType=password` no emite `SessionExpired`. `CheckSessionUseCase` usa `AuthRepository.isLoggedIn` (tokens + usuario). `ActivateRoutineResult.ServerError` no lleva copy de API; Create Habit/Task validan el submit en UiState.
+
 AppRoute navigation uses a bounded Channel exposed as a one-shot Flow: it bridges Splash-before-host without replaying an already consumed action after host recreation. GoodLifeNavHost collects it only while the host lifecycle is STARTED, so buffered actions wait while backgrounded and are consumed once on return. The controller owns no unmanaged coroutine scope; TabRoute effects remain local rendezvous events.
 
 ## Tab details
@@ -44,9 +46,17 @@ AppRoute navigation uses a bounded Channel exposed as a one-shot Flow: it bridge
 
 `addDailyTabGraph` and `addMealsTabGraph` are internal typed graph boundaries included by `addTabNavGraph`; instrumentation exercises the same routes with deterministic content and no backend.
 
+Daily and Meals headers open the shared `DatePickerBottomSheetComponent`. `DailyTabViewModel`, `MealsTabViewModel` and `WorkoutsTabViewModel` reload on resume after the first composition (`hasResumedOnce`) so popping a create flow refreshes the list without changing day. Daily `completionRate` is completed items / total on the loaded list. Daily and Meals wrap the list in `PullToRefreshBox`.
+
 ## Workout detail
 
 `TabRoute.WorkoutDetail` carries only `workoutId`. Its Owner resolves the current active routine through the existing use case, so it has no duplicate API contract, repository mutation or deep-link dependency. The ViewModel exposes loading, content, missing and error states; composables remain pure.
+
+User intents are `WorkoutDetailUiAction`: `OnRetry`, `OnNotesChange`, `OnSetFieldChange` (`WorkoutSetField` Weight/Reps/Rpe) and `OnFinishWorkout`. Content holds editable session `notes` (seed empty), editable set inputs (seeded from targets, labelled via `WorkoutSetField.label` + `WorkoutTexts` ES/EN/PT), `isFinishing`, `finishError` and `finished`. The ViewModel starts the session clock with `DateProvider.now()` when it publishes Content and ends it on Finish; `durationMinutes` is that interval coerced to at least 1. Finish parses Content inputs into `FinishWorkoutDraft` (RPE via `PerceivedExertion.fromWire`); exercise notes still come from `WorkoutExercise.notes`. GET failures remain `Error`/`NotFound`; POST 400/5xx/unknown stay on Content with `WorkoutTexts.finishFailed`; network is `connectionError`; empty sets are `noExercises`. On `FinishWorkoutResult.Success` the ViewModel sets `Content.finished = true`; the Screen shows the existing `SuccessDialog` Lottie (`R.raw.success_animation`) and then calls Owner `onNavigateUp`. Domain and data are wired (`FinishWorkoutUseCase` → `WorkoutLogRepository` → `POST /api/v1/workouts/log/finish`). The Screen never holds a `NavController`. `GetActiveRoutineUseCase` stays remote-only; cache is `loadedWorkout` / `loadedRoutineId` on the ViewModel.
+
+Daily items keep workout facts (`routineName`, `exerciseCount`, `dayOrder`) on the domain model and Room v3 cache. Copy is applied in the ViewModel with `WorkoutTexts`. `GET /api/v1/meal-plans` has no `date` query; `MealPlanRepositoryImpl` recorta al día.
+
+Contract: `sdd/wip/20261106-android-finish-workout-session/` (CU-19 reconfirmed against R-03).
 
 ## SDD ownership
 

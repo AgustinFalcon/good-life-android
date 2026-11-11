@@ -23,7 +23,8 @@ val settingsModule = module {
         SettingsTabViewModel(
             logoutUseCase = get(),
             getCurrentUserUseCase = get(),
-            navigationController = get()
+            navigationController = get(),
+            language = get(),
         )
     }
 }

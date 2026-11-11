@@ -15,15 +15,11 @@ class MealPlanRemoteDataSource(
 ) {
 
     /**
-     * Obtiene los planes de comida para una fecha específica.
-     *
-     * @param date Fecha en formato ISO-8601 (ej: "2026-05-15").
+     * Obtiene todos los planes de comida activos. El filtro por día es del repositorio.
      */
-    suspend fun getMealPlansByDate(
-        date: String
-    ): Result<List<DailyMealPlanResponseDto>> {
+    suspend fun getMealPlans(): Result<List<DailyMealPlanResponseDto>> {
         return executeApiCall {
-            apiService.getMealPlansByDate(date)
+            apiService.getMealPlans()
         }
     }
 

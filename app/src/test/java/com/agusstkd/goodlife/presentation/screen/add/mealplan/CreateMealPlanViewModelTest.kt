@@ -2,10 +2,12 @@ package com.agusstkd.goodlife.presentation.screen.add.mealplan
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.agusstkd.goodlife.core.datetime.language.Spanish
+import com.agusstkd.goodlife.core.network.ApiException
 import com.agusstkd.goodlife.core.dispatcher.TestDispatcherProvider
 import com.agusstkd.goodlife.core.pagination.PageResult
 import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.domain.model.nutrition.MealType
+import com.agusstkd.goodlife.domain.model.nutrition.PortionUnit
 import com.agusstkd.goodlife.domain.usecase.nutrition.*
 import com.agusstkd.goodlife.fake.FakeMealPlanRepository
 import com.agusstkd.goodlife.fake.FakeNavigationController
@@ -71,7 +73,7 @@ class CreateMealPlanViewModelTest {
         Assert.assertEquals(1, vm.uiState.value.ingredientCatalog.size)
         vm.onAction(CreateMealPlanUiAction.OnOpenQuantityBottomSheet(1L))
         Assert.assertTrue(vm.uiState.value.showQuantityBottomSheet)
-        vm.onAction(CreateMealPlanUiAction.OnConfirmIngredientQuantity(1L, 200.0, "g"))
+        vm.onAction(CreateMealPlanUiAction.OnConfirmIngredientQuantity(1L, 200.0, PortionUnit.GRAM))
         Assert.assertEquals(260.0, vm.uiState.value.previewCalories, 0.01)
         vm.onAction(CreateMealPlanUiAction.OnRemoveIngredient(1L))
         Assert.assertEquals(0.0, vm.uiState.value.previewCalories, 0.01)
@@ -99,6 +101,8 @@ class CreateMealPlanViewModelTest {
         advanceUntilIdle()
         Assert.assertTrue(vm.uiState.value.isSuccess)
         Assert.assertEquals(1, mealRepo.createCallCount)
+        Assert.assertEquals(1L, mealRepo.lastCreateDraft?.scheduledMeals?.single()?.selectedMeal?.id)
+        Assert.assertEquals(MealType.LUNCH, mealRepo.lastCreateDraft?.scheduledMeals?.single()?.mealType)
         vm.onAction(CreateMealPlanUiAction.OnSuccessAnimationFinished)
         Assert.assertTrue(nav.navigatedActions.isNotEmpty())
     }
@@ -122,7 +126,7 @@ class CreateMealPlanViewModelTest {
         val vm = vm(); advanceUntilIdle()
         vm.onAction(CreateMealPlanUiAction.OnShowCreateIngredientDialog)
         Assert.assertTrue(vm.uiState.value.showCreateIngredientDialog)
-        vm.onAction(CreateMealPlanUiAction.OnCreateCustomIngredient("Oats", null, 100.0, "g", 380.0, 12.0, 60.0, 7.0))
+        vm.onAction(CreateMealPlanUiAction.OnCreateCustomIngredient("Oats", null, 100.0, PortionUnit.GRAM, 380.0, 12.0, 60.0, 7.0))
         advanceUntilIdle()
         Assert.assertFalse(vm.uiState.value.showCreateIngredientDialog)
         Assert.assertEquals(1, vm.uiState.value.ingredientCatalog.size)
@@ -132,5 +136,17 @@ class CreateMealPlanViewModelTest {
         advanceUntilIdle()
         Assert.assertTrue(catalogRepo.searchMealsCallCount > 0)
         Assert.assertTrue(catalogRepo.searchIngredientsCallCount > 0)
+    }
+
+    @Test fun `server error shows localized copy not backend message`() = runTest(dispatcher) {
+        mealRepo.createResult = Result.Error(ApiException.ServerException("mealId es obligatorio"))
+        val vm = vm(); advanceUntilIdle()
+        vm.onAction(CreateMealPlanUiAction.OnSelectMeal(FakeNutritionCatalogRepository.defaultMeal()))
+        vm.onAction(CreateMealPlanUiAction.OnMealTypeSelected(MealType.LUNCH))
+        vm.onAction(CreateMealPlanUiAction.OnDayToggled(DayOfWeek.MONDAY))
+        vm.onAction(CreateMealPlanUiAction.OnSubmit)
+        advanceUntilIdle()
+        Assert.assertEquals(Spanish.createMealPlanTexts.errorServer, vm.uiState.value.errorMessage)
+        Assert.assertTrue(vm.uiState.value.errorMessage != "mealId es obligatorio")
     }
 }

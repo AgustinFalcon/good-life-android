@@ -1,9 +1,8 @@
 package com.agusstkd.goodlife.domain.repository
 
 import com.agusstkd.goodlife.core.result.Result
-import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateMealPlanRequestDto
-import com.agusstkd.goodlife.data.remote.dto.response.nutrition.MealPlanResponseDto
 import com.agusstkd.goodlife.domain.model.nutrition.DailyMealPlanSummary
+import com.agusstkd.goodlife.domain.model.nutrition.MealPlanDraft
 import kotlinx.datetime.LocalDate
 
 /**
@@ -22,7 +21,5 @@ interface MealPlanRepository {
     /**
      * Crea un plan de comidas completo.
      */
-    suspend fun createMealPlan(
-        request: CreateMealPlanRequestDto
-    ): Result<MealPlanResponseDto>
+    suspend fun createMealPlan(draft: MealPlanDraft): Result<Long>
 }

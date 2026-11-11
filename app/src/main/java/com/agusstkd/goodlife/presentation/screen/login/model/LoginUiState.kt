@@ -44,7 +44,9 @@ sealed interface LoginUiState {
         val isBiometricAvailable: Boolean = false,
         val isBiometricEnabled: Boolean = false,
         val shouldShowBiometricPrompt: Boolean = false
-    ) : LoginUiState
+    ) : LoginUiState {
+        val isFormValid: Boolean get() = email.isNotBlank() && password.isNotBlank()
+    }
 
     /**
      * Estado de error general.

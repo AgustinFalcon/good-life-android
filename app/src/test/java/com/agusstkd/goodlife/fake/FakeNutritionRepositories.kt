@@ -2,31 +2,33 @@ package com.agusstkd.goodlife.fake
 
 import com.agusstkd.goodlife.core.pagination.PageResult
 import com.agusstkd.goodlife.core.result.Result
-import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateCustomIngredientRequestDto
-import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateCustomMealRequestDto
-import com.agusstkd.goodlife.data.remote.dto.request.nutrition.CreateMealPlanRequestDto
-import com.agusstkd.goodlife.data.remote.dto.response.nutrition.MealPlanResponseDto
+import com.agusstkd.goodlife.domain.model.nutrition.CustomIngredientDraft
+import com.agusstkd.goodlife.domain.model.nutrition.CustomMealDraft
 import com.agusstkd.goodlife.domain.model.nutrition.DailyMealPlanSummary
+import com.agusstkd.goodlife.domain.model.nutrition.MealPlanDraft
 import com.agusstkd.goodlife.domain.model.nutrition.Ingredient
 import com.agusstkd.goodlife.domain.model.nutrition.MealSummary
+import com.agusstkd.goodlife.domain.model.nutrition.PortionUnit
 import com.agusstkd.goodlife.domain.repository.MealPlanRepository
 import com.agusstkd.goodlife.domain.repository.NutritionCatalogRepository
 import kotlinx.datetime.LocalDate
 
 class FakeMealPlanRepository : MealPlanRepository {
     var getResult: Result<List<DailyMealPlanSummary>> = Result.Success(emptyList())
-    var createResult: Result<MealPlanResponseDto> = Result.Success(MealPlanResponseDto(id = 1L, name = "Meal", totalCalories = 0.0, totalProtein = 0.0, totalCarbs = 0.0, totalFat = 0.0, isActive = true))
+    var createResult: Result<Long> = Result.Success(1L)
     var getHandler: (suspend (LocalDate) -> Result<List<DailyMealPlanSummary>>)? = null
     val requestedDates = mutableListOf<LocalDate>()
     var createCallCount = 0
+    var lastCreateDraft: MealPlanDraft? = null
 
     override suspend fun getMealPlansByDate(date: LocalDate): Result<List<DailyMealPlanSummary>> {
         requestedDates.add(date)
         return getHandler?.invoke(date) ?: getResult
     }
 
-    override suspend fun createMealPlan(request: CreateMealPlanRequestDto): Result<MealPlanResponseDto> {
+    override suspend fun createMealPlan(draft: MealPlanDraft): Result<Long> {
         createCallCount++
+        lastCreateDraft = draft
         return createResult
     }
 }
@@ -38,6 +40,8 @@ class FakeNutritionCatalogRepository : NutritionCatalogRepository {
     var createMealResult: Result<MealSummary> = Result.Success(defaultMeal())
     var searchMealsCallCount = 0
     var searchIngredientsCallCount = 0
+    var lastCreateIngredientDraft: CustomIngredientDraft? = null
+    var lastCreateMealDraft: CustomMealDraft? = null
 
     override suspend fun searchIngredients(query: String, page: Int, pageSize: Int): Result<PageResult<Ingredient>> {
         searchIngredientsCallCount++
@@ -49,11 +53,18 @@ class FakeNutritionCatalogRepository : NutritionCatalogRepository {
         return mealResult
     }
 
-    override suspend fun createCustomIngredient(request: CreateCustomIngredientRequestDto): Result<Ingredient> = createIngredientResult
-    override suspend fun createCustomMeal(request: CreateCustomMealRequestDto): Result<MealSummary> = createMealResult
+    override suspend fun createCustomIngredient(draft: CustomIngredientDraft): Result<Ingredient> {
+        lastCreateIngredientDraft = draft
+        return createIngredientResult
+    }
+
+    override suspend fun createCustomMeal(draft: CustomMealDraft): Result<MealSummary> {
+        lastCreateMealDraft = draft
+        return createMealResult
+    }
 
     companion object {
-        fun defaultIngredient() = Ingredient(1L, "Rice", null, 100.0, "g", 130.0, 2.7, 28.0, 0.3, true, null)
-        fun defaultMeal() = MealSummary(1L, "Bowl", null, null, null, 1.0, "unit", 500.0, 30.0, 60.0, 10.0, true)
+        fun defaultIngredient() = Ingredient(1L, "Rice", null, 100.0, PortionUnit.GRAM, 130.0, 2.7, 28.0, 0.3, true, null)
+        fun defaultMeal() = MealSummary(1L, "Bowl", null, null, null, 1.0, PortionUnit.PIECE, 500.0, 30.0, 60.0, 10.0, true)
     }
 }

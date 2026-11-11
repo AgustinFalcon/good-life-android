@@ -83,6 +83,7 @@ data class CheckboxParams(
     val id: CheckboxParamsId = CheckboxParamsId.OTHER,
     val linkText: String? = null,
     val endIcon: ImageVector? = null,
+    val endIconContentDescription: String? = null,
     val enabled: Boolean = true,
     val enabledState: CheckboxVisualState = CheckboxVisualState.Enabled,
     val disabledState: CheckboxVisualState = CheckboxVisualState.Disabled
@@ -185,7 +186,7 @@ fun CheckboxComponent(
                             Modifier.clickable(enabled = params.enabled) { onEndIconClick() }
                         } else Modifier
                     ),
-                contentDescription = "Activar con huella"
+                contentDescription = params.endIconContentDescription
             )
         }
     }

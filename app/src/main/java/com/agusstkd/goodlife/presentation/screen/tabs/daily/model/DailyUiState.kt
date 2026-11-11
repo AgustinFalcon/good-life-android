@@ -2,6 +2,8 @@ package com.agusstkd.goodlife.presentation.screen.tabs.daily.model
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
+import com.agusstkd.goodlife.core.datetime.language.WorkoutTexts
+import com.agusstkd.goodlife.core.extensions.formatArgs
 import com.agusstkd.goodlife.core.extensions.toDisplayString
 import com.agusstkd.goodlife.domain.model.daily.DailyItem
 import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
@@ -46,7 +48,13 @@ sealed interface DailyUiState {
      * La UI debe mostrar un mensaje invitando a agregar items.
      */
     @Immutable
-    data object Empty : DailyUiState
+    data class Empty(
+        val date: LocalDate,
+        val dayNumber: Int,
+        val headerText: String,
+        val monthYear: String,
+        val showFullDate: Boolean,
+    ) : DailyUiState
 
     /**
      * Estado principal con el daily log cargado.
@@ -84,9 +92,12 @@ sealed interface DailyUiState {
         val monthYear: String,
         val showFullDate: Boolean,
         val completionRate: Double,
+        val completedCount: Int = 0,
+        val totalCount: Int = 0,
         val items: ImmutableList<DailyItemUiModel>,
         val isRefreshing: Boolean = false,
         val activeFilter: DailyFilter = DailyFilter.ALL,
+        val statusError: String? = null,
     ) : DailyUiState
 
     /**
@@ -137,21 +148,48 @@ data class DailyItemUiModel(
  * Mapea [DailyItem][com.agusstkd.goodlife.domain.model.daily.DailyItem] (Domain Model)
  * → [DailyItemUiModel] (UI Model).
  *
- * El título y descripción ya vienen extraídos en el Domain Model
- * (el mapeo Response→Domain se hizo en el Repository).
- * Este método solo formatea la hora para la UI.
+ * El título ya viene extraído en el Domain Model. La hora se formatea aquí.
+ * Un workout arma la descripción con [WorkoutTexts], no con copy del DTO.
  */
-fun DailyItem.toUiModel(typeLabel: String, highlight: DailyItemHighlight = DailyItemHighlight.NONE): DailyItemUiModel {
+fun DailyItem.toUiModel(
+    typeLabel: String,
+    highlight: DailyItemHighlight = DailyItemHighlight.NONE,
+    workoutTexts: WorkoutTexts,
+    calorieUnit: String = "",
+    gramUnit: String = "",
+): DailyItemUiModel {
     return DailyItemUiModel(
         id = id,
         type = type,
-        title = title,
-        description = description,
+        title = title.ifBlank { typeLabel },
+        description = formattedDescription(workoutTexts, calorieUnit, gramUnit),
         scheduledTime = scheduledTime?.toDisplayString(),
         status = status,
         typeLabel = typeLabel,
         highlight = highlight
     )
+}
+
+fun DailyItem.formattedDescription(
+    texts: WorkoutTexts,
+    calorieUnit: String = "",
+    gramUnit: String = "",
+): String? {
+    if (type == DailyItemType.MEAL) {
+        val calories = mealCalories ?: return description
+        val protein = mealProtein ?: return description
+        return "$calories $calorieUnit • $protein$gramUnit"
+    }
+    if (type != DailyItemType.WORKOUT) return description
+    val routine = workoutRoutineName?.takeIf { it.isNotBlank() } ?: texts.noRoutineName
+    val suffix = when {
+        workoutExerciseCount != null && workoutExerciseCount > 0 ->
+            " • ${texts.dailyExercisesFormat.formatArgs(workoutExerciseCount)}"
+        workoutDayOrder != null ->
+            " • ${texts.dayFormat.formatArgs(workoutDayOrder)}"
+        else -> ""
+    }
+    return texts.dailyRoutineFormat.formatArgs(routine) + suffix
 }
 
 enum class DailyItemHighlight { NONE, NEXT_UP, IN_PROGRESS }

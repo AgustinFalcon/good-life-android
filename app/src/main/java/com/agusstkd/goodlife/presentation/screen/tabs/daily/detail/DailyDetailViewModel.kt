@@ -9,6 +9,7 @@ import com.agusstkd.goodlife.domain.model.daily.DailyItemStatus
 import com.agusstkd.goodlife.domain.model.daily.DailyItemType
 import com.agusstkd.goodlife.domain.usecase.daily.GetDailyItemsUseCase
 import com.agusstkd.goodlife.domain.usecase.daily.result.GetDailyItemsResult
+import com.agusstkd.goodlife.presentation.screen.tabs.daily.model.formattedDescription
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.detail.model.DailyDetailTexts
 import com.agusstkd.goodlife.presentation.screen.tabs.daily.detail.model.DailyDetailUiState
 import kotlinx.coroutines.Job
@@ -75,7 +76,7 @@ class DailyDetailViewModel(
         type = typeLabel(item.type),
         status = statusLabel(item.status),
         scheduledTime = item.scheduledTime?.toDisplayString(),
-        description = item.description?.takeIf(String::isNotBlank),
+        description = item.formattedDescription(language.workoutTexts)?.takeIf(String::isNotBlank),
     )
 
     private fun typeLabel(type: DailyItemType): String = when (type) {
@@ -83,6 +84,7 @@ class DailyDetailViewModel(
         DailyItemType.HABIT -> language.dailyTexts.habit
         DailyItemType.WORKOUT -> language.dailyTexts.workout
         DailyItemType.MEAL -> language.dailyTexts.meal
+        DailyItemType.UNKNOWN -> language.dailyItemLabels.unknown
     }
 
     private fun statusLabel(status: DailyItemStatus): String = when (status) {
@@ -90,6 +92,7 @@ class DailyDetailViewModel(
         DailyItemStatus.IN_PROGRESS -> texts.inProgress
         DailyItemStatus.COMPLETED -> texts.completed
         DailyItemStatus.SKIPPED -> texts.skipped
+        DailyItemStatus.UNKNOWN -> texts.unknown
     }
 }
 

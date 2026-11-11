@@ -1,0 +1,184 @@
+{
+  "feature": "android-finish-workout-session",
+  "stack_profile": "mobile",
+  "project_type": "production",
+  "execution_strategy": "sequential",
+  "stats": { "total": 8, "done": 8, "by_layer": { "1": 6, "2": 0, "3": 2 } },
+  "tasks": [
+    {
+      "id": "TASK-001",
+      "title": "Add PerceivedExertion closed type",
+      "description": "Domain fromWire for RPE 1–10, Absent, and Unknown. Draft maps Score to Int and the rest to null.",
+      "status": "completed",
+      "layer": 1,
+      "complexity": "Low",
+      "depends_on": [],
+      "files": [
+        "app/src/main/java/com/agusstkd/goodlife/domain/model/training/PerceivedExertion.kt",
+        "app/src/test/java/com/agusstkd/goodlife/domain/model/training/PerceivedExertionTest.kt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: fromWire empty and null are Absent",
+        "AC-2: fromWire 1 and 10 are Score",
+        "AC-3: fromWire 11 and abc are Unknown",
+        "GATE: PerceivedExertionTest passes"
+      ],
+      "references": [],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-002",
+      "title": "Add finishFailed copy and FakeDateProvider.advance",
+      "description": "WorkoutTexts.finishFailed uses create-flow errorServer literals. FakeDateProvider keeps today() and advances now() on the same instance.",
+      "status": "completed",
+      "layer": 1,
+      "complexity": "Low",
+      "depends_on": [],
+      "files": [
+        "app/src/main/java/com/agusstkd/goodlife/core/datetime/language/UiTexts.kt",
+        "app/src/main/java/com/agusstkd/goodlife/core/datetime/language/Spanish.kt",
+        "app/src/main/java/com/agusstkd/goodlife/core/datetime/language/English.kt",
+        "app/src/main/java/com/agusstkd/goodlife/core/datetime/language/Portuguese.kt",
+        "app/src/test/java/com/agusstkd/goodlife/core/datetime/FakeDateProvider.kt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: finishFailed ES/EN/PT match errorServer",
+        "AC-2: FakeDateProvider(LocalDate) still returns start-of-day UTC for now()",
+        "AC-3: advance does not change today()"
+      ],
+      "references": [],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-003",
+      "title": "Extend WorkoutDetail UiState and UiAction",
+      "description": "Content gains isFinishing and finishError. Sets carry identity and editable inputs. OnSetFieldChange uses sealed WorkoutSetField.",
+      "status": "completed",
+      "layer": 1,
+      "complexity": "Medium",
+      "depends_on": ["TASK-001"],
+      "files": [
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/detail/model/WorkoutDetailUiState.kt",
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/detail/model/WorkoutDetailUiAction.kt",
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/detail/model/WorkoutSetField.kt",
+        "app/src/test/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/detail/model/WorkoutDetailUiActionTest.kt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: WorkoutSetField is Weight, Reps, Rpe",
+        "AC-2: UiAction when is exhaustive including OnSetFieldChange"
+      ],
+      "references": [],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-004",
+      "title": "Wire session clock and finish parse in ViewModel",
+      "description": "Start clock on Content. Parse UiModel into FinishWorkoutDraft. POST failures stay on Content with finishFailed. GET still uses Error/NotFound.",
+      "status": "completed",
+      "layer": 1,
+      "complexity": "High",
+      "depends_on": ["TASK-001", "TASK-002", "TASK-003"],
+      "files": [
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/detail/WorkoutDetailViewModel.kt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: durationMinutes >= 1",
+        "AC-2: POST error does not become UiState.Error",
+        "AC-3: Empty GET cache on NotFound/Error",
+        "AC-4: Exercise notes come from WorkoutExercise.notes"
+      ],
+      "references": [],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-005",
+      "title": "Render editable sets and finishError on Screen",
+      "description": "Pure Screen edits weight/reps/RPE through OnSetFieldChange and shows finishError on Content. Lottie remains on finished.",
+      "status": "completed",
+      "layer": 1,
+      "complexity": "Medium",
+      "depends_on": ["TASK-003", "TASK-004"],
+      "files": [
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/detail/WorkoutDetailScreen.kt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Finish button disabled while isFinishing or finished",
+        "AC-2: finishError visible on Content",
+        "AC-3: No NavController in Screen"
+      ],
+      "references": [],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-006",
+      "title": "Cover finish session in ViewModel tests",
+      "description": "Keep happy path. Add duration advance, RPE, edited sets, null weight fallback, double tap, and POST server error on Content.",
+      "status": "completed",
+      "layer": 1,
+      "complexity": "Medium",
+      "depends_on": ["TASK-004"],
+      "files": [
+        "app/src/test/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/detail/WorkoutDetailViewModelTest.kt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Existing notes and GET error tests still pass",
+        "AC-2: New spec cases pass",
+        "GATE: FinishWorkoutUseCaseTest and WorkoutDetailViewModelTest pass"
+      ],
+      "references": [],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-007",
+      "title": "Update architecture, contracts, changelog, R-03",
+      "description": "Document the implemented session contract. Do not bump version.",
+      "status": "completed",
+      "layer": 3,
+      "complexity": "Low",
+      "depends_on": ["TASK-004", "TASK-005"],
+      "files": [
+        "docs/agent/architecture.md",
+        "docs/agent/contracts.md",
+        "CHANGELOG.md",
+        "sdd/wip/20260911-goodlife-android-revival/2-technical/R-03-workout-detail.md"
+      ],
+      "acceptance_criteria": [
+        "AC-1: architecture.md describes implemented session, not next-contract-only",
+        "AC-2: CHANGELOG Unreleased records the code change"
+      ],
+      "references": [],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-008",
+      "title": "Run unit tests for finish session",
+      "description": "Execute FinishWorkoutUseCaseTest, WorkoutDetailViewModelTest, PerceivedExertionTest, and related unit tests.",
+      "status": "completed",
+      "layer": 3,
+      "complexity": "Low",
+      "depends_on": ["TASK-006"],
+      "files": [],
+      "acceptance_criteria": [
+        "GATE: targeted Gradle unit tests pass"
+      ],
+      "references": [],
+      "design_decisions": []
+    }
+  ],
+  "dependency_graph": {
+    "by_layer": {
+      "1": {
+        "level_0": ["TASK-001", "TASK-002"],
+        "level_1": ["TASK-003"],
+        "level_2": ["TASK-004", "TASK-005", "TASK-006"]
+      },
+      "3": {
+        "level_0": ["TASK-007", "TASK-008"]
+      }
+    }
+  },
+  "notes": [
+    "Express mode: tasks auto-approved with the caller implement request. No Everest: project is Koin/Compose per Android PROJECT.md.",
+    "Keep init { load() }. Do not move finish into RoutineRepository."
+  ]
+}

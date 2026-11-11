@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.agusstkd.goodlife.core.datetime.language.CreateMealPlanTexts
 import com.agusstkd.goodlife.domain.model.nutrition.Ingredient
+import com.agusstkd.goodlife.domain.model.nutrition.PortionUnit
 import com.agusstkd.goodlife.domain.model.nutrition.MealIngredientDraft
 import com.agusstkd.goodlife.presentation.theme.CarbsColor
 import com.agusstkd.goodlife.presentation.theme.FatColor
@@ -95,6 +96,7 @@ fun MyIngredientsSection(
         ingredients.forEach { draft ->
             MyIngredientItem(
                 draft = draft,
+                texts = texts,
                 onRemove = onRemove,
             )
         }
@@ -104,6 +106,7 @@ fun MyIngredientsSection(
 @Composable
 private fun MyIngredientItem(
     draft: MealIngredientDraft,
+    texts: CreateMealPlanTexts,
     onRemove: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -151,15 +154,15 @@ private fun MyIngredientItem(
                 )
                 // Cantidad • brand
                 Text(
-                    text = "${draft.quantity.toInt()}${draft.unit} • ${draft.ingredient.brand ?: ""}",
+                    text = "${draft.quantity.toInt()}${draft.unit.label} • ${draft.ingredient.brand ?: ""}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 // Macros con pill
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    MacroPill("P: ${draft.scaledProtein.toInt()}g", ProteinColor)
-                    MacroPill("C: ${draft.scaledCarbs.toInt()}g", CarbsColor)
-                    MacroPill("G: ${draft.scaledFat.toInt()}g", FatColor)
+                    MacroPill("${texts.macroProteinAbbrev}: ${draft.scaledProtein.toInt()}${texts.gramUnit}", ProteinColor)
+                    MacroPill("${texts.macroCarbsAbbrev}: ${draft.scaledCarbs.toInt()}${texts.gramUnit}", CarbsColor)
+                    MacroPill("${texts.macroFatAbbrev}: ${draft.scaledFat.toInt()}${texts.gramUnit}", FatColor)
                 }
             }
 
@@ -192,20 +195,20 @@ private fun MyIngredientsSectionPreview() {
                 MealIngredientDraft(
                     ingredient = Ingredient(
                         id = 1, name = "Pechuga de Pollo", brand = "A la plancha",
-                        servingSize = 100.0, servingUnit = "g",
+                        servingSize = 100.0, servingUnit = PortionUnit.GRAM,
                         calories = 165.0, protein = 31.0, carbs = 0.0, fat = 3.5,
                         isGlobal = true, imageUrl = null,
                     ),
-                    quantity = 150.0, unit = "g",
+                    quantity = 150.0, unit = PortionUnit.GRAM,
                 ),
                 MealIngredientDraft(
                     ingredient = Ingredient(
                         id = 2, name = "Arroz Integral", brand = "Cocido",
-                        servingSize = 100.0, servingUnit = "g",
+                        servingSize = 100.0, servingUnit = PortionUnit.GRAM,
                         calories = 123.0, protein = 2.6, carbs = 23.0, fat = 0.9,
                         isGlobal = true, imageUrl = null,
                     ),
-                    quantity = 100.0, unit = "g",
+                    quantity = 100.0, unit = PortionUnit.GRAM,
                 ),
             ),
             texts = previewMyIngredientsTexts(),
@@ -219,7 +222,7 @@ private fun previewMyIngredientsTexts() = CreateMealPlanTexts(
     // region campos requeridos vacíos
     screenTitle = "", typeBadge = "", stepOf = "", nextButton = "", backButton = "",
     createPlanButton = "", successTitle = "", searchMealPlaceholder = "", filterAll = "",
-    chooseMealButton = "", createNewMealButton = "", newMealNameLabel = "",
+    chooseMealButton = "", customMealBadge = "", createNewMealButton = "", newMealNameLabel = "",
     newMealNamePlaceholder = "", newMealDescriptionLabel = "", newMealDescriptionPlaceholder = "",
     newMealTypeLabel = "", macrosSummaryTitle = "", ingredientCatalogSectionTitle = "",
     searchIngredientPlaceholder = "", addIngredientButton = "", createCustomIngredientButton = "",

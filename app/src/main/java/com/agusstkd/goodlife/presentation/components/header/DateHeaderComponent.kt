@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.agusstkd.goodlife.core.datetime.language.AccessibilityTexts
 import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.presentation.components.GradientIcon
 import com.agusstkd.goodlife.presentation.theme.DarkGreen
@@ -57,6 +58,22 @@ data class DateHeaderParams(
     val previousDayLabel: String = "",
     val nextDayLabel: String = "",
     val notificationsLabel: String = ""
+)
+
+fun dateHeaderParams(
+    dayNumber: Int,
+    headerText: String,
+    monthYear: String,
+    showFullDate: Boolean,
+    accessibility: AccessibilityTexts,
+) = DateHeaderParams(
+    dayNumber = dayNumber,
+    headerText = headerText,
+    monthYear = if (showFullDate) monthYear else null,
+    openCalendarLabel = accessibility.openCalendar,
+    previousDayLabel = accessibility.previousDay,
+    nextDayLabel = accessibility.nextDay,
+    notificationsLabel = accessibility.notifications,
 )
 
 /**

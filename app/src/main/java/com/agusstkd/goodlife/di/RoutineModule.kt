@@ -2,15 +2,19 @@ package com.agusstkd.goodlife.di
 
 import com.agusstkd.goodlife.data.remote.datasource.remote.RoutineRemoteDataSource
 import com.agusstkd.goodlife.data.remote.datasource.remote.TrainingCatalogRemoteDataSource
+import com.agusstkd.goodlife.data.remote.datasource.remote.WorkoutLogRemoteDataSource
 import com.agusstkd.goodlife.data.repository.RoutineRepositoryImpl
 import com.agusstkd.goodlife.data.repository.TrainingCatalogRepositoryImpl
+import com.agusstkd.goodlife.data.repository.WorkoutLogRepositoryImpl
 import com.agusstkd.goodlife.domain.repository.RoutineRepository
 import com.agusstkd.goodlife.domain.repository.TrainingCatalogRepository
+import com.agusstkd.goodlife.domain.repository.WorkoutLogRepository
 import com.agusstkd.goodlife.domain.usecase.routine.ActivateRoutineUseCase
 import com.agusstkd.goodlife.domain.usecase.routine.CreateRoutineUseCase
 import com.agusstkd.goodlife.domain.usecase.routine.GetActiveRoutineUseCase
 import com.agusstkd.goodlife.domain.usecase.routine.GetMuscleGroupsUseCase
 import com.agusstkd.goodlife.domain.usecase.routine.SearchExercisesUseCase
+import com.agusstkd.goodlife.domain.usecase.workoutlog.FinishWorkoutUseCase
 import com.agusstkd.goodlife.presentation.screen.add.routine.CreateRoutineViewModel
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.WorkoutsTabViewModel
 import com.agusstkd.goodlife.presentation.screen.tabs.workout.detail.WorkoutDetailViewModel
@@ -22,10 +26,12 @@ val routineModule = module {
     // ── Data Sources ──
     factory { TrainingCatalogRemoteDataSource(trainingCatalogApiService = get()) }
     factory { RoutineRemoteDataSource(routineApiService = get()) }
+    factory { WorkoutLogRemoteDataSource(workoutLogApiService = get()) }
 
     // ── Repositories ──
     single<TrainingCatalogRepository> { TrainingCatalogRepositoryImpl(trainingCatalogRemoteDataSource = get()) }
     single<RoutineRepository> { RoutineRepositoryImpl(routineRemoteDataSource = get()) }
+    single<WorkoutLogRepository> { WorkoutLogRepositoryImpl(workoutLogRemoteDataSource = get()) }
 
     // ── Use Cases ──
     factory { GetMuscleGroupsUseCase(repository = get(), dispatcher = get()) }
@@ -33,6 +39,7 @@ val routineModule = module {
     factory { CreateRoutineUseCase(repository = get(), dispatcher = get()) }
     factory { ActivateRoutineUseCase(repository = get(), dispatcher = get()) }
     factory { GetActiveRoutineUseCase(repository = get(), dispatcher = get()) }
+    factory { FinishWorkoutUseCase(repository = get(), dispatcher = get()) }
 
     // ── ViewModels ──
     viewModel {
@@ -58,7 +65,9 @@ val routineModule = module {
         WorkoutDetailViewModel(
             workoutId = workoutId,
             language = get(),
+            dateProvider = get(),
             getActiveRoutineUseCase = get(),
+            finishWorkoutUseCase = get(),
         )
     }
 }

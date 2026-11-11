@@ -69,8 +69,7 @@ data class MainScaffoldTexts(
     val lunch: String,
     val dinner: String,
     val snack: String,
-    val preWorkout: String,
-    val postWorkout: String,
+    val afternoonSnack: String,
     val tabDaily: String,
     val tabWorkouts: String,
     val tabFood: String,
@@ -95,6 +94,7 @@ data class HomeTexts(
  * Textos para pantallas de autenticación (Login + Register).
  */
 data class AuthTexts(
+    val appName: String,
     val loginSubtitle: String,
     val emailOrUsername: String,
     val password: String,
@@ -141,6 +141,7 @@ data class AccessibilityTexts(
     val goToMore: String,
     val close: String,
     val appLogo: String,
+    val enableBiometric: String,
 )
 
 /**
@@ -148,6 +149,18 @@ data class AccessibilityTexts(
  */
 data class SplashTexts(
     val tapToContinue: String,
+    val appName: String,
+)
+
+/**
+ * Textos para la pantalla de perfil.
+ *
+ * Cubre las cadenas que la Screen muestra (content descriptions y fallback de nombre).
+ */
+data class ProfileTexts(
+    val profilePhoto: String,
+    val changePhoto: String,
+    val fallbackName: String,
 )
 
 /**
@@ -240,6 +253,7 @@ data class CreateTaskTexts(
     val errorTitleEmpty: String,
     val errorNoDate: String,
     val errorNoDays: String,
+    val errorOnceAndRecurrent: String,
     val errorEndBeforeStart: String,
     val errorServer: String,
     val errorNetwork: String,
@@ -247,10 +261,12 @@ data class CreateTaskTexts(
 )
 
 /**
- * Nombres localizados para las 13 categorías de hábito.
+ * Nombres localizados para las categorías de hábito.
  *
- * Cada propiedad corresponde a un valor del enum [HabitCategory].
- * Se usan en el selector de categoría de la pantalla Create Habit.
+ * Cada propiedad corresponde a un valor del enum [HabitCategory],
+ * incluido [HabitCategory.UNKNOWN] para no imprimir el wire crudo.
+ * Se usan en el selector de categoría de la pantalla Create Habit
+ * y al mostrar un hábito cargado con categoría desconocida.
  */
 data class HabitCategoryTexts(
     val hydration: String,
@@ -266,6 +282,7 @@ data class HabitCategoryTexts(
     val productivity: String,
     val health: String,
     val custom: String,
+    val unknown: String,
 )
 
 /**
@@ -274,6 +291,7 @@ data class HabitCategoryTexts(
 data class CreateHabitTexts(
     val screenTitle: String,
     val typeBadge: String,
+    val namePlaceholder: String,
     val saveButton: String,
     val successTitle: String,
     val categorySectionTitle: String,
@@ -293,7 +311,7 @@ data class CreateHabitTexts(
 )
 
 /**
- * Nombres localizados para los 6 tipos de comida del enum [MealType].
+ * Nombres localizados para los tipos de comida del enum [MealType].
  *
  * Se usan como chips de filtro en el catálogo (Paso 1A)
  * y como selector de tipo en el Paso 3 del wizard de comidas.
@@ -302,9 +320,9 @@ data class MealTypeTexts(
     val breakfast: String,
     val lunch: String,
     val dinner: String,
+    val afternoonSnack: String,
     val snack: String,
-    val preWorkout: String,
-    val postWorkout: String,
+    val unknown: String,
 )
 
 /**
@@ -332,6 +350,7 @@ data class CreateMealPlanTexts(
     val searchMealPlaceholder: String,
     val filterAll: String,
     val chooseMealButton: String,
+    val customMealBadge: String,
     val createNewMealButton: String,
 
     // ── Paso 1B: Crear nueva meal ──
@@ -390,10 +409,23 @@ data class CreateMealPlanTexts(
     val errorNetwork: String,
 
     val loadingTitle: String,
+    val gramUnit: String = "g",
+    val calorieUnit: String = "kcal",
+    val catalogCountUnit: String = "unidades",
+    val minutesUnit: String = "min",
+    val macroProteinAbbrev: String = "P",
+    val macroCarbsAbbrev: String = "C",
+    val macroFatAbbrev: String = "G",
+    val caloriesAbbrev: String = "KCAL",
+    val proteinAbbrev: String = "PROT",
+    val carbsAbbrev: String = "CARB",
 )
 
 /**
- * Textos del tab Workouts y su detalle de solo lectura.
+ * Textos del tab Workouts y su detalle.
+ *
+ * Los labels de set (`setWeightLabel`, `setRepsLabel`, `setRpeLabel`) identifican
+ * qué hay que ingresar en cada input de sesión; la Screen los pide a [com.agusstkd.goodlife.presentation.screen.tabs.workout.detail.model.WorkoutSetField.label].
  */
 data class WorkoutTexts(
     val noRoutineTitle: String,
@@ -408,11 +440,24 @@ data class WorkoutTexts(
     val exercisesTitle: String,
     val noExercises: String,
     val notesLabel: String,
+    val notesPlaceholder: String,
     val noSets: String,
     val setFormat: String,
     val repsFormat: String,
     val repsAndWeightFormat: String,
     val workoutNotFound: String,
+    val finishWorkout: String,
+    val workoutFinishedTitle: String,
+    val finishFailed: String,
+    /** Label del input de peso de la sesión (kg). */
+    val setWeightLabel: String,
+    /** Label del input de repeticiones de la sesión. */
+    val setRepsLabel: String,
+    /** Label del input de RPE (1–10, opcional). */
+    val setRpeLabel: String,
+    val dailyRoutineFormat: String,
+    val dailyExercisesFormat: String,
+    val noRoutineName: String,
 )
 /**
  * Textos para el wizard de creación de Rutina (SPEC-011).
@@ -420,6 +465,7 @@ data class WorkoutTexts(
 data class CreateRoutineTexts(
     val screenTitle: String,
     val typeBadge: String,
+    val namePlaceholder: String,
     val stepOf: String,
     val nextButton: String,
     val backButton: String,
@@ -429,6 +475,7 @@ data class CreateRoutineTexts(
     val difficultyBeginner: String,
     val difficultyIntermediate: String,
     val difficultyAdvanced: String,
+    val unknown: String,
     val goalSectionTitle: String,
     val goalPlaceholder: String,
     val goalMuscleGain: String,
@@ -463,10 +510,22 @@ data class CreateRoutineTexts(
     val errorNoDays: String,
     val errorNoWorkouts: String,
     val errorWorkoutNoExercises: String,
+    val errorExerciseNoSets: String,
     val errorEndBeforeStart: String,
     val errorServer: String,
     val errorNetwork: String,
     val loadingTitle: String,
+)
+
+/**
+ * Textos del tab Settings (cuenta, perfil y logout).
+ */
+data class SettingsTexts(
+    val accountSection: String,
+    val profileTitle: String,
+    val profileSubtitleFallback: String,
+    val logoutTitle: String,
+    val logoutSubtitle: String,
 )
 
 /** Copy shared by the read-only Daily and Meals details. */
@@ -475,6 +534,7 @@ data class TabDetailTexts(
     val dailyNotFound: String, val mealNotFound: String, val invalidRoute: String, val retry: String,
     val typeLabel: String, val statusLabel: String, val scheduleLabel: String, val descriptionLabel: String,
     val pending: String, val inProgress: String, val completed: String, val skipped: String,
+    val unknown: String,
     val mealLabel: String, val proteinLabel: String, val carbsLabel: String, val fatLabel: String,
     val active: String, val inactive: String,
     val mealImageUnavailable: String, val emptyMealsTitle: String, val emptyMealsDescription: String,

@@ -1,5 +1,6 @@
 package com.agusstkd.goodlife.core.session
 
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
@@ -16,7 +17,10 @@ import kotlinx.coroutines.flow.asSharedFlow
  */
 object SessionEventBus {
 
-    private val _events = MutableSharedFlow<SessionEvent>(extraBufferCapacity = 1)
+    private val _events = MutableSharedFlow<SessionEvent>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
     val events = _events.asSharedFlow()
 
     fun emit(event: SessionEvent) {

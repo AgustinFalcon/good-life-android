@@ -35,7 +35,13 @@ sealed interface MealsUiState {
      * La UI muestra un mensaje invitando a crear el primer plan.
      */
     @Immutable
-    data object Empty : MealsUiState
+    data class Empty(
+        val date: LocalDate,
+        val dayNumber: Int,
+        val headerText: String,
+        val monthYear: String,
+        val showFullDate: Boolean,
+    ) : MealsUiState
 
     /**
      * Estado principal con los planes de comida del día cargados.

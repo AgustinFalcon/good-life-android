@@ -39,7 +39,9 @@ class GetActiveRoutineUseCase(
                 is Result.Success -> result.data?.let(GetActiveRoutineResult::Success) ?: GetActiveRoutineResult.NotFound
                 is Result.Error -> when (val ex = result.exception) {
                     is ApiException.NotFoundException -> GetActiveRoutineResult.NotFound
-                    is ApiException.ServerException -> GetActiveRoutineResult.ServerError(ex.message)
+                    is ApiException.ServerException,
+                    is ApiException.BadRequestException,
+                    is ApiException.UnknownApiException -> GetActiveRoutineResult.ServerError(ex.message)
                     else -> GetActiveRoutineResult.NetworkError
                 }
             }

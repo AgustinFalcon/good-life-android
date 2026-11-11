@@ -13,6 +13,8 @@ import kotlinx.serialization.Serializable
 data class WorkoutSummaryDto(
     val id: Long? = null,
     val name: String? = null,
+    val routineId: Long? = null,
     val routineName: String? = null,
+    val dayOrder: Int? = null,
     val exerciseCount: Int? = null,
 )

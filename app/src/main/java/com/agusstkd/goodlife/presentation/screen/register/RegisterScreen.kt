@@ -74,8 +74,25 @@ fun RegisterScreen(
                 auth = auth,
                 accessibility = accessibility
             )
-            is RegisterUiState.Success -> { }
+            is RegisterUiState.Success -> RegisterSuccessScreen(text = auth.register)
         }
+    }
+}
+
+@Composable
+internal fun RegisterSuccessScreen(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.primary
+        )
     }
 }
 
@@ -99,15 +116,6 @@ private fun RegisterContent(
     auth: AuthTexts,
     accessibility: AccessibilityTexts
 ) {
-    val isFormValid = state.fullName.isNotBlank() &&
-            state.userName.isNotBlank() &&
-            state.email.isNotBlank() &&
-            state.password.isNotBlank() &&
-            state.confirmPassword.isNotBlank() &&
-            state.password == state.confirmPassword &&
-            state.acceptedTerms &&
-            !state.isConfirmPasswordError
-
     val scrollState = rememberScrollState()
 
     Column(
@@ -120,7 +128,7 @@ private fun RegisterContent(
     ) {
         Spacer(modifier = Modifier.height(32.dp))
 
-        RegisterHeader(auth = auth)
+        RegisterHeader(auth = auth, accessibility = accessibility)
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -135,7 +143,7 @@ private fun RegisterContent(
         ButtonComponent(
             params = ButtonParams(
                 text = auth.register,
-                enabled = isFormValid,
+                enabled = state.isFormValid,
                 isLoading = state.isLoading,
                 variant = ButtonVariant.PRIMARY,
                 showTrailingIcon = !state.isLoading
@@ -161,14 +169,14 @@ private fun RegisterContent(
 }
 
 @Composable
-private fun RegisterHeader(auth: AuthTexts) {
+private fun RegisterHeader(auth: AuthTexts, accessibility: AccessibilityTexts) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
         Image(
             painter = painterResource(R.drawable.good_life_logo),
-            contentDescription = "Logo GoodLife",
+            contentDescription = accessibility.appLogo,
             modifier = Modifier
                 .size(100.dp)
                 .clip(MaterialTheme.shapes.large),
@@ -356,6 +364,42 @@ private fun RegisterScreenFilledPreview() {
                 confirmPassword = "123456",
                 acceptedTerms = true
             ),
+            onAction = {},
+            texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Content - Error")
+@Composable
+private fun RegisterScreenErrorPreview() {
+    GoodLifeTheme {
+        RegisterScreen(
+            uiState = RegisterUiState.Content(
+                fullName = "Agustín",
+                userName = "ag",
+                email = "mal",
+                password = "123",
+                confirmPassword = "456",
+                isFullNameError = true,
+                isUserNameError = true,
+                isEmailError = true,
+                isPasswordError = true,
+                isConfirmPasswordError = true,
+                errorMessage = Spanish.errorTexts.registerError,
+            ),
+            onAction = {},
+            texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Success")
+@Composable
+private fun RegisterScreenSuccessPreview() {
+    GoodLifeTheme {
+        RegisterScreen(
+            uiState = RegisterUiState.Success,
             onAction = {},
             texts = AuthScreenTexts(Spanish.authTexts, Spanish.accessibilityTexts)
         )

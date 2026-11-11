@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Restaurant
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -29,9 +30,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.agusstkd.goodlife.core.datetime.language.Spanish
 import com.agusstkd.goodlife.presentation.components.nutrition.MacrosSummaryCard
 import com.agusstkd.goodlife.presentation.screen.tabs.meals.detail.model.MealDetailUiState
+import com.agusstkd.goodlife.presentation.theme.GoodLifeTheme
 
 /** Pure Compose rendering for a read-only meal-plan detail. */
 @Composable
@@ -117,6 +122,119 @@ internal fun MealDetailImage(imageUrl: String?, unavailableDescription: String, 
             contentDescription = null,
             onError = { failed = true },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "MealDetailScreen - plan activo")
+@Composable
+private fun MealDetailScreenActivePreview() {
+    val texts = Spanish.mealDetailTexts()
+    GoodLifeTheme {
+        MealDetailScreen(
+            state = MealDetailUiState.Content(
+                planName = "Plan Almuerzo Equilibrado",
+                mealTypeLabel = Spanish.mealTypeTexts.lunch,
+                scheduledTimeLabel = "13:00",
+                mealName = "Pollo con arroz y vegetales",
+                imageUrl = null,
+                totalCalories = 620.0,
+                totalProtein = 48.0,
+                totalCarbs = 60.0,
+                totalFat = 14.0,
+                isActive = true,
+            ),
+            texts = texts,
+            onNavigateUp = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "MealDetailScreen - plan inactivo")
+@Composable
+private fun MealDetailScreenInactivePreview() {
+    val texts = Spanish.mealDetailTexts()
+    GoodLifeTheme {
+        MealDetailScreen(
+            state = MealDetailUiState.Content(
+                planName = "Plan Snack",
+                mealTypeLabel = Spanish.mealTypeTexts.snack,
+                scheduledTimeLabel = null,
+                mealName = null,
+                imageUrl = null,
+                totalCalories = 180.0,
+                totalProtein = 12.0,
+                totalCarbs = 18.0,
+                totalFat = 6.0,
+                isActive = false,
+            ),
+            texts = texts,
+            onNavigateUp = {},
+        )
+    }
+}
+
+@Composable
+internal fun MealDetailMessage(
+    message: String,
+    backLabel: String,
+    onNavigateUp: () -> Unit,
+    primaryActionLabel: String? = null,
+    onPrimaryAction: (() -> Unit)? = null,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text(message, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
+        if (primaryActionLabel != null && onPrimaryAction != null) {
+            Button(onClick = onPrimaryAction, modifier = Modifier.padding(top = 16.dp)) {
+                Text(primaryActionLabel)
+            }
+        }
+        Button(onClick = onNavigateUp, modifier = Modifier.padding(top = 8.dp)) { Text(backLabel) }
+    }
+}
+
+@Preview(showBackground = true, name = "MealDetailScreen - Loading")
+@Composable
+private fun MealDetailLoadingPreview() {
+    val texts = Spanish.mealDetailTexts()
+    GoodLifeTheme {
+        MealDetailMessage(message = texts.loading, backLabel = texts.back, onNavigateUp = {})
+    }
+}
+
+@Preview(showBackground = true, name = "MealDetailScreen - NotFound")
+@Composable
+private fun MealDetailNotFoundPreview() {
+    val texts = Spanish.mealDetailTexts()
+    GoodLifeTheme {
+        MealDetailMessage(message = texts.notFound, backLabel = texts.back, onNavigateUp = {})
+    }
+}
+
+@Preview(showBackground = true, name = "MealDetailScreen - InvalidRoute")
+@Composable
+private fun MealDetailInvalidRoutePreview() {
+    val texts = Spanish.mealDetailTexts()
+    GoodLifeTheme {
+        MealDetailMessage(message = texts.invalidRoute, backLabel = texts.back, onNavigateUp = {})
+    }
+}
+
+@Preview(showBackground = true, name = "MealDetailScreen - Error")
+@Composable
+private fun MealDetailErrorPreview() {
+    val texts = Spanish.mealDetailTexts()
+    GoodLifeTheme {
+        MealDetailMessage(
+            message = Spanish.errorTexts.connectionError,
+            backLabel = texts.back,
+            onNavigateUp = {},
+            primaryActionLabel = texts.retry,
+            onPrimaryAction = {},
         )
     }
 }

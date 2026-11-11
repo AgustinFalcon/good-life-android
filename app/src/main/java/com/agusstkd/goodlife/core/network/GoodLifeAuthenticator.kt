@@ -1,9 +1,12 @@
 package com.agusstkd.goodlife.core.network
 
 import android.util.Log
+import com.agusstkd.goodlife.BuildConfig
+import com.agusstkd.goodlife.core.session.SessionCleanup
 import com.agusstkd.goodlife.core.session.SessionEventBus
+import com.agusstkd.goodlife.core.session.SessionExpiryPolicy
 import com.agusstkd.goodlife.core.storage.TokenManager
-import com.agusstkd.goodlife.data.remote.api.auth.AuthApiService
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -11,6 +14,7 @@ import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
+import okio.Buffer
 
 /**
  * Authenticator de OkHttp para refresh automático de access token.
@@ -32,19 +36,21 @@ import okhttp3.Route
  * ## Flujo:
  * ```
  * Request → 401 → authenticate()
- *   ├── Es endpoint /token → ya no hay cómo refrescar → logout → null
+ *   ├── Es /token grantType=refreshToken → logout → null
+ *   ├── Es /token grantType=password (login fallido) → null, sin wipe
+ *   ├── Es /token sin grantType legible y con refresh persistido → logout → null
  *   ├── Header X-Retry → retry post-refresh también falló → logout → null
  *   ├── Token ya fue renovado por otro thread → retry con token nuevo
  *   └── Sin renovar → refresh token → nuevo access token → retry request
  * ```
  *
  * @param tokenManager Gestión de tokens JWT
- * @param authApiService Lazy para romper dependencia circular con OkHttpClient/Retrofit.
- *                       Solo necesita [AuthApiService] porque el único endpoint que usa es refreshToken.
+ * @param tokenRefresher Lazy para romper dependencia circular con OkHttpClient/Retrofit.
  */
 class GoodLifeAuthenticator(
     private val tokenManager: TokenManager,
-    private val authApiService: Lazy<AuthApiService>
+    private val tokenRefresher: Lazy<TokenRefresher>,
+    private val sessionCleanup: SessionCleanup,
 ) : Authenticator {
 
     private val refreshMutex = Mutex()
@@ -54,23 +60,26 @@ class GoodLifeAuthenticator(
         // Devolver null aquí evita la recursión infinita:
         // authenticate() → refreshToken() → 401 → authenticate() → ...
         if (response.request.url.encodedPath.endsWith(TOKEN_ENDPOINT)) {
-            Log.w(TAG, "⛔ El endpoint de token retornó 401 — forzando logout.")
-            tokenManager.clearTokens()
-            SessionEventBus.emit(SessionEventBus.SessionEvent.SessionExpired)
+            val grantType = peekGrantType(response.request)
+            val hasRefresh = !tokenManager.getRefreshToken().isNullOrBlank()
+            if (SessionExpiryPolicy.shouldWipeSessionOnTokenEndpointFailure(grantType, hasRefresh)) {
+                Log.w(TAG, "⛔ Refresh en /token retornó 401 — forzando logout.")
+                forceLogout()
+            }
             return null
         }
 
         // Guarda 2: si ya hicimos un retry post-refresh y sigue fallando, logout.
         if (response.request.header(HEADER_RETRY) != null) {
             Log.w(TAG, "⛔ Retry tras refresh también falló — forzando logout.")
-            tokenManager.clearTokens()
-            SessionEventBus.emit(SessionEventBus.SessionEvent.SessionExpired)
+            forceLogout()
             return null
         }
 
         val refreshToken = tokenManager.getRefreshToken()
         if (refreshToken.isNullOrBlank()) {
             Log.w(TAG, "⚠️ No hay refresh token disponible.")
+            forceLogout()
             return null
         }
 
@@ -92,14 +101,10 @@ class GoodLifeAuthenticator(
                             .build()
                     }
 
-                    val result = authApiService.value.refreshToken(
-                        grantType = GRANT_TYPE_REFRESH,
-                        refreshToken = refreshToken
-                    )
-
-                    val newAccessToken = result.data?.accessToken
+                    val newAccessToken = tokenRefresher.value.refreshAccessToken(refreshToken)
                     if (newAccessToken == null) {
-                        Log.w(TAG, "⚠️ Refresh respondió sin access token (code=${result.code}).")
+                        Log.w(TAG, "⚠️ Refresh respondió sin access token.")
+                        forceLogoutSuspended()
                         return@withLock null
                     }
 
@@ -113,10 +118,37 @@ class GoodLifeAuthenticator(
                         .build()
                 }
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
-            Log.e(TAG, "❌ Error durante refresh token.", e)
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "Refresh token failed", e)
+            } else {
+                Log.e(TAG, "Refresh token failed")
+            }
+            forceLogout()
             null
         }
+    }
+
+    private fun peekGrantType(request: Request): String? {
+        val body = request.body ?: return null
+        return try {
+            val buffer = Buffer()
+            body.writeTo(buffer)
+            SessionExpiryPolicy.grantTypeFromFormBody(buffer.readUtf8())
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    private fun forceLogout() {
+        runBlocking { forceLogoutSuspended() }
+    }
+
+    private suspend fun forceLogoutSuspended() {
+        sessionCleanup.clearBestEffort()
+        SessionEventBus.emit(SessionEventBus.SessionEvent.SessionExpired)
     }
 
     companion object {
@@ -124,7 +156,6 @@ class GoodLifeAuthenticator(
         private const val HEADER_AUTH = "Authorization"
         private const val BEARER_PREFIX = "Bearer "
         private const val HEADER_RETRY = "X-Retry-After-Refresh"
-        private const val GRANT_TYPE_REFRESH = "refreshToken"
         private const val ACCESS_TOKEN_DURATION_MS = 30 * 60 * 1000L
         private const val TOKEN_ENDPOINT = "/api/v1/token"
     }
