@@ -56,7 +56,7 @@ User intents are `WorkoutDetailUiAction`: `OnRetry`, `OnNotesChange`, `OnSetFiel
 
 Daily items keep workout facts (`routineName`, `exerciseCount`, `dayOrder`) on the domain model and Room v3 cache. Copy is applied in the ViewModel with `WorkoutTexts`. `GET /api/v1/meal-plans` has no `date` query; `MealPlanRepositoryImpl` recorta al día.
 
-Contract: `sdd/wip/20261106-android-finish-workout-session/` (CU-19 reconfirmed against R-03).
+Contract: `sdd/features/20261106-android-finish-workout-session/` (CU-19 reconfirmed against R-03).
 
 ## SDD ownership
 
