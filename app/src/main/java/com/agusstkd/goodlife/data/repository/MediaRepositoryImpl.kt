@@ -1,7 +1,7 @@
 package com.agusstkd.goodlife.data.repository
 
 import android.content.Context
-import android.net.Uri
+import androidx.core.net.toUri
 import com.agusstkd.goodlife.core.result.Result
 import com.agusstkd.goodlife.data.remote.api.executeApiCall
 import com.agusstkd.goodlife.data.remote.api.media.MediaApiService
@@ -26,7 +26,7 @@ class MediaRepositoryImpl(
 
     override suspend fun uploadImage(image: LocalImageRef, folder: String): Result<String> {
         return try {
-            val imageUri = Uri.parse(image.value)
+            val imageUri = image.value.toUri()
             val bytes = context.contentResolver.openInputStream(imageUri)?.use { it.readBytes() }
                 ?: return Result.Error(Exception("Unable to read image"))
 

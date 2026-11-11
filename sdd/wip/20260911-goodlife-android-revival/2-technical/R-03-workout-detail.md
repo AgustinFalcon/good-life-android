@@ -1,6 +1,6 @@
 # R-03 — Workout detail contract
 
-> **Delta de finish (2026-11-06):** la sesión real (reloj, duración, RPE, sets editables) está especificada e implementada en `sdd/wip/20261106-android-finish-workout-session/`. Ese feature reconfirma CU-19 y sustituye el POST de plantilla. Carga, notes, Lottie y navegación de este R-03 siguen vigentes.
+> **Delta de finish (2026-11-06):** la sesión real (reloj, duración, RPE, sets editables) está especificada e implementada en `sdd/features/20261106-android-finish-workout-session/`. Ese feature reconfirma CU-19 y sustituye el POST de plantilla. Carga, notes, Lottie y navegación de este R-03 siguen vigentes.
 
 ## Scope
 

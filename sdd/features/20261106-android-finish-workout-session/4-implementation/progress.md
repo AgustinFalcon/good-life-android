@@ -8,4 +8,5 @@
 - 2026-11-06: `/sdd.plan` express sequential — 8 tasks in `3-tasks/tasks.json`.
 - 2026-11-06: `/sdd.build` — sesión real implementada (reloj, sets editables, RPE, finishError, FakeDateProvider.advance). Tests targeted en verde.
 - 2026-11-06: Labels de set (`setWeightLabel` / `setRepsLabel` / `setRpeLabel`) en AppLanguage; `WorkoutSetField.label` es la única fuente. Tests ES/EN/PT.
-- 2026-11-10: Listo para PR en `feature/android-finish-workout`. En la misma rama (fuera de esta spec) quedaron los fixes de smoke Daily/Meals: calendario reutilizable, reload al resume, contrato meal-plans (`mealName`/`daysOfWeek`), `MealType.AFTERNOON_SNACK`. Campana y rediseño FAB siguen pendientes de producto. `/sdd.finish` no archiva este feature en este paso.
+- 2026-11-10: Listo para PR en `feature/android-finish-workout`. En la misma rama (fuera de esta spec) quedaron los fixes de smoke Daily/Meals: calendario reutilizable, reload al resume, contrato meal-plans (`mealName`/`daysOfWeek`), `MealType.AFTERNOON_SNACK`. Campana y rediseño FAB siguen pendientes de producto.
+- 2026-11-11: Cimientos de dominio/sesión mergeados (#73 → #72 → `master`, `36abdd5`). `/sdd.finish` archiva este feature a `sdd/features/`.

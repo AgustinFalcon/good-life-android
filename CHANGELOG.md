@@ -16,7 +16,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 ### Added
 - Los inputs de set en Workout Detail muestran label AppLanguage (`WorkoutSetField.label`: peso/reps/RPE) en ES/EN/PT.
 - Workout Detail registra la sesión real al terminar: reloj `DateProvider`, `durationMinutes` ≥ 1, sets editables (peso/reps/RPE vía `PerceivedExertion`), anti doble tap y error de POST en Content (`finishFailed`). GET sigue en `Error`/`NotFound`.
-- Spec SDD `sdd/wip/20261106-android-finish-workout-session/`: sesión real al terminar workout (reloj, duración, RPE, sets editables). Reconfirma CU-19.
+- Spec SDD `sdd/features/20261106-android-finish-workout-session/`: sesión real al terminar workout (reloj, duración, RPE, sets editables). Reconfirma CU-19.
 - Workout Detail declara `WorkoutDetailUiAction` (`OnRetry`, `OnFinishWorkout`, `OnNotesChange`) y muestra el botón “Terminar workout” (ES/EN/PT).
 - El detalle de workout permite feedback de sesión (`Content.notes` + campo multiline). `FinishWorkoutDraft.notes` es `String` no null (vacío si el usuario no escribió). El ViewModel arma el draft desde campos privados de dominio y lee `notes` desde UiState.
 - Tras `FinishWorkoutResult.Success`, `Content.finished` pasa a `true` y el detalle muestra `SuccessDialog` (Lottie `success_animation`). Al terminar la animación se vuelve atrás con `onNavigateUp`.
@@ -41,6 +41,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - Se eliminaron nueve strings legacy de Daily, tabs y registro tras verificar que el copy canónico vive en `UiTexts`; launcher y compatibilidad permanecen explícitamente retenidos en la issue #38 (PR #44 mergeada).
 
 ### Fixed
+- Lint CI: `Uri.parse` en la subida de foto usa `toUri()` (UseKtx) y se retira la deuda `ModifierParameter` de `MacrosSummaryCard` ya resuelta.
 - Si `GET /me` o persistir el usuario falla tras `saveTokens`, el login hace rollback de sesión local. Create Task no pega a red sin fecha (ONCE) ni sin días (RECURRENT).
 - Un PATCH fallido del Diario deja la lista y muestra el error en Success; no reemplaza por Error full-screen. SKIPPED cuenta en el completion rate. Macros de comida del Daily se formatean en el VM. El bus de sesión y la navegación no tiran el evento ni crashean si el buffer está lleno.
 - Diario descarta un GET anterior a un toggle (`dataGeneration`) sin bloquear la navegación de fecha; el Authenticator limpia tokens, biométrica, usuario y cache Daily al expirar la sesión. Create Habit no cae a `CUSTOM` si falta categoría. Finish Workout libera `isFinishing` si el use case lanza. Daily/Meals Screen arman el `DateHeader` y leen `completionRate`/`completedCount` del ViewModel.

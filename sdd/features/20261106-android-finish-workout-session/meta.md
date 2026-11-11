@@ -17,7 +17,8 @@
 | 1 — Functional Spec | ✅ Approved |
 | 2 — Technical Spec | ✅ Approved |
 | 3 — Tasks | ✅ Approved (express sequential) |
-| 4 — Implementation | ✅ Built (PR `feature/android-finish-workout`; `/sdd.finish` archive pending) |
+| 4 — Implementation | ✅ Complete — archived after PR #72/#73 merge |
+| Archive | ✅ `sdd/features/20261106-android-finish-workout-session` (2026-11-11) |
 
 stages:
   functional:

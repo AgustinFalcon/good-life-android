@@ -67,18 +67,6 @@
           "createdOn": "2026-09-15"
         },
         {
-          "fingerprint": "22f496daa3fe3328ff8ff7c48211a76c9ed47d0df3dac2a954fed649d8456c26",
-          "variant": "debug",
-          "ruleId": "ModifierParameter",
-          "relativePath": "app/src/main/java/com/agusstkd/goodlife/presentation/components/nutrition/MacrosSummaryCard.kt",
-          "message": "Modifier parameter should be the first optional parameter",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
           "fingerprint": "326f70e581f7d955a23bf4f6ffdcfeef9c0e02589b7a83bb03d01923b81ef914",
           "variant": "debug",
           "ruleId": "UnusedResources",
@@ -220,18 +208,6 @@
           "ruleId": "ObsoleteSdkInt",
           "relativePath": "app/src/main/res/mipmap-anydpi-v26",
           "message": "This folder configuration (`v26`) is unnecessary; `minSdkVersion` is 26. Merge all the resources in this folder into `mipmap-anydpi`.",
-          "classification": "investigate",
-          "owner": "android-maintainers",
-          "justification": "Pre-existing deterministic lint debt measured for issue #10.",
-          "linkedIssueOrPr": "#10",
-          "createdOn": "2026-09-15"
-        },
-        {
-          "fingerprint": "d51b1dd340c9dda771331e35189ace02b99b50baa6d64ce687288b1889b04902",
-          "variant": "release",
-          "ruleId": "ModifierParameter",
-          "relativePath": "app/src/main/java/com/agusstkd/goodlife/presentation/components/nutrition/MacrosSummaryCard.kt",
-          "message": "Modifier parameter should be the first optional parameter",
           "classification": "investigate",
           "owner": "android-maintainers",
           "justification": "Pre-existing deterministic lint debt measured for issue #10.",
