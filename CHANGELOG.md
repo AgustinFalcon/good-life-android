@@ -14,6 +14,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 - `CreateRoutineUseCase` valida con `CreateRoutineValidation` (tipo cerrado) y reglas strategy nombradas. El ViewModel traduce a `CreateRoutineTexts`; el dominio ya no emite copy.
 
 ### Added
+- Spec SDD `sdd/wip/20261112-android-stitch-tabs-redesign/`: alinear tabs Entrenar, Comida y Más a Stitch Vitality Flow. Guía y tareas para implementar en `feature/android-entrenar-stitch-tab` (luego comida y más). Código de Compose queda fuera de este commit.
 - Los inputs de set en Workout Detail muestran label AppLanguage (`WorkoutSetField.label`: peso/reps/RPE) en ES/EN/PT.
 - Workout Detail registra la sesión real al terminar: reloj `DateProvider`, `durationMinutes` ≥ 1, sets editables (peso/reps/RPE vía `PerceivedExertion`), anti doble tap y error de POST en Content (`finishFailed`). GET sigue en `Error`/`NotFound`.
 - Spec SDD `sdd/features/20261106-android-finish-workout-session/`: sesión real al terminar workout (reloj, duración, RPE, sets editables). Reconfirma CU-19.

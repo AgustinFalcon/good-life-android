@@ -58,6 +58,10 @@ Daily items keep workout facts (`routineName`, `exerciseCount`, `dayOrder`) on t
 
 Contract: `sdd/features/20261106-android-finish-workout-session/` (CU-19 reconfirmed against R-03).
 
+## Next contract — Stitch tabs
+
+`sdd/wip/20261112-android-stitch-tabs-redesign/` (guía: `IMPLEMENTATION-GUIDE.md`). Fase 1 Entrenar: el JSON `workouts[].dayOfWeek` es `dayOrder`, no ISO; emparejar como `DailyLogService`. Finish freeze no se toca (`SuccessDialog`, `notes` de sesión, RPE por set). `WorkoutsScreen` aún no tiene `PullToRefreshBox` (`OnRefresh` ya existe). Comida/Más/XP quedan en fases 2–4.
+
 ## SDD ownership
 
 `sdd/PROJECT.md` y `sdd/wip/20260911-goodlife-android-revival/` son el contrato de recovery Android versionado. Repo-minology feature 008 conserva la intención de producto transversal; el SDD externo del Desktop es solo insumo histórico.
