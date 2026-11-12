@@ -1,5 +1,19 @@
 # GoodLife Android — SDD project contract
 
+## vision
+
+summary: GoodLife es la app Android para registrar y completar el día: entrenos, comidas y hábitos, con progreso personal (XP, rachas, PRs).
+target_users: Personas que entrenan y comen con un plan, en español rioplatense, sin red social.
+value_proposition: Un solo lugar para ver qué entrenar, qué comer y qué hábitos completar hoy, con diseño Vitality Flow.
+principles:
+  - Diseño Stitch Vitality Flow (menta, voseo, sin campana).
+  - Tipos cerrados (MealType, DailyItemStatus, DifficultyLevel, GoalType, niveles XP) — nada de strings mágicos.
+  - Reusar pantallas Stitch ya existentes (Diario, agua, wizards) — no rediseñar de cero.
+anti_goals:
+  - Ranking social entre usuarios.
+  - Campana / notificaciones hasta que exista librería de backend.
+  - Inventar metas (kcal, semanas, minutos) que el API no envía.
+
 ## Ownership and precedence
 
 This directory is the versioned source of truth for Android revival work in this repository. Product intent lives in Repo-minology feature 008; implementation truth is the checked-in code, Gradle configuration, tests, and reviewed pull-request evidence. The Desktop `../../sdd` directory is historical input only and must not drive implementation without reconfirmation.

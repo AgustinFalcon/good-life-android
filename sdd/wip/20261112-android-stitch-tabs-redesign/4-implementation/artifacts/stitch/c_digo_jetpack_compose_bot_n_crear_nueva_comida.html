@@ -1,0 +1,64 @@
+```kotlin
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+/**
+ * Botón "+ Crear nueva comida" para el flujo de nutrición de GoodLife.
+ * 
+ * Especificaciones:
+ * - Color de acento: #F57C00 (Naranja Nutrición)
+ * - Redondeo: 12.dp (RoundedCornerShape)
+ * - Fuente: Inter / Material3 Typography
+ */
+@Composable
+fun CreateNewMealButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val nutritionOrange = Color(0xFFF57C00)
+    
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .padding(horizontal = 16.dp),
+        shape = RoundedCornerShape(12.dp),
+        border = androidx.compose.foundation.BorderStroke(
+            width = 1.5.dp,
+            color = nutritionOrange.copy(alpha = 0.5f) // Borde sutil
+        ),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = nutritionOrange
+        )
+    ) {
+        Icon(
+            imageVector = Icons.Default.Add,
+            contentDescription = null,
+            modifier = Modifier.padding(end = 8.dp)
+        )
+        Text(
+            text = "Crear nueva comida".uppercase(),
+            style = androidx.compose.ui.text.TextStyle(
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 0.5.sp
+            )
+        )
+    }
+}
+```

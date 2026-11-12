@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Detalle de Comida - Bowl de Quinoa</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "nutrition-orange": "#FF6B35",
+                        "protein": "#4ade80",
+                        "carbs": "#60a5fa",
+                        "fats": "#fbbf24",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen pb-24">
+<!-- Top App Bar -->
+<nav class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-4 py-3 flex items-center justify-between border-b border-slate-200 dark:border-slate-800">
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold">Detalle de Comida</h1>
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+</nav>
+<!-- Hero Image Section -->
+<div class="px-4 py-4">
+<div class="relative h-64 w-full rounded-xl overflow-hidden shadow-lg group">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<img alt="Bowl de Quinoa y Pollo" class="w-full h-full object-cover" data-alt="Healthy quinoa bowl with chicken and vegetables" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgRQ2c_JWJlir4fOSOA-l6Jbc6ulHn3uBB9f3cEk07AZQk_zaerHwC_khZvlNntjNOqZL5W33ZPWKBW9uZHeHoftc9RPS__DtSQK9tfZfczmVyzabfGEsP1YMktSpLd0E0Oefbmj8-Fv7EOkwTc5LarjbOcwrLg_9UFKDmI4pp9ixKIAAVWWi1Q9JVAP2L5TrAgur55Egi3IA0isIGsMrIHCNvEDDDWw5ZLN1S44eEyGDQ3F05HzzFRttlGQxL0v71sxjzaIsvjAs"/>
+<div class="absolute bottom-4 left-4 right-4 text-white">
+<h2 class="text-2xl font-bold leading-tight">Bowl de Quinoa y Pollo</h2>
+<div class="flex items-center gap-2 mt-1 text-sm opacity-90">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>20 min</span>
+<span class="mx-1">•</span>
+<span class="material-symbols-outlined text-sm">local_fire_department</span>
+<span>450 kcal</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Macros Section (Circular Indicators) -->
+<div class="px-4 py-6">
+<div class="bg-white dark:bg-slate-900 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-800">
+<h3 class="text-base font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">analytics</span>
+                Macronutrientes
+            </h3>
+<div class="grid grid-cols-3 gap-4">
+<!-- Protein -->
+<div class="flex flex-col items-center">
+<div class="relative size-20 flex items-center justify-center">
+<svg class="size-full" viewbox="0 0 36 36">
+<circle class="stroke-slate-100 dark:stroke-slate-800" cx="18" cy="18" fill="none" r="16" stroke-width="3"></circle>
+<circle class="stroke-protein" cx="18" cy="18" fill="none" r="16" stroke-dasharray="75, 100" stroke-linecap="round" stroke-width="3"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-sm font-bold">45g</span>
+</div>
+</div>
+<span class="text-xs mt-2 font-medium text-slate-500 dark:text-slate-400">Proteína</span>
+</div>
+<!-- Carbs -->
+<div class="flex flex-col items-center">
+<div class="relative size-20 flex items-center justify-center">
+<svg class="size-full" viewbox="0 0 36 36">
+<circle class="stroke-slate-100 dark:stroke-slate-800" cx="18" cy="18" fill="none" r="16" stroke-width="3"></circle>
+<circle class="stroke-carbs" cx="18" cy="18" fill="none" r="16" stroke-dasharray="40, 100" stroke-linecap="round" stroke-width="3"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-sm font-bold">32g</span>
+</div>
+</div>
+<span class="text-xs mt-2 font-medium text-slate-500 dark:text-slate-400">Carbos</span>
+</div>
+<!-- Fats -->
+<div class="flex flex-col items-center">
+<div class="relative size-20 flex items-center justify-center">
+<svg class="size-full" viewbox="0 0 36 36">
+<circle class="stroke-slate-100 dark:stroke-slate-800" cx="18" cy="18" fill="none" r="16" stroke-width="3"></circle>
+<circle class="stroke-fats" cx="18" cy="18" fill="none" r="16" stroke-dasharray="25, 100" stroke-linecap="round" stroke-width="3"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-sm font-bold">12g</span>
+</div>
+</div>
+<span class="text-xs mt-2 font-medium text-slate-500 dark:text-slate-400">Grasas</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Customize Action -->
+<div class="px-4 mb-6">
+<button class="w-full flex items-center justify-between bg-primary/10 dark:bg-primary/20 text-primary border border-primary/20 p-4 rounded-xl hover:bg-primary/15 transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">tune</span>
+<span class="font-bold">Personalizar ingredientes</span>
+</div>
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<!-- Ingredients List -->
+<div class="px-4 space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="text-lg font-bold">Ingredientes</h3>
+<span class="text-sm text-slate-500">4 unidades</span>
+</div>
+<!-- Ingredient Card: Quinoa -->
+<div class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-4">
+<div class="size-16 rounded-lg overflow-hidden shrink-0">
+<img alt="Quinoa" class="w-full h-full object-cover" data-alt="Raw organic quinoa in a bowl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkTpxzbOvC2zayOuS_ccUMc1lDqizzQ1vz942fnHXqrKz8GTyvqtnbO8t9VVZF1ApTEWf6iUep4dcXxF6VVCWDUya9hHvmmeDqhVE7iBj-v0oKhvnKQKpmgni7nc7NIr94C5RUNLVlEni4xK-CKyejFdEuSgKpFqEkkuAM13Hk8rx1U3zs2fZMxd72H4TEWVEva6r4iotqNkgGf8ZkPrIDbKdSEKajk8fR36B5ov2N5pSB2kNw7q6kIJuZnQ9KRXlZJtFGdOxdwuI"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-bold text-slate-900 dark:text-slate-100">Quinoa Blanca</p>
+<p class="text-sm text-slate-500">1/2 taza (80g)</p>
+</div>
+<div class="flex gap-1">
+<span class="size-2 rounded-full bg-carbs" title="Carbs"></span>
+<span class="size-2 rounded-full bg-protein/50" title="Traces of protein"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Ingredient Card: Chicken -->
+<div class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-4">
+<div class="size-16 rounded-lg overflow-hidden shrink-0">
+<img alt="Pechuga de Pollo" class="w-full h-full object-cover" data-alt="Grilled chicken breast slices" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCvd8Q_6s4dEC3RDpEe-aNb2itrUaff0y5rUZcerf9dNpKp6ZMwLm5LgbaeCEnUIJ_08qNkEcATt4wiOOtPrNM4moSWyeEmja5uJVuYEk01HB-BKskCAQxtUdbsmR_GkayyCkBQR0f_mWaA1x4XCdTGowd56gUm0oQMYAYNSG1-J0t9ThMCTZGxmAwS0OFHytF9hRKG9K3o_BlHCX_aKhY1rxiJ26LPRlvNb4esLMMkXArNwa-vW6gP2MnsFQdu-h0qIiLghbUf_c"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-bold text-slate-900 dark:text-slate-100">Pechuga de Pollo</p>
+<p class="text-sm text-slate-500">120g a la plancha</p>
+</div>
+<div class="flex gap-1">
+<span class="size-2 rounded-full bg-protein" title="Protein"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Ingredient Card: Avocado -->
+<div class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-4">
+<div class="size-16 rounded-lg overflow-hidden shrink-0">
+<img alt="Aguacate" class="w-full h-full object-cover" data-alt="Fresh sliced avocado" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDzxjF4BXn8GMe02CAxL8V0g2abCw-7zQeUhDcI82SoMUpemVV0jkEPo5ao1bpKoGHFUPyLDbz9Dl5WecW38bZgDYNrkgXNcHv1_kZy49UfRL5Z3LwgN-TU5XEpuQul_tTLJZKDYqeBUMr47oN1-rWXd89ohhHwvz7u24mBGKoVWmQ9Fie8Is0La57hKzyVz2lWJH_vmXax2SD6G2Si_2ptUuFezY3SYhPX9rUMi3da7m00GF1U_AgLNKGSWOyjqyU66T2aDhuKcc"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-bold text-slate-900 dark:text-slate-100">Aguacate</p>
+<p class="text-sm text-slate-500">1/4 de pieza (40g)</p>
+</div>
+<div class="flex gap-1">
+<span class="size-2 rounded-full bg-fats" title="Fats"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Ingredient Card: Spinach -->
+<div class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-4">
+<div class="size-16 rounded-lg overflow-hidden shrink-0">
+<img alt="Espinacas" class="w-full h-full object-cover" data-alt="Fresh green baby spinach leaves" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhd9Jt6qRQZKTvSDFJKvAIrVV_D3UbYR5CZvt27SQrj5wK9CqfAS81yvoODYCq9glxzucswWSixPwjHieYjXo7Ry-o7nYf3Rib8qRKv_CwCsp9ZxaDozRTxlxnuq9TvIQ6rxOr_3CiC_iPd7yrbk1j-7ekIiDEt4GFPnXxGsYyfToRg2ihf_VIxjb-t-8j_Kr1DWT2wsnULtQvCc14YYNm2qepaQrYUKqKEG29IQimu_vow4hDdpC46OGQTyTeCKxWaLUJ-duZcbs"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-bold text-slate-900 dark:text-slate-100">Espinaca Baby</p>
+<p class="text-sm text-slate-500">1 taza (30g)</p>
+</div>
+<div class="flex gap-1">
+<span class="size-2 rounded-full bg-slate-400" title="Micros"></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Action Button at Bottom -->
+<div class="fixed bottom-0 left-0 right-0 p-4 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800">
+<div class="max-w-md mx-auto flex gap-3">
+<button class="flex-1 h-12 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/25 transition-transform active:scale-95">
+<span class="material-symbols-outlined">add</span>
+                Agregar al Plan
+            </button>
+<button class="size-12 bg-slate-200 dark:bg-slate-800 rounded-xl flex items-center justify-center hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<!-- Overlay / Background Screen (Paso 3) -->
+<div class="fixed inset-0 bg-slate-900/40 z-0">
+<div class="p-6">
+<h1 class="text-2xl font-bold opacity-50">Resumen de Entrenamiento</h1>
+<div class="mt-4 space-y-4 opacity-50">
+<div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+<p class="font-semibold">Press de Banca</p>
+<p class="text-sm">3 sets completados</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Sheet Container -->
+<div class="fixed inset-x-0 bottom-0 z-50 flex flex-col justify-end h-full">
+<!-- Backdrop Backdrop for the sheet specifically -->
+<div class="absolute inset-0 bg-black/20"></div>
+<!-- The Bottom Sheet (80% height) -->
+<div class="relative w-full h-[80%] bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl flex flex-col overflow-hidden">
+<!-- Handle -->
+<div class="flex h-8 w-full items-center justify-center shrink-0">
+<div class="h-1.5 w-12 rounded-full bg-slate-300 dark:bg-slate-700"></div>
+</div>
+<!-- Header -->
+<div class="px-6 py-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 shrink-0">
+<div class="flex items-center gap-4">
+<div class="size-14 rounded-xl bg-cover bg-center" data-alt="Close up of a barbell bench press exercise" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDKMrqyI1T6TWogt4BAERoyXh3UVstSnjXokrZ0FvwTD0inV3xI_t9e0jBwEK_fI7ZhrH7lux_yWh5iMJhNwD4rMQXFUJoU-w6UQzkOhvUdvxHZNDguVvrCHxYKGvXchbkJlsQZPFHtJ4f8CjDIklxY-iVxy_0wUYECFX_w-6INv9_FPlzthtFSxnW6bsfrnBwEYYkwo2JPlHRXUAWPdmMLx7fbyJl9YrHL_iYnX7bpRMalQLz1__DHg93AN6eW3U8BsvdQZnoSfW4");'></div>
+<div>
+<h2 class="text-xl font-bold text-slate-900 dark:text-white">Press de Banca</h2>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                            Pecho
+                        </span>
+</div>
+</div>
+<button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full">
+<span class="material-symbols-outlined text-slate-500">more_vert</span>
+</button>
+</div>
+<!-- Content Area (Scrollable) -->
+<div class="flex-1 overflow-y-auto px-6 py-4">
+<!-- Sets Table Header -->
+<div class="grid grid-cols-12 gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-2">
+<div class="col-span-1 text-center">#</div>
+<div class="col-span-4 text-center">Reps</div>
+<div class="col-span-5 text-center">Peso (kg)</div>
+<div class="col-span-2 text-right"></div>
+</div>
+<!-- Set Rows -->
+<div class="space-y-3">
+<!-- Row 1 -->
+<div class="grid grid-cols-12 gap-2 items-center bg-slate-50 dark:bg-slate-800/50 p-2 rounded-xl border border-slate-100 dark:border-slate-800">
+<div class="col-span-1 text-center font-bold text-slate-500">1</div>
+<div class="col-span-4">
+<input class="w-full text-center bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-primary focus:border-primary text-sm" type="number" value="12"/>
+</div>
+<div class="col-span-5">
+<input class="w-full text-center bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-primary focus:border-primary text-sm" type="number" value="60"/>
+</div>
+<div class="col-span-2 flex justify-end">
+<button class="text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="grid grid-cols-12 gap-2 items-center bg-slate-50 dark:bg-slate-800/50 p-2 rounded-xl border border-slate-100 dark:border-slate-800">
+<div class="col-span-1 text-center font-bold text-slate-500">2</div>
+<div class="col-span-4">
+<input class="w-full text-center bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-primary focus:border-primary text-sm" type="number" value="10"/>
+</div>
+<div class="col-span-5">
+<input class="w-full text-center bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-primary focus:border-primary text-sm" type="number" value="65"/>
+</div>
+<div class="col-span-2 flex justify-end">
+<button class="text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="grid grid-cols-12 gap-2 items-center bg-slate-50 dark:bg-slate-800/50 p-2 rounded-xl border border-slate-100 dark:border-slate-800">
+<div class="col-span-1 text-center font-bold text-slate-500">3</div>
+<div class="col-span-4">
+<input class="w-full text-center bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-primary focus:border-primary text-sm" type="number" value="8"/>
+</div>
+<div class="col-span-5">
+<input class="w-full text-center bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-primary focus:border-primary text-sm" type="number" value="70"/>
+</div>
+<div class="col-span-2 flex justify-end">
+<button class="text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+</div>
+<!-- Add Set Button -->
+<button class="w-full py-3 flex items-center justify-center gap-2 border-2 border-dashed border-emerald-500/50 rounded-xl text-emerald-600 font-semibold hover:bg-emerald-50 transition-colors">
+<span class="material-symbols-outlined">add</span>
+<span>Agregar set</span>
+</button>
+</div>
+<!-- Notes Field -->
+<div class="mt-8">
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Notas</label>
+<textarea class="w-full rounded-2xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-primary focus:border-primary placeholder:text-slate-400 text-sm" placeholder="Ej: Usar agarre cerrado" rows="3"></textarea>
+</div>
+</div>
+<!-- Footer Buttons -->
+<div class="p-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
+<div class="flex gap-4">
+<button class="flex-1 px-6 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                        Cancelar
+                    </button>
+<button class="flex-[1.5] px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all active:scale-95">
+                        Confirmar
+                    </button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

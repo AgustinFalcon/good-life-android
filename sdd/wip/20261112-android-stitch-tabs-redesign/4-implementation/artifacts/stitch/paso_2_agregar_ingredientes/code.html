@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Paso 2 — Agregar Ingredientes</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-fixed": "#001d34",
+                        "error": "#ba1a1a",
+                        "secondary": "#00629d",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#572800",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#fff8f6",
+                        "on-secondary-fixed-variant": "#004a78",
+                        "primary": "#964900",
+                        "surface": "#fff8f6",
+                        "inverse-surface": "#362f2c",
+                        "surface-container": "#f8ebe6",
+                        "on-surface-variant": "#574235",
+                        "primary-fixed": "#ffdcc6",
+                        "outline": "#8b7263",
+                        "on-surface": "#201a17",
+                        "background": "#fff8f6",
+                        "primary-container": "#f57c00",
+                        "secondary-container": "#4fafff",
+                        "surface-container-high": "#f2e6e0",
+                        "on-tertiary-container": "#5e006f",
+                        "on-secondary-container": "#004069",
+                        "secondary-fixed-dim": "#99cbff",
+                        "surface-variant": "#ede0db",
+                        "on-background": "#201a17",
+                        "surface-container-low": "#fef1ec",
+                        "on-primary-fixed-variant": "#723600",
+                        "on-primary-fixed": "#311300",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#780e8c",
+                        "tertiary-fixed": "#ffd6ff",
+                        "surface-tint": "#964900",
+                        "inverse-on-surface": "#fbeee9",
+                        "primary-fixed-dim": "#ffb786",
+                        "on-tertiary-fixed": "#350040",
+                        "surface-container-highest": "#ede0db",
+                        "tertiary-container": "#dc74ec",
+                        "tertiary": "#9431a6",
+                        "secondary-fixed": "#cfe5ff",
+                        "on-tertiary": "#ffffff",
+                        "inverse-primary": "#ffb786",
+                        "outline-variant": "#dec1af",
+                        "surface-dim": "#e4d8d2",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#f8acff"
+                    },
+                    fontFamily: {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface antialiased min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="flex items-center justify-between px-6 h-16 w-full fixed top-0 z-50 bg-[#fef1ec] dark:bg-stone-900/50">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-[#964900] dark:text-[#f57c00] hover:bg-[#ede0db]/50 p-2 rounded-full transition-all active:opacity-80 scale-95">
+                arrow_back
+            </button>
+<h1 class="font-headline font-bold text-lg tracking-tight text-[#964900] dark:text-[#f57c00]">Nueva Comida</h1>
+</div>
+<div class="px-3 py-1 bg-primary-container text-on-primary-container rounded-full text-[10px] font-bold tracking-widest uppercase">
+            COMIDA
+        </div>
+</header>
+<main class="pt-20 px-6 max-w-[430px] mx-auto">
+<!-- Progress Bar -->
+<div class="mb-6">
+<div class="flex justify-between items-center mb-2">
+<span class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Paso 2 de 3</span>
+<span class="text-xs font-bold text-primary">66%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-primary-container w-2/3 rounded-full"></div>
+</div>
+</div>
+<!-- Sticky Macro Card -->
+<div class="bg-[#FFF3E0] rounded-2xl p-5 mb-8 shadow-sm border border-[#FF7043]/10">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-[#FF7043]" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="font-headline font-extrabold text-2xl text-[#FF7043]">420 kcal</span>
+</div>
+<div class="grid grid-cols-3 gap-3">
+<div class="bg-white/60 backdrop-blur rounded-xl p-3 flex flex-col items-center">
+<span class="text-xs font-bold text-secondary mb-1">PROTEÍNA</span>
+<span class="font-headline font-bold text-[#004a78]">35g</span>
+</div>
+<div class="bg-white/60 backdrop-blur rounded-xl p-3 flex flex-col items-center">
+<span class="text-xs font-bold text-amber-600 mb-1">CARBOS</span>
+<span class="font-headline font-bold text-amber-800">40g</span>
+</div>
+<div class="bg-white/60 backdrop-blur rounded-xl p-3 flex flex-col items-center">
+<span class="text-xs font-bold text-purple-600 mb-1">GRASAS</span>
+<span class="font-headline font-bold text-purple-900">12g</span>
+</div>
+</div>
+</div>
+<!-- Search Bar -->
+<div class="relative mb-6">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-[#F5F5F5] border-none rounded-xl py-4 pl-12 pr-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Buscar ingredientes..." type="text"/>
+</div>
+<!-- Filter Chips -->
+<div class="flex gap-2 overflow-x-auto pb-4 mb-6 hide-scrollbar">
+<button class="whitespace-nowrap px-5 py-2 rounded-full bg-primary text-white font-semibold text-sm shadow-md">Todos</button>
+<button class="whitespace-nowrap px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-semibold text-sm hover:bg-surface-variant transition-colors">Alto en Proteína 💪</button>
+<button class="whitespace-nowrap px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-semibold text-sm hover:bg-surface-variant transition-colors">Bajo en Carbos</button>
+<button class="whitespace-nowrap px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-semibold text-sm hover:bg-surface-variant transition-colors">Alto en Fibra</button>
+<button class="whitespace-nowrap px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-semibold text-sm hover:bg-surface-variant transition-colors">Custom 👤</button>
+</div>
+<!-- Section Divider -->
+<div class="flex justify-between items-end mb-6">
+<h2 class="font-headline font-bold text-lg text-on-surface">Catálogo de ingredientes</h2>
+<span class="text-xs font-medium text-on-surface-variant mb-1">128 resultados</span>
+</div>
+<!-- Ingredient List -->
+<div class="space-y-4">
+<!-- Ingredient Card 1 -->
+<div class="bg-surface-container-lowest p-4 rounded-2xl flex gap-4 items-center shadow-sm hover:shadow-md transition-shadow">
+<div class="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0">
+<img alt="Pechuga de pollo" class="w-full h-full object-cover" data-alt="Close-up of a grilled organic chicken breast on a white minimalist plate with subtle herbs and steam" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCh4V7MRW-LPX2iRQpakR2AUHEs6bixXOsg_xUbSO_U0DkKFnJwyLs2W1W0QKqezpMpPPWFga08YolnVtZiQb_22DtO0EKv-RCr1DcgquuScVLXJ7Q4bSJkTd8ruNvE5anx2PWdfE6G8C3554SSGqrrF1LeA8qbSm6uLpy-u1KOLYRRR6QTM_mfvJ_VFrjbDsmVdzH2tAmb8Up-0szA5YDpDy7YhMOkKjbH1YH_XZ2xrakwowFj04lSx7A7EVi5YKkhFNqZdk1Su3k"/>
+</div>
+<div class="flex-grow min-w-0">
+<h3 class="font-bold text-sm truncate">Pechuga de Pollo</h3>
+<p class="text-[11px] text-on-surface-variant mb-2">100g • 165 kcal</p>
+<div class="flex items-center gap-2">
+<div class="flex-grow h-1.5 bg-surface-variant rounded-full overflow-hidden flex">
+<div class="h-full bg-secondary w-[70%]"></div>
+<div class="h-full bg-amber-400 w-[5%]"></div>
+<div class="h-full bg-purple-500 w-[25%]"></div>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant whitespace-nowrap">P 31g C 0g G 4g</span>
+</div>
+</div>
+<button class="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined font-bold">add</span>
+</button>
+</div>
+<!-- Ingredient Card 2 (Selected) -->
+<div class="bg-surface-container-lowest p-4 rounded-2xl flex gap-4 items-center border-2 border-primary-container shadow-md">
+<div class="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0">
+<img alt="Arroz integral" class="w-full h-full object-cover" data-alt="Macro photo of cooked brown rice grains in a ceramic bowl with warm natural lighting and soft shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAENcX5gSzk-Tpf-Qqw37_ZQCIFMmQFEPDdvh0QoxzfrtO_CD02lb_PcG-WdF6A66HSLK-W-ao_EHoJUoFyYKirDFAO-reS03p2eJf94wc2nznjiiKIPXxQXlcWobkP0ntF81r1twLxPte9_YdEhDSx9TQ8CFjORTqWwgXSwQGhycP6y_rVBq7IWyWHPq4V0Mg_BxKFqtNLfsKtDuJB4m_NsP0VhoguFneV0fYOn2OoH609ABsyxy7-FWVZSvZV1IsrtfOtB8Q9G7Q"/>
+</div>
+<div class="flex-grow min-w-0">
+<h3 class="font-bold text-sm truncate">Arroz Integral</h3>
+<p class="text-[11px] text-on-surface-variant mb-2">100g • 111 kcal</p>
+<div class="flex items-center gap-2">
+<div class="flex-grow h-1.5 bg-surface-variant rounded-full overflow-hidden flex">
+<div class="h-full bg-secondary w-[10%]"></div>
+<div class="h-full bg-amber-400 w-[85%]"></div>
+<div class="h-full bg-purple-500 w-[5%]"></div>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant whitespace-nowrap">P 3g C 23g G 1g</span>
+</div>
+</div>
+<button class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-white">
+<span class="material-symbols-outlined font-bold">check</span>
+</button>
+</div>
+<!-- Ingredient Card 3 -->
+<div class="bg-surface-container-lowest p-4 rounded-2xl flex gap-4 items-center shadow-sm hover:shadow-md transition-shadow">
+<div class="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0">
+<img alt="Aguacate" class="w-full h-full object-cover" data-alt="Slices of fresh ripe avocado on a neutral background with a clean editorial food photography style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAD1W4w9LVtvnR-3LZczEOEfComEaNz3W2e4yEdsv6Kkp3cydsEMvninjKUmhrx5SMMYe8bf_eX4XH83O3JVV__ifjwofR3dw-7Ir9BLpv0yeXol9Mx_YezWUfcovxzxDpLtY9TwzLfTxTpWVYW1ZlQHwbTN2d16kWbRsZuC0HeERHho7_skeTA14sDLb5FVqcpAL1oJUfPU9S2BE65TeqxPGJRuI_q1g5s-JrUmq4ZNRkDWlh3EX0UPQxMl8Vo-jEKH7Q_oN_T-jE"/>
+</div>
+<div class="flex-grow min-w-0">
+<h3 class="font-bold text-sm truncate">Aguacate Hass</h3>
+<p class="text-[11px] text-on-surface-variant mb-2">50g • 80 kcal</p>
+<div class="flex items-center gap-2">
+<div class="flex-grow h-1.5 bg-surface-variant rounded-full overflow-hidden flex">
+<div class="h-full bg-secondary w-[5%]"></div>
+<div class="h-full bg-amber-400 w-[15%]"></div>
+<div class="h-full bg-purple-500 w-[80%]"></div>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant whitespace-nowrap">P 1g C 4g G 7g</span>
+</div>
+</div>
+<button class="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined font-bold">add</span>
+</button>
+</div>
+</div>
+<!-- Custom Ingredient Button -->
+<button class="w-full mt-8 py-4 border-2 border-dashed border-outline-variant rounded-2xl text-primary font-bold text-sm hover:bg-primary/5 transition-colors">
+            + Crear ingrediente personalizado
+        </button>
+</main>
+<!-- BottomNavBar as Sticky Footer -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-6 pb-6 pt-2 bg-[#ede0db]/70 dark:bg-stone-900/80 backdrop-blur-xl shadow-[0_-4px_24px_rgba(32,26,23,0.06)] rounded-t-3xl">
+<div class="flex flex-col items-center justify-center text-stone-600 dark:text-stone-400 px-4 py-2 hover:opacity-90 transition-transform duration-200 scale-98 active:scale-95">
+<span class="material-symbols-outlined text-xl mb-1" data-icon="analytics">analytics</span>
+<span class="font-['Inter'] font-semibold text-xs uppercase tracking-widest">Resumen</span>
+</div>
+<!-- Primary Action -->
+<div class="flex flex-col items-center justify-center bg-gradient-to-r from-[#964900] to-[#f57c00] text-white rounded-full px-8 py-3 my-2 mx-4 hover:opacity-90 transition-transform duration-200 scale-98 active:scale-95">
+<div class="flex items-center gap-2">
+<span class="font-['Inter'] font-semibold text-sm uppercase tracking-widest">Siguiente</span>
+<span class="material-symbols-outlined text-xl" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</div>
+</nav>
+</body></html>

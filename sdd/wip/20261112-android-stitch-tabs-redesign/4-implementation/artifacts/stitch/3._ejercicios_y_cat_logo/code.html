@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2ECC71",
+                        "background-light": "#f8fdfa",
+                        "background-dark": "#0d1f14",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>Create Routine - Step 3</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Main Wizard Container -->
+<div class="relative flex h-auto min-h-screen w-full flex-col max-w-md mx-auto overflow-x-hidden border-x border-slate-200 dark:border-slate-800 shadow-sm">
+<!-- TopAppBar -->
+<div class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10">
+<div class="text-slate-900 dark:text-slate-100 flex size-12 shrink-0 items-center cursor-pointer">
+<span class="material-symbols-outlined">arrow_back</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Paso 3 de 4</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex items-center justify-center rounded-xl h-12 bg-transparent text-primary p-0">
+<span class="material-symbols-outlined">check_circle</span>
+</button>
+</div>
+</div>
+<!-- Progress Indicator -->
+<div class="flex w-full flex-row items-center justify-center gap-3 py-5">
+<div class="h-2 w-2 rounded-full bg-primary/30"></div>
+<div class="h-2 w-2 rounded-full bg-primary/30"></div>
+<div class="h-2 w-8 rounded-full bg-primary"></div>
+<div class="h-2 w-2 rounded-full bg-primary/30"></div>
+</div>
+<!-- Routine Title Section -->
+<div class="px-4 pb-3 pt-2">
+<div class="flex items-center justify-between">
+<h1 class="text-slate-900 dark:text-slate-100 tracking-tight text-3xl font-bold leading-tight">Push Day</h1>
+<span class="material-symbols-outlined text-slate-400 cursor-pointer">edit</span>
+</div>
+</div>
+<!-- Current Exercises List -->
+<div class="px-4 pb-2 pt-4">
+<h3 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em]">Tus Ejercicios</h3>
+</div>
+<div class="flex flex-col gap-1">
+<!-- Exercise Item 1 -->
+<div class="flex items-center gap-4 bg-background-light dark:bg-background-dark px-4 min-h-[72px] py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-16 bg-slate-200 dark:bg-slate-700" data-alt="Man performing barbell bench press in gym" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBO_bVi06AI74z0AA9183vY87Vu5cPiaOkRJD8di6yKNWBI8n7eu-XVdIV0w_c4zErAhTfKzmu1xLijaJijeqN6AnIMNzMaqwExAYtY-8YntmvYqwssTmhF4dGH8jrTNSipn8pGPVJkeGqHt6NWzEt7TJtax9NlCbYncvx9pzQO-gn4fv_nONasK5Lr3VoqZ5UlbPDFkiRWkXlFy-grA98AB_wmwhCc4tjSoIUVw9Y3C4WTpxlHgMi0MLFvXK5eLjDO0ifhgTIK3uo");'></div>
+<div class="flex flex-col justify-center flex-1">
+<p class="text-slate-900 dark:text-slate-100 text-base font-semibold leading-normal line-clamp-1">Bench Press</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal line-clamp-2">4 series • Pecho</p>
+</div>
+<div class="flex gap-2">
+<div class="text-primary flex size-9 items-center justify-center rounded-full hover:bg-primary/10 cursor-pointer">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</div>
+<div class="text-red-500 flex size-9 items-center justify-center rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</div>
+</div>
+</div>
+<!-- Exercise Item 2 -->
+<div class="flex items-center gap-4 bg-background-light dark:bg-background-dark px-4 min-h-[72px] py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-16 bg-slate-200 dark:bg-slate-700" data-alt="Dumbbell shoulder press exercise close up" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAQWnAkhD5RRdCECWaF5nOFNe6M5wIrW28R3CKDGBoavpJca4qHjLBtEq_0PeOZCh_AzRpwEg4sk7jWEiZMWS9f5MMbmH9SUBkLGxMAvu72bisz-_AZ2WSaYi-Fz-ydinziYHmWGQxHDyN6iDVhH90C54QXsU81L-o5EZfYQ5006IR3LJHqjrXmd6754fmRLy4Qn9qKGQS0rZjzTFvWqM61-kiY9B60b25hOekJZHuAyx9r-Pjb62RSGvSeJo4rk5ov2mO-h1rU7Fk");'></div>
+<div class="flex flex-col justify-center flex-1">
+<p class="text-slate-900 dark:text-slate-100 text-base font-semibold leading-normal line-clamp-1">Overhead Press</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal line-clamp-2">3 series • Hombros</p>
+</div>
+<div class="flex gap-2">
+<div class="text-primary flex size-9 items-center justify-center rounded-full hover:bg-primary/10 cursor-pointer">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</div>
+<div class="text-red-500 flex size-9 items-center justify-center rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Add Button Main -->
+<div class="p-4 mt-2">
+<button class="w-full flex items-center justify-center gap-2 bg-primary/10 border-2 border-dashed border-primary text-primary font-bold py-4 rounded-xl hover:bg-primary/20 transition-all">
+<span class="material-symbols-outlined">add</span>
+                Agregar ejercicio
+            </button>
+</div>
+<div class="flex-1 min-h-[100px]"></div>
+<!-- Catalog Bottom Sheet -->
+<div class="fixed inset-x-0 bottom-0 z-20 max-w-md mx-auto bg-white dark:bg-slate-900 rounded-t-3xl shadow-[0_-8px_30px_rgb(0,0,0,0.12)] border-t border-slate-100 dark:border-slate-800 h-[70vh] flex flex-col overflow-hidden">
+<!-- Drag Handle -->
+<div class="w-full flex justify-center py-3">
+<div class="w-12 h-1.5 rounded-full bg-slate-200 dark:bg-slate-700"></div>
+</div>
+<!-- Search Bar -->
+<div class="px-4 pb-4">
+<h4 class="text-slate-900 dark:text-slate-100 text-xl font-bold mb-4">Catálogo de Ejercicios</h4>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-xl py-3 pl-10 pr-4 focus:ring-2 focus:ring-primary text-slate-900 dark:text-slate-100" placeholder="Buscar ejercicio..." type="text"/>
+</div>
+</div>
+<!-- Muscle Group Chips -->
+<div class="flex gap-2 px-4 pb-6 overflow-x-auto no-scrollbar">
+<button class="shrink-0 px-5 py-2 bg-primary text-white rounded-full text-sm font-medium">Todos</button>
+<button class="shrink-0 px-5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Pecho</button>
+<button class="shrink-0 px-5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Espalda</button>
+<button class="shrink-0 px-5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Piernas</button>
+<button class="shrink-0 px-5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Hombros</button>
+</div>
+<!-- Exercise Catalog List -->
+<div class="flex-1 overflow-y-auto px-4 pb-20">
+<div class="flex flex-col gap-4">
+<!-- Catalog Item 1 -->
+<div class="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl">
+<div class="size-16 rounded-lg bg-slate-200 dark:bg-slate-700 shrink-0 bg-cover bg-center" data-alt="Dumbbell lateral raise exercise demonstration" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBFBh2LKUQdz7Kb36eULdhC7OxYlDCT57fKFVzy0GSQFDbVqGtwc3vLMmptSnq7hiKPREcyRDTJKA9o3XpPZCQ2q_p4UHRck_N4Q6HsE9uFUT7zxOOQ7xFNz2eMdeWk2ULHbeKU06YBUwxXg8wxRN2EnPImaFC3mTaHzMURpGKC8awvu_j-0p6pPo_FsPVCgnP-dr7fa-8R78F80-Zdr7sP-o7N9tiOu8t8aGhDF4l3h3ZYxY3SN0f-Pz9wae4CT8QdKU46B6qjL9Y')"></div>
+<div class="flex-1">
+<p class="font-bold text-slate-900 dark:text-slate-100">Vuelos Laterales</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Hombro Lateral • Mancuernas</p>
+</div>
+<button class="bg-primary text-white px-4 py-1.5 rounded-lg text-sm font-bold shadow-sm hover:brightness-110 active:scale-95 transition-all">
+                            Agregar
+                        </button>
+</div>
+<!-- Catalog Item 2 -->
+<div class="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl">
+<div class="size-16 rounded-lg bg-slate-200 dark:bg-slate-700 shrink-0 bg-cover bg-center" data-alt="Tricep pushdown machine in modern gym" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBH-Kc8aaH7i4bwdGvSBclolU84gH88_gsPl4x10er6Uu2OaVQhF4MTVlFqGYc4EMQ8sqDrn8riZU77NP8VvF4fYexBCYtgInDf9P2GfbmeVzgj65-WifCSOeKNUTzY7Rch5_U_o8eS4qfEcFvRWGRzehRv5tAWJpauOkgD0o3MTstObWWUFY5-MaL4P7mZ__NjDP2t75alVUyqAKsrvv1Fgb86AvaGpSWjGjHlDnW7dSJeLxZP7Q6KtRF-NOji8Ai08gnxQwdK-5w')"></div>
+<div class="flex-1">
+<p class="font-bold text-slate-900 dark:text-slate-100">Tricep Pushdown</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Tríceps • Polea</p>
+</div>
+<button class="bg-primary text-white px-4 py-1.5 rounded-lg text-sm font-bold shadow-sm hover:brightness-110 active:scale-95 transition-all">
+                            Agregar
+                        </button>
+</div>
+<!-- Catalog Item 3 -->
+<div class="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl">
+<div class="size-16 rounded-lg bg-slate-200 dark:bg-slate-700 shrink-0 bg-cover bg-center" data-alt="Dips on parallel bars exercise" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBiIfXkXjVGHh4WA59o1oScecXA6CM9ntn-TxJVO8zboQun8oEPLjErT8Y3MPnuYsJc9tsm-JFStWiXTa_pp_BhMHM2uHcaV5AqypnC265dHp27XEBi282w8oXXuYqPvPwI8x-_NwXWGJh5sO9u2I16M3D-LfL4FkTDYCKZ4F2xsprnof7u8wAQwqwWMi5Sz_W_8cSTZtp2fRuDmHrSFkGev1-a-XGmN3o3Y1RK4Z_yhkDvTNVI-GzPjezpY-Ae78A3zhajRJAtksE')"></div>
+<div class="flex-1">
+<p class="font-bold text-slate-900 dark:text-slate-100">Fondos (Dips)</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Pecho/Tríceps • Peso Corporal</p>
+</div>
+<button class="bg-primary text-white px-4 py-1.5 rounded-lg text-sm font-bold shadow-sm hover:brightness-110 active:scale-95 transition-all">
+                            Agregar
+                        </button>
+</div>
+<!-- Catalog Item 4 -->
+<div class="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl">
+<div class="size-16 rounded-lg bg-slate-200 dark:bg-slate-700 shrink-0 bg-cover bg-center" data-alt="Incline dumbbell press workout" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDEmOZZnhRLYIgPmU8fw1hI7qsluX8YYerEOqVsr2p2dmdWA-_yemTLMrxyG4l50FzfQqP6AGqy5yA9_t9X9Vgkz9pM5O_Foybsbjgy2FB0pHt_AF401V6_C5CuDNlkf0f0XwfoPPDEFt63cdVix0Wact8WQgNJqs0d-fNHrseccvgcezwhhKLwbzJ3xSvg7SwO98OzFrbP5CljSRyZIesxeE8fFNITCB85d2Xz3FNXBbhgQGlm_rNiqPoiURjs6Y-sATVTCqDeb2Y')"></div>
+<div class="flex-1">
+<p class="font-bold text-slate-900 dark:text-slate-100">Incline DB Press</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Pecho Superior • Mancuernas</p>
+</div>
+<button class="bg-primary text-white px-4 py-1.5 rounded-lg text-sm font-bold shadow-sm hover:brightness-110 active:scale-95 transition-all">
+                            Agregar
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</body></html>

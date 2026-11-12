@@ -1,0 +1,227 @@
+package com.agusstkd.goodlife.presentation.components.nutrition
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+/**
+ * Componente CreateIngredientDialog para la app GoodLife.
+ * 
+ * Permite al usuario crear un ingrediente personalizado mediante un ModalBottomSheet.
+ * Sigue el patrón visual de QuantityBottomSheet.kt.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CreateIngredientDialog(
+    texts: CreateMealPlanTexts,
+    onDismiss: () -> Unit,
+    onConfirm: (
+        name: String, 
+        brand: String?, 
+        servingSize: Double, 
+        servingUnit: String, 
+        calories: Double, 
+        protein: Double, 
+        carbs: Double, 
+        fat: Double
+    ) -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    
+    // Estados internos del formulario
+    var name by remember { mutableStateOf("") }
+    var brand by remember { mutableStateOf("") }
+    var servingSize by remember { mutableStateOf("") }
+    var servingUnit by remember { mutableStateOf("g") }
+    
+    var calories by remember { mutableStateOf("") }
+    var protein by remember { mutableStateOf("") }
+    var carbs by remember { mutableStateOf("") }
+    var fat by remember { mutableStateOf("") }
+
+    // Validación para habilitar el botón de guardado
+    val isFormValid = name.isNotBlank() && (servingSize.toDoubleOrNull() ?: 0.0) > 0.0
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        dragHandle = { BottomSheetDefaults.DragHandle() },
+        containerColor = Color.White
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 32.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // Header
+            Text(
+                text = texts.createIngredientDialogTitle,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+
+            // Campo Nombre
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text(texts.ingredientNameLabel) },
+                placeholder = { Text(texts.ingredientNamePlaceholder) },
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium
+            )
+
+            // Campo Marca
+            OutlinedTextField(
+                value = brand,
+                onValueChange = { brand = it },
+                label = { Text(texts.ingredientBrandLabel) },
+                placeholder = { Text(texts.ingredientBrandPlaceholder) },
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium,
+                singleLine = true
+            )
+
+            // Porción y Unidades
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = texts.ingredientServingSizeLabel,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    OutlinedTextField(
+                        value = servingSize,
+                        onValueChange = { if (it.isEmpty() || it.toDoubleOrNull() != null) servingSize = it },
+                        modifier = Modifier.weight(1f),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        shape = MaterialTheme.shapes.medium
+                    )
+                    
+                    // Chips de Unidades (Simplificado para el ejemplo)
+                    val units = listOf("g", "ml", "unidad")
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        units.forEach { unit ->
+                            FilterChip(
+                                selected = servingUnit == unit,
+                                onClick = { servingUnit = unit },
+                                label = { Text(unit) }
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Grilla de Macros 2x2
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    MacroInputField(
+                        value = calories,
+                        onValueChange = { calories = it },
+                        label = texts.ingredientCaloriesLabel,
+                        icon = "🔥",
+                        modifier = Modifier.weight(1f)
+                    )
+                    MacroInputField(
+                        value = protein,
+                        onValueChange = { protein = it },
+                        label = texts.ingredientProteinLabel,
+                        icon = "💪",
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    MacroInputField(
+                        value = carbs,
+                        onValueChange = { carbs = it },
+                        label = texts.ingredientCarbsLabel,
+                        icon = "🍞",
+                        modifier = Modifier.weight(1f)
+                    )
+                    MacroInputField(
+                        value = fat,
+                        onValueChange = { fat = it },
+                        label = texts.ingredientFatLabel,
+                        icon = "🧈",
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Botones de acción
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                OutlinedButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f),
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Text(texts.cancelButton)
+                }
+                
+                Button(
+                    onClick = {
+                        onConfirm(
+                            name,
+                            brand.takeIf { it.isNotBlank() },
+                            servingSize.toDoubleOrNull() ?: 0.0,
+                            servingUnit,
+                            calories.toDoubleOrNull() ?: 0.0,
+                            protein.toDoubleOrNull() ?: 0.0,
+                            carbs.toDoubleOrNull() ?: 0.0,
+                            fat.toDoubleOrNull() ?: 0.0
+                        )
+                    },
+                    enabled = isFormValid,
+                    modifier = Modifier.weight(1f),
+                    shape = MaterialTheme.shapes.medium,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFF57C00) // NutritionAccent
+                    )
+                ) {
+                    Text(texts.saveIngredientButton)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun MacroInputField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    icon: String,
+    modifier: Modifier = Modifier
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = { if (it.isEmpty() || it.toDoubleOrNull() != null) onValueChange(it) },
+        label = { Text("$icon $label") },
+        modifier = modifier,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+        shape = MaterialTheme.shapes.medium,
+        singleLine = true
+    )
+}

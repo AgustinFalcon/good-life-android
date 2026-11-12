@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nuevo Ingrediente - Nutrition &amp; Vitality</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#f8acff",
+                        "on-background": "#201a17",
+                        "surface-variant": "#ede0db",
+                        "tertiary": "#9431a6",
+                        "surface-container-highest": "#ede0db",
+                        "on-tertiary-fixed-variant": "#780e8c",
+                        "on-secondary-container": "#004069",
+                        "inverse-surface": "#362f2c",
+                        "on-primary-fixed": "#311300",
+                        "surface-bright": "#fff8f6",
+                        "on-tertiary-fixed": "#350040",
+                        "surface-container-high": "#f2e6e0",
+                        "primary-fixed-dim": "#ffb786",
+                        "surface-tint": "#964900",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#5e006f",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#fef1ec",
+                        "on-error-container": "#93000a",
+                        "surface": "#fff8f6",
+                        "secondary-container": "#4fafff",
+                        "inverse-primary": "#ffb786",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#e4d8d2",
+                        "background": "#fff8f6",
+                        "tertiary-container": "#dc74ec",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#fbeee9",
+                        "on-surface": "#201a17",
+                        "on-primary-fixed-variant": "#723600",
+                        "on-primary-container": "#572800",
+                        "on-secondary-fixed": "#001d34",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#ffdcc6",
+                        "primary-container": "#f57c00",
+                        "outline-variant": "#dec1af",
+                        "on-secondary-fixed-variant": "#004a78",
+                        "tertiary-fixed": "#ffd6ff",
+                        "on-surface-variant": "#574235",
+                        "secondary-fixed": "#cfe5ff",
+                        "primary": "#964900",
+                        "surface-container": "#f8ebe6",
+                        "outline": "#8b7263",
+                        "on-primary": "#ffffff",
+                        "secondary": "#00629d",
+                        "secondary-fixed-dim": "#99cbff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .modal-blur {
+            backdrop-filter: blur(8px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-on-background/20 font-body text-on-background min-h-screen flex flex-col justify-end">
+<!-- Modal Overlay Backdrop -->
+<div class="fixed inset-0 z-0 bg-on-background/40 backdrop-blur-sm"></div>
+<!-- Bottom Sheet Container -->
+<main class="relative z-10 w-full max-w-2xl mx-auto bg-surface rounded-t-[32px] shadow-2xl overflow-hidden flex flex-col max-h-[839px]">
+<!-- Drag Handle & Header -->
+<header class="flex flex-col items-center pt-3 pb-6 px-6 bg-surface">
+<div class="w-12 h-1.5 bg-outline-variant/30 rounded-full mb-6"></div>
+<h1 class="font-headline text-2xl font-bold tracking-tight text-on-background">Nuevo Ingrediente</h1>
+</header>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto px-6 pb-8 hide-scrollbar">
+<div class="space-y-8">
+<!-- Name Field -->
+<div class="space-y-2">
+<label class="font-label text-sm font-semibold text-on-surface-variant ml-1">Nombre *</label>
+<input class="w-full h-14 px-4 rounded-xl bg-surface-container-highest border-none focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline transition-all duration-200 outline-none" placeholder="Ej: Avena instantánea" type="text"/>
+</div>
+<!-- Brand Field -->
+<div class="space-y-2">
+<label class="font-label text-sm font-semibold text-on-surface-variant ml-1">Marca (opcional)</label>
+<input class="w-full h-14 px-4 rounded-xl bg-surface-container-highest border-none focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline transition-all duration-200 outline-none" placeholder="Ej: Quaker" type="text"/>
+</div>
+<!-- Portion Row -->
+<div class="flex flex-col md:flex-row md:items-end gap-6">
+<div class="flex-1 space-y-2">
+<label class="font-label text-sm font-semibold text-on-surface-variant ml-1">Porción *</label>
+<input class="w-full h-14 px-4 rounded-xl bg-surface-container-highest border-none focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline transition-all duration-200 outline-none" placeholder="100" type="number"/>
+</div>
+<div class="flex items-center gap-2 pb-1 overflow-x-auto hide-scrollbar">
+<button class="h-10 px-6 rounded-full bg-primary-container text-on-primary-container font-semibold text-sm transition-transform active:scale-95">g</button>
+<button class="h-10 px-6 rounded-full bg-surface-container-high text-on-surface-variant font-semibold text-sm hover:bg-surface-variant transition-colors">ml</button>
+<button class="h-10 px-6 rounded-full bg-surface-container-high text-on-surface-variant font-semibold text-sm hover:bg-surface-variant transition-colors">unidad</button>
+</div>
+</div>
+<!-- Macros Grid -->
+<div class="grid grid-cols-2 gap-4">
+<!-- Calories -->
+<div class="bg-surface-container-low p-4 rounded-2xl space-y-3">
+<div class="flex items-center gap-2 text-[#FF7043]">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="font-label text-xs font-bold uppercase tracking-wider">Calorías (kcal)</span>
+</div>
+<input class="w-full bg-transparent border-none p-0 text-2xl font-bold text-on-surface focus:ring-0 placeholder:text-outline/40" placeholder="0" type="number"/>
+</div>
+<!-- Protein -->
+<div class="bg-surface-container-low p-4 rounded-2xl space-y-3">
+<div class="flex items-center gap-2 text-[#42A5F5]">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">fitness_center</span>
+<span class="font-label text-xs font-bold uppercase tracking-wider">Proteínas (g)</span>
+</div>
+<input class="w-full bg-transparent border-none p-0 text-2xl font-bold text-on-surface focus:ring-0 placeholder:text-outline/40" placeholder="0" type="number"/>
+</div>
+<!-- Carbs -->
+<div class="bg-surface-container-low p-4 rounded-2xl space-y-3">
+<div class="flex items-center gap-2 text-[#FFCA28]">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">bakery_dining</span>
+<span class="font-label text-xs font-bold uppercase tracking-wider">Carbohidratos (g)</span>
+</div>
+<input class="w-full bg-transparent border-none p-0 text-2xl font-bold text-on-surface focus:ring-0 placeholder:text-outline/40" placeholder="0" type="number"/>
+</div>
+<!-- Fat -->
+<div class="bg-surface-container-low p-4 rounded-2xl space-y-3">
+<div class="flex items-center gap-2 text-[#AB47BC]">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">opacity</span>
+<span class="font-label text-xs font-bold uppercase tracking-wider">Grasas (g)</span>
+</div>
+<input class="w-full bg-transparent border-none p-0 text-2xl font-bold text-on-surface focus:ring-0 placeholder:text-outline/40" placeholder="0" type="number"/>
+</div>
+</div>
+<!-- Visual Accent Tip -->
+<div class="bg-secondary-fixed/30 p-4 rounded-2xl flex gap-4 items-start">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">info</span>
+<p class="text-xs text-on-secondary-fixed-variant leading-relaxed">
+                        Los valores nutricionales deben basarse en la porción indicada arriba. Esta información se guardará en tu biblioteca personal.
+                    </p>
+</div>
+</div>
+</div>
+<!-- Footer Buttons -->
+<footer class="p-6 bg-surface border-t border-outline-variant/10 flex items-center justify-between gap-4">
+<button class="flex-1 h-14 rounded-full border-2 border-primary-container text-primary font-bold tracking-wide transition-all hover:bg-primary-container/5 active:scale-95">
+                CANCELAR
+            </button>
+<button class="flex-[1.5] h-14 rounded-full bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold tracking-wide shadow-lg shadow-primary/25 transition-all hover:opacity-90 active:scale-95">
+                GUARDAR
+            </button>
+</footer>
+</main>
+<!-- Bottom Navigation Mockup for Context -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-6 bg-[#ede0db]/70 backdrop-blur-xl shadow-[0_-8px_30px_rgb(0,0,0,0.04)] md:hidden">
+<div class="flex flex-col items-center justify-center text-[#53433c] px-6 py-2">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+<span class="font-['Inter'] text-xs font-semibold tracking-wide uppercase mt-1">Journal</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-gradient-to-br from-[#964900] to-[#f57c00] text-white rounded-full px-6 py-2">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="font-['Inter'] text-xs font-semibold tracking-wide uppercase mt-1">Library</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#53433c] px-6 py-2">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span class="font-['Inter'] text-xs font-semibold tracking-wide uppercase mt-1">Trends</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#53433c] px-6 py-2">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="font-['Inter'] text-xs font-semibold tracking-wide uppercase mt-1">Profile</span>
+</div>
+</nav>
+</body></html>

@@ -1,0 +1,330 @@
+{
+  "feature": "android-stitch-tabs-redesign",
+  "stack_profile": "mobile",
+  "project_type": "production",
+  "execution_strategy": "sequential",
+  "stats": { "total": 16, "done": 0, "by_layer": { "1": 13, "2": 0, "3": 3 } },
+  "gitflow": {
+    "base": "master",
+    "branches": [
+      { "name": "feature/android-entrenar-stitch-tab", "phase": 1, "tasks": ["TASK-001", "TASK-002", "TASK-003", "TASK-004", "TASK-005", "TASK-006"] },
+      { "name": "feature/android-comida-stitch-tab", "phase": 2, "tasks": ["TASK-007", "TASK-008", "TASK-009", "TASK-010"] },
+      { "name": "feature/android-mas-settings-hub", "phase": 3, "tasks": ["TASK-011", "TASK-012", "TASK-013"] }
+    ],
+    "later": "fase 4 (agua/XP/PRs) no tiene rama hasta que existan subpantallas Stitch"
+  },
+  "tasks": [
+    {
+      "id": "TASK-001",
+      "title": "Add GoalType.GENERAL_HEALTH to the closed type",
+      "description": "Backend already has GENERAL_HEALTH. Add the case to selectable + fromWire. Add CreateRoutineTexts.goalGeneralHealth ES/EN/PT. Exhaustive when in WorkoutsTabViewModel and CreateRoutineViewModel. GoalTypeTest selectable size becomes 6.",
+      "status": "pending",
+      "layer": 1,
+      "complexity": "Low",
+      "branch": "feature/android-entrenar-stitch-tab",
+      "depends_on": [],
+      "files": [
+        "app/src/main/java/com/agusstkd/goodlife/domain/model/training/GoalType.kt",
+        "app/src/test/java/com/agusstkd/goodlife/domain/model/training/GoalTypeTest.kt",
+        "app/src/main/java/com/agusstkd/goodlife/core/datetime/language/UiTexts.kt",
+        "app/src/main/java/com/agusstkd/goodlife/core/datetime/language/Spanish.kt",
+        "app/src/main/java/com/agusstkd/goodlife/core/datetime/language/English.kt",
+        "app/src/main/java/com/agusstkd/goodlife/core/datetime/language/Portuguese.kt",
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/WorkoutsTabViewModel.kt",
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/add/routine/CreateRoutineViewModel.kt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: fromWire(\"GENERAL_HEALTH\") is GENERAL_HEALTH",
+        "AC-2: fromWire(\"HYPERTROPHY\") stays UNKNOWN",
+        "AC-3: selectable size is 6 and excludes UNKNOWN",
+        "GATE: GoalTypeTest passes"
+      ],
+      "references": ["2-technical/spec.md#fase-1"],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-002",
+      "title": "Map workout JSON dayOfWeek as dayOrder",
+      "description": "Workout.dayOrder: Int?. Remove Workout.dayOfWeek: DayOfWeek? (that was the ISO bug). Routine.daysOfWeek Set stays for Create Routine. Add Routine.daysOfWeekOrdered: List<Int> from JSON order. Mapper: dayOrder = wire int, do not call toDayOfWeekOrNull. Rewrite RoutineResponseTest 1→MONDAY. Update every Workout(...) test fixture. WorkoutDetail dayLabel that used workout.dayOfWeek is omitted.",
+      "status": "pending",
+      "layer": 1,
+      "complexity": "High",
+      "branch": "feature/android-entrenar-stitch-tab",
+      "depends_on": [],
+      "files": [
+        "app/src/main/java/com/agusstkd/goodlife/domain/model/training/Routine.kt",
+        "app/src/main/java/com/agusstkd/goodlife/data/remote/dto/response/training/RoutineResponse.kt",
+        "app/src/test/java/com/agusstkd/goodlife/data/remote/dto/response/training/RoutineResponseTest.kt",
+        "app/src/test/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/WorkoutsTabViewModelTest.kt",
+        "app/src/test/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/detail/WorkoutDetailViewModelTest.kt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: wire dayOfWeek 1 maps to dayOrder == 1, not MONDAY",
+        "AC-2: wire dayOfWeek 9 maps to dayOrder == 9",
+        "AC-3: daysOfWeekOrdered preserves [5,1,3]",
+        "AC-4: WorkoutDraft and CreateRoutineUseCase still use daysOfWeek Set",
+        "GATE: RoutineResponseTest passes"
+      ],
+      "references": ["1-functional/spec.md#contrato-wire"],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-003",
+      "title": "Add workoutForIsoDay pairing (DailyLogService rule)",
+      "description": "Pure function: empty workouts → null; iso not in ordered list → null (rest day); else sortedBy dayOrder then indexOf % size. Test PPL [1,3,5] + dayOrder 1,2,3.",
+      "status": "pending",
+      "layer": 1,
+      "complexity": "Medium",
+      "branch": "feature/android-entrenar-stitch-tab",
+      "depends_on": ["TASK-002"],
+      "files": [
+        "app/src/main/java/com/agusstkd/goodlife/domain/model/training/RoutineDayAssignment.kt",
+        "app/src/test/java/com/agusstkd/goodlife/domain/model/training/RoutineDayAssignmentTest.kt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Mon/Wed/Fri map to workouts 1/2/3",
+        "AC-2: Tuesday is null",
+        "AC-3: more days than workouts wraps with %",
+        "GATE: RoutineDayAssignmentTest passes"
+      ],
+      "references": ["2-technical/spec.md#dominio"],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-004",
+      "title": "Wire Entrenar tab: pairing, PTR, Stitch layout",
+      "description": "UiState Success: selectedIsoDay, todayWorkoutId, week label only if start AND end, scheduledTime if present. Actions: OnSelectDay, OnAvatarClick (new effect to Más). VM uses workoutForIsoDay. Screen: PullToRefreshBox, Lun–Dom, Empezá only today, Ver rutina otherwise, no campana/60min/XP/warmup. Copy voseo in WorkoutTexts. HTML: artifacts/stitch/entrenar_rutina_activa/.",
+      "status": "pending",
+      "layer": 1,
+      "complexity": "High",
+      "branch": "feature/android-entrenar-stitch-tab",
+      "depends_on": ["TASK-001", "TASK-003"],
+      "files": [
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/model/WorkoutsUiState.kt",
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/model/WorkoutsUiAction.kt",
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/model/WorkoutsNavigationEffect.kt",
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/WorkoutsTabViewModel.kt",
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/WorkoutsScreen.kt",
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/WorkoutsScreenOwner.kt",
+        "app/src/test/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/WorkoutsTabViewModelTest.kt",
+        "app/src/main/java/com/agusstkd/goodlife/core/datetime/language/UiTexts.kt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: rest day todayWorkoutId is null",
+        "AC-2: OnRefresh still calls GetActiveRoutineUseCase",
+        "AC-3: Screen has PullToRefreshBox",
+        "AC-4: no 60 min, no bell, no XP badge",
+        "GATE: WorkoutsTabViewModelTest passes"
+      ],
+      "references": ["4-implementation/artifacts/stitch/entrenar_rutina_activa/code.html"],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-005",
+      "title": "Sesión en curso: OnAddSet + Stitch layout, finish freeze",
+      "description": "Do not change FinishWorkoutRequest/UseCase/PerceivedExertion/SuccessDialog. Add OnAddSet(exerciseId) with local negative set ids and correlative setNumber. Notes card = session notes. Omit muscle chip, +50 XP, draft CTA, dayLabel from old dayOfWeek. scheduledTime show-if-present. HTML: entrenar_detalle_de_sesi_n.",
+      "status": "pending",
+      "layer": 1,
+      "complexity": "High",
+      "branch": "feature/android-entrenar-stitch-tab",
+      "depends_on": ["TASK-002"],
+      "files": [
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/detail/model/WorkoutDetailUiAction.kt",
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/detail/model/WorkoutDetailUiState.kt",
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/detail/WorkoutDetailViewModel.kt",
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/detail/WorkoutDetailScreen.kt",
+        "app/src/test/java/com/agusstkd/goodlife/presentation/screen/tabs/workout/detail/WorkoutDetailViewModelTest.kt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: OnAddSet appends setNumber max+1 and extra set is in finish draft",
+        "AC-2: POST body still notes always, per-set RPE 1–10 or null, all sets",
+        "AC-3: SuccessDialog remains; no PopupResult on this screen",
+        "AC-4: WorkoutDetailViewModelTest dayLabel assertion no longer expects Día from ISO dayOfWeek",
+        "GATE: WorkoutDetailViewModelTest passes"
+      ],
+      "references": ["4-implementation/artifacts/stitch/entrenar_detalle_de_sesi_n/code.html"],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-006",
+      "title": "Fase 1 quality gate",
+      "description": "CHANGELOG Unreleased. Targeted unit tests + compile. Coverage gate still 80%. Do not bump version.",
+      "status": "pending",
+      "layer": 3,
+      "complexity": "Low",
+      "branch": "feature/android-entrenar-stitch-tab",
+      "depends_on": ["TASK-004", "TASK-005"],
+      "files": ["CHANGELOG.md"],
+      "acceptance_criteria": [
+        "AC-1: CHANGELOG records Entrenar pairing + Stitch layout",
+        "GATE: ./gradlew :app:testDebugUnitTest --tests '*GoalType*' --tests '*RoutineResponse*' --tests '*RoutineDayAssignment*' --tests '*WorkoutsTab*' --tests '*WorkoutDetailViewModel*' passes"
+      ],
+      "references": [],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-007",
+      "title": "Fix meal-plan appliesTo to match Daily",
+      "description": "Empty daysOfWeek returns false. Keep weekday membership + start/end. Add test empty list is omitted. Keep mealId on DailyMealPlanSummary.",
+      "status": "pending",
+      "layer": 1,
+      "complexity": "Medium",
+      "branch": "feature/android-comida-stitch-tab",
+      "depends_on": ["TASK-006"],
+      "files": [
+        "app/src/main/java/com/agusstkd/goodlife/data/remote/dto/response/nutrition/DailyMealPlanResponseDto.kt",
+        "app/src/main/java/com/agusstkd/goodlife/domain/model/nutrition/DailyMealPlanSummary.kt",
+        "app/src/test/java/com/agusstkd/goodlife/data/remote/dto/response/nutrition/DailyMealPlanResponseDtoTest.kt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: empty daysOfWeek → toDailySummary null",
+        "AC-2: mealId survives mapper",
+        "GATE: DailyMealPlanResponseDtoTest passes"
+      ],
+      "references": ["2-technical/spec.md#fase-2"],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-008",
+      "title": "Comida tab Stitch layout without fake kcal/XP",
+      "description": "MealsScreen follows comida_vista_diaria. Macros = sum of plans that pass appliesTo. No 2400 denominator, no +5 XP. Group by MealType. Completado via Daily MEAL referenceId=planId if daily loads; do not block list. Registrar comida → plan detail or Create Meal Plan.",
+      "status": "pending",
+      "layer": 1,
+      "complexity": "High",
+      "branch": "feature/android-comida-stitch-tab",
+      "depends_on": ["TASK-007"],
+      "files": [
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/meals/MealsScreen.kt",
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/meals/MealsTabViewModel.kt",
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/meals/model/MealsUiState.kt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: no 2400 / Faltan / +5 XP",
+        "AC-2: unknown MealType not shown",
+        "GATE: meals tab unit tests pass"
+      ],
+      "references": ["4-implementation/artifacts/stitch/comida_vista_diaria/code.html"],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-009",
+      "title": "Meal detail stays plan-only (receta = 2b)",
+      "description": "Do not add Retrofit GET /meals/{id} in this PR. Do not invent ingredients/steps. Keep macros/photo from plan.",
+      "status": "pending",
+      "layer": 1,
+      "complexity": "Low",
+      "branch": "feature/android-comida-stitch-tab",
+      "depends_on": ["TASK-007"],
+      "files": [
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/meals/detail/MealDetailScreen.kt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: no fake recipe sections",
+        "AC-2: still loads by planId"
+      ],
+      "references": ["2-technical/spec.md#c2--2b"],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-010",
+      "title": "Fase 2 quality gate",
+      "description": "CHANGELOG Unreleased. Unit tests for appliesTo and meals tab.",
+      "status": "pending",
+      "layer": 3,
+      "complexity": "Low",
+      "branch": "feature/android-comida-stitch-tab",
+      "depends_on": ["TASK-008", "TASK-009"],
+      "files": ["CHANGELOG.md"],
+      "acceptance_criteria": [
+        "GATE: DailyMealPlanResponseDtoTest and meals unit tests pass"
+      ],
+      "references": [],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-011",
+      "title": "Settings hub: Room profile without XP rows",
+      "description": "Show username, email, photo from GetCurrentUserUseCase/Room. Do not add XP/streaks/PRs/export. Do not revalidate GET /me every visit. Keep ProfileScreen upload; do not promise server persist.",
+      "status": "pending",
+      "layer": 1,
+      "complexity": "Medium",
+      "branch": "feature/android-mas-settings-hub",
+      "depends_on": ["TASK-010"],
+      "files": [
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/settings/SettingsScreen.kt",
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/settings/SettingsTabViewModel.kt",
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/settings/model/SettingsUiState.kt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: email/photo from Room user",
+        "AC-2: no XP/rachas/PRs rows",
+        "GATE: Settings unit tests pass"
+      ],
+      "references": ["4-implementation/artifacts/stitch/m_s_hub_de_ajustes/code.html"],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-012",
+      "title": "Persist AppLanguage + move biometría toggle to Settings",
+      "description": "Non-encrypted SharedPreferences key app_language es/en/pt. coreModule resolves preference else device locale. Do not store language in TokenManager EncryptedSharedPreferences. Reuse Login biometric preference in Settings row. No password storage.",
+      "status": "pending",
+      "layer": 1,
+      "complexity": "High",
+      "branch": "feature/android-mas-settings-hub",
+      "depends_on": ["TASK-011"],
+      "files": [
+        "app/src/main/java/com/agusstkd/goodlife/di/AppModule.kt",
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/tabs/settings/SettingsScreen.kt",
+        "app/src/main/java/com/agusstkd/goodlife/presentation/screen/login/LoginViewModel.kt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: selected language survives process death",
+        "AC-2: language prefs are not in EncryptedSharedPreferences of tokens",
+        "AC-3: biometric toggle works from Settings"
+      ],
+      "references": ["2-technical/spec.md#fase-3"],
+      "design_decisions": []
+    },
+    {
+      "id": "TASK-013",
+      "title": "Fase 3 quality gate",
+      "description": "CHANGELOG Unreleased. Settings tests.",
+      "status": "pending",
+      "layer": 3,
+      "complexity": "Low",
+      "branch": "feature/android-mas-settings-hub",
+      "depends_on": ["TASK-012"],
+      "files": ["CHANGELOG.md"],
+      "acceptance_criteria": [
+        "GATE: settings unit tests pass"
+      ],
+      "references": [],
+      "design_decisions": []
+    }
+  ],
+  "dependency_graph": {
+    "by_layer": {
+      "1": {
+        "level_0": ["TASK-001", "TASK-002"],
+        "level_1": ["TASK-003", "TASK-005"],
+        "level_2": ["TASK-004"],
+        "level_3": ["TASK-007"],
+        "level_4": ["TASK-008", "TASK-009"],
+        "level_5": ["TASK-011"],
+        "level_6": ["TASK-012"]
+      },
+      "3": {
+        "level_0": ["TASK-006"],
+        "level_1": ["TASK-010"],
+        "level_2": ["TASK-013"]
+      }
+    }
+  },
+  "notes": [
+    "Auto-approved so Agustín can implement. No Everest: PROJECT.md Koin/Compose.",
+    "Sequential PRs: Entrenar → Comida → Más. Fase 4 (water/XP) is documented only.",
+    "Do not implement campana, FAB, SQLCipher, XP badges, GET /meals/{id} in fases 1–3.",
+    "Keep List (not ImmutableList) on Workouts files.",
+    "Finish workout contract is freeze (master)."
+  ]
+}

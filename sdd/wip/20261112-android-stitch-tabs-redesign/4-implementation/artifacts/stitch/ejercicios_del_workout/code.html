@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Workout Builder - Push Day</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#10b981", // Emerald Green accent as requested
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.5rem", // 24dp equivalent
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Public Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto shadow-2xl bg-white dark:bg-stone-900">
+<!-- Header -->
+<header class="flex items-center p-4 sticky top-0 bg-white/80 dark:bg-stone-900/80 backdrop-blur-md z-10 border-b border-slate-100 dark:border-stone-800">
+<button class="p-2 hover:bg-slate-100 dark:hover:bg-stone-800 rounded-full transition-colors">
+<span class="material-symbols-outlined text-slate-600 dark:text-stone-400">arrow_back</span>
+</button>
+<div class="flex-1 px-2 flex items-center gap-2">
+<h1 class="text-xl font-bold tracking-tight">Push Day</h1>
+<span class="material-symbols-outlined text-primary text-lg cursor-pointer">edit</span>
+</div>
+<button class="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">play_arrow</span>
+                Iniciar
+            </button>
+</header>
+<!-- Main Content -->
+<main class="flex-1 pb-24">
+<!-- Tus Ejercicios Section -->
+<section class="p-4">
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-lg font-bold">Tus Ejercicios</h2>
+<span class="text-xs font-medium text-slate-500 bg-slate-100 dark:bg-stone-800 px-2 py-1 rounded">3 total</span>
+</div>
+<!-- Exercise Cards Container -->
+<div class="space-y-4">
+<!-- Card Bench Press -->
+<div class="bg-white dark:bg-stone-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-stone-700 flex items-center gap-4 group">
+<div class="relative w-20 h-20 shrink-0 rounded-xl overflow-hidden bg-slate-100">
+<img class="w-full h-full object-cover" data-alt="Man performing chest bench press in gym" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6rconyko1Kb9A6pI6bMpY0lPIQHBnwVxIdQUAO65fErsOvzioWWtCQ70pize0EOsrNfaMmq5UMX5SqSargxAEwdWnaMJLci_UNr16NTzXqkTaA3JCLEK-kggOhb5dBmdy3YKlYPlQevIG1RnEoQ3m0O0mESGOojwNtCAPWIk0Zg-MvW2eevPtYPMNOv-ghBuwB6XRhmd0b1xF5HeJcPTjV8bVUmpIrLoC9oru94j2BOkTbwmJ1uxm7xuWmojvCwQqbAmjgUgtl4U"/>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="font-bold text-base truncate">Bench Press</h3>
+<p class="text-sm text-slate-500 dark:text-stone-400 leading-tight mt-0.5">3 sets • 12/10/8 reps<br/>60-70 kg</p>
+<div class="flex items-center gap-3 mt-2">
+<button class="text-primary flex items-center gap-1 text-xs font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm">edit</span> Editar
+                                </button>
+<button class="text-rose-500 flex items-center gap-1 text-xs font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+<div class="cursor-grab active:cursor-grabbing p-2 text-slate-300 dark:text-stone-600">
+<span class="material-symbols-outlined">drag_indicator</span>
+</div>
+</div>
+<!-- Card Overhead Press -->
+<div class="bg-white dark:bg-stone-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-stone-700 flex items-center gap-4">
+<div class="relative w-20 h-20 shrink-0 rounded-xl overflow-hidden bg-slate-100">
+<img class="w-full h-full object-cover" data-alt="Woman lifting weights overhead in training" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYlzGH74T2mgejQ8NBIq9NIwjVJtu-TUZ-haav1yRlINNASJarEEX2RFSbKnEPeyucgfKG8YZE8QUO9uyV4ayiM2i51VRHzPY8cuKUJ_gqE6-WXfRjY8Hui2lKkV-jeZXxliiGrsUdQj_gUoqB5ndBC08apdebZRa_aSyygfMdL58XvN8qGDsCHRNxhmYPU0Iw4dszTrKubd6LdVfpWuqz_ATRpupO57G97OguVxpvpSVOwx6fde1G87ESM0TadliJln0gpI7NDM4"/>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="font-bold text-base truncate">Overhead Press</h3>
+<p class="text-sm text-slate-500 dark:text-stone-400 leading-tight mt-0.5">3 sets • 10 reps<br/>30 kg</p>
+<div class="flex items-center gap-3 mt-2">
+<button class="text-primary flex items-center gap-1 text-xs font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm">edit</span> Editar
+                                </button>
+<button class="text-rose-500 flex items-center gap-1 text-xs font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+<div class="cursor-grab p-2 text-slate-300 dark:text-stone-600">
+<span class="material-symbols-outlined">drag_indicator</span>
+</div>
+</div>
+</div>
+<!-- Empty State (Hidden by default, shown if no cards) -->
+<div class="hidden flex-col items-center justify-center py-12 text-center">
+<div class="w-32 h-32 bg-primary/5 rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-primary text-5xl">fitness_center</span>
+</div>
+<p class="text-slate-600 dark:text-stone-400 font-medium">No hay ejercicios aún</p>
+<p class="text-sm text-slate-400 dark:text-stone-500 mt-1 px-8">Agregá ejercicios desde el catálogo para armar tu rutina.</p>
+</div>
+</section>
+<!-- Catálogo Section -->
+<section class="mt-4 px-4">
+<div class="bg-slate-50 dark:bg-stone-800/50 rounded-3xl p-6 border border-slate-100 dark:border-stone-800">
+<h2 class="text-lg font-bold mb-4">Catálogo de Ejercicios</h2>
+<!-- Search & Filter -->
+<div class="flex flex-col gap-3 mb-6">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full bg-white dark:bg-stone-900 border-none rounded-xl py-3 pl-10 pr-4 text-sm shadow-sm focus:ring-2 focus:ring-primary/50 transition-all" placeholder="Buscar ejercicios..." type="text"/>
+</div>
+<div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+<button class="bg-primary text-white px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap">Pecho</button>
+<button class="bg-white dark:bg-stone-900 text-slate-600 dark:text-stone-400 px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap shadow-sm border border-slate-100 dark:border-stone-800">Hombros</button>
+<button class="bg-white dark:bg-stone-900 text-slate-600 dark:text-stone-400 px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap shadow-sm border border-slate-100 dark:border-stone-800">Tríceps</button>
+<button class="bg-white dark:bg-stone-900 text-slate-600 dark:text-stone-400 px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap shadow-sm border border-slate-100 dark:border-stone-800">Fuerza</button>
+</div>
+</div>
+<!-- Catalog List Mini -->
+<div class="space-y-3">
+<div class="flex items-center justify-between p-3 bg-white dark:bg-stone-900 rounded-xl shadow-sm">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center overflow-hidden">
+<div class="w-full h-full bg-gradient-to-br from-primary/20 to-primary/40" data-alt="Abstract gradient exercise placeholder"></div>
+</div>
+<span class="font-medium text-sm">Dumbbell Flyes</span>
+</div>
+<button class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+<div class="flex items-center justify-between p-3 bg-white dark:bg-stone-900 rounded-xl shadow-sm">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center overflow-hidden">
+<div class="w-full h-full bg-gradient-to-br from-primary/20 to-primary/40" data-alt="Abstract gradient exercise placeholder"></div>
+</div>
+<span class="font-medium text-sm">Lateral Raises</span>
+</div>
+<button class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white dark:bg-stone-900 border-t border-slate-100 dark:border-stone-800 px-4 pb-6 pt-2 flex justify-around items-center z-20">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined font-variation-settings-fill">fitness_center</span>
+<span class="text-[10px] font-bold">Rutina</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="text-[10px] font-medium">Catálogo</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-[10px] font-medium">Progreso</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-medium">Perfil</span>
+</a>
+</nav>
+</div>
+</body></html>

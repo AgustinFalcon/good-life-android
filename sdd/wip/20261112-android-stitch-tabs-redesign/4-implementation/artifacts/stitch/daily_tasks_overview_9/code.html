@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GoodLife - Nueva Tarea Recurrente</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1EC691",
+                        "primary-dark": "#17a377",
+                        "background-light": "#f8faf8",
+                        "neutral-surface": "#f3f4f6",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "1.5rem", "xl": "2rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body { @apply bg-gray-900/40; }
+        }
+        .bottom-sheet-gradient {
+            background: linear-gradient(180deg, #FFFFFF 0%, #F9FAFB 100%);
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #1EC691 0%, #17A377 100%);
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display flex flex-col justify-end min-h-screen">
+<div class="fixed inset-0 z-0"></div>
+<div class="relative z-10 w-full max-w-md mx-auto bottom-sheet-gradient rounded-t-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+<div class="flex justify-center pt-4 pb-2">
+<div class="w-12 h-1.5 bg-gray-200 rounded-full"></div>
+</div>
+<div class="px-8 pt-4 pb-6 flex justify-between items-center">
+<h1 class="text-2xl font-extrabold text-gray-900">Nueva Tarea</h1>
+<button class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition-colors">
+<span class="material-icons-round text-2xl">close</span>
+</button>
+</div>
+<div class="px-8 pb-10 overflow-y-auto no-scrollbar space-y-6">
+<div class="space-y-2">
+<label class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Título</label>
+<input class="w-full bg-gray-50 border-none rounded-2xl p-4 text-gray-900 font-semibold placeholder:text-gray-300 focus:ring-2 focus:ring-primary/20 transition-all shadow-sm" placeholder="Ej. Meditación matutina" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Categoría</label>
+<div class="flex space-x-3 overflow-x-auto no-scrollbar py-1">
+<button class="px-4 py-2 bg-white border-2 border-primary text-primary font-bold rounded-full text-sm whitespace-nowrap shadow-sm">
+                        Hábito
+                    </button>
+<button class="px-4 py-2 bg-gray-50 border-2 border-transparent text-gray-400 font-bold rounded-full text-sm whitespace-nowrap">
+                        Comida
+                    </button>
+<button class="px-4 py-2 bg-gray-50 border-2 border-transparent text-gray-400 font-bold rounded-full text-sm whitespace-nowrap">
+                        Entreno
+                    </button>
+<button class="px-4 py-2 bg-gray-50 border-2 border-transparent text-gray-400 font-bold rounded-full text-sm whitespace-nowrap">
+                        Trabajo
+                    </button>
+</div>
+</div>
+<div class="bg-gray-50/80 rounded-3xl p-6 space-y-5 border border-gray-100 shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-icons-round">autorenew</span>
+</div>
+<span class="font-bold text-gray-800">Se repite</span>
+</div>
+<div class="relative inline-flex h-7 w-12 items-center rounded-full bg-primary cursor-pointer">
+<span class="inline-block h-5 w-5 translate-x-6 transform rounded-full bg-white shadow-sm transition-transform"></span>
+</div>
+</div>
+<div class="flex justify-between items-center py-2">
+<div class="flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-extrabold shadow-lg shadow-primary/20">LUN</div>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-white text-gray-400 border-2 border-gray-100 flex items-center justify-center text-[10px] font-extrabold">MAR</div>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-extrabold shadow-lg shadow-primary/20">MIÉ</div>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-white text-gray-400 border-2 border-gray-100 flex items-center justify-center text-[10px] font-extrabold">JUE</div>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-extrabold shadow-lg shadow-primary/20">VIE</div>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-white text-gray-400 border-2 border-gray-100 flex items-center justify-center text-[10px] font-extrabold">SÁB</div>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-white text-gray-400 border-2 border-gray-100 flex items-center justify-center text-[10px] font-extrabold">DOM</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-2">
+<label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Desde</label>
+<div class="bg-white rounded-2xl p-3 border border-gray-100 flex items-center justify-between shadow-sm">
+<span class="text-sm font-bold text-gray-800">24 Oct</span>
+<span class="material-icons-round text-primary text-lg">calendar_today</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Hasta</label>
+<div class="bg-white rounded-2xl p-3 border border-gray-100 flex items-center justify-between shadow-sm">
+<span class="text-sm font-bold text-gray-800">Indefinido</span>
+<span class="material-icons-round text-gray-300 text-lg">calendar_today</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-gray-50/80 rounded-3xl p-6 border border-gray-100 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-500">
+<span class="material-icons-round">schedule</span>
+</div>
+<span class="font-bold text-gray-800">Sin hora específica</span>
+</div>
+<div class="relative inline-flex h-7 w-12 items-center rounded-full bg-gray-200 cursor-pointer">
+<span class="inline-block h-5 w-5 translate-x-1 transform rounded-full bg-white shadow-sm transition-transform"></span>
+</div>
+</div>
+<div class="flex items-center justify-between bg-white rounded-2xl p-4 border border-gray-100">
+<span class="text-sm font-bold text-gray-400">Hora de inicio</span>
+<span class="text-lg font-extrabold text-gray-900">08:30 AM</span>
+</div>
+</div>
+<button class="w-full py-5 rounded-[1.8rem] btn-gradient text-white font-extrabold text-sm tracking-[0.15em] shadow-xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98] uppercase">
+                Guardar Tarea
+            </button>
+<div class="h-6"></div>
+</div>
+</div>
+
+</body></html>

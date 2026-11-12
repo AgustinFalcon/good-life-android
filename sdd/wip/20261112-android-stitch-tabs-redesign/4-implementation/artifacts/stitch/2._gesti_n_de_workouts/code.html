@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2ECC71",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#1a1a1a",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Top Navigation Bar -->
+<div class="relative flex h-auto w-full flex-col bg-white dark:bg-background-dark border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center p-4 pb-2 justify-between">
+<div class="text-slate-900 dark:text-slate-100 flex size-12 shrink-0 items-center cursor-pointer">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">Create Routine</h2>
+</div>
+<!-- Progress Stepper -->
+<div class="flex w-full flex-row items-center justify-center gap-3 py-5">
+<div class="h-2 w-2 rounded-full bg-primary/30"></div>
+<div class="h-2 w-10 rounded-full bg-primary"></div>
+<div class="h-2 w-2 rounded-full bg-primary/30"></div>
+<div class="h-2 w-2 rounded-full bg-primary/30"></div>
+<div class="h-2 w-2 rounded-full bg-primary/30"></div>
+<div class="h-2 w-2 rounded-full bg-primary/30"></div>
+</div>
+</div>
+<!-- Main Content -->
+<main class="px-4 pb-32">
+<div class="pt-6 pb-2">
+<h3 class="text-slate-900 dark:text-slate-100 tracking-tight text-2xl font-bold leading-tight">Workouts de la rutina</h3>
+<h2 class="text-primary text-lg font-bold leading-tight tracking-[-0.015em] pt-1">(2 de 6 días)</h2>
+<p class="text-slate-600 dark:text-slate-400 text-base font-normal leading-normal pt-3">Define your workout rotation. You can add multiple sessions and organize them by day.</p>
+</div>
+<!-- Workout List -->
+<div class="mt-6 flex flex-col gap-4">
+<!-- Workout Card 1 -->
+<div class="flex items-center justify-between p-4 bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+<span class="material-symbols-outlined">fitness_center</span>
+</div>
+<div>
+<p class="font-bold text-slate-900 dark:text-slate-100">Día 1: Empuje (Pecho/Tríceps)</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">8 ejercicios • 60 mins</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-xl">delete</span>
+</button>
+</div>
+</div>
+<!-- Workout Card 2 -->
+<div class="flex items-center justify-between p-4 bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+<span class="material-symbols-outlined">exercise</span>
+</div>
+<div>
+<p class="font-bold text-slate-900 dark:text-slate-100">Día 2: Tracción (Espalda/Bíceps)</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">7 ejercicios • 55 mins</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-xl">delete</span>
+</button>
+</div>
+</div>
+<!-- Placeholder for next day -->
+<div class="border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-8 flex flex-col items-center justify-center text-slate-400">
+<span class="material-symbols-outlined text-3xl mb-2">add_circle</span>
+<p class="text-sm font-medium">Añadir entrenamiento para el día 3</p>
+</div>
+</div>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed bottom-24 right-6 size-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+</button>
+<!-- Bottom Navigation Buttons -->
+<div class="fixed bottom-0 left-0 right-0 bg-white dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 p-4 flex gap-4 items-center">
+<button class="flex-1 py-3 px-6 rounded-xl font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+            Atrás
+        </button>
+<button class="flex-[2] py-3 px-6 rounded-xl font-bold text-white bg-primary hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-sm">
+            Siguiente
+            <span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</div>
+</body></html>

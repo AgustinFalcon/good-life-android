@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .shimmer {
+            background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        .dark .shimmer {
+            background: linear-gradient(90deg, #3d2b23 25%, #4d3b33 50%, #3d2b23 75%);
+            background-size: 200% 100%;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="max-w-md mx-auto min-h-screen flex flex-col border-x border-slate-200 dark:border-slate-800 bg-background-light dark:bg-background-dark">
+<!-- Header -->
+<header class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md pt-4">
+<div class="flex items-center px-4 pb-2 justify-between">
+<div class="text-slate-900 dark:text-slate-100 flex size-10 shrink-0 items-center justify-center cursor-pointer hover:bg-primary/10 rounded-full transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight flex-1 ml-2">Catálogo</h2>
+<div class="size-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">tune</span>
+</div>
+</div>
+<!-- Search Bar -->
+<div class="px-4 py-3">
+<label class="flex flex-col min-w-40 h-12 w-full">
+<div class="flex w-full flex-1 items-stretch rounded-2xl h-full shadow-sm">
+<div class="text-primary flex border-none bg-slate-100 dark:bg-slate-800 items-center justify-center pl-4 rounded-l-2xl border-r-0">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden text-slate-900 dark:text-slate-100 focus:outline-0 focus:ring-0 border-none bg-slate-100 dark:bg-slate-800 focus:border-none h-full placeholder:text-slate-400 px-4 rounded-r-none border-r-0 pr-2 rounded-l-none border-l-0 pl-2 text-base font-normal" placeholder="Buscar ejercicios..." value="xyz"/>
+<div class="flex items-center justify-center rounded-r-2xl border-l-0 border-none bg-slate-100 dark:bg-slate-800 pr-4">
+<button class="flex cursor-pointer items-center justify-center overflow-hidden rounded-full bg-transparent text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">cancel</span>
+</button>
+</div>
+</div>
+</label>
+</div>
+</header>
+<!-- View 1: Loading State (Skeleton) -->
+<main class="flex-1 px-4 py-2">
+<h3 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight pb-4">Cargando ejercicios...</h3>
+<div class="grid grid-cols-2 gap-4">
+<!-- Skeleton Card 1 -->
+<div class="flex flex-col gap-3">
+<div class="w-full aspect-square rounded-2xl shimmer"></div>
+<div class="h-4 w-3/4 rounded-full shimmer"></div>
+<div class="h-3 w-1/2 rounded-full shimmer opacity-60"></div>
+</div>
+<!-- Skeleton Card 2 -->
+<div class="flex flex-col gap-3">
+<div class="w-full aspect-square rounded-2xl shimmer"></div>
+<div class="h-4 w-5/6 rounded-full shimmer"></div>
+<div class="h-3 w-2/3 rounded-full shimmer opacity-60"></div>
+</div>
+<!-- Skeleton Card 3 -->
+<div class="flex flex-col gap-3">
+<div class="w-full aspect-square rounded-2xl shimmer"></div>
+<div class="h-4 w-2/3 rounded-full shimmer"></div>
+<div class="h-3 w-1/2 rounded-full shimmer opacity-60"></div>
+</div>
+<!-- Skeleton Card 4 -->
+<div class="flex flex-col gap-3">
+<div class="w-full aspect-square rounded-2xl shimmer"></div>
+<div class="h-4 w-3/4 rounded-full shimmer"></div>
+<div class="h-3 w-1/3 rounded-full shimmer opacity-60"></div>
+</div>
+</div>
+<!-- Separator for demonstration -->
+<div class="my-12 border-t-2 border-dashed border-slate-200 dark:border-slate-800 relative">
+<span class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background-light dark:bg-background-dark px-2 text-[10px] uppercase tracking-widest text-slate-400">Estado Vacío</span>
+</div>
+<!-- View 2: Empty State -->
+<div class="flex flex-col items-center justify-center py-12 text-center">
+<div class="relative mb-6">
+<div class="size-24 rounded-full bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-6xl text-primary opacity-50">search</span>
+</div>
+<div class="absolute -bottom-1 -right-1 size-10 rounded-full bg-background-light dark:bg-background-dark border-4 border-background-light dark:border-background-dark flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-2xl font-bold">sentiment_dissatisfied</span>
+</div>
+</div>
+<h4 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Sin resultados</h4>
+<p class="text-slate-600 dark:text-slate-400 px-8 mb-6">
+                    No se encontraron ejercicios para <span class="text-primary font-semibold">"xyz"</span>.
+                </p>
+<div class="bg-primary/5 dark:bg-primary/10 p-4 rounded-2xl border border-primary/10 max-w-[280px]">
+<p class="text-sm text-slate-700 dark:text-slate-300">
+<span class="font-bold text-primary">Sugerencia:</span> Probá con otros filtros o términos más generales.
+                    </p>
+</div>
+<button class="mt-8 px-6 py-3 bg-primary text-white font-bold rounded-full hover:shadow-lg transition-all active:scale-95">
+                    Limpiar búsqueda
+                </button>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="sticky bottom-0 bg-background-light dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 px-4 pb-6 pt-2 flex justify-around items-center">
+<a class="flex flex-col items-center gap-1 text-slate-400 transition-colors" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-medium">Inicio</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">fitness_center</span>
+<span class="text-[10px] font-bold">Ejercicios</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 transition-colors" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="text-[10px] font-medium">Rutinas</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-medium">Perfil</span>
+</a>
+</nav>
+</div>
+</body></html>

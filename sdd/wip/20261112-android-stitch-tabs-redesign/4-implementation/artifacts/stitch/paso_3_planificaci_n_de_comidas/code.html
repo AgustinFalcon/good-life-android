@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GoodLife - Planificar Comida</title>
+<!-- Tailwind CSS CDN with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              orange: '#F57C00',
+              orangeLight: '#FFF3E0',
+              orangeMuted: '#FFB74D',
+            },
+            surface: '#FAFAFA'
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-transitions">
+    .chip-active {
+      background-color: #F57C00;
+      color: white;
+    }
+    .chip-inactive {
+      background-color: #F5F5F5;
+      color: #757575;
+      border: 1px solid #E0E0E0;
+    }
+  </style>
+</head>
+<body class="bg-surface font-sans text-slate-900 min-h-screen pb-24">
+<!-- BEGIN: MainHeader -->
+<header class="bg-white px-4 py-4 shadow-sm sticky top-0 z-50">
+<div class="flex items-center justify-between mb-2">
+<button aria-label="Volver" class="p-2 -ml-2">
+<svg class="h-6 w-6 text-slate-700" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<h1 class="text-lg font-bold">Nueva Comida</h1>
+<div class="w-10"></div> <!-- Spacer for balance -->
+</div>
+<!-- Progress Indicator -->
+<div class="space-y-1">
+<div class="flex justify-between text-xs font-medium text-slate-500 uppercase tracking-wider">
+<span>Planificar</span>
+<span>Paso 3 de 3 (100%)</span>
+</div>
+<div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+<div class="bg-brand-orange h-full w-full"></div>
+</div>
+</div>
+</header>
+<!-- END: MainHeader -->
+<main class="p-4 space-y-6">
+<!-- BEGIN: MealSummaryCard -->
+<!-- Displays a summary of the meal selected in previous steps -->
+<section data-purpose="selected-meal-summary">
+<div class="bg-brand-orangeLight border border-brand-orangeMuted/30 rounded-2xl p-4 flex items-center gap-4">
+<div class="bg-white p-3 rounded-xl shadow-sm text-2xl">
+          🥗
+        </div>
+<div class="flex-1">
+<h2 class="font-bold text-slate-800">Ensalada de Quinoa y Pollo</h2>
+<div class="flex gap-3 mt-1 text-xs text-slate-600">
+<span>🔥 450 kcal</span>
+<span>🥩 30g P</span>
+<span>🍞 45g C</span>
+</div>
+</div>
+</div>
+</section>
+<!-- END: MealSummaryCard -->
+<!-- BEGIN: MealTypeSelection -->
+<section class="space-y-3" data-purpose="meal-type-selection">
+<h3 class="text-sm font-bold text-slate-700 uppercase tracking-wide">Tipo de comida *</h3>
+<div class="flex flex-wrap gap-2">
+<!-- Using chip pattern for selection -->
+<button class="chip-inactive px-4 py-2 rounded-full text-sm font-medium">Desayuno</button>
+<button class="chip-active px-4 py-2 rounded-full text-sm font-medium">Almuerzo</button>
+<button class="chip-inactive px-4 py-2 rounded-full text-sm font-medium">Merienda</button>
+<button class="chip-inactive px-4 py-2 rounded-full text-sm font-medium">Cena</button>
+</div>
+</section>
+<!-- END: MealTypeSelection -->
+<!-- BEGIN: WeeklySchedule -->
+<section class="space-y-3" data-purpose="day-selection">
+<h3 class="text-sm font-bold text-slate-700 uppercase tracking-wide">Días de la semana *</h3>
+<div class="flex justify-between items-center">
+<!-- Circular chips for days of the week -->
+<button class="w-10 h-10 rounded-full chip-active flex items-center justify-center font-bold text-sm">L</button>
+<button class="w-10 h-10 rounded-full chip-inactive flex items-center justify-center font-bold text-sm">M</button>
+<button class="w-10 h-10 rounded-full chip-active flex items-center justify-center font-bold text-sm">X</button>
+<button class="w-10 h-10 rounded-full chip-inactive flex items-center justify-center font-bold text-sm">J</button>
+<button class="w-10 h-10 rounded-full chip-active flex items-center justify-center font-bold text-sm">V</button>
+<button class="w-10 h-10 rounded-full chip-inactive flex items-center justify-center font-bold text-sm">S</button>
+<button class="w-10 h-10 rounded-full chip-inactive flex items-center justify-center font-bold text-sm">D</button>
+</div>
+</section>
+<!-- END: WeeklySchedule -->
+<!-- BEGIN: DateSettings -->
+<section class="space-y-4" data-purpose="date-scheduling">
+<div class="flex flex-col gap-2">
+<label class="text-sm font-bold text-slate-700 uppercase tracking-wide">Fecha de inicio</label>
+<button class="flex items-center justify-between w-full bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
+<span class="text-slate-600">Hoy, 15 de Octubre</span>
+<svg class="h-5 w-5 text-brand-orange" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+<div class="flex items-center justify-between py-2">
+<span class="text-slate-700 font-medium">Sin fecha de fin</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-orange"></div>
+</label>
+</div>
+</section>
+<!-- END: DateSettings -->
+<!-- BEGIN: TimeSettings -->
+<section class="pt-2 border-t border-slate-100" data-purpose="time-scheduling">
+<div class="flex items-center justify-between py-2">
+<div class="flex flex-col">
+<span class="text-slate-700 font-medium">Sin hora específica</span>
+<span class="text-xs text-slate-500">Recibirás un recordatorio general</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-orange"></div>
+</label>
+</div>
+</section>
+<!-- END: TimeSettings -->
+</main>
+<!-- BEGIN: BottomAction -->
+<footer class="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t border-slate-100">
+<button class="w-full bg-brand-orange hover:bg-orange-700 text-white font-bold py-4 rounded-2xl shadow-lg transition-colors flex items-center justify-center gap-2">
+      CREAR PLAN
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</footer>
+<!-- END: BottomAction -->
+</body></html>

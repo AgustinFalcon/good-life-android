@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#f9f9ff;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'on-surface-variant': '#3c4a42', 'on-tertiary-fixed-variant': '#005313', 'surface-bright': '#f9f9ff', 'on-primary-fixed': '#002115', 'on-tertiary-fixed': '#002204', 'on-primary': '#ffffff', 'error': '#ba1a1a', 'surface-tint': '#006c4d', 'tertiary-fixed': '#94f990', 'tertiary-fixed-dim': '#78dc77', 'on-secondary': '#ffffff', 'surface-dim': '#d3daef', 'surface-container-highest': '#dce2f7', 'on-error': '#ffffff', 'primary-fixed': '#69fcc2', 'on-surface': '#141b2b', 'primary': '#006c4d', 'secondary': '#0d6c4b', 'secondary-fixed': '#a0f4ca', 'inverse-on-surface': '#edf0ff', 'tertiary-container': '#61c462', 'on-primary-container': '#004c35', 'secondary-container': '#a0f4ca', 'tertiary': '#006e1c', 'on-error-container': '#93000a', 'error-container': '#ffdad6', 'surface-container': '#e9edff', 'surface-variant': '#dce2f7', 'outline-variant': '#bbcac0', 'on-secondary-fixed-variant': '#005237', 'on-tertiary-container': '#004e11', 'outline': '#6c7a72', 'on-primary-fixed-variant': '#005139', 'surface': '#f9f9ff', 'background': '#f9f9ff', 'surface-container-high': '#e1e8fd', 'on-secondary-fixed': '#002114', 'surface-container-lowest': '#ffffff', 'primary-fixed-dim': '#46dfa8', 'secondary-fixed-dim': '#85d7ae', 'on-secondary-container': '#187250', 'inverse-surface': '#293040', 'surface-container-low': '#f1f3ff', 'primary-container': '#1ec691', 'on-background': '#141b2b', 'inverse-primary': '#46dfa8', 'on-tertiary': '#ffffff' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'space-sm': '0.5rem', 'gutter': '1rem', 'space-xs': '0.25rem', 'space-md': '1rem', 'space-lg': '1.5rem', 'space-xl': '2rem', 'margin': '1rem' }, fontFamily: { 'body-lg': ['Plus Jakarta Sans'], 'display-lg': ['Plus Jakarta Sans'], 'label-md': ['Plus Jakarta Sans'], 'label-sm': ['Plus Jakarta Sans'], 'title-md': ['Plus Jakarta Sans'], 'body-sm': ['Plus Jakarta Sans'], 'body-md': ['Plus Jakarta Sans'], 'headline-lg': ['Plus Jakarta Sans'], 'headline-sm': ['Plus Jakarta Sans'], 'title-lg': ['Plus Jakarta Sans'], 'label-lg': ['Plus Jakarta Sans'] }, fontSize: { 'body-lg': ['16px', {'lineHeight': '24px', 'fontWeight': '400'}], 'display-lg': ['40px', {'lineHeight': '48px', 'fontWeight': '700'}], 'label-md': ['12px', {'lineHeight': '16px', 'fontWeight': '500'}], 'label-sm': ['11px', {'lineHeight': '14px', 'fontWeight': '500'}], 'title-md': ['16px', {'lineHeight': '24px', 'fontWeight': '600'}], 'body-sm': ['12px', {'lineHeight': '16px', 'fontWeight': '400'}], 'body-md': ['14px', {'lineHeight': '20px', 'fontWeight': '400'}], 'headline-lg': ['28px', {'lineHeight': '36px', 'fontWeight': '700'}], 'headline-sm': ['24px', {'lineHeight': '32px', 'fontWeight': '700'}], 'title-lg': ['20px', {'lineHeight': '26px', 'fontWeight': '600'}], 'label-lg': ['14px', {'lineHeight': '20px', 'fontWeight': '600'}] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface antialiased flex flex-col min-h-screen"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.03)]"><div class="flex justify-between items-center px-margin h-6 pt-1 text-on-surface select-none"><span class="font-label-md text-label-md font-semibold tracking-tight">09:41</span><div class="flex items-center gap-space-xs text-on-surface"><span class="material-symbols-outlined text-[16px]">signal_cellular_4_bar</span><span class="material-symbols-outlined text-[16px]">wifi</span><span class="material-symbols-outlined text-[18px]">battery_full</span></div></div><div class="h-16 px-space-sm flex items-center justify-between"><div class="flex items-center gap-space-xs"><button aria-label="Volver" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface active:bg-surface-container transition-colors" onclick="history.back()"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><h1 class="font-title-lg text-title-lg text-on-surface select-none">Sesión En Curso</h1></div><div class="pr-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full px-margin pt-[88px] pb-safe bg-surface"><div class="flex flex-col w-full pb-32 space-y-4">
+<!-- Subtítulo de contexto semanal -->
+<div class="flex items-center justify-between px-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container animate-pulse"></span>
+<p class="font-label-md text-label-md text-on-surface-variant font-medium">Lunes · Semana 4</p>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-high px-2.5 py-1 rounded-full text-secondary">
+<span class="material-symbols-outlined text-[14px]">timer</span>
+<span class="font-label-sm text-label-sm font-semibold tracking-tight" id="sessionTimer">42:18</span>
+</div>
+</div>
+<!-- Banner de error POST inline -->
+<div class="bg-error-container text-on-error-container p-space-md rounded-2xl shadow-sm flex items-center justify-between gap-space-sm" role="alert">
+<div class="flex items-start gap-2.5 min-w-0">
+<span class="material-symbols-outlined text-[20px] text-error shrink-0 mt-0.5" style="font-variation-settings: 'FILL' 1;">warning</span>
+<p class="font-body-sm text-body-sm text-on-error-container font-medium leading-snug">
+        Error de conexión al sincronizar la serie 3. Tocá para reintentar.
+      </p>
+</div>
+<button class="shrink-0 bg-on-error text-error px-3 py-1.5 rounded-full font-label-sm text-label-sm font-semibold active:opacity-80 transition-opacity" onclick="this.closest('div').classList.add('hidden')">
+      Reintentá
+    </button>
+</div>
+<!-- Ejercicio 1: Press de Banca Plano con Barra -->
+<section class="bg-surface-container-lowest rounded-[24px] p-space-md shadow-sm space-y-space-md">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="space-y-1 min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full font-semibold">Pecho</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">4 series</span>
+</div>
+<h2 class="font-title-md text-title-md text-on-surface font-bold leading-tight">Press de Banca Plano con Barra</h2>
+</div>
+<button aria-label="Historial del ejercicio" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant active:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">show_chart</span>
+</button>
+</div>
+<!-- Notas de plantilla -->
+<div class="bg-surface-container-low rounded-xl p-3 flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">info</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+<span class="font-semibold text-primary">Foco:</span> Pausa de 1 seg en el pecho, cadencia 3-0-1-0.
+      </p>
+</div>
+<!-- Tabla / Sets M3 -->
+<div class="space-y-2">
+<!-- Headers de columnas -->
+<div class="grid grid-cols-12 gap-2 px-3 text-on-surface-variant font-label-sm text-label-sm font-medium select-none">
+<span class="col-span-2 text-center">SERIE</span>
+<span class="col-span-3 text-center">PESO</span>
+<span class="col-span-3 text-center">REPS</span>
+<span class="col-span-2 text-center">RPE</span>
+<span class="col-span-2 text-center">ESTADO</span>
+</div>
+<!-- Set 1: Completado -->
+<div class="grid grid-cols-12 gap-2 items-center bg-surface-container-low p-2.5 rounded-2xl">
+<div class="col-span-2 flex justify-center">
+<span class="w-6 h-6 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm flex items-center justify-center font-bold">1</span>
+</div>
+<div class="col-span-3 text-center font-label-lg text-label-lg font-semibold text-on-surface">80 <span class="font-body-sm text-body-sm text-on-surface-variant font-normal">kg</span></div>
+<div class="col-span-3 text-center font-label-lg text-label-lg font-semibold text-on-surface">10</div>
+<div class="col-span-2 text-center font-label-md text-label-md font-medium text-on-surface-variant">@7</div>
+<div class="col-span-2 flex justify-center">
+<span class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary shadow-sm">
+<span class="material-symbols-outlined text-[18px] font-bold">check</span>
+</span>
+</div>
+</div>
+<!-- Set 2: Completado -->
+<div class="grid grid-cols-12 gap-2 items-center bg-surface-container-low p-2.5 rounded-2xl">
+<div class="col-span-2 flex justify-center">
+<span class="w-6 h-6 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm flex items-center justify-center font-bold">2</span>
+</div>
+<div class="col-span-3 text-center font-label-lg text-label-lg font-semibold text-on-surface">85 <span class="font-body-sm text-body-sm text-on-surface-variant font-normal">kg</span></div>
+<div class="col-span-3 text-center font-label-lg text-label-lg font-semibold text-on-surface">8</div>
+<div class="col-span-2 text-center font-label-md text-label-md font-medium text-on-surface-variant">@8</div>
+<div class="col-span-2 flex justify-center">
+<span class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary shadow-sm">
+<span class="material-symbols-outlined text-[18px] font-bold">check</span>
+</span>
+</div>
+</div>
+<!-- Set 3: En curso (con inputs activos Compose) -->
+<div class="grid grid-cols-12 gap-2 items-center bg-primary-fixed/30 p-2.5 rounded-2xl shadow-sm">
+<div class="col-span-2 flex justify-center">
+<span class="w-6 h-6 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center font-bold">3</span>
+</div>
+<div class="col-span-3">
+<div class="relative bg-surface-container-lowest rounded-xl flex items-center justify-center px-1 py-1.5 shadow-sm">
+<input class="w-full text-center bg-transparent font-label-lg text-label-lg font-bold text-on-surface focus:outline-none" inputmode="decimal" type="number" value="90"/>
+<span class="font-label-sm text-label-sm text-on-surface-variant pr-1">k</span>
+</div>
+</div>
+<div class="col-span-3">
+<div class="bg-surface-container-lowest rounded-xl flex items-center justify-center px-1 py-1.5 shadow-sm">
+<input class="w-full text-center bg-transparent font-label-lg text-label-lg font-bold text-on-surface focus:outline-none" inputmode="numeric" type="number" value="6"/>
+</div>
+</div>
+<div class="col-span-2">
+<div class="bg-surface-container-lowest rounded-xl flex items-center justify-center px-1 py-1.5 shadow-sm">
+<input class="w-full text-center bg-transparent font-label-md text-label-md font-bold text-primary focus:outline-none" inputmode="decimal" type="text" value="9"/>
+</div>
+</div>
+<div class="col-span-2 flex justify-center">
+<button aria-label="Confirmar serie 3" class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-md active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]">done</span>
+</button>
+</div>
+</div>
+<!-- Set 4: Pendiente -->
+<div class="grid grid-cols-12 gap-2 items-center bg-surface-container-lowest p-2.5 rounded-2xl opacity-75">
+<div class="col-span-2 flex justify-center">
+<span class="w-6 h-6 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm flex items-center justify-center font-bold">4</span>
+</div>
+<div class="col-span-3 text-center font-label-lg text-label-lg text-on-surface">90 <span class="font-body-sm text-body-sm text-on-surface-variant font-normal">kg</span></div>
+<div class="col-span-3 text-center font-label-lg text-label-lg text-on-surface">6</div>
+<div class="col-span-2 text-center font-label-md text-label-md text-on-surface-variant">@9.5</div>
+<div class="col-span-2 flex justify-center">
+<span class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">radio_button_unchecked</span>
+</span>
+</div>
+</div>
+</div>
+<!-- Botón micro-acción Agregar serie -->
+<button class="w-full py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-primary flex items-center justify-center gap-1.5 font-label-md text-label-md font-semibold transition-colors">
+<span class="material-symbols-outlined text-[18px]">add</span>
+      Agregar serie
+    </button>
+</section>
+<!-- Ejercicio 2: Press Militar con Mancuernas -->
+<section class="bg-surface-container-lowest rounded-[24px] p-space-md shadow-sm space-y-space-md">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="space-y-1 min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full font-semibold">Hombros</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">3 series</span>
+</div>
+<h2 class="font-title-md text-title-md text-on-surface font-bold leading-tight">Press Militar con Mancuernas</h2>
+</div>
+<button aria-label="Historial de hombros" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant active:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">show_chart</span>
+</button>
+</div>
+<!-- Mini resumen visual de series -->
+<div class="space-y-2">
+<div class="grid grid-cols-12 gap-2 px-3 text-on-surface-variant font-label-sm text-label-sm font-medium select-none">
+<span class="col-span-2 text-center">SERIE</span>
+<span class="col-span-4 text-center">PESO</span>
+<span class="col-span-4 text-center">REPS</span>
+<span class="col-span-2 text-center">ESTADO</span>
+</div>
+<div class="grid grid-cols-12 gap-2 items-center bg-surface-container-low p-2.5 rounded-2xl">
+<div class="col-span-2 flex justify-center">
+<span class="w-6 h-6 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm flex items-center justify-center font-bold">1</span>
+</div>
+<div class="col-span-4 text-center font-label-lg text-label-lg font-semibold text-on-surface">28 <span class="font-body-sm text-body-sm text-on-surface-variant font-normal">kg c/u</span></div>
+<div class="col-span-4 text-center font-label-lg text-label-lg font-semibold text-on-surface">10</div>
+<div class="col-span-2 flex justify-center">
+<span class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">radio_button_unchecked</span>
+</span>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-2 items-center bg-surface-container-low p-2.5 rounded-2xl">
+<div class="col-span-2 flex justify-center">
+<span class="w-6 h-6 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm flex items-center justify-center font-bold">2</span>
+</div>
+<div class="col-span-4 text-center font-label-lg text-label-lg font-semibold text-on-surface">28 <span class="font-body-sm text-body-sm text-on-surface-variant font-normal">kg c/u</span></div>
+<div class="col-span-4 text-center font-label-lg text-label-lg font-semibold text-on-surface">10</div>
+<div class="col-span-2 flex justify-center">
+<span class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">radio_button_unchecked</span>
+</span>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-2 items-center bg-surface-container-low p-2.5 rounded-2xl">
+<div class="col-span-2 flex justify-center">
+<span class="w-6 h-6 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm flex items-center justify-center font-bold">3</span>
+</div>
+<div class="col-span-4 text-center font-label-lg text-label-lg font-semibold text-on-surface">28 <span class="font-body-sm text-body-sm text-on-surface-variant font-normal">kg c/u</span></div>
+<div class="col-span-4 text-center font-label-lg text-label-lg font-semibold text-on-surface">10</div>
+<div class="col-span-2 flex justify-center">
+<span class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">radio_button_unchecked</span>
+</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Campo multilínea: Cómo te sentiste -->
+<section class="bg-surface-container-lowest rounded-[24px] p-space-md shadow-sm space-y-2">
+<label class="font-label-lg text-label-lg text-on-surface font-semibold flex items-center gap-1.5" for="workoutNotes">
+<span class="material-symbols-outlined text-primary text-[18px]">mood</span>
+      ¿Cómo te sentiste hoy?
+    </label>
+<div class="relative bg-surface rounded-xl p-3">
+<textarea class="w-full bg-transparent font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none resize-none" id="workoutNotes" placeholder="Sensaciones, dolor articular, energía..." rows="3"></textarea>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant px-1 font-label-sm text-label-sm">
+<span>Auto-guardado en la nube</span>
+<span>0/250</span>
+</div>
+</section>
+<!-- Sticky Bottom Footer M3 -->
+<div class="fixed bottom-0 inset-x-0 p-margin bg-surface/90 backdrop-blur-xl z-40 max-w-md mx-auto">
+<button class="w-full h-14 bg-primary-container text-on-primary rounded-full px-6 flex items-center justify-between shadow-lg active:scale-[0.98] transition-transform">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[22px]">flag</span>
+<span class="font-label-lg text-label-lg font-bold tracking-wide">Terminar workout</span>
+</div>
+<div class="bg-primary text-on-primary font-label-sm text-label-sm font-bold px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+        +50 XP TRAINING
+      </div>
+</button>
+</div>
+</div>
+<script>
+  let seconds = 2538;
+  const timerEl = document.getElementById('sessionTimer');
+  setInterval(() => {
+    seconds++;
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    if (timerEl) {
+      timerEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+  }, 1000);
+</script></main></body></html>

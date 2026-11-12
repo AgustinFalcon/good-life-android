@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Date Picker Selector - GoodLife</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2ECC71",
+                        "primary-dark": "#27ae60",
+                        "background-light": "#f8faf8",
+                        "background-dark": "#112116",
+                        "neutral-surface": "#eef2ee",
+                        "neutral-surface-dark": "#1a2e21",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        :root {
+            --meal-bg: #FFF9E6;
+            --meal-tag-text: #A67C00;
+            --meal-time-text: #E6B000;
+            --meal-icon-bg: #FFECB3;
+            --meal-icon-color: #F9A825;
+            --habit-bg: #F1F8E9;
+            --habit-tag-text: #4CAF50;
+            --habit-time-text: #689F38;
+            --habit-icon-bg: #C8E6C9;
+            --habit-icon-color: #388E3C;
+            --workout-bg: #FCE4EC;
+            --workout-tag-text: #E91E63;
+            --workout-time-text: #D81B60;
+            --workout-icon-bg: #F8BBD0;
+            --workout-icon-color: #C2185B;
+            --task-bg: #E3F2FD;
+            --task-tag-text: #1976D2;
+            --task-time-text: #1565C0;
+            --task-icon-bg: #BBDEFB;
+            --task-icon-color: #1976D2;
+            --next-up-bg: #2ECC71;
+            --checkmark-border: #D1D5DB;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+        .ios-bottom-sheet {
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light text-gray-800 font-display min-h-screen flex justify-center overflow-hidden">
+<div class="w-full max-w-md bg-background-light min-h-screen relative shadow-2xl overflow-hidden flex flex-col">
+<div class="absolute inset-0 bg-black/40 z-20"></div>
+<header class="pt-12 px-6 pb-4 opacity-30">
+<div class="flex justify-between items-center mb-6">
+<div>
+<h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Today</h2>
+<h1 class="text-3xl font-extrabold text-gray-900">Thu, 24 Oct</h1>
+</div>
+<img alt="User profile" class="w-12 h-12 rounded-full border-2 border-primary object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaSfQbTxtpHG_JDW9vNXmg_tIdqUzZIzmIQsKwAguKp9e6s15i_4qd23XoFjR2d2c83gyy1swjZEZHpV313zcE9DBUw9xi_-UHpDE1Hsap7FrgxGhD6pAMlEMYe7jeI9ov1aKaeRc-lS8GPxLowERGan-nHZvuL_7l_qMSzqkRfd26mmE9fO4SNyu5AsEAbrwqW03dlibhSrOFV7mbif_L6TQ7LzvUEynWTnBpCGu4-mhL3Gd7lj8cxXa2SqhiNzZzs5WE_EI1PsI"/>
+</div>
+<div class="mb-6">
+<div class="w-full bg-neutral-surface h-3 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full w-1/2"></div>
+</div>
+</div>
+</header>
+<main class="flex-1 px-6 pb-24 space-y-4 opacity-30">
+<div class="bg-[var(--habit-bg)] p-5 rounded-[1.5rem]">
+<div class="flex justify-between items-center">
+<div class="flex-1">
+<span class="inline-block px-3 py-1 bg-white rounded-full text-[10px] font-bold text-[var(--habit-tag-text)] mb-2 uppercase">Habit</span>
+<h3 class="text-xl font-extrabold text-gray-900">Drink Water</h3>
+</div>
+</div>
+</div>
+<div class="bg-[var(--meal-bg)] p-5 rounded-[1.5rem] border-2 border-primary">
+<div class="flex justify-between items-center">
+<div class="flex-1">
+<span class="inline-block px-3 py-1 bg-white rounded-full text-[10px] font-bold text-[var(--meal-tag-text)] mb-2 uppercase">Meal</span>
+<h3 class="text-xl font-extrabold text-gray-900">Breakfast</h3>
+</div>
+</div>
+</div>
+</main>
+<div class="absolute bottom-0 w-full bg-white rounded-t-[2.5rem] z-50 flex flex-col ios-bottom-sheet">
+<div class="flex justify-center pt-3 pb-1">
+<div class="w-10 h-1.5 bg-gray-200 rounded-full"></div>
+</div>
+<div class="flex justify-between items-center px-6 py-4">
+<button class="text-gray-400 font-semibold text-base">Cancelar</button>
+<h2 class="text-lg font-bold text-gray-900">Seleccionar fecha</h2>
+<button class="text-primary font-bold text-base">OK</button>
+</div>
+<div class="px-6 pb-8">
+<div class="flex items-center justify-between mb-6">
+<button class="p-2 hover:bg-gray-100 rounded-full">
+<span class="material-icons-round text-gray-400">chevron_left</span>
+</button>
+<div class="text-center">
+<h3 class="text-xl font-extrabold text-gray-900">Marzo 2026</h3>
+</div>
+<button class="p-2 hover:bg-gray-100 rounded-full">
+<span class="material-icons-round text-gray-400">chevron_right</span>
+</button>
+</div>
+<div class="calendar-grid mb-4">
+<div class="text-center text-[10px] font-bold text-gray-400 uppercase">Dom</div>
+<div class="text-center text-[10px] font-bold text-gray-400 uppercase">Lun</div>
+<div class="text-center text-[10px] font-bold text-gray-400 uppercase">Mar</div>
+<div class="text-center text-[10px] font-bold text-gray-400 uppercase">Mié</div>
+<div class="text-center text-[10px] font-bold text-gray-400 uppercase">Jue</div>
+<div class="text-center text-[10px] font-bold text-gray-400 uppercase">Vie</div>
+<div class="text-center text-[10px] font-bold text-gray-400 uppercase">Sáb</div>
+</div>
+<div class="calendar-grid text-sm">
+<div class="aspect-square flex items-center justify-center text-gray-300 font-medium">25</div>
+<div class="aspect-square flex items-center justify-center text-gray-300 font-medium">26</div>
+<div class="aspect-square flex items-center justify-center text-gray-300 font-medium">27</div>
+<div class="aspect-square flex items-center justify-center text-gray-300 font-medium">28</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">1</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">2</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">3</div>
+<div class="aspect-square flex items-center justify-center">
+<div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-extrabold shadow-lg shadow-primary/30">4</div>
+</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">5</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">6</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">7</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">8</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">9</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">10</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">11</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">12</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">13</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">14</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">15</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">16</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">17</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">18</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">19</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">20</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">21</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">22</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">23</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">24</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">25</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">26</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">27</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">28</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">29</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">30</div>
+<div class="aspect-square flex items-center justify-center text-gray-900 font-semibold">31</div>
+</div>
+<div class="mt-8 pb-4">
+<button class="w-full py-4 bg-gradient-to-r from-[#2ECC71] to-[#27ae60] text-white font-extrabold rounded-2xl shadow-lg shadow-primary/30 transition-transform active:scale-95">
+                        Seleccionar
+                    </button>
+</div>
+<div class="h-6"></div>
+</div>
+</div>
+</div>
+
+</body></html>

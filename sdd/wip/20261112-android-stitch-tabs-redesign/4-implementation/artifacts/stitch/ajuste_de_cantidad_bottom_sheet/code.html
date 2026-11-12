@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            goodlife: {
+              orange: '#F57C00',
+              protein: '#2196F3',
+              carbs: '#FFC107',
+              fats: '#9C27B0',
+              gray: '#757575'
+            }
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-animations">
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .animate-slide-up {
+      animation: slideUp 0.3s ease-out forwards;
+    }
+    .active-chip {
+      background-color: #F57C00 !important;
+      color: white !important;
+    }
+  </style>
+<title>GoodLife - Configurar Cantidad</title>
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+<!-- BEGIN: BottomSheetContainer -->
+<!-- Background overlay for modal effect -->
+<div class="fixed inset-0 bg-black/40 z-40 flex items-end justify-center" data-purpose="modal-overlay">
+<!-- BEGIN: BottomSheetContent -->
+<main class="bg-white w-full max-w-md rounded-t-[28px] p-6 pb-10 shadow-xl animate-slide-up z-50" data-purpose="bottom-sheet">
+<!-- Drag Handle -->
+<div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-6" data-purpose="drag-handle"></div>
+<!-- BEGIN: HeaderSection -->
+<header class="mb-8">
+<h1 class="text-2xl font-bold text-gray-900 leading-tight">Pechuga de Pollo</h1>
+<p class="text-goodlife-gray text-sm font-medium mt-1">34 kcal / 100g</p>
+</header>
+<!-- END: HeaderSection -->
+<!-- BEGIN: InputSection -->
+<section class="space-y-6" data-purpose="input-controls">
+<!-- Cantidad Field -->
+<div class="relative">
+<label class="block text-xs font-semibold text-goodlife-orange uppercase tracking-wider mb-2" for="cantidad">Cantidad</label>
+<input class="w-full text-4xl font-bold border-0 border-b-2 border-gray-200 focus:border-goodlife-orange focus:ring-0 p-0 pb-2 transition-colors" id="cantidad" placeholder="0" type="number" value="150"/>
+</div>
+<!-- Unit Chips -->
+<div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar" data-purpose="unit-selector">
+<button class="active-chip px-5 py-2 rounded-full border border-gray-200 text-sm font-medium whitespace-nowrap">g</button>
+<button class="bg-gray-50 text-gray-600 px-5 py-2 rounded-full border border-gray-200 text-sm font-medium whitespace-nowrap">kg</button>
+<button class="bg-gray-50 text-gray-600 px-5 py-2 rounded-full border border-gray-200 text-sm font-medium whitespace-nowrap">ml</button>
+<button class="bg-gray-50 text-gray-600 px-5 py-2 rounded-full border border-gray-200 text-sm font-medium whitespace-nowrap">L</button>
+<button class="bg-gray-50 text-gray-600 px-5 py-2 rounded-full border border-gray-200 text-sm font-medium whitespace-nowrap">taza</button>
+<button class="bg-gray-50 text-gray-600 px-5 py-2 rounded-full border border-gray-200 text-sm font-medium whitespace-nowrap">unidad</button>
+</div>
+</section>
+<!-- END: InputSection -->
+<!-- BEGIN: MacroPreview -->
+<section class="mt-10 bg-gray-50 rounded-2xl p-4 grid grid-cols-4 gap-2" data-purpose="macro-preview-card">
+<!-- Kcal -->
+<div class="text-center">
+<span class="block text-[10px] font-bold text-goodlife-orange uppercase">Kcal</span>
+<span class="text-lg font-bold text-gray-900">51</span>
+</div>
+<!-- Proteína -->
+<div class="text-center">
+<span class="block text-[10px] font-bold text-goodlife-protein uppercase">Prot (g)</span>
+<span class="text-lg font-bold text-gray-900">10.5</span>
+</div>
+<!-- Carbos -->
+<div class="text-center">
+<span class="block text-[10px] font-bold text-goodlife-carbs uppercase">Carb (g)</span>
+<span class="text-lg font-bold text-gray-900">0.0</span>
+</div>
+<!-- Grasas -->
+<div class="text-center">
+<span class="block text-[10px] font-bold text-goodlife-fats uppercase">Gras (g)</span>
+<span class="text-lg font-bold text-gray-900">1.2</span>
+</div>
+</section>
+<!-- END: MacroPreview -->
+<!-- BEGIN: ActionButtons -->
+<footer class="mt-8 flex gap-3">
+<button class="flex-1 py-4 border-2 border-goodlife-orange text-goodlife-orange font-bold rounded-xl active:bg-orange-50 transition-colors" data-purpose="btn-cancel">
+          CANCELAR
+        </button>
+<button class="flex-1 py-4 bg-goodlife-orange text-white font-bold rounded-xl shadow-lg shadow-orange-200 active:bg-orange-700 transition-colors" data-purpose="btn-confirm">
+          CONFIRMAR
+        </button>
+</footer>
+<!-- END: ActionButtons -->
+</main>
+<!-- END: BottomSheetContent -->
+</div>
+<!-- END: BottomSheetContainer -->
+</body></html>
